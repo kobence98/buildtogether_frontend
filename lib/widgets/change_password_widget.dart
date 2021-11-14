@@ -1,0 +1,178 @@
+import 'dart:convert';
+
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_frontend/auth/auth_sqflite_handler.dart';
+import 'package:flutter_frontend/auth/auth_user.dart';
+import 'package:flutter_frontend/entities/session.dart';
+import 'package:flutter_frontend/entities/user.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+
+class ChangePasswordWidget extends StatefulWidget {
+  final Session session;
+  final User user;
+
+  const ChangePasswordWidget({required this.session, required this.user});
+
+  @override
+  _ChangePasswordWidgetState createState() => _ChangePasswordWidgetState();
+}
+
+class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
+  TextEditingController _passController = TextEditingController();
+  TextEditingController _passAgainController = TextEditingController();
+  AuthSqfLiteHandler authSqfLiteHandler = AuthSqfLiteHandler();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+      ),
+      body: Container(
+        color: Colors.black,
+        child: Center(
+          child: Container(
+            padding: EdgeInsets.all(MediaQuery.of(context).size.height * 0.02),
+            width: 600,
+            height: 1000,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Center(
+                  child: Container(
+                    padding: EdgeInsets.only(left: 20.0),
+                    color: Colors.yellow.withOpacity(0.7),
+                    child: TextField(
+                      style: TextStyle(color: Colors.black),
+                      controller: _passController,
+                      cursorColor: Colors.black,
+                      enableSuggestions: false,
+                      autocorrect: false,
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        hintText: 'Password',
+                        hintStyle:
+                            TextStyle(color: Colors.black.withOpacity(0.5)),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 10),
+                Center(
+                  child: Container(
+                    padding: EdgeInsets.only(left: 20.0),
+                    color: Colors.yellow.withOpacity(0.7),
+                    child: TextField(
+                      style: TextStyle(color: Colors.black),
+                      controller: _passAgainController,
+                      cursorColor: Colors.black,
+                      enableSuggestions: false,
+                      autocorrect: false,
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        hintText: 'Password again',
+                        hintStyle:
+                            TextStyle(color: Colors.black.withOpacity(0.5)),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 5),
+                Center(
+                  child: ButtonTheme(
+                    height: 50,
+                    minWidth: 300,
+                    child: ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all<Color>(Colors.yellow),
+                      ),
+                      onPressed: _onChangePressed,
+                      child: Text(
+                        "Change password",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                            color: Colors.black),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _onChangePressed() {
+    if (_passController.text == _passAgainController.text) {
+      if(_passController.text.isEmpty){
+        Fluttertoast.showToast(
+            msg: "Fill all of the fields!",
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      }
+      else{
+        dynamic body = <String, String?>{
+          'password': _passController.text,
+        };
+        widget.session
+            .postJson(
+          '/api/users/changePassword',
+          jsonEncode(body),
+        )
+            .then((response) {
+          if (response.statusCode == 200) {
+            authSqfLiteHandler.deleteUsers();
+            authSqfLiteHandler.insertUser(AuthUser(
+                id: 0,
+                email: widget.user.email,
+                password: _passController.text));
+            Navigator.of(context).pop();
+            Fluttertoast.showToast(
+                msg: "Successful password change!",
+                toastLength: Toast.LENGTH_LONG,
+                gravity: ToastGravity.CENTER,
+                timeInSecForIosWeb: 1,
+                backgroundColor: Colors.green,
+                textColor: Colors.white,
+                fontSize: 16.0);
+          } else {
+            Fluttertoast.showToast(
+                msg: "Something went wrong!",
+                toastLength: Toast.LENGTH_LONG,
+                gravity: ToastGravity.CENTER,
+                timeInSecForIosWeb: 1,
+                backgroundColor: Colors.red,
+                textColor: Colors.white,
+                fontSize: 16.0);
+          }
+        });
+      }
+    }
+    else{
+      Fluttertoast.showToast(
+          msg: "Passwords are not identical!",
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.green,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _passController.dispose();
+    _passAgainController.dispose();
+    super.dispose();
+  }
+}
