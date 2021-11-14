@@ -346,7 +346,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
         children: [
           Flexible(
             child: ListView.builder(
-                itemCount: pollOptions.length + 7,
+                itemCount: pollOptions.length + 6,
                 itemBuilder: (BuildContext context, int index) {
                   if (index == 0) {
                     return SizedBox(
@@ -363,142 +363,10 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                       ),
                     );
                   } else if (index == 2) {
-                    return _selectedCompany == null
-                        ? Container(
-                            height: 35,
-                            margin: EdgeInsets.only(left: 10, right: 10),
-                            color: Colors.white,
-                            padding: EdgeInsets.all(4),
-                            child: TypeAheadField(
-                              noItemsFoundBuilder: (context) {
-                                return Container(
-                                  padding: EdgeInsets.all(1),
-                                  color: Colors.yellow,
-                                  child: Container(
-                                    color: Colors.black,
-                                    child: ListTile(
-                                      leading: Icon(
-                                        Icons.not_interested_rounded,
-                                        color: Colors.yellow,
-                                      ),
-                                      title: Text(
-                                        'No items found!',
-                                        style: TextStyle(
-                                            color: Colors.yellow,
-                                            fontStyle: FontStyle.italic,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 20),
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              },
-                              textFieldConfiguration: TextFieldConfiguration(
-                                decoration: new InputDecoration.collapsed(
-                                    hintText: 'Company name'),
-                                controller: _companyNameController,
-                                cursorColor: Colors.black,
-                                autofocus: true,
-                                style: TextStyle(fontSize: 20),
-                              ),
-                              suggestionsCallback: (pattern) async {
-                                dynamic response = await widget.session
-                                    .get("/api/companies/getByName/" + pattern);
-                                if (response.statusCode == 200) {
-                                  widget.session.updateCookie(response);
-                                  Iterable l = json
-                                      .decode(utf8.decode(response.bodyBytes));
-                                  companies = List<CompanyForSearch>.from(l.map(
-                                      (company) =>
-                                          CompanyForSearch.fromJson(company)));
-                                  List<String> resultList = [];
-                                  companies.forEach((company) {
-                                    resultList.add(company.id.toString());
-                                  });
-                                  return resultList;
-                                }
-                                return [];
-                              },
-                              itemBuilder: (context, c) {
-                                CompanyForSearch company = companies
-                                    .where((cp) => cp.id.toString() == c)
-                                    .first;
-                                return Container(
-                                  padding: EdgeInsets.all(1),
-                                  color: Colors.yellow,
-                                  child: Container(
-                                    color: Colors.black,
-                                    child: ListTile(
-                                      leading: CircleAvatar(
-                                        radius: 20,
-                                        backgroundImage: NetworkImage( widget.session.domainName +
-                                            "/api/images/" +
-                                              company.imageId.toString(),
-                                          headers: widget.session.headers,
-                                        ),
-                                      ),
-                                      title: Text(
-                                        company.name,
-                                        style: TextStyle(
-                                            color: Colors.yellow,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 20),
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              },
-                              onSuggestionSelected: (suggestion) {
-                                CompanyForSearch company = companies
-                                    .where(
-                                        (cp) => cp.id.toString() == suggestion)
-                                    .first;
-                                _companyNameController.text = company.name;
-                                _selectedCompany = company;
-                              },
-                            ),
-                          )
-                        : Container(
-                            margin: EdgeInsets.only(left: 10, right: 10),
-                            padding: EdgeInsets.all(1),
-                            color: Colors.yellow,
-                            child: Container(
-                              color: Colors.black,
-                              child: ListTile(
-                                leading: CircleAvatar(
-                                  radius: 20,
-                                  backgroundImage: NetworkImage( widget.session.domainName +
-                                    "/api/images/" +
-                                        _selectedCompany!.imageId.toString(),
-                                    headers: widget.session.headers,
-                                  ),
-                                ),
-                                title: Text(
-                                  _selectedCompany!.name,
-                                  style: TextStyle(
-                                      color: Colors.yellow,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20),
-                                ),
-                                trailing: InkWell(
-                                  child: Icon(
-                                    Icons.clear,
-                                    color: Colors.yellow,
-                                  ),
-                                  onTap: () {
-                                    setState(() {
-                                      _selectedCompany = null;
-                                    });
-                                  },
-                                ),
-                              ),
-                            ),
-                          );
-                  } else if (index == 3) {
                     return SizedBox(
-                      height: 20,
+                      height: 10,
                     );
-                  } else if (index == 4) {
+                  } else if (index == 3) {
                     return Container(
                       margin: EdgeInsets.only(left: 10, right: 10),
                       color: Colors.white,
@@ -510,7 +378,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                             hintText: 'Short description for the poll'),
                       ),
                     );
-                  } else if (index == 5) {
+                  } else if (index == 4) {
                     return ListTile(
                       title: Text(
                         'Poll options:',
@@ -521,25 +389,28 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                       ),
                     );
                   }
-                  if (index < pollOptions.length + 6) {
-                    return pollOptions.elementAt(index - 6);
+                  if (index < pollOptions.length + 5) {
+                    return pollOptions.elementAt(index - 5);
                   } else {
-                    return Center(
-                      child: ButtonTheme(
-                        height: 70,
-                        minWidth: MediaQuery.of(context).size.width - 5,
-                        child: ElevatedButton(
-                          style: ButtonStyle(
-                            backgroundColor:
-                                MaterialStateProperty.all<Color>(Colors.yellow),
-                          ),
-                          onPressed: _onAddOptionPressed,
-                          child: Text(
-                            "Add option",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20,
-                                color: Colors.black),
+                    return Container(
+                      margin: EdgeInsets.only(top: 20),
+                      child: Center(
+                        child: ButtonTheme(
+                          height: 70,
+                          minWidth: MediaQuery.of(context).size.width - 5,
+                          child: ElevatedButton(
+                            style: ButtonStyle(
+                              backgroundColor:
+                              MaterialStateProperty.all<Color>(Colors.yellow),
+                            ),
+                            onPressed: _onAddOptionPressed,
+                            child: Text(
+                              "Add option",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20,
+                                  color: Colors.black),
+                            ),
                           ),
                         ),
                       ),
@@ -630,18 +501,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
         pollsAreEmpty = true;
       }
     });
-    if (_selectedCompany == null) {
-      //TODO check english
-      Fluttertoast.showToast(
-          msg:
-              "Choose from the registrated companies! If you start to write in it's name, it will appear in the list.",
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          fontSize: 16.0);
-    } else if (_titleController.text.isEmpty || pollsAreEmpty) {
+    if (_titleController.text.isEmpty || pollsAreEmpty) {
       //TODO check english
       Fluttertoast.showToast(
           msg: "Fill all of the fields. Delete the empty poll options!",
