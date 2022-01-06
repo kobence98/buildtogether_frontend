@@ -1,25 +1,29 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_frontend/auth/auth_sqflite_handler.dart';
+import 'package:flutter_frontend/languages/english_language.dart';
+import 'package:flutter_frontend/languages/languages.dart';
+import 'package:flutter_frontend/languages/languages_sqflite_handler.dart';
 import 'package:flutter_frontend/widgets/main_widget.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import 'auth/login_widget.dart';
 import 'entities/session.dart';
 import 'entities/user.dart';
+import 'languages/hungarian_language.dart';
 
 void main() {
   runApp(Phoenix(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
+  //TODO megváltoztatni a téma színét anélkül, hogy a visszanyíl ikon eltűnne
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
       home: MyHomePage(),
     );
   }
@@ -33,41 +37,92 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   Session session = Session();
   AuthSqfLiteHandler authSqfLiteHandler = AuthSqfLiteHandler();
-  Widget mainWidget = Container();
+  LanguagesSqfLiteHandler languagesSqfLiteHandler = LanguagesSqfLiteHandler();
+  late Languages languages;
+  Widget mainWidget = Container(
+    child: Center(
+      child: CircularProgressIndicator(
+        color: Colors.yellow,
+      ),
+    ),
+  );
 
   @override
   void initState() {
     super.initState();
-    authSqfLiteHandler.retrieveUser().then((authUser) {
-      if (authUser != null) {
-        var body = new Map<String, dynamic>();
-        body['username'] = authUser.email;
-        body['password'] = authUser.password;
-        session
-            .post(
-          '/api/login',
-          body,
-        )
-            .then((res) {
-          if (res.statusCode == 200) {
-            session.updateCookie(res);
-            session.get('/api/users/getAuthenticatedUser').then((innerRes) {
-              if (innerRes.statusCode == 200) {
-                session.updateCookie(innerRes);
-                User user =
-                    User.fromJson(jsonDecode(utf8.decode(innerRes.bodyBytes)));
-                setState(() {
-                  mainWidget = MainWidget(session: session, user: user);
-                });
-              }
-            });
-          }
-        });
+    SystemChrome.setEnabledSystemUIOverlays([]);
+    languagesSqfLiteHandler.retrieveLanguageCode().then((languageCode) {
+      if (languageCode == null) {
+        languages = LanguageEn();
       } else {
-        setState(() {
-          mainWidget = LoginPage();
-        });
+        switch (languageCode.code) {
+          case 'en':
+            languages = LanguageEn();
+            break;
+          case 'hu':
+            languages = LanguageHu();
+            break;
+          default:
+            languages = LanguageEn();
+            break;
+        }
       }
+      authSqfLiteHandler.retrieveUser().then((authUser) {
+        if (authUser != null) {
+          var body = new Map<String, dynamic>();
+          body['username'] = authUser.email;
+          body['password'] = authUser.password;
+          session
+              .post(
+            '/api/login',
+            body,
+          )
+              .then((res) {
+            if (res.statusCode == 200) {
+              session.updateCookie(res);
+              session.get('/api/users/getAuthenticatedUser').then((innerRes) {
+                if (innerRes.statusCode == 200) {
+                  session.updateCookie(innerRes);
+                  User user = User.fromJson(
+                      jsonDecode(utf8.decode(innerRes.bodyBytes)));
+                  if (user.roles.contains('ROLE_COMPANY') &&
+                      !user.isCompanyActive) {
+                    Fluttertoast.showToast(
+                        msg: languages.subscribeWarningMessage,
+                        toastLength: Toast.LENGTH_LONG,
+                        gravity: ToastGravity.CENTER,
+                        timeInSecForIosWeb: 1,
+                        backgroundColor: Colors.yellow,
+                        textColor: Colors.black,
+                        fontSize: 16.0);
+                  }
+                  setState(() {
+                    mainWidget = MainWidget(session: session, user: user, languages: languages,);
+                  });
+                }
+              });
+            } else {
+              authSqfLiteHandler.deleteUsers();
+              Fluttertoast.showToast(
+                  msg:
+                      languages.automaticLoginErrorMessage,
+                  toastLength: Toast.LENGTH_LONG,
+                  gravity: ToastGravity.CENTER,
+                  timeInSecForIosWeb: 1,
+                  backgroundColor: Colors.red,
+                  textColor: Colors.white,
+                  fontSize: 16.0);
+              setState(() {
+                mainWidget = LoginPage(languages: languages);
+              });
+            }
+          });
+        } else {
+          setState(() {
+            mainWidget = LoginPage(languages: languages);
+          });
+        }
+      });
     });
   }
 

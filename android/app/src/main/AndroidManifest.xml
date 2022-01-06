@@ -2,10 +2,12 @@
     package="com.ubul_studio.flutter_frontend">
 
     <uses-permission android:name="com.android.vending.BILLING" />
+    <uses-permission android:name="android.permission.INTERNET"/>
 
    <application
-        android:label="flutter_frontend"
-        android:icon="@mipmap/ic_launcher">
+        android:label="INNO"
+        android:icon="@mipmap/launcher_icon"
+        android:usesCleartextTraffic="true">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

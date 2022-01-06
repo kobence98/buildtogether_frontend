@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_frontend/auth/auth_sqflite_handler.dart';
 import 'package:flutter_frontend/entities/session.dart';
 import 'package:flutter_frontend/entities/user.dart';
+import 'package:flutter_frontend/languages/languages.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -13,8 +14,10 @@ import 'change_user_data_widget.dart';
 class SettingsWidget extends StatefulWidget {
   final Session session;
   final User user;
+  final Languages languages;
 
-  const SettingsWidget({required this.session, required this.user});
+  const SettingsWidget(
+      {required this.session, required this.user, required this.languages});
 
   @override
   _SettingsWidgetState createState() => _SettingsWidgetState();
@@ -23,10 +26,12 @@ class SettingsWidget extends StatefulWidget {
 class _SettingsWidgetState extends State<SettingsWidget> {
   AuthSqfLiteHandler authSqfLiteHandler = AuthSqfLiteHandler();
   late bool loading;
+  late Languages languages;
 
   @override
   void initState() {
     super.initState();
+    languages = widget.languages;
     loading = false;
   }
 
@@ -140,22 +145,31 @@ class _SettingsWidgetState extends State<SettingsWidget> {
 
   void _onChangePasswordTap() {
     Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) =>
-            ChangePasswordWidget(user: widget.user, session: widget.session)));
+        builder: (context) => ChangePasswordWidget(
+              user: widget.user,
+              session: widget.session,
+              languages: languages,
+            )));
   }
 
   void _onChangeUserDataTap() {
-    Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => ChangeUserDataWidget(
-              user: widget.user,
-              session: widget.session,
-            )));
+    Navigator.of(context)
+        .push(MaterialPageRoute(
+            builder: (context) => ChangeUserDataWidget(
+                  user: widget.user,
+                  session: widget.session,
+                  languages: languages,
+                )))
+        .whenComplete(() => Phoenix.rebirth(context));
   }
 
   void _onChangeLocationTap() {
     Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) =>
-            ChangeLocationWidget(user: widget.user, session: widget.session)));
+        builder: (context) => ChangeLocationWidget(
+              user: widget.user,
+              session: widget.session,
+              languages: languages,
+            )));
   }
 
   void _onSubscriptionHandlingTap() {
@@ -167,7 +181,9 @@ class _SettingsWidgetState extends State<SettingsWidget> {
             return loading
                 ? Container(
                     child: Center(
-                      child: CircularProgressIndicator(),
+                      child: CircularProgressIndicator(
+                        color: Colors.yellow,
+                      ),
                     ),
                   )
                 : AlertDialog(
@@ -181,7 +197,9 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                     ),
                     content: Container(
                       child: Text(
-                        widget.user.isCompanyActive ? 'Tap the button below to unsubscribe!' : 'Until 5000 users the app ensure free subscription for companies. After that it will cost about 30 euros monthly. Its necessary to subscribe if you want to get ideas from users.',
+                        widget.user.isCompanyActive
+                            ? 'Tap the button below to unsubscribe!'
+                            : 'Until 5000 users the app ensure free subscription for companies. After that it will cost about 30 euros monthly. Its necessary to subscribe if you want to get ideas from users.',
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 20,
@@ -203,7 +221,9 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                           _onSubscriptionTap(setState);
                         },
                         child: Text(
-                          widget.user.isCompanyActive ? 'Unsubscribe' : 'Subscribe',
+                          widget.user.isCompanyActive
+                              ? 'Unsubscribe'
+                              : 'Subscribe',
                           style: TextStyle(color: Colors.yellow),
                         ),
                       )
@@ -213,13 +233,16 @@ class _SettingsWidgetState extends State<SettingsWidget> {
         });
   }
 
-  _onSubscriptionTap(setState){
+  _onSubscriptionTap(setState) {
     setState(() {
       loading = true;
     });
     widget.session
-        .postDomainJson('/api/companies/' + widget.user.companyId.toString() + '/subscription',
-        Map<String, String?>())
+        .postDomainJson(
+            '/api/companies/' +
+                widget.user.companyId.toString() +
+                '/subscription',
+            Map<String, String?>())
         .then((response) {
       if (response.statusCode == 200) {
         loading = false;

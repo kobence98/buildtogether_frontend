@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_frontend/entities/company_for_search.dart';
 import 'package:flutter_frontend/entities/session.dart';
 import 'package:flutter_frontend/entities/user.dart';
+import 'package:flutter_frontend/static/profanity_checker.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -29,10 +30,12 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
 
   List<TextEditingController> pollControllers = [];
   List<Widget> pollOptions = [];
+  late bool isButtonEnabled;
 
   @override
   void initState() {
     super.initState();
+    isButtonEnabled = true;
     company = widget.user.roles.contains('ROLE_COMPANY');
     pollControllers.add(TextEditingController());
     pollOptions.add(
@@ -57,7 +60,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
   Widget build(BuildContext context) {
     return Container(
       color: Colors.black,
-      child: company
+      child: company && widget.user.isCompanyActive
           ? DefaultTabController(
               initialIndex: 0,
               length: 2,
@@ -92,55 +95,80 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
   }
 
   void _onPostSimplePressed() {
-    if (_selectedCompany == null) {
-      //TODO check english
-      Fluttertoast.showToast(
-          msg:
-              "Choose from the registrated companies! If you start to write in it's name, it will appear in the list.",
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          fontSize: 16.0);
-    } else if (_titleController.text.isEmpty ||
-        _descriptionController.text.isEmpty) {
-      //TODO check english
-      Fluttertoast.showToast(
-          msg: "Fill all of the fields.",
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          fontSize: 16.0);
-    } else {
-      dynamic body = <String, String>{
-        'title': _titleController.text,
-        'companyId': _selectedCompany!.id.toString(),
-        'description': _descriptionController.text
-      };
-      widget.session
-          .postJson(
-        '/api/posts',
-        jsonEncode(body),
-      )
-          .then((response) {
-        if (response.statusCode == 200) {
-          _titleController.clear();
-          _companyNameController.clear();
-          _descriptionController.clear();
-          Fluttertoast.showToast(
-              msg: "Your post is out!",
-              toastLength: Toast.LENGTH_LONG,
-              gravity: ToastGravity.CENTER,
-              timeInSecForIosWeb: 1,
-              backgroundColor: Colors.green,
-              textColor: Colors.white,
-              fontSize: 16.0);
-          Phoenix.rebirth(context);
-        }
+    isButtonEnabled = false;
+    if(ProfanityChecker.alert(_descriptionController.text + ' ' + _titleController.text)){
+      setState(() {
+        isButtonEnabled = true;
       });
+      Fluttertoast.showToast(
+          msg: "Please dont use bad language!",
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }
+    else{
+      if (_selectedCompany == null) {
+        //TODO check english
+        setState(() {
+          isButtonEnabled = true;
+        });
+        Fluttertoast.showToast(
+            msg:
+            "Choose from the registered companies! If you start to write in it's name, it will appear in the list.",
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      } else if (_titleController.text.isEmpty ||
+          _descriptionController.text.isEmpty) {
+        //TODO check english
+        setState(() {
+          isButtonEnabled = true;
+        });
+        Fluttertoast.showToast(
+            msg: "Fill all of the fields.",
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      } else {
+        dynamic body = <String, String>{
+          'title': _titleController.text,
+          'companyId': _selectedCompany!.id.toString(),
+          'description': _descriptionController.text
+        };
+        widget.session
+            .postJson(
+          '/api/posts',
+          jsonEncode(body),
+        )
+            .then((response) {
+          if (response.statusCode == 200) {
+            setState(() {
+              isButtonEnabled = true;
+            });
+            _titleController.clear();
+            _companyNameController.clear();
+            _descriptionController.clear();
+            Fluttertoast.showToast(
+                msg: "Your post is out!",
+                toastLength: Toast.LENGTH_LONG,
+                gravity: ToastGravity.CENTER,
+                timeInSecForIosWeb: 1,
+                backgroundColor: Colors.green,
+                textColor: Colors.white,
+                fontSize: 16.0);
+            Phoenix.rebirth(context);
+          }
+        });
+      }
     }
   }
 
@@ -324,9 +352,9 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
             child: ElevatedButton(
               style: ButtonStyle(
                 backgroundColor:
-                    MaterialStateProperty.all<Color>(Colors.yellowAccent),
+                    MaterialStateProperty.all<Color>(isButtonEnabled ? Colors.yellowAccent : Colors.yellow.shade200),
               ),
-              onPressed: _onPostSimplePressed,
+              onPressed: isButtonEnabled ? _onPostSimplePressed : null,
               child: ListTile(
                 title: Center(
                   child: Text("POST"),
@@ -372,6 +400,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                       color: Colors.white,
                       padding: EdgeInsets.all(4),
                       child: TextField(
+                        cursorColor: Colors.black,
                         controller: _titleController,
                         style: TextStyle(fontSize: 20),
                         decoration: new InputDecoration.collapsed(
@@ -425,9 +454,9 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
               child: ElevatedButton(
                 style: ButtonStyle(
                   backgroundColor:
-                      MaterialStateProperty.all<Color>(Colors.yellowAccent),
+                  MaterialStateProperty.all<Color>(isButtonEnabled ? Colors.yellowAccent : Colors.yellow.shade200),
                 ),
-                onPressed: _onPostPollPressed,
+                onPressed: isButtonEnabled ? _onPostPollPressed : null,
                 child: ListTile(
                   title: Center(
                     child: Text("POST"),
@@ -495,52 +524,78 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
   }
 
   void _onPostPollPressed() {
+    isButtonEnabled = false;
     bool pollsAreEmpty = false;
+    String pollsConcat = '';
     pollControllers.forEach((poll) {
       if (poll.text.isEmpty) {
         pollsAreEmpty = true;
       }
+      else{
+        pollsConcat = pollsConcat + ' ' + poll.text;
+      }
     });
-    if (_titleController.text.isEmpty || pollsAreEmpty) {
-      //TODO check english
+    if(ProfanityChecker.alert(_titleController.text + ' ' + pollsConcat)){
+      setState(() {
+        isButtonEnabled = true;
+      });
       Fluttertoast.showToast(
-          msg: "Fill all of the fields. Delete the empty poll options!",
+          msg: "Please dont use bad language!",
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.CENTER,
           timeInSecForIosWeb: 1,
           backgroundColor: Colors.red,
           textColor: Colors.white,
           fontSize: 16.0);
-    } else {
-      List<String> options = [];
-      pollControllers.forEach((poll) {
-        options.add(poll.text);
-      });
-      dynamic body = <String, dynamic>{
-        'title': _titleController.text,
-        'options': options
-      };
-      widget.session
-          .postJson(
-        '/api/posts/poll',
-        jsonEncode(body),
-      )
-          .then((response) {
-        if (response.statusCode == 200) {
-          _titleController.clear();
-          _companyNameController.clear();
-          _descriptionController.clear();
-          Fluttertoast.showToast(
-              msg: "Your post is out!",
-              toastLength: Toast.LENGTH_LONG,
-              gravity: ToastGravity.CENTER,
-              timeInSecForIosWeb: 1,
-              backgroundColor: Colors.green,
-              textColor: Colors.white,
-              fontSize: 16.0);
-          Phoenix.rebirth(context);
-        }
-      });
+    }
+    else{
+      if (_titleController.text.isEmpty || pollsAreEmpty) {
+        setState(() {
+          isButtonEnabled = true;
+        });
+        //TODO check english
+        Fluttertoast.showToast(
+            msg: "Fill all of the fields. Delete the empty poll options!",
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      } else {
+        List<String> options = [];
+        pollControllers.forEach((poll) {
+          options.add(poll.text);
+        });
+        dynamic body = <String, dynamic>{
+          'title': _titleController.text,
+          'options': options
+        };
+        widget.session
+            .postJson(
+          '/api/posts/poll',
+          jsonEncode(body),
+        )
+            .then((response) {
+          if (response.statusCode == 200) {
+            _titleController.clear();
+            _companyNameController.clear();
+            _descriptionController.clear();
+            setState(() {
+              isButtonEnabled = true;
+            });
+            Fluttertoast.showToast(
+                msg: "Your post is out!",
+                toastLength: Toast.LENGTH_LONG,
+                gravity: ToastGravity.CENTER,
+                timeInSecForIosWeb: 1,
+                backgroundColor: Colors.green,
+                textColor: Colors.white,
+                fontSize: 16.0);
+            Phoenix.rebirth(context);
+          }
+        });
+      }
     }
   }
 }

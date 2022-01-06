@@ -4,13 +4,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_frontend/entities/session.dart';
 import 'package:flutter_frontend/entities/user.dart';
+import 'package:flutter_frontend/languages/languages.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class ChangeLocationWidget extends StatefulWidget {
   final Session session;
   final User user;
+  final Languages languages;
 
-  const ChangeLocationWidget({required this.session, required this.user});
+  const ChangeLocationWidget({required this.session, required this.user, required this.languages});
 
   @override
   _ChangeLocationWidgetState createState() => _ChangeLocationWidgetState();
@@ -21,18 +23,20 @@ class _ChangeLocationWidgetState extends State<ChangeLocationWidget> {
   List<String> countryCodes = [];
   String? _chosenCountryCode;
   bool _countryCodesLoaded = false;
+  late Languages languages;
 
   @override
   void initState() {
     super.initState();
     _useLocation = widget.user.setByLocale;
+    languages = widget.languages;
 
     countryCodes.add("Global");
     widget.session
         .get('/api/companies/countryCodes')
         .then((response) {
       if (response.statusCode == 200) {
-        Iterable l = json.decode(response.body);
+        Iterable l = json.decode(utf8.decode(response.bodyBytes));
         countryCodes.addAll(l.map((data) => data.toString()).toList());
         countryCodes.remove("Undefined");
         _chosenCountryCode = widget.user.locale == null ? 'Global' : widget.user.locale;
@@ -42,7 +46,7 @@ class _ChangeLocationWidgetState extends State<ChangeLocationWidget> {
       } else {
         Fluttertoast.showToast(
             msg:
-                "Something went wrong with the countries! Check your network connection",
+            languages.countryCodesErrorMessage,
             toastLength: Toast.LENGTH_LONG,
             gravity: ToastGravity.CENTER,
             timeInSecForIosWeb: 1,
@@ -74,8 +78,8 @@ class _ChangeLocationWidgetState extends State<ChangeLocationWidget> {
                       Container(
                         child: Text(
                           _useLocation
-                              ? 'Switch off if you don\'t want to use your location'
-                              : 'Switch on if you want to use your location',
+                              ? languages.switchOffLocationUseLabel
+                              : languages.switchOnLocationUseLabel,
                           style: TextStyle(
                               color: Colors.yellow,
                               fontWeight: FontWeight.bold,
@@ -120,20 +124,6 @@ class _ChangeLocationWidgetState extends State<ChangeLocationWidget> {
                                     ),
                                   );
                                 }).toList(),
-                                hint: Text(
-                                  "Location (if you want to see only global company posts)",
-                                  style: TextStyle(
-                                      color: Colors.yellow,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500),
-                                ),
-                                disabledHint: Text(
-                                  "DDD (if you want to see only global company posts)",
-                                  style: TextStyle(
-                                      color: Colors.yellow,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500),
-                                ),
                                 onChanged: (String? value) {
                                   setState(() {
                                     _chosenCountryCode = value;
@@ -155,7 +145,7 @@ class _ChangeLocationWidgetState extends State<ChangeLocationWidget> {
                             ),
                             onPressed: _onChangePressed,
                             child: Text(
-                              "Change location",
+                              languages.changeLocationLabel,
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 20,
@@ -176,7 +166,7 @@ class _ChangeLocationWidgetState extends State<ChangeLocationWidget> {
   void _onChangePressed() {
     if (!_useLocation && _chosenCountryCode == null) {
       Fluttertoast.showToast(
-          msg: "Choose a location!",
+          msg: languages.chooseLocationWarningLabel,
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.CENTER,
           timeInSecForIosWeb: 1,
@@ -200,7 +190,7 @@ class _ChangeLocationWidgetState extends State<ChangeLocationWidget> {
           widget.user.locale = _chosenCountryCode;
           widget.user.setByLocale = _useLocation;
           Fluttertoast.showToast(
-              msg: "Successful location change!",
+              msg: languages.successfulLocationChangeMessage,
               toastLength: Toast.LENGTH_LONG,
               gravity: ToastGravity.CENTER,
               timeInSecForIosWeb: 1,
@@ -209,7 +199,7 @@ class _ChangeLocationWidgetState extends State<ChangeLocationWidget> {
               fontSize: 16.0);
         } else {
           Fluttertoast.showToast(
-              msg: "Something went wrong!",
+              msg: languages.globalErrorMessage,
               toastLength: Toast.LENGTH_LONG,
               gravity: ToastGravity.CENTER,
               timeInSecForIosWeb: 1,

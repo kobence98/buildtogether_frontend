@@ -3,13 +3,15 @@ description: Build together flutter frontend
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 1.0.0+1
+version: 12.0.0+12
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
   flutter:
+    sdk: flutter
+  flutter_localizations:
     sdk: flutter
   http: ^0.13.3
 
@@ -27,13 +29,20 @@ dependencies:
   country_codes: ^2.1.1
   flutter_inapp_purchase: ^5.0.3
   polls: ^1.0.1
-
+  profanity_filter: ^2.0.0
 
   cupertino_icons: ^1.0.2
+  flutter_launcher_icons: ^0.9.2
+  country_icons: ^2.0.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+flutter_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/launcher_icon.png"
 
 flutter:
 

@@ -6,13 +6,15 @@ import 'package:flutter_frontend/auth/auth_sqflite_handler.dart';
 import 'package:flutter_frontend/auth/auth_user.dart';
 import 'package:flutter_frontend/entities/session.dart';
 import 'package:flutter_frontend/entities/user.dart';
+import 'package:flutter_frontend/languages/languages.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class ChangePasswordWidget extends StatefulWidget {
   final Session session;
   final User user;
+  final Languages languages;
 
-  const ChangePasswordWidget({required this.session, required this.user});
+  const ChangePasswordWidget({required this.session, required this.user, required this.languages});
 
   @override
   _ChangePasswordWidgetState createState() => _ChangePasswordWidgetState();
@@ -22,6 +24,13 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
   TextEditingController _passController = TextEditingController();
   TextEditingController _passAgainController = TextEditingController();
   AuthSqfLiteHandler authSqfLiteHandler = AuthSqfLiteHandler();
+  late Languages languages;
+
+  @override
+  void initState() {
+    super.initState();
+    languages = widget.languages;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +60,7 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
                       autocorrect: false,
                       obscureText: true,
                       decoration: InputDecoration(
-                        hintText: 'Password',
+                        hintText: languages.passwordLabel,
                         hintStyle:
                             TextStyle(color: Colors.black.withOpacity(0.5)),
                       ),
@@ -71,7 +80,7 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
                       autocorrect: false,
                       obscureText: true,
                       decoration: InputDecoration(
-                        hintText: 'Password again',
+                        hintText: languages.passAgainLabel,
                         hintStyle:
                             TextStyle(color: Colors.black.withOpacity(0.5)),
                       ),
@@ -90,7 +99,7 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
                       ),
                       onPressed: _onChangePressed,
                       child: Text(
-                        "Change password",
+                        languages.changePasswordLabel,
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 20,
@@ -111,7 +120,7 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
     if (_passController.text == _passAgainController.text) {
       if(_passController.text.isEmpty){
         Fluttertoast.showToast(
-            msg: "Fill all of the fields!",
+            msg: languages.fillAllFieldsWarningMessage,
             toastLength: Toast.LENGTH_LONG,
             gravity: ToastGravity.CENTER,
             timeInSecForIosWeb: 1,
@@ -137,7 +146,7 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
                 password: _passController.text));
             Navigator.of(context).pop();
             Fluttertoast.showToast(
-                msg: "Successful password change!",
+                msg: languages.successfulPasswordChangeMessage,
                 toastLength: Toast.LENGTH_LONG,
                 gravity: ToastGravity.CENTER,
                 timeInSecForIosWeb: 1,
@@ -146,7 +155,7 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
                 fontSize: 16.0);
           } else {
             Fluttertoast.showToast(
-                msg: "Something went wrong!",
+                msg: languages.globalErrorMessage,
                 toastLength: Toast.LENGTH_LONG,
                 gravity: ToastGravity.CENTER,
                 timeInSecForIosWeb: 1,
@@ -159,7 +168,7 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
     }
     else{
       Fluttertoast.showToast(
-          msg: "Passwords are not identical!",
+          msg: languages.passwordsAreNotIdenticalWarningMessage,
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.CENTER,
           timeInSecForIosWeb: 1,

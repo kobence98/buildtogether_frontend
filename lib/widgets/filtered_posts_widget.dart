@@ -265,7 +265,7 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
               )
             : Container(
                 child: Center(
-                  child: CircularProgressIndicator(),
+                  child: CircularProgressIndicator(color: Colors.yellow,),
                 ),
               ),
       ),

@@ -13,7 +13,6 @@ import 'package:flutter_frontend/widgets/single_post_widget.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:like_button/like_button.dart';
-import 'package:polls/polls.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import 'comments_widget.dart';
@@ -125,6 +124,7 @@ class _PostsWidgetState extends State<PostsWidget> {
                       cursorColor: Colors.black,
                       autofocus: false,
                       style: TextStyle(fontSize: 20),
+                      onEditingComplete: _onSearchButtonPressed,
                     ),
                     suggestionsCallback: (pattern) async {
                       dynamic response = await widget.session
@@ -163,8 +163,10 @@ class _PostsWidgetState extends State<PostsWidget> {
                             leading: name != null
                                 ? CircleAvatar(
                                     radius: 20,
-                                    backgroundImage: NetworkImage( widget.session.domainName +
-                                      "/api/images/" + name.imageId.toString(),
+                                    backgroundImage: NetworkImage(
+                                      widget.session.domainName +
+                                          "/api/images/" +
+                                          name.imageId.toString(),
                                       headers: widget.session.headers,
                                     ),
                                   )
@@ -196,6 +198,7 @@ class _PostsWidgetState extends State<PostsWidget> {
                         name = n.toString();
                       }
                       _searchFieldController.text = name.toString();
+                      _onSearchButtonPressed();
                     },
                   ),
                   flex: 8,
@@ -206,21 +209,7 @@ class _PostsWidgetState extends State<PostsWidget> {
                       Icons.search,
                       color: Colors.black,
                     ),
-                    onPressed: () {
-                      Navigator.of(context)
-                          .push(MaterialPageRoute(
-                              builder: (context) => FilteredPostsWidget(
-                                  session: widget.session,
-                                  pattern: _searchFieldController.text,
-                                  user: widget.user)))
-                          .whenComplete(() => Navigator.of(context)
-                              .pushReplacement(MaterialPageRoute(
-                                  builder: (context) => PostsWidget(
-                                        session: widget.session,
-                                        user: widget.user,
-                                        initPage: 1,
-                                      ))));
-                    },
+                    onPressed: _onSearchButtonPressed,
                   ),
                   flex: 1,
                 ),
@@ -308,9 +297,10 @@ class _PostsWidgetState extends State<PostsWidget> {
                                     ListTile(
                                       leading: CircleAvatar(
                                         radius: 20,
-                                        backgroundImage: NetworkImage( widget.session.domainName +
-                                          "/api/images/" +
-                                              post.companyId.toString(),
+                                        backgroundImage: NetworkImage(
+                                          widget.session.domainName +
+                                              "/api/images/" +
+                                              post.companyImageId.toString(),
                                           headers: widget.session.headers,
                                         ),
                                       ),
@@ -582,7 +572,9 @@ class _PostsWidgetState extends State<PostsWidget> {
                                       padding: EdgeInsets.all(5),
                                       alignment: Alignment.topLeft,
                                       child: Text(
-                                        post.postType == 'SIMPLE_POST' ? post.description : 'Click here to open the poll!',
+                                        post.postType == 'SIMPLE_POST'
+                                            ? post.description
+                                            : 'Click here to open the poll!',
                                         style: TextStyle(color: Colors.white),
                                       ),
                                     ),
@@ -686,7 +678,7 @@ class _PostsWidgetState extends State<PostsWidget> {
             )
           : Container(
               child: Center(
-                child: CircularProgressIndicator(),
+                child: CircularProgressIndicator(color: Colors.yellow,),
               ),
             ),
     );
@@ -740,8 +732,10 @@ class _PostsWidgetState extends State<PostsWidget> {
                     children: [
                       CircleAvatar(
                         radius: 20,
-                        backgroundImage: NetworkImage(widget.session.domainName +
-                          "/api/images/" + company.imageId.toString(),
+                        backgroundImage: NetworkImage(
+                          widget.session.domainName +
+                              "/api/images/" +
+                              company.imageId.toString(),
                           headers: widget.session.headers,
                         ),
                       ),
@@ -932,5 +926,28 @@ class _PostsWidgetState extends State<PostsWidget> {
     _refreshNewController.refreshCompleted();
     _refreshBestController.refreshCompleted();
     _refreshOwnController.refreshCompleted();
+  }
+
+  void _evictImage(String url) {
+    final NetworkImage provider = NetworkImage(url);
+    provider.evict().then<void>((bool success) {
+      if (success) debugPrint('removed image!');
+    });
+  }
+
+  void _onSearchButtonPressed() {
+    Navigator.of(context)
+        .push(MaterialPageRoute(
+            builder: (context) => FilteredPostsWidget(
+                session: widget.session,
+                pattern: _searchFieldController.text,
+                user: widget.user)))
+        .whenComplete(
+            () => Navigator.of(context).pushReplacement(MaterialPageRoute(
+                builder: (context) => PostsWidget(
+                      session: widget.session,
+                      user: widget.user,
+                      initPage: 1,
+                    ))));
   }
 }

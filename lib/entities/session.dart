@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 
 class Session {
   Map<String, String> headers = {};
-  String domainName = 'http://20211115t002125-dot-buildtogether.ew.r.appspot.com';
+  String domainName = 'http://10.0.2.2:8080';
 
   Future<dynamic> get(String url) async {
     http.Response response = await http.get(Uri.parse(domainName + url), headers: headers);
