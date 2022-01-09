@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_frontend/entities/comment.dart';
 import 'package:flutter_frontend/entities/session.dart';
 import 'package:flutter_frontend/entities/user.dart';
+import 'package:flutter_frontend/languages/languages.dart';
+import 'package:flutter_frontend/static/date_formatter.dart';
 import 'package:flutter_frontend/static/profanity_checker.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:like_button/like_button.dart';
@@ -13,9 +15,13 @@ class CommentsWidget extends StatefulWidget {
   final Session session;
   final int postId;
   final User user;
+  final Languages languages;
 
   const CommentsWidget(
-      {required this.session, required this.postId, required this.user});
+      {required this.session,
+      required this.postId,
+      required this.user,
+      required this.languages});
 
   @override
   _CommentsWidgetState createState() => _CommentsWidgetState();
@@ -25,10 +31,12 @@ class _CommentsWidgetState extends State<CommentsWidget> {
   List<Comment> comments = [];
   final TextEditingController _commentController = TextEditingController();
   late bool loading;
+  late Languages languages;
 
   @override
   void initState() {
     super.initState();
+    languages = widget.languages;
     loading = true;
     widget.session
         .get('/api/posts/' + widget.postId.toString() + '/comments')
@@ -40,10 +48,9 @@ class _CommentsWidgetState extends State<CommentsWidget> {
               List<Comment>.from(l.map((model) => Comment.fromJson(model)));
           loading = false;
         });
-      }
-      else{
+      } else {
         Fluttertoast.showToast(
-            msg: "Something went wrong pls check your network connection!",
+            msg: languages.globalErrorMessage,
             toastLength: Toast.LENGTH_LONG,
             gravity: ToastGravity.CENTER,
             timeInSecForIosWeb: 1,
@@ -63,161 +70,177 @@ class _CommentsWidgetState extends State<CommentsWidget> {
       appBar: AppBar(
         backgroundColor: Colors.black,
       ),
-      body: loading ? Container(
-        color: Colors.black,
-        child: Center(
-          child: CircularProgressIndicator(color: Colors.yellow,),
-        ),
-      ) : Container(
-        height: MediaQuery.of(context).size.height,
-        padding: EdgeInsets.only(bottom: 10),
-        color: Colors.black,
-        child: Column(
-          children: [
-            Flexible(
-              child: ListView.separated(
-                padding: EdgeInsets.only(bottom: 10),
-                separatorBuilder: (context, index) => Divider(
-                  height: 1,
-                  color: Colors.white,
+      body: loading
+          ? Container(
+              color: Colors.black,
+              child: Center(
+                child: CircularProgressIndicator(
+                  color: Colors.yellow,
                 ),
-                itemCount: comments.length,
-                itemBuilder: (context, index) {
-                  Comment comment = comments.elementAt(index);
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ListTile(
-                        leading: Container(
-                          padding: EdgeInsets.all(3),
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              border: Border.all(
-                                color: Colors.black,
-                              ),
-                              borderRadius:
-                              BorderRadius.all(Radius.circular(20))),
-                          child: Text(
-                            comment.userName,
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        title: Text(
-                          comment.text,
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        trailing: comment.userId == widget.user.userId
-                            ? Container(
-                          child: PopupMenuButton(
-                              child: Icon(
-                                Icons.more_horiz,
-                                color: Colors.white,
-                              ),
-                              itemBuilder: (context) {
-                                return List.generate(1, (index) {
-                                  return PopupMenuItem(
-                                    child: Text('Delete'),
-                                    value: 0,
-                                  );
-                                });
-                              },
-                              onSelected: (index) {
-                                widget.session
-                                    .delete('/api/comments/' +
-                                    comment.commentId.toString())
-                                    .then((response) {
-                                  if (response.statusCode == 200) {
-                                    Fluttertoast.showToast(
-                                        msg: "Successful delete!",
-                                        toastLength: Toast.LENGTH_LONG,
-                                        gravity: ToastGravity.CENTER,
-                                        timeInSecForIosWeb: 1,
-                                        backgroundColor: Colors.green,
-                                        textColor: Colors.white,
-                                        fontSize: 16.0);
-                                    setState(() {
-                                      comments.remove(comment);
-                                    });
-                                  } else {
-                                    Fluttertoast.showToast(
-                                        msg: "Something went wrong!",
-                                        toastLength: Toast.LENGTH_LONG,
-                                        gravity: ToastGravity.CENTER,
-                                        timeInSecForIosWeb: 1,
-                                        backgroundColor: Colors.red,
-                                        textColor: Colors.white,
-                                        fontSize: 16.0);
-                                  }
-                                });
-                              }),
-                        )
-                            : Container(
-                          width: 1,
-                        ),
+              ),
+            )
+          : Container(
+              height: MediaQuery.of(context).size.height,
+              padding: EdgeInsets.only(bottom: 10),
+              color: Colors.black,
+              child: Column(
+                children: [
+                  Flexible(
+                    child: ListView.separated(
+                      padding: EdgeInsets.only(bottom: 10),
+                      separatorBuilder: (context, index) => Divider(
+                        height: 1,
+                        color: Colors.white,
                       ),
-                      Container(
-                        height: 40,
-                        margin: EdgeInsets.only(left: 5),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      itemCount: comments.length,
+                      itemBuilder: (context, index) {
+                        Comment comment = comments.elementAt(index);
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            LikeButton(
-                              size: 20.0,
-                              circleColor: CircleColor(
-                                  start: Colors.yellow.shade200,
-                                  end: Colors.yellow),
-                              bubblesColor: BubblesColor(
-                                dotPrimaryColor: Colors.yellow.shade200,
-                                dotSecondaryColor: Colors.yellow,
+                            ListTile(
+                              leading: Container(
+                                padding: EdgeInsets.all(3),
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    border: Border.all(
+                                      color: Colors.black,
+                                    ),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(20))),
+                                child: Text(
+                                  comment.userName,
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold),
+                                ),
                               ),
-                              isLiked: comment.liked,
-                              likeBuilder: (bool isLiked) {
-                                return Icon(
-                                  Icons.lightbulb,
-                                  color: isLiked ? Colors.yellow : Colors.white,
-                                );
-                              },
-                              onTap: (isLiked) {
-                                return _onLikeButton(isLiked, comment);
-                              },
-                              likeCount: comment.likeNumber,
+                              title: Text(
+                                comment.text,
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              trailing: comment.userId == widget.user.userId
+                                  ? Container(
+                                      child: PopupMenuButton(
+                                          child: Icon(
+                                            Icons.more_horiz,
+                                            color: Colors.white,
+                                          ),
+                                          itemBuilder: (context) {
+                                            return List.generate(1, (index) {
+                                              return PopupMenuItem(
+                                                child:
+                                                    Text(languages.deleteLabel),
+                                                value: 0,
+                                              );
+                                            });
+                                          },
+                                          onSelected: (index) {
+                                            widget.session
+                                                .delete('/api/comments/' +
+                                                    comment.commentId
+                                                        .toString())
+                                                .then((response) {
+                                              if (response.statusCode == 200) {
+                                                Fluttertoast.showToast(
+                                                    msg: languages
+                                                        .successfulDeleteMessage,
+                                                    toastLength:
+                                                        Toast.LENGTH_LONG,
+                                                    gravity:
+                                                        ToastGravity.CENTER,
+                                                    timeInSecForIosWeb: 1,
+                                                    backgroundColor:
+                                                        Colors.green,
+                                                    textColor: Colors.white,
+                                                    fontSize: 16.0);
+                                                setState(() {
+                                                  comments.remove(comment);
+                                                });
+                                              } else {
+                                                Fluttertoast.showToast(
+                                                    msg: languages
+                                                        .globalServerErrorMessage,
+                                                    toastLength:
+                                                        Toast.LENGTH_LONG,
+                                                    gravity:
+                                                        ToastGravity.CENTER,
+                                                    timeInSecForIosWeb: 1,
+                                                    backgroundColor: Colors.red,
+                                                    textColor: Colors.white,
+                                                    fontSize: 16.0);
+                                              }
+                                            });
+                                          }),
+                                    )
+                                  : Container(
+                                      width: 1,
+                                    ),
                             ),
-                            Text(
-                              _formatDate(comment.createdDate),
-                              style: TextStyle(color: Colors.white),
+                            Container(
+                              height: 40,
+                              margin: EdgeInsets.only(left: 5),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  LikeButton(
+                                    size: 20.0,
+                                    circleColor: CircleColor(
+                                        start: Colors.yellow.shade200,
+                                        end: Colors.yellow),
+                                    bubblesColor: BubblesColor(
+                                      dotPrimaryColor: Colors.yellow.shade200,
+                                      dotSecondaryColor: Colors.yellow,
+                                    ),
+                                    isLiked: comment.liked,
+                                    likeBuilder: (bool isLiked) {
+                                      return Icon(
+                                        Icons.lightbulb,
+                                        color: isLiked
+                                            ? Colors.yellow
+                                            : Colors.white,
+                                      );
+                                    },
+                                    onTap: (isLiked) {
+                                      return _onLikeButton(isLiked, comment);
+                                    },
+                                    likeCount: comment.likeNumber,
+                                  ),
+                                  Text(
+                                    DateFormatter.formatDate(comment.createdDate, languages),
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ],
+                              ),
                             ),
                           ],
+                        );
+                      },
+                    ),
+                    flex: 8,
+                  ),
+                  Flexible(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        _addComment();
+                      },
+                      style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              Colors.yellowAccent)),
+                      child: Center(
+                        child: Text(
+                          languages.addCommentLabel,
+                          style: TextStyle(color: Colors.black),
                         ),
                       ),
-                    ],
-                  );
-                },
-              ),
-              flex: 8,
-            ),
-            Flexible(
-              child: ElevatedButton(
-                onPressed: () {
-                  _addComment();
-                },
-                style: ButtonStyle(
-                    backgroundColor:
-                    MaterialStateProperty.all<Color>(Colors.yellowAccent)),
-                child: Center(
-                  child: Text(
-                    "Add comment",
-                    style: TextStyle(color: Colors.black),
+                    ),
+                    flex: 1,
                   ),
-                ),
+                ],
               ),
-              flex: 1,
             ),
-          ],
-        ),
-      ),
     );
   }
 
@@ -230,14 +253,16 @@ class _CommentsWidgetState extends State<CommentsWidget> {
             return loading
                 ? Container(
                     child: Center(
-                      child: CircularProgressIndicator(color: Colors.yellow,),
+                      child: CircularProgressIndicator(
+                        color: Colors.yellow,
+                      ),
                     ),
                   )
                 : AlertDialog(
                     backgroundColor: Colors.black,
                     title: Center(
                       child: Text(
-                        "Add comment",
+                        languages.addCommentLabel,
                         style: TextStyle(
                             fontSize: 20, fontWeight: FontWeight.bold),
                       ),
@@ -253,8 +278,7 @@ class _CommentsWidgetState extends State<CommentsWidget> {
                           controller: _commentController,
                           style: TextStyle(fontSize: 20),
                           decoration: new InputDecoration.collapsed(
-                              hintText:
-                                  'This is where you should write your comment. Maximum of 256 characters.'),
+                              hintText: languages.commentTipLabel),
                           onChanged: (text) => setState(() {})),
                     ),
                     actions: <Widget>[
@@ -265,7 +289,7 @@ class _CommentsWidgetState extends State<CommentsWidget> {
                             Navigator.of(context).pop();
                           },
                           child: Text(
-                            'Close',
+                            languages.closeLabel,
                             style: TextStyle(color: Colors.black),
                           ),
                         ),
@@ -277,7 +301,7 @@ class _CommentsWidgetState extends State<CommentsWidget> {
                             _addCommentToList(setInnerState);
                           },
                           child: Text(
-                            'Add comment',
+                            languages.addCommentLabel,
                             style: TextStyle(color: Colors.black),
                           ),
                         ),
@@ -292,20 +316,19 @@ class _CommentsWidgetState extends State<CommentsWidget> {
     setInnerState(() {
       loading = true;
     });
-    if(ProfanityChecker.alert(_commentController.text)){
+    if (ProfanityChecker.alert(_commentController.text)) {
       setState(() {
         loading = false;
       });
       Fluttertoast.showToast(
-          msg: "Please dont use bad language!",
+          msg: languages.profanityWarningMessage,
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.CENTER,
           timeInSecForIosWeb: 1,
           backgroundColor: Colors.red,
           textColor: Colors.white,
           fontSize: 16.0);
-    }
-    else{
+    } else {
       if (_commentController.text != '') {
         dynamic body = <String, String>{'text': _commentController.text};
         widget.session
@@ -316,13 +339,13 @@ class _CommentsWidgetState extends State<CommentsWidget> {
             .then((response) {
           if (response.statusCode == 200) {
             Comment comment =
-            Comment.fromJson(json.decode(utf8.decode(response.bodyBytes)));
+                Comment.fromJson(json.decode(utf8.decode(response.bodyBytes)));
             Navigator.of(context).pop();
             setState(() {
               comments.add(comment);
               loading = false;
               Fluttertoast.showToast(
-                  msg: "Your comment is added!",
+                  msg: languages.commentAddedMessage,
                   toastLength: Toast.LENGTH_LONG,
                   gravity: ToastGravity.CENTER,
                   timeInSecForIosWeb: 1,
@@ -335,7 +358,7 @@ class _CommentsWidgetState extends State<CommentsWidget> {
               loading = false;
             });
             Fluttertoast.showToast(
-                msg: "There is some problem! Check your network connection!",
+                msg: languages.globalErrorMessage,
                 toastLength: Toast.LENGTH_LONG,
                 gravity: ToastGravity.CENTER,
                 timeInSecForIosWeb: 1,
@@ -349,7 +372,7 @@ class _CommentsWidgetState extends State<CommentsWidget> {
           loading = false;
         });
         Fluttertoast.showToast(
-            msg: "Dont let the comment empty!",
+            msg: languages.emptyCommentWarningMessage,
             toastLength: Toast.LENGTH_LONG,
             gravity: ToastGravity.CENTER,
             timeInSecForIosWeb: 1,
@@ -358,35 +381,6 @@ class _CommentsWidgetState extends State<CommentsWidget> {
             fontSize: 16.0);
       }
     }
-  }
-
-  String _formatDate(DateTime createdDate) {
-    if (createdDate.isAfter(DateTime.now().subtract(Duration(hours: 1)))) {
-      return (DateTime.now().hour == createdDate.hour
-                  ? DateTime.now().minute - createdDate.minute
-                  : DateTime.now().minute + (60 - createdDate.minute))
-              .toString() +
-          'm';
-    }
-    for (int i = 2; i < 24; i++) {
-      if (createdDate.isAfter(DateTime.now().subtract(Duration(hours: i)))) {
-        return (i - 1).toString() + 'h';
-      }
-    }
-    for (int i = 2; i < 21; i++) {
-      if (createdDate.isAfter(DateTime.now().subtract(Duration(days: i)))) {
-        return (i - 1).toString() + "d";
-      }
-    }
-    return createdDate.year.toString() +
-        '.' +
-        createdDate.month.toString() +
-        '.' +
-        createdDate.day.toString() +
-        '.' +
-        createdDate.hour.toString() +
-        ':' +
-        createdDate.minute.toString();
   }
 
   Future<bool> _onLikeButton(bool isLiked, Comment comment) async {

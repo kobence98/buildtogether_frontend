@@ -54,7 +54,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                 color: Colors.black,
               ),
               title: Text(
-                'Change password',
+                languages.changePasswordLabel,
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
               ),
               onTap: _onChangePasswordTap,
@@ -69,7 +69,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                 color: Colors.black,
               ),
               title: Text(
-                'Change user data',
+                languages.changeUserDataLabel,
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
               ),
               onTap: _onChangeUserDataTap,
@@ -84,7 +84,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                 color: Colors.black,
               ),
               title: Text(
-                'Change location',
+                languages.changeLocationLabel,
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
               ),
               onTap: _onChangeLocationTap,
@@ -100,7 +100,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                       color: Colors.black,
                     ),
                     title: Text(
-                      'Subscription handling',
+                      languages.subscriptionHandlingLabel,
                       style:
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                     ),
@@ -117,7 +117,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                 color: Colors.black,
               ),
               title: Text(
-                'Logout',
+                languages.logoutLabel,
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
               ),
               onTap: _onLogoutTap,
@@ -189,7 +189,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                 : AlertDialog(
                     backgroundColor: Colors.black,
                     title: Text(
-                      'Subscription handling.',
+                      '${languages.subscriptionHandlingLabel}.',
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 20,
@@ -198,8 +198,8 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                     content: Container(
                       child: Text(
                         widget.user.isCompanyActive
-                            ? 'Tap the button below to unsubscribe!'
-                            : 'Until 5000 users the app ensure free subscription for companies. After that it will cost about 30 euros monthly. Its necessary to subscribe if you want to get ideas from users.',
+                            ? languages.unsubscribeTipLabel
+                            : languages.subscribeTipLabel,
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 20,
@@ -212,7 +212,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                           Navigator.of(context).pop();
                         },
                         child: Text(
-                          'Cancel',
+                          languages.cancelLabel,
                           style: TextStyle(color: Colors.yellow),
                         ),
                       ),
@@ -222,8 +222,8 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                         },
                         child: Text(
                           widget.user.isCompanyActive
-                              ? 'Unsubscribe'
-                              : 'Subscribe',
+                              ? languages.unsubscribeLabel
+                              : languages.subscribeLabel,
                           style: TextStyle(color: Colors.yellow),
                         ),
                       )
@@ -249,7 +249,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
         Navigator.of(context).pop();
         widget.user.isCompanyActive = !widget.user.isCompanyActive;
         Fluttertoast.showToast(
-            msg: "Successful subscription!",
+            msg: languages.successfulSubscriptionMessage,
             toastLength: Toast.LENGTH_LONG,
             gravity: ToastGravity.CENTER,
             timeInSecForIosWeb: 1,
@@ -261,7 +261,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
           loading = false;
         });
         Fluttertoast.showToast(
-            msg: "Something went wrong, check your network connection!",
+            msg: languages.globalErrorMessage,
             toastLength: Toast.LENGTH_LONG,
             gravity: ToastGravity.CENTER,
             timeInSecForIosWeb: 1,

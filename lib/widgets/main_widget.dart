@@ -64,8 +64,8 @@ class _MainWidgetState extends State<MainWidget> {
 
   List<Widget> _buildScreens() {
     return [
-      PostsWidget(session: widget.session, user: widget.user, initPage: 1,),
-      CreatePostWidget(session: widget.session, user: widget.user),
+      PostsWidget(session: widget.session, user: widget.user, initPage: 1, languages: languages,),
+      CreatePostWidget(session: widget.session, user: widget.user, languages: languages,),
       SettingsWidget(session: widget.session, user: widget.user, languages: languages)
     ];
   }

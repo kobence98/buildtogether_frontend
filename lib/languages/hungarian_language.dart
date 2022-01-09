@@ -9,6 +9,10 @@ class LanguageHu extends Languages {
   String get globalErrorMessage => 'Valami hiba történt! Ellenőrizd az internetkapcsolatot!';
 
   @override
+  String get globalServerErrorMessage =>
+      'Valami hiba történt! (Szerver hiba)';
+
+  @override
   String get cancelLabel => 'Mégse';
 
   @override
@@ -156,4 +160,148 @@ class LanguageHu extends Languages {
 
   @override
   String get fillAllFieldsWithLocationWarningMessage => 'Töltsd ki az összes mezőt megfelelően, még az országot is válaszd ki!';
+
+  //COMMENTS WIDGET
+
+  @override
+  String get deleteLabel => 'Törlés';
+
+  @override
+  String get successfulDeleteMessage => 'Sikeres törlés!';
+
+  @override
+  String get addCommentLabel => 'Komment hozzáadása';
+
+  @override
+  String get commentTipLabel => 'Ide írjad a kommentet. Maximum 256 karakterből állhat.';
+
+  @override
+  String get commentAddedMessage => 'Komment hozzáadva!';
+
+  @override
+  String get emptyCommentWarningMessage => 'Ne hagyd üresen a kommentet!';
+
+  //CREATE POST WIDGET
+
+  @override
+  String get newPollOptionLabel => 'Új szavazási lehetőség';
+
+  @override
+  String get simplePostLabel => 'Egyszerű poszt';
+
+  @override
+  String get pollPostLabel => 'Szavazós poszt';
+
+  @override
+  String get companyChooseHintLabel => 'Válassz a regisztrált cégek közül! Ha elkezded beírni a nevét, akkor meg fog jelenni egy listában.';
+
+  @override
+  String get postIsOutMessage => 'A posztod kikerült!';
+
+  @override
+  String get whatIsYourIdeaLabel => 'Mi az ötleted?';
+
+  @override
+  String get noItemsFoundLabel => 'Nincs ilyen elem';
+
+  @override
+  String get companyNameLabel => 'Cég neve';
+
+  @override
+  String get titleOfIdeaLabel => 'Az ötleted címe';
+
+  @override
+  String get writeHereYourIdeaLabel => 'Ide írjad le az ötletedet. Maximum 2048 keraktert használhatsz.';
+
+  @override
+  String get POSTLabel => 'POSZTOLÁS';
+
+  @override
+  String get pollShortDescriptionLabel => 'Szavazás rövid leírása';
+
+  @override
+  String get pollOptionsLabel => 'Szavazási lehetőségek';
+
+  @override
+  String get addOptionLabel => 'Opció hozzáadása';
+
+  @override
+  String get fillAllFieldsWithPollOptionWarningMessage => 'Töltsd ki az összes mezőt. Töröld ki az üres szavazási lehetőségeket!';
+
+  @override
+  String get yourPostIsOutMessage => 'A posztod kikerült!';
+
+  //FILTERED POST WIDGET
+
+  @override
+  String get ideaIsImplementedMessage => 'This idea is implemented!';
+
+  @override
+  String get clickHereToOpenThePollLabel => 'Kattints ide a szavazás megnyitásához!';
+
+  //POSTS WIDGET
+
+  @override
+  String get searchLabel => 'Keresés';
+
+  @override
+  String get newLabel => 'Új';
+
+  @override
+  String get bestLabel => 'Legjobb';
+
+  @override
+  String get ownLabel => 'Saját';
+
+  @override
+  String get notImplementedLabel => 'Nincs megvalósítva';
+
+  @override
+  String get implementedLabel => 'Meg van valósítva';
+
+  @override
+  String get successLabel => 'Siker';
+
+  @override
+  String get noPostInYourAreaLabel => 'A te országodban nincsenek posztok, légyszíves ellenőrizd a helyzetmeghatározási beállításokat vagy húzd le a képernyőt a frissítéshez!';
+
+  //SETTINGS WIDGET
+
+  @override
+  String get changeUserDataLabel => 'Felhasználó adatok megváltoztatása';
+
+  @override
+  String get subscriptionHandlingLabel => 'Feliratkozás kezelése';
+
+  @override
+  String get logoutLabel => 'Kijelentkezés';
+
+  @override
+  String get unsubscribeTipLabel => 'Nyomd meg a lenti gombot a leiratkozáshoz!';
+
+  @override
+  String get subscribeTipLabel => 'Az alkalmazás 5000 felhasználóig ingyenes feliratkozást biztosít a cégeknek. Miután elérte ezt a letöltésszámot az alkalmazás, körülbelül 30 eurós, azaz nagyjából 10000 forintos díjra lehet majd számítani havonta. A feliratkozás szükséges ahhoz, hogy a felhasználók posztolhassanak a céget megjelölve.';
+
+  @override
+  String get unsubscribeLabel => 'Leiratkozás';
+
+  @override
+  String get subscribeLabel => 'Feliratkozás';
+
+  @override
+  String get successfulSubscriptionMessage => 'Sikeres feliratkozás!';
+
+  //DATE FORMATTER
+
+  @override
+  String get minuteLetter => 'p';
+
+  @override
+  String get now => 'now';
+
+  @override
+  String get hourLetter => 'ó';
+
+  @override
+  String get dayLetter => 'n';
 }

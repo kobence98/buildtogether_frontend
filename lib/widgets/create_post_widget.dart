@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_frontend/entities/company_for_search.dart';
 import 'package:flutter_frontend/entities/session.dart';
 import 'package:flutter_frontend/entities/user.dart';
+import 'package:flutter_frontend/languages/languages.dart';
 import 'package:flutter_frontend/static/profanity_checker.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
@@ -13,8 +14,10 @@ import 'package:fluttertoast/fluttertoast.dart';
 class CreatePostWidget extends StatefulWidget {
   final Session session;
   final User user;
+  final Languages languages;
 
-  const CreatePostWidget({required this.session, required this.user});
+  const CreatePostWidget(
+      {required this.session, required this.user, required this.languages});
 
   @override
   _CreatePostWidgetState createState() => _CreatePostWidgetState();
@@ -32,9 +35,12 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
   List<Widget> pollOptions = [];
   late bool isButtonEnabled;
 
+  late Languages languages;
+
   @override
   void initState() {
     super.initState();
+    languages = widget.languages;
     isButtonEnabled = true;
     company = widget.user.roles.contains('ROLE_COMPANY');
     pollControllers.add(TextEditingController());
@@ -48,7 +54,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
           controller: pollControllers.first,
           cursorColor: Colors.black,
           decoration: InputDecoration(
-            hintText: 'New poll option',
+            hintText: languages.newPollOptionLabel,
             hintStyle: TextStyle(color: Colors.black.withOpacity(0.5)),
           ),
         ),
@@ -74,13 +80,13 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                       tabs: [
                         Tab(
                           child: Text(
-                            'Simple post',
+                            languages.simplePostLabel,
                             style: TextStyle(color: Colors.yellow),
                           ),
                         ),
                         Tab(
                           child: Text(
-                            'Poll post',
+                            languages.pollPostLabel,
                             style: TextStyle(color: Colors.yellow),
                           ),
                         ),
@@ -96,28 +102,26 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
 
   void _onPostSimplePressed() {
     isButtonEnabled = false;
-    if(ProfanityChecker.alert(_descriptionController.text + ' ' + _titleController.text)){
+    if (ProfanityChecker.alert(
+        _descriptionController.text + ' ' + _titleController.text)) {
       setState(() {
         isButtonEnabled = true;
       });
       Fluttertoast.showToast(
-          msg: "Please dont use bad language!",
+          msg: languages.profanityWarningMessage,
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.CENTER,
           timeInSecForIosWeb: 1,
           backgroundColor: Colors.red,
           textColor: Colors.white,
           fontSize: 16.0);
-    }
-    else{
+    } else {
       if (_selectedCompany == null) {
-        //TODO check english
         setState(() {
           isButtonEnabled = true;
         });
         Fluttertoast.showToast(
-            msg:
-            "Choose from the registered companies! If you start to write in it's name, it will appear in the list.",
+            msg: languages.companyChooseHintLabel,
             toastLength: Toast.LENGTH_LONG,
             gravity: ToastGravity.CENTER,
             timeInSecForIosWeb: 1,
@@ -126,12 +130,11 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
             fontSize: 16.0);
       } else if (_titleController.text.isEmpty ||
           _descriptionController.text.isEmpty) {
-        //TODO check english
         setState(() {
           isButtonEnabled = true;
         });
         Fluttertoast.showToast(
-            msg: "Fill all of the fields.",
+            msg: languages.fillAllFieldsWarningMessage,
             toastLength: Toast.LENGTH_LONG,
             gravity: ToastGravity.CENTER,
             timeInSecForIosWeb: 1,
@@ -158,7 +161,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
             _companyNameController.clear();
             _descriptionController.clear();
             Fluttertoast.showToast(
-                msg: "Your post is out!",
+                msg: languages.postIsOutMessage,
                 toastLength: Toast.LENGTH_LONG,
                 gravity: ToastGravity.CENTER,
                 timeInSecForIosWeb: 1,
@@ -182,7 +185,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
           ),
           ListTile(
             title: Text(
-              'What is your idea?',
+              languages.whatIsYourIdeaLabel,
               style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
@@ -208,7 +211,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                               color: Colors.yellow,
                             ),
                             title: Text(
-                              'No items found!',
+                              languages.noItemsFoundLabel,
                               style: TextStyle(
                                   color: Colors.yellow,
                                   fontStyle: FontStyle.italic,
@@ -221,7 +224,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                     },
                     textFieldConfiguration: TextFieldConfiguration(
                       decoration: new InputDecoration.collapsed(
-                          hintText: 'Company name'),
+                          hintText: languages.companyNameLabel),
                       controller: _companyNameController,
                       cursorColor: Colors.black,
                       autofocus: true,
@@ -255,8 +258,10 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                           child: ListTile(
                             leading: CircleAvatar(
                               radius: 20,
-                              backgroundImage: NetworkImage(widget.session.domainName +
-                                  "/api/images/" + company.imageId.toString(),
+                              backgroundImage: NetworkImage(
+                                widget.session.domainName +
+                                    "/api/images/" +
+                                    company.imageId.toString(),
                                 headers: widget.session.headers,
                               ),
                             ),
@@ -289,8 +294,10 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                     child: ListTile(
                       leading: CircleAvatar(
                         radius: 20,
-                        backgroundImage: NetworkImage( widget.session.domainName +
-                            "/api/images/" + _selectedCompany!.imageId.toString(),
+                        backgroundImage: NetworkImage(
+                          widget.session.domainName +
+                              "/api/images/" +
+                              _selectedCompany!.imageId.toString(),
                           headers: widget.session.headers,
                         ),
                       ),
@@ -326,7 +333,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
               controller: _titleController,
               style: TextStyle(fontSize: 20),
               decoration:
-                  new InputDecoration.collapsed(hintText: 'Title of your idea'),
+                  new InputDecoration.collapsed(hintText: languages.titleOfIdeaLabel),
             ),
           ),
           SizedBox(
@@ -344,15 +351,17 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                 style: TextStyle(fontSize: 20),
                 decoration: new InputDecoration.collapsed(
                     hintText:
-                        'This is where you should write your idea. Maximum of 2048 characters.'),
+                        languages.writeHereYourIdeaLabel),
                 onChanged: (text) => setState(() {})),
           ),
           Container(
             margin: EdgeInsets.only(left: 10, right: 10),
             child: ElevatedButton(
               style: ButtonStyle(
-                backgroundColor:
-                    MaterialStateProperty.all<Color>(isButtonEnabled ? Colors.yellowAccent : Colors.yellow.shade200),
+                backgroundColor: MaterialStateProperty.all<Color>(
+                    isButtonEnabled
+                        ? Colors.yellowAccent
+                        : Colors.yellow.shade200),
               ),
               onPressed: isButtonEnabled ? _onPostSimplePressed : null,
               child: ListTile(
@@ -383,7 +392,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                   } else if (index == 1) {
                     return ListTile(
                       title: Text(
-                        'What is your idea?',
+                        languages.whatIsYourIdeaLabel,
                         style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -404,13 +413,13 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                         controller: _titleController,
                         style: TextStyle(fontSize: 20),
                         decoration: new InputDecoration.collapsed(
-                            hintText: 'Short description for the poll'),
+                            hintText: languages.pollShortDescriptionLabel),
                       ),
                     );
                   } else if (index == 4) {
                     return ListTile(
                       title: Text(
-                        'Poll options:',
+                        '${languages.pollOptionsLabel}:',
                         style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -429,12 +438,12 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                           minWidth: MediaQuery.of(context).size.width - 5,
                           child: ElevatedButton(
                             style: ButtonStyle(
-                              backgroundColor:
-                              MaterialStateProperty.all<Color>(Colors.yellow),
+                              backgroundColor: MaterialStateProperty.all<Color>(
+                                  Colors.yellow),
                             ),
                             onPressed: _onAddOptionPressed,
                             child: Text(
-                              "Add option",
+                              languages.addOptionLabel,
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 20,
@@ -453,13 +462,15 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
               margin: EdgeInsets.only(left: 10, right: 10),
               child: ElevatedButton(
                 style: ButtonStyle(
-                  backgroundColor:
-                  MaterialStateProperty.all<Color>(isButtonEnabled ? Colors.yellowAccent : Colors.yellow.shade200),
+                  backgroundColor: MaterialStateProperty.all<Color>(
+                      isButtonEnabled
+                          ? Colors.yellowAccent
+                          : Colors.yellow.shade200),
                 ),
                 onPressed: isButtonEnabled ? _onPostPollPressed : null,
                 child: ListTile(
                   title: Center(
-                    child: Text("POST"),
+                    child: Text(languages.POSTLabel),
                   ),
                 ),
               ),
@@ -494,7 +505,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                   controller: textEditingController,
                   cursorColor: Colors.black,
                   decoration: InputDecoration(
-                    hintText: 'New poll option',
+                    hintText: languages.newPollOptionLabel,
                     hintStyle: TextStyle(color: Colors.black.withOpacity(0.5)),
                   ),
                 ),
@@ -504,7 +515,8 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                 child: IconButton(
                   onPressed: () {
                     setState(() {
-                      int index = pollControllers.indexOf(textEditingController);
+                      int index =
+                          pollControllers.indexOf(textEditingController);
                       pollControllers.removeAt(index);
                       pollOptions.removeAt(index);
                     });
@@ -530,32 +542,29 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
     pollControllers.forEach((poll) {
       if (poll.text.isEmpty) {
         pollsAreEmpty = true;
-      }
-      else{
+      } else {
         pollsConcat = pollsConcat + ' ' + poll.text;
       }
     });
-    if(ProfanityChecker.alert(_titleController.text + ' ' + pollsConcat)){
+    if (ProfanityChecker.alert(_titleController.text + ' ' + pollsConcat)) {
       setState(() {
         isButtonEnabled = true;
       });
       Fluttertoast.showToast(
-          msg: "Please dont use bad language!",
+          msg: languages.profanityWarningMessage,
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.CENTER,
           timeInSecForIosWeb: 1,
           backgroundColor: Colors.red,
           textColor: Colors.white,
           fontSize: 16.0);
-    }
-    else{
+    } else {
       if (_titleController.text.isEmpty || pollsAreEmpty) {
         setState(() {
           isButtonEnabled = true;
         });
-        //TODO check english
         Fluttertoast.showToast(
-            msg: "Fill all of the fields. Delete the empty poll options!",
+            msg: languages.fillAllFieldsWithPollOptionWarningMessage,
             toastLength: Toast.LENGTH_LONG,
             gravity: ToastGravity.CENTER,
             timeInSecForIosWeb: 1,
@@ -585,7 +594,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
               isButtonEnabled = true;
             });
             Fluttertoast.showToast(
-                msg: "Your post is out!",
+                msg: languages.yourPostIsOutMessage,
                 toastLength: Toast.LENGTH_LONG,
                 gravity: ToastGravity.CENTER,
                 timeInSecForIosWeb: 1,

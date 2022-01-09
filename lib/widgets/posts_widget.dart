@@ -9,6 +9,8 @@ import 'package:flutter_frontend/entities/post.dart';
 import 'package:flutter_frontend/entities/search_field_names.dart';
 import 'package:flutter_frontend/entities/session.dart';
 import 'package:flutter_frontend/entities/user.dart';
+import 'package:flutter_frontend/languages/languages.dart';
+import 'package:flutter_frontend/static/date_formatter.dart';
 import 'package:flutter_frontend/widgets/single_post_widget.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -22,9 +24,13 @@ class PostsWidget extends StatefulWidget {
   final Session session;
   final User user;
   final int initPage;
+  final Languages languages;
 
   const PostsWidget(
-      {required this.session, required this.user, required this.initPage});
+      {required this.session,
+      required this.user,
+      required this.initPage,
+      required this.languages});
 
   @override
   _PostsWidgetState createState() => _PostsWidgetState();
@@ -51,10 +57,12 @@ class _PostsWidgetState extends State<PostsWidget> {
   List<SearchFieldNames> names = [];
   String? country;
   bool loadedPosts = false;
+  late Languages languages;
 
   @override
   void initState() {
     super.initState();
+    languages = widget.languages;
     _loadData();
   }
 
@@ -106,7 +114,7 @@ class _PostsWidgetState extends State<PostsWidget> {
                               color: Colors.yellow,
                             ),
                             title: Text(
-                              'No items found!',
+                              languages.noItemsFoundLabel,
                               style: TextStyle(
                                   color: Colors.yellow,
                                   fontStyle: FontStyle.italic,
@@ -118,8 +126,8 @@ class _PostsWidgetState extends State<PostsWidget> {
                       );
                     },
                     textFieldConfiguration: TextFieldConfiguration(
-                      decoration:
-                          new InputDecoration.collapsed(hintText: 'Search'),
+                      decoration: new InputDecoration.collapsed(
+                          hintText: languages.searchLabel),
                       controller: _searchFieldController,
                       cursorColor: Colors.black,
                       autofocus: false,
@@ -222,19 +230,19 @@ class _PostsWidgetState extends State<PostsWidget> {
               tabs: [
                 Tab(
                   child: Text(
-                    'New',
+                    languages.newLabel,
                     style: TextStyle(color: Colors.yellow),
                   ),
                 ),
                 Tab(
                   child: Text(
-                    'Best',
+                    languages.bestLabel,
                     style: TextStyle(color: Colors.yellow),
                   ),
                 ),
                 Tab(
                   child: Text(
-                    'Own',
+                    languages.ownLabel,
                     style: TextStyle(color: Colors.yellow),
                   ),
                 ),
@@ -353,8 +361,8 @@ class _PostsWidgetState extends State<PostsWidget> {
                                                   ),
                                                   onTap: () {
                                                     Fluttertoast.showToast(
-                                                        msg:
-                                                            "This idea is implemented!",
+                                                        msg: languages
+                                                            .ideaIsImplementedMessage,
                                                         toastLength:
                                                             Toast.LENGTH_SHORT,
                                                         gravity:
@@ -368,7 +376,8 @@ class _PostsWidgetState extends State<PostsWidget> {
                                                 )
                                               : Container(),
                                           Text(
-                                            _formatDate(post.createdDate),
+                                            DateFormatter.formatDate(
+                                                post.createdDate, languages),
                                             style:
                                                 TextStyle(color: Colors.white),
                                           ),
@@ -390,16 +399,18 @@ class _PostsWidgetState extends State<PostsWidget> {
                                                               : 1, (index) {
                                                         if (index == 0) {
                                                           return PopupMenuItem(
-                                                            child:
-                                                                Text('Delete'),
+                                                            child: Text(languages
+                                                                .deleteLabel),
                                                             value: 0,
                                                           );
                                                         } else {
                                                           return PopupMenuItem(
                                                             child: Text(post
                                                                     .implemented
-                                                                ? 'Not implemented'
-                                                                : 'Implemented'),
+                                                                ? languages
+                                                                    .notImplementedLabel
+                                                                : languages
+                                                                    .implementedLabel),
                                                             value: 1,
                                                           );
                                                         }
@@ -416,8 +427,8 @@ class _PostsWidgetState extends State<PostsWidget> {
                                                                   .statusCode ==
                                                               200) {
                                                             Fluttertoast.showToast(
-                                                                msg:
-                                                                    "Successful delete!",
+                                                                msg: languages
+                                                                    .successfulDeleteMessage,
                                                                 toastLength: Toast
                                                                     .LENGTH_LONG,
                                                                 gravity:
@@ -442,8 +453,8 @@ class _PostsWidgetState extends State<PostsWidget> {
                                                             });
                                                           } else {
                                                             Fluttertoast.showToast(
-                                                                msg:
-                                                                    "Something went wrong!",
+                                                                msg: languages
+                                                                    .globalServerErrorMessage,
                                                                 toastLength: Toast
                                                                     .LENGTH_LONG,
                                                                 gravity:
@@ -473,7 +484,8 @@ class _PostsWidgetState extends State<PostsWidget> {
                                                                   .statusCode ==
                                                               200) {
                                                             Fluttertoast.showToast(
-                                                                msg: "Success!",
+                                                                msg:
+                                                                    "${languages.successLabel}!",
                                                                 toastLength: Toast
                                                                     .LENGTH_LONG,
                                                                 gravity:
@@ -533,8 +545,8 @@ class _PostsWidgetState extends State<PostsWidget> {
                                                             });
                                                           } else {
                                                             Fluttertoast.showToast(
-                                                                msg:
-                                                                    "Something went wrong!",
+                                                                msg: languages
+                                                                    .globalServerErrorMessage,
                                                                 toastLength: Toast
                                                                     .LENGTH_LONG,
                                                                 gravity:
@@ -574,7 +586,8 @@ class _PostsWidgetState extends State<PostsWidget> {
                                       child: Text(
                                         post.postType == 'SIMPLE_POST'
                                             ? post.description
-                                            : 'Click here to open the poll!',
+                                            : languages
+                                                .clickHereToOpenThePollLabel,
                                         style: TextStyle(color: Colors.white),
                                       ),
                                     ),
@@ -626,12 +639,15 @@ class _PostsWidgetState extends State<PostsWidget> {
                                                       MaterialPageRoute(
                                                           builder: (context) =>
                                                               CommentsWidget(
-                                                                  session: widget
-                                                                      .session,
-                                                                  postId: post
-                                                                      .postId,
-                                                                  user: widget
-                                                                      .user)));
+                                                                session: widget
+                                                                    .session,
+                                                                postId:
+                                                                    post.postId,
+                                                                user:
+                                                                    widget.user,
+                                                                languages:
+                                                                    languages,
+                                                              )));
                                                 },
                                               ),
                                             ],
@@ -650,7 +666,7 @@ class _PostsWidgetState extends State<PostsWidget> {
                       : Container(
                           child: Center(
                             child: Text(
-                              'There is no post in your area, please check your location settings or pull down to refresh!',
+                              languages.noPostInYourAreaLabel,
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                   fontSize: 20,
@@ -678,7 +694,9 @@ class _PostsWidgetState extends State<PostsWidget> {
             )
           : Container(
               child: Center(
-                child: CircularProgressIndicator(color: Colors.yellow,),
+                child: CircularProgressIndicator(
+                  color: Colors.yellow,
+                ),
               ),
             ),
     );
@@ -767,7 +785,7 @@ class _PostsWidgetState extends State<PostsWidget> {
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
-                        child: Text('Close')),
+                        child: Text(languages.closeLabel)),
                   ],
                 );
               });
@@ -816,9 +834,11 @@ class _PostsWidgetState extends State<PostsWidget> {
       context,
       MaterialPageRoute(
           builder: (context) => SinglePostWidget(
-              post: actualPosts.elementAt(index),
-              session: widget.session,
-              user: widget.user)),
+                post: actualPosts.elementAt(index),
+                session: widget.session,
+                user: widget.user,
+                languages: languages,
+              )),
     ).whenComplete(() => {
           widget.session
               .get('/api/posts/' + actualPosts[index].postId.toString())
@@ -831,36 +851,6 @@ class _PostsWidgetState extends State<PostsWidget> {
             }
           })
         });
-  }
-
-  String _formatDate(DateTime createdDate) {
-    if (createdDate.isAfter(DateTime.now().subtract(Duration(hours: 1)))) {
-      String minString = (DateTime.now().hour == createdDate.hour
-                  ? DateTime.now().minute - createdDate.minute
-                  : DateTime.now().minute + (60 - createdDate.minute))
-              .toString() +
-          'm';
-      return minString == '0m' ? 'now' : minString;
-    }
-    for (int i = 2; i < 24; i++) {
-      if (createdDate.isAfter(DateTime.now().subtract(Duration(hours: i)))) {
-        return (i - 1).toString() + 'h';
-      }
-    }
-    for (int i = 2; i < 21; i++) {
-      if (createdDate.isAfter(DateTime.now().subtract(Duration(days: i)))) {
-        return (i - 1).toString() + "d";
-      }
-    }
-    return createdDate.year.toString() +
-        '.' +
-        createdDate.month.toString() +
-        '.' +
-        createdDate.day.toString() +
-        '.' +
-        createdDate.hour.toString() +
-        ':' +
-        createdDate.minute.toString();
   }
 
   void refresh() {
@@ -928,26 +918,22 @@ class _PostsWidgetState extends State<PostsWidget> {
     _refreshOwnController.refreshCompleted();
   }
 
-  void _evictImage(String url) {
-    final NetworkImage provider = NetworkImage(url);
-    provider.evict().then<void>((bool success) {
-      if (success) debugPrint('removed image!');
-    });
-  }
-
   void _onSearchButtonPressed() {
     Navigator.of(context)
         .push(MaterialPageRoute(
             builder: (context) => FilteredPostsWidget(
-                session: widget.session,
-                pattern: _searchFieldController.text,
-                user: widget.user)))
+                  session: widget.session,
+                  pattern: _searchFieldController.text,
+                  user: widget.user,
+                  languages: languages,
+                )))
         .whenComplete(
             () => Navigator.of(context).pushReplacement(MaterialPageRoute(
                 builder: (context) => PostsWidget(
                       session: widget.session,
                       user: widget.user,
                       initPage: 1,
+                      languages: languages,
                     ))));
   }
 }

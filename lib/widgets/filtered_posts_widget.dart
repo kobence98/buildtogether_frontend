@@ -6,6 +6,8 @@ import 'package:flutter_frontend/entities/company.dart';
 import 'package:flutter_frontend/entities/post.dart';
 import 'package:flutter_frontend/entities/session.dart';
 import 'package:flutter_frontend/entities/user.dart';
+import 'package:flutter_frontend/languages/languages.dart';
+import 'package:flutter_frontend/static/date_formatter.dart';
 import 'package:flutter_frontend/widgets/single_post_widget.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:like_button/like_button.dart';
@@ -16,8 +18,13 @@ class FilteredPostsWidget extends StatefulWidget {
   final Session session;
   final String pattern;
   final User user;
+  final Languages languages;
 
-  const FilteredPostsWidget({required this.session, required this.pattern, required this.user});
+  const FilteredPostsWidget(
+      {required this.session,
+      required this.pattern,
+      required this.user,
+      required this.languages});
 
   @override
   _FilteredPostsWidgetState createState() => _FilteredPostsWidgetState();
@@ -28,10 +35,12 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
   late List<Post> actualPosts = [];
   final ScrollController _scrollController = ScrollController();
   bool loading = false;
+  late Languages languages;
 
   @override
   void initState() {
     super.initState();
+    languages = widget.languages;
     _scrollController.addListener(() {
       if (_scrollController.position.pixels >=
               _scrollController.position.maxScrollExtent &&
@@ -90,8 +99,9 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
                                 ListTile(
                                   leading: CircleAvatar(
                                     radius: 20,
-                                    backgroundImage: NetworkImage( widget.session.domainName +
-                                      "/api/images/" +
+                                    backgroundImage: NetworkImage(
+                                      widget.session.domainName +
+                                          "/api/images/" +
                                           post.companyId.toString(),
                                       headers: widget.session.headers,
                                     ),
@@ -141,8 +151,8 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
                                               ),
                                               onTap: () {
                                                 Fluttertoast.showToast(
-                                                    msg:
-                                                        "This idea is implemented!",
+                                                    msg: languages
+                                                        .ideaIsImplementedMessage,
                                                     toastLength:
                                                         Toast.LENGTH_SHORT,
                                                     gravity:
@@ -156,7 +166,7 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
                                             )
                                           : Container(),
                                       Text(
-                                        _formatDate(post.createdDate),
+                                        DateFormatter.formatDate(post.createdDate, languages),
                                         style: TextStyle(color: Colors.white),
                                       ),
                                     ],
@@ -176,7 +186,9 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
                                   padding: EdgeInsets.all(5),
                                   alignment: Alignment.topLeft,
                                   child: Text(
-                                    post.postType == 'SIMPLE_POST' ? post.description : 'Click here to open the poll!',
+                                    post.postType == 'SIMPLE_POST'
+                                        ? post.description
+                                        : languages.clickHereToOpenThePollLabel,
                                     style: TextStyle(color: Colors.white),
                                   ),
                                 ),
@@ -227,11 +239,13 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
                                                   MaterialPageRoute(
                                                       builder: (context) =>
                                                           CommentsWidget(
-                                                              session: widget
-                                                                  .session,
-                                                              postId: post
-                                                                  .postId,
-                                                          user: widget.user,)));
+                                                            session:
+                                                                widget.session,
+                                                            postId: post.postId,
+                                                            user: widget.user,
+                                                            languages:
+                                                                languages,
+                                                          )));
                                             },
                                           ),
                                         ],
@@ -265,7 +279,9 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
               )
             : Container(
                 child: Center(
-                  child: CircularProgressIndicator(color: Colors.yellow,),
+                  child: CircularProgressIndicator(
+                    color: Colors.yellow,
+                  ),
                 ),
               ),
       ),
@@ -308,8 +324,9 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
                     children: [
                       CircleAvatar(
                         radius: 20,
-                        backgroundImage: NetworkImage( widget.session.domainName +
-                          "/api/images/" +
+                        backgroundImage: NetworkImage(
+                          widget.session.domainName +
+                              "/api/images/" +
                               company.imageId.toString(),
                           headers: widget.session.headers,
                         ),
@@ -342,7 +359,7 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
-                        child: Text('Close')),
+                        child: Text(languages.closeLabel)),
                   ],
                 );
               });
@@ -375,11 +392,14 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
       context,
       MaterialPageRoute(
           builder: (context) => SinglePostWidget(
-              post: actualPosts.elementAt(index), session: widget.session, user: widget.user)),
+                post: actualPosts.elementAt(index),
+                session: widget.session,
+                user: widget.user,
+                languages: languages,
+              )),
     ).whenComplete(() => {
           widget.session
-              .get('/api/posts/' +
-                  actualPosts[index].postId.toString())
+              .get('/api/posts/' + actualPosts[index].postId.toString())
               .then((response) {
             if (response.statusCode == 200) {
               setState(() {
@@ -389,34 +409,5 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
             }
           })
         });
-  }
-
-  String _formatDate(DateTime createdDate) {
-    if (createdDate.isAfter(DateTime.now().subtract(Duration(hours: 1)))) {
-      return (DateTime.now().hour == createdDate.hour
-                  ? DateTime.now().minute - createdDate.minute
-                  : DateTime.now().minute + (60 - createdDate.minute))
-              .toString() +
-          'm';
-    }
-    for (int i = 2; i < 24; i++) {
-      if (createdDate.isAfter(DateTime.now().subtract(Duration(hours: i)))) {
-        return (i - 1).toString() + 'h';
-      }
-    }
-    for (int i = 2; i < 21; i++) {
-      if (createdDate.isAfter(DateTime.now().subtract(Duration(days: i)))) {
-        return (i - 1).toString() + "d";
-      }
-    }
-    return createdDate.year.toString() +
-        '.' +
-        createdDate.month.toString() +
-        '.' +
-        createdDate.day.toString() +
-        '.' +
-        createdDate.hour.toString() +
-        ':' +
-        createdDate.minute.toString();
   }
 }

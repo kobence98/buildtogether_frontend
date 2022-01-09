@@ -10,6 +10,10 @@ class LanguageEn extends Languages {
       'Something went wrong! Check your network connection!';
 
   @override
+  String get globalServerErrorMessage =>
+      'Something went wrong! (Server error)';
+
+  @override
   String get cancelLabel => 'Cancel';
 
   @override
@@ -162,4 +166,147 @@ class LanguageEn extends Languages {
   @override
   String get fillAllFieldsWithLocationWarningMessage => 'Fill all fields properly, choose a location as well!';
 
+  //COMMENTS WIDGET
+
+  @override
+  String get deleteLabel => 'Delete';
+
+  @override
+  String get successfulDeleteMessage => 'Successful delete!';
+
+  @override
+  String get addCommentLabel => 'Add comment';
+
+  @override
+  String get commentTipLabel => 'This is where you should write your comment. Maximum of 256 characters.';
+
+  @override
+  String get commentAddedMessage => 'Your comment is added!';
+
+  @override
+  String get emptyCommentWarningMessage => 'Don\'t let the comment empty!';
+
+  //CREATE POST WIDGET
+
+  @override
+  String get newPollOptionLabel => 'New poll option';
+
+  @override
+  String get simplePostLabel => 'Simple post';
+
+  @override
+  String get pollPostLabel => 'Poll post';
+
+  @override
+  String get companyChooseHintLabel => 'Choose from the registered companies! If you start to write in it\'s name, it will appear in the list.';
+
+  @override
+  String get postIsOutMessage => 'Your post is out!';
+
+  @override
+  String get whatIsYourIdeaLabel => 'What is your idea?';
+
+  @override
+  String get noItemsFoundLabel => 'No items found!';
+
+  @override
+  String get companyNameLabel => 'Company name';
+
+  @override
+  String get titleOfIdeaLabel => 'Title of your idea';
+
+  @override
+  String get writeHereYourIdeaLabel => 'This is where you should write your idea. Maximum of 2048 characters.';
+
+  @override
+  String get POSTLabel => 'POST';
+
+  @override
+  String get pollShortDescriptionLabel => 'Short description for the poll';
+
+  @override
+  String get pollOptionsLabel => 'Poll options';
+
+  @override
+  String get addOptionLabel => 'Add option';
+
+  @override
+  String get fillAllFieldsWithPollOptionWarningMessage => 'Fill all of the fields. Delete the empty poll options!';
+
+  @override
+  String get yourPostIsOutMessage => 'Your post is out!';
+
+  //FILTERED POST WIDGET
+
+  @override
+  String get ideaIsImplementedMessage => 'This idea is implemented!';
+
+  @override
+  String get clickHereToOpenThePollLabel => 'Click here to open the poll!';
+
+  //POSTS WIDGET
+
+  @override
+  String get searchLabel => 'Search';
+
+  @override
+  String get newLabel => 'New';
+
+  @override
+  String get bestLabel => 'Best';
+
+  @override
+  String get ownLabel => 'Own';
+
+  @override
+  String get notImplementedLabel => 'Not implemented';
+
+  @override
+  String get implementedLabel => 'Implemented';
+
+  @override
+  String get successLabel => 'Success';
+
+  @override
+  String get noPostInYourAreaLabel => 'There is no post in your area, please check your location settings or pull down to refresh!';
+
+  //SETTINGS WIDGET
+
+  @override
+  String get changeUserDataLabel => 'Change user data';
+
+  @override
+  String get subscriptionHandlingLabel => 'Subscription handling';
+
+  @override
+  String get logoutLabel => 'Logout';
+
+  @override
+  String get unsubscribeTipLabel => 'Tap the button below to unsubscribe!';
+
+  @override
+  String get subscribeTipLabel => 'Until 5000 users the app ensure free subscription for companies. After that it will cost about 30 euros monthly. Its necessary to subscribe if you want to get ideas from users.';
+
+  @override
+  String get unsubscribeLabel => 'Unsubscribe';
+
+  @override
+  String get subscribeLabel => 'Subscribe';
+
+  @override
+  String get successfulSubscriptionMessage => 'Successful subscription!';
+
+  //DATE FORMATTER
+
+  @override
+  String get minuteLetter => 'm';
+
+  @override
+  String get now => 'now';
+
+  @override
+  String get hourLetter => 'h';
+
+  @override
+  String get dayLetter => 'd';
 }

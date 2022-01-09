@@ -4,6 +4,8 @@ abstract class Languages {
   //GLOBAL
   String get globalErrorMessage;
 
+  String get globalServerErrorMessage;
+
   String get cancelLabel;
 
   String get closeLabel;
@@ -105,4 +107,104 @@ abstract class Languages {
   String get successfulDataChangeLabel;
 
   String get fillAllFieldsWithLocationWarningMessage;
+
+  //COMMENTS WIDGET
+
+  String get deleteLabel;
+
+  String get successfulDeleteMessage;
+
+  String get addCommentLabel;
+
+  String get commentTipLabel;
+
+  String get commentAddedMessage;
+
+  String get emptyCommentWarningMessage;
+
+  //CREATE POST WIDGET
+
+  String get newPollOptionLabel;
+
+  String get simplePostLabel;
+
+  String get pollPostLabel;
+
+  String get companyChooseHintLabel;
+
+  String get postIsOutMessage;
+
+  String get whatIsYourIdeaLabel;
+
+  String get noItemsFoundLabel;
+
+  String get companyNameLabel;
+
+  String get titleOfIdeaLabel;
+
+  String get writeHereYourIdeaLabel;
+
+  String get POSTLabel;
+
+  String get pollShortDescriptionLabel;
+
+  String get pollOptionsLabel;
+
+  String get addOptionLabel;
+
+  String get fillAllFieldsWithPollOptionWarningMessage;
+
+  String get yourPostIsOutMessage;
+
+  //FILTERED POST WIDGET
+
+  String get ideaIsImplementedMessage;
+
+  String get clickHereToOpenThePollLabel;
+
+  //POSTS WIDGET
+
+  String get searchLabel;
+
+  String get newLabel;
+
+  String get bestLabel;
+
+  String get ownLabel;
+
+  String get notImplementedLabel;
+
+  String get implementedLabel;
+
+  String get successLabel;
+
+  String get noPostInYourAreaLabel;
+
+  //SETTINGS WIDGET
+
+  String get changeUserDataLabel;
+
+  String get subscriptionHandlingLabel;
+
+  String get logoutLabel;
+
+  String get unsubscribeTipLabel;
+
+  String get subscribeTipLabel;
+
+  String get unsubscribeLabel;
+
+  String get subscribeLabel;
+
+  String get successfulSubscriptionMessage;
+
+  //DATE FORMATTER
+
+  String get minuteLetter;
+
+  String get now;
+
+  String get hourLetter;
+
+  String get dayLetter;
 }

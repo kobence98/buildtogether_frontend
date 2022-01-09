@@ -6,6 +6,8 @@ import 'package:flutter_frontend/entities/company.dart';
 import 'package:flutter_frontend/entities/post.dart';
 import 'package:flutter_frontend/entities/session.dart';
 import 'package:flutter_frontend/entities/user.dart';
+import 'package:flutter_frontend/languages/languages.dart';
+import 'package:flutter_frontend/static/date_formatter.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:like_button/like_button.dart';
 import 'package:polls/polls.dart';
@@ -16,14 +18,27 @@ class SinglePostWidget extends StatefulWidget {
   final Post post;
   final Session session;
   final User user;
+  final Languages languages;
 
-  const SinglePostWidget({required this.post, required this.session, required this.user});
+  const SinglePostWidget(
+      {required this.post,
+      required this.session,
+      required this.user,
+      required this.languages});
 
   @override
   _SinglePostWidgetState createState() => _SinglePostWidgetState();
 }
 
 class _SinglePostWidgetState extends State<SinglePostWidget> {
+  late Languages languages;
+
+  @override
+  void initState() {
+    super.initState();
+    languages = widget.languages;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,8 +57,9 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                 ListTile(
                   leading: CircleAvatar(
                     radius: 20,
-                    backgroundImage: NetworkImage( widget.session.domainName +
-                      "/api/images/" +
+                    backgroundImage: NetworkImage(
+                      widget.session.domainName +
+                          "/api/images/" +
                           widget.post.companyId.toString(),
                       headers: widget.session.headers,
                     ),
@@ -92,7 +108,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                               ),
                               onTap: () {
                                 Fluttertoast.showToast(
-                                    msg: "This idea is implemented!",
+                                    msg: languages.ideaIsImplementedMessage,
                                     toastLength: Toast.LENGTH_SHORT,
                                     gravity: ToastGravity.CENTER,
                                     timeInSecForIosWeb: 1,
@@ -103,7 +119,8 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                             )
                           : Container(),
                       Text(
-                        _formatDate(widget.post.createdDate),
+                        DateFormatter.formatDate(
+                            widget.post.createdDate, languages),
                         style: TextStyle(color: Colors.white),
                       ),
                     ],
@@ -121,10 +138,12 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                 Container(
                   padding: EdgeInsets.all(5),
                   alignment: Alignment.topLeft,
-                  child: widget.post.postType == 'SIMPLE_POST' ? Text(
-                    widget.post.description,
-                    style: TextStyle(color: Colors.white),
-                  ) : _pollWidget(widget.post),
+                  child: widget.post.postType == 'SIMPLE_POST'
+                      ? Text(
+                          widget.post.description,
+                          style: TextStyle(color: Colors.white),
+                        )
+                      : _pollWidget(widget.post),
                 ),
                 Container(
                   height: 40,
@@ -164,9 +183,11 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                             onPressed: () {
                               Navigator.of(context).push(MaterialPageRoute(
                                   builder: (context) => CommentsWidget(
-                                      session: widget.session,
-                                      postId: widget.post.postId,
-                                  user: widget.user)));
+                                        session: widget.session,
+                                        postId: widget.post.postId,
+                                        user: widget.user,
+                                        languages: languages,
+                                      )));
                             },
                           ),
                         ],
@@ -200,8 +221,9 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                     children: [
                       CircleAvatar(
                         radius: 20,
-                        backgroundImage: NetworkImage( widget.session.domainName +
-                          "/api/images/" +
+                        backgroundImage: NetworkImage(
+                          widget.session.domainName +
+                              "/api/images/" +
                               company.imageId.toString(),
                           headers: widget.session.headers,
                         ),
@@ -234,7 +256,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
-                        child: Text('Close')),
+                        child: Text(languages.closeLabel)),
                   ],
                 );
               });
@@ -245,9 +267,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
 
   Future<bool> _onLikeButton(bool isLiked) async {
     dynamic response = await widget.session.post(
-        "/api/posts/" +
-            widget.post.postId.toString() +
-            "/like",
+        "/api/posts/" + widget.post.postId.toString() + "/like",
         new Map<String, dynamic>());
     if (response.statusCode == 200) {
       widget.post.liked = !widget.post.liked;
@@ -262,46 +282,23 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
     }
   }
 
-  String _formatDate(DateTime createdDate) {
-    if (createdDate.isAfter(DateTime.now().subtract(Duration(hours: 1)))) {
-      return (DateTime.now().hour == createdDate.hour
-                  ? DateTime.now().minute - createdDate.minute
-                  : DateTime.now().minute + (60 - createdDate.minute))
-              .toString() +
-          'm';
-    }
-    for (int i = 2; i < 24; i++) {
-      if (createdDate.isAfter(DateTime.now().subtract(Duration(hours: i)))) {
-        return (i - 1).toString() + 'h';
-      }
-    }
-    for (int i = 2; i < 21; i++) {
-      if (createdDate.isAfter(DateTime.now().subtract(Duration(days: i)))) {
-        return (i - 1).toString() + "d";
-      }
-    }
-    return createdDate.year.toString() +
-        '.' +
-        createdDate.month.toString() +
-        '.' +
-        createdDate.day.toString() +
-        '.' +
-        createdDate.hour.toString() +
-        ':' +
-        createdDate.minute.toString();
-  }
-
   Widget _pollWidget(Post post) {
     List<dynamic> polls = [];
     Map<dynamic, dynamic> voteData = {};
-    post.pollOptions.forEach((option){
-      polls.add(Polls.options(title: option.title!, value: double.parse(option.likeNumber.toString())),);
-      for(int i = 0; i < option.likeNumber; i++){
+    post.pollOptions.forEach((option) {
+      polls.add(
+        Polls.options(
+            title: option.title!,
+            value: double.parse(option.likeNumber.toString())),
+      );
+      for (int i = 0; i < option.likeNumber; i++) {
         voteData.addAll({i.toString(): post.pollOptions.indexOf(option) + 1});
       }
-      if(option.liked){
+      if (option.liked) {
         voteData.remove(voteData.values.last);
-        voteData.addAll({widget.user.userId.toString(): post.pollOptions.indexOf(option) + 1});
+        voteData.addAll({
+          widget.user.userId.toString(): post.pollOptions.indexOf(option) + 1
+        });
       }
     });
     return Polls(
@@ -315,19 +312,25 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
       leadingBackgroundColor: Colors.yellow.shade800,
       backgroundColor: Colors.white,
       onVote: (choice) {
-        widget.session.post('/api/posts/'+ post.postId.toString() + '/pollVote/' + post.pollOptions.elementAt(choice - 1).pollId.toString(), Map()).then((response) {
-          if(response.statusCode == 200){
+        widget.session
+            .post(
+                '/api/posts/' +
+                    post.postId.toString() +
+                    '/pollVote/' +
+                    post.pollOptions.elementAt(choice - 1).pollId.toString(),
+                Map())
+            .then((response) {
+          if (response.statusCode == 200) {
             setState(() {
-              post.pollOptions.forEach((option){
+              post.pollOptions.forEach((option) {
                 option.liked = false;
               });
               post.pollOptions.elementAt(choice - 1).liked = true;
               post.pollOptions.elementAt(choice - 1).likeNumber++;
             });
-          }
-          else{
+          } else {
             Fluttertoast.showToast(
-                msg: "Something went wrong, check your network connection!",
+                msg: languages.globalErrorMessage,
                 toastLength: Toast.LENGTH_LONG,
                 gravity: ToastGravity.CENTER,
                 timeInSecForIosWeb: 1,
@@ -336,7 +339,6 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                 fontSize: 16.0);
           }
         });
-
       },
     );
   }
