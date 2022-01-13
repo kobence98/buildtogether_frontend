@@ -58,6 +58,8 @@ class _PostsWidgetState extends State<PostsWidget> {
   String? country;
   bool loadedPosts = false;
   late Languages languages;
+  final TextEditingController _couponCodeController = TextEditingController();
+  bool innerLoading = false;
 
   @override
   void initState() {
@@ -395,13 +397,19 @@ class _PostsWidgetState extends State<PostsWidget> {
                                                           widget.user.roles
                                                                   .contains(
                                                                       'ROLE_COMPANY')
-                                                              ? 2
+                                                              ? 3
                                                               : 1, (index) {
                                                         if (index == 0) {
                                                           return PopupMenuItem(
                                                             child: Text(languages
                                                                 .deleteLabel),
                                                             value: 0,
+                                                          );
+                                                        } else if (index == 1) {
+                                                          return PopupMenuItem(
+                                                            child: Text(languages
+                                                                .contactCreatorLabel),
+                                                            value: 1,
                                                           );
                                                         } else {
                                                           return PopupMenuItem(
@@ -411,7 +419,7 @@ class _PostsWidgetState extends State<PostsWidget> {
                                                                     .notImplementedLabel
                                                                 : languages
                                                                     .implementedLabel),
-                                                            value: 1,
+                                                            value: 2,
                                                           );
                                                         }
                                                       });
@@ -470,6 +478,9 @@ class _PostsWidgetState extends State<PostsWidget> {
                                                                 fontSize: 16.0);
                                                           }
                                                         });
+                                                      } else if (index == 1) {
+                                                        _onContactCreatorTap(
+                                                            post);
                                                       } else {
                                                         widget.session
                                                             .post(
@@ -935,5 +946,139 @@ class _PostsWidgetState extends State<PostsWidget> {
                       initPage: 1,
                       languages: languages,
                     ))));
+  }
+
+  void _onContactCreatorTap(Post post) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return StatefulBuilder(builder: (context, setState) {
+            return innerLoading
+                ? Container(
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        color: Colors.yellow,
+                      ),
+                    ),
+                  )
+                : AlertDialog(
+                    backgroundColor: Colors.yellow,
+                    title: Text(
+                      languages.thisIsTheContactEmailLabel,
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                          color: Colors.black),
+                    ),
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          child: Center(
+                            child: Text(
+                              post.creatorEmail,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20,
+                                  color: Colors.black),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Container(
+                          color: Colors.black,
+                          padding: EdgeInsets.all(2),
+                          child: Center(
+                            child: Container(
+                              padding: EdgeInsets.only(left: 20.0),
+                              color: Colors.yellow.withOpacity(0.7),
+                              child: TextField(
+                                style: TextStyle(color: Colors.black),
+                                controller: _couponCodeController,
+                                cursorColor: Colors.black,
+                                decoration: InputDecoration(
+                                  hintText: languages.couponCodeLabel,
+                                  hintStyle: TextStyle(
+                                      color: Colors.black.withOpacity(0.5)),
+                                ),
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                    actions: <Widget>[
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Text(
+                          languages.cancelLabel,
+                          style: TextStyle(color: Colors.black),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          _onSendCouponEmailTap(post.postId, context);
+                          setState((){
+                            innerLoading = true;
+                          });
+                        },
+                        child: Text(
+                          languages.sendLabel,
+                          style: TextStyle(color: Colors.black),
+                        ),
+                      ),
+                    ],
+                  );
+          });
+        });
+  }
+
+  void _onSendCouponEmailTap(int postId, context) {
+    if (_couponCodeController.text.isEmpty) {
+      Fluttertoast.showToast(
+          msg: languages.fillAllFieldsWarningMessage,
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    } else {
+      dynamic body = <String, dynamic>{
+        'couponCode': _couponCodeController.text,
+      };
+      widget.session
+          .postJson(
+        '/api/posts/${postId.toString()}/sendCouponToCreator',
+        jsonEncode(body),
+      )
+          .then((response) {
+        innerLoading = false;
+        if (response.statusCode == 200) {
+          Navigator.of(context).pop();
+          Fluttertoast.showToast(
+              msg: languages.successfulCouponSendMessage,
+              toastLength: Toast.LENGTH_LONG,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.green,
+              textColor: Colors.white,
+              fontSize: 16.0);
+        } else {
+          Fluttertoast.showToast(
+              msg: languages.globalServerErrorMessage,
+              toastLength: Toast.LENGTH_LONG,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.red,
+              textColor: Colors.white,
+              fontSize: 16.0);
+        }
+      });
+    }
   }
 }

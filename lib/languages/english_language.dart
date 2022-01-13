@@ -270,6 +270,18 @@ class LanguageEn extends Languages {
   @override
   String get noPostInYourAreaLabel => 'There is no post in your area, please check your location settings or pull down to refresh!';
 
+  @override
+  String get contactCreatorLabel => 'Contact creator';
+
+  @override
+  String get thisIsTheContactEmailLabel => 'You can send a coupon to this email address here, or you can contact him by yourself:';
+
+  @override
+  String get couponCodeLabel => 'Coupon code';
+
+  @override
+  String get successfulCouponSendMessage => 'Successful coupon sending!';
+
   //SETTINGS WIDGET
 
   @override
@@ -295,6 +307,9 @@ class LanguageEn extends Languages {
 
   @override
   String get successfulSubscriptionMessage => 'Successful subscription!';
+
+  @override
+  String get changeLanguageLabel => 'Change language';
 
   //DATE FORMATTER
 

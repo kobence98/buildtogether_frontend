@@ -180,6 +180,14 @@ abstract class Languages {
 
   String get noPostInYourAreaLabel;
 
+  String get contactCreatorLabel;
+
+  String get thisIsTheContactEmailLabel;
+
+  String get couponCodeLabel;
+
+  String get successfulCouponSendMessage;
+
   //SETTINGS WIDGET
 
   String get changeUserDataLabel;
@@ -197,6 +205,8 @@ abstract class Languages {
   String get subscribeLabel;
 
   String get successfulSubscriptionMessage;
+
+  String get changeLanguageLabel;
 
   //DATE FORMATTER
 

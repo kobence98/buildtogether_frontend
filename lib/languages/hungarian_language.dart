@@ -265,6 +265,18 @@ class LanguageHu extends Languages {
   @override
   String get noPostInYourAreaLabel => 'A te országodban nincsenek posztok, légyszíves ellenőrizd a helyzetmeghatározási beállításokat vagy húzd le a képernyőt a frissítéshez!';
 
+  @override
+  String get contactCreatorLabel => 'Kapcsolatfelvétel a készítővel';
+
+  @override
+  String get thisIsTheContactEmailLabel => 'Erre az email címre tudsz itt egy kuponszámot küldeni, vagy írhatsz neki személyesen is:';
+
+  @override
+  String get couponCodeLabel => 'Kupon kód';
+
+  @override
+  String get successfulCouponSendMessage => 'Sikeres kuponküldés!';
+
   //SETTINGS WIDGET
 
   @override
@@ -290,6 +302,9 @@ class LanguageHu extends Languages {
 
   @override
   String get successfulSubscriptionMessage => 'Sikeres feliratkozás!';
+
+  @override
+  String get changeLanguageLabel => 'Nyelv megváltoztatása';
 
   //DATE FORMATTER
 

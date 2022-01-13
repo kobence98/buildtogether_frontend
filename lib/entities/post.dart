@@ -6,6 +6,7 @@ class Post{
   String description;
   String companyName;
   String userName;
+  String creatorEmail;
   int companyId;
   int likeNumber;
   bool liked;
@@ -17,7 +18,7 @@ class Post{
   int companyUserId;
   int companyImageId;
 
-  Post({required this.postId, required this.title, required this.description, required this.companyName, required this.userName, required this.likeNumber, required this.liked, required this.companyId, required this.createdDate, required this.commentNumber, required this.implemented, required this.postType, required this.pollOptions, required this.companyUserId, required this.companyImageId});
+  Post({required this.postId, required this.title, required this.description, required this.companyName, required this.userName, required this.creatorEmail, required this.likeNumber, required this.liked, required this.companyId, required this.createdDate, required this.commentNumber, required this.implemented, required this.postType, required this.pollOptions, required this.companyUserId, required this.companyImageId});
 
   factory Post.fromJson(Map<String, dynamic> json) {
     String stringDate = json['createdDate'];
@@ -28,6 +29,7 @@ class Post{
       description: json['description'],
       companyName: json['companyName'],
       userName: json['userName'],
+      creatorEmail: json['creatorEmail'],
       companyId: json['companyId'],
       likeNumber: json['likeNumber'],
       liked: json['liked'],

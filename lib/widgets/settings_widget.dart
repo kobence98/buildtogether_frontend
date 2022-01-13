@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_frontend/auth/auth_sqflite_handler.dart';
 import 'package:flutter_frontend/entities/session.dart';
 import 'package:flutter_frontend/entities/user.dart';
+import 'package:flutter_frontend/languages/language_code.dart';
 import 'package:flutter_frontend/languages/languages.dart';
+import 'package:flutter_frontend/languages/languages_sqflite_handler.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -27,6 +29,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
   AuthSqfLiteHandler authSqfLiteHandler = AuthSqfLiteHandler();
   late bool loading;
   late Languages languages;
+  LanguagesSqfLiteHandler languagesSqfLiteHandler = LanguagesSqfLiteHandler();
 
   @override
   void initState() {
@@ -88,6 +91,21 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
               ),
               onTap: _onChangeLocationTap,
+            ),
+          ),
+          SizedBox(height: company ? 5 : 0),
+          Container(
+            color: Colors.yellowAccent,
+            child: ListTile(
+              leading: Icon(
+                Icons.language,
+                color: Colors.black,
+              ),
+              title: Text(
+                languages.changeLanguageLabel,
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+              ),
+              onTap: _onChangeLanguageTap,
             ),
           ),
           SizedBox(height: 5),
@@ -170,6 +188,79 @@ class _SettingsWidgetState extends State<SettingsWidget> {
               session: widget.session,
               languages: languages,
             )));
+  }
+
+  void _onChangeLanguageTap() {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+                  backgroundColor: Colors.yellow,
+                  title: Text(
+                    languages.changeLanguageLabel,
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                        color: Colors.black),
+                  ),
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        child: Center(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              InkWell(
+                                child: CircleAvatar(
+                                  backgroundColor: Colors.white,
+                                  radius: 30,
+                                  foregroundImage: AssetImage(
+                                      'icons/flags/png/gb.png',
+                                      package: 'country_icons'),
+                                ),
+                                onTap: () {
+                                  languagesSqfLiteHandler.insertLanguageCode(
+                                      LanguageCode(code: 'en', id: 0));
+                                  Phoenix.rebirth(context);
+                                },
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              InkWell(
+                                child: CircleAvatar(
+                                  backgroundColor: Colors.white,
+                                  radius: 30,
+                                  foregroundImage: AssetImage(
+                                      'icons/flags/png/hu.png',
+                                      package: 'country_icons'),
+                                ),
+                                onTap: () {
+                                  languagesSqfLiteHandler.insertLanguageCode(
+                                      LanguageCode(code: 'hu', id: 0));
+                                  Phoenix.rebirth(context);
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text(
+                        languages.cancelLabel,
+                        style: TextStyle(color: Colors.black),
+                      ),
+                    ),
+                  ],
+                );
+        });
   }
 
   void _onSubscriptionHandlingTap() {
