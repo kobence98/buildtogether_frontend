@@ -312,7 +312,7 @@ class LanguageHu extends Languages {
   String get minuteLetter => 'p';
 
   @override
-  String get now => 'now';
+  String get now => 'most';
 
   @override
   String get hourLetter => 'ó';

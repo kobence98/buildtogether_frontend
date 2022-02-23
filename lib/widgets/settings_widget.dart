@@ -93,7 +93,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
               onTap: _onChangeLocationTap,
             ),
           ),
-          SizedBox(height: company ? 5 : 0),
+          SizedBox(height: 5),
           Container(
             color: Colors.yellowAccent,
             child: ListTile(

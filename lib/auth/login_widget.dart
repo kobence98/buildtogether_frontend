@@ -483,7 +483,7 @@ class _LoginPageState extends State<LoginPage> {
                                       : _regNameController,
                                   cursorColor: Colors.black,
                                   decoration: InputDecoration(
-                                    hintText: languages.nameLabel,
+                                    hintText: company ? languages.companyNameLabel : languages.nameLabel,
                                     hintStyle: TextStyle(
                                         color: Colors.black.withOpacity(0.5)),
                                   ),
@@ -646,7 +646,7 @@ class _LoginPageState extends State<LoginPage> {
         });
   }
 
-  void onRegistrationActivatePressed(setState) {
+  void onRegistrationActivatePressed(setInnerState) {
     if (ProfanityChecker.alert(_regNameController.text +
         ' ' +
         _regCompanyDescriptionController.text +
@@ -702,18 +702,18 @@ class _LoginPageState extends State<LoginPage> {
                       .sendMultipart('/api/images', imageBody, multipartImage)
                       .then((response) {
                     if (response.statusCode == 200) {
+                      Navigator.of(context).pop();
                       setState(() {
+                        _emailController.clear();
+                        _passwordController.clear();
+                        _regEmailController.clear();
+                        _regPasswordController.clear();
+                        _regPassAgainController.clear();
+                        _regNameController.clear();
+                        _regCompanyNameController.clear();
+                        _regCompanyDescriptionController.clear();
                         loading = false;
                       });
-                      _emailController.clear();
-                      _passwordController.clear();
-                      _regEmailController.clear();
-                      _regPasswordController.clear();
-                      _regPassAgainController.clear();
-                      _regNameController.clear();
-                      _regCompanyNameController.clear();
-                      _regCompanyDescriptionController.clear();
-                      Navigator.of(context).pop();
                       Fluttertoast.showToast(
                           msg:
                               languages.successfulRegistrationMessage,
@@ -721,6 +721,20 @@ class _LoginPageState extends State<LoginPage> {
                           gravity: ToastGravity.CENTER,
                           timeInSecForIosWeb: 1,
                           backgroundColor: Colors.green,
+                          textColor: Colors.white,
+                          fontSize: 16.0);
+                    }
+                    else{
+                      setInnerState(() {
+                        loading = false;
+                      });
+                      Fluttertoast.showToast(
+                          msg:
+                          languages.globalServerErrorMessage,
+                          toastLength: Toast.LENGTH_LONG,
+                          gravity: ToastGravity.CENTER,
+                          timeInSecForIosWeb: 1,
+                          backgroundColor: Colors.red,
                           textColor: Colors.white,
                           fontSize: 16.0);
                     }
@@ -750,7 +764,7 @@ class _LoginPageState extends State<LoginPage> {
                     fontSize: 16.0);
               }
             } else if (response.statusCode == 400) {
-              setState(() {
+              setInnerState(() {
                 loading = false;
               });
               Fluttertoast.showToast(
@@ -762,7 +776,7 @@ class _LoginPageState extends State<LoginPage> {
                   textColor: Colors.white,
                   fontSize: 16.0);
             } else if (response.statusCode == 500) {
-              setState(() {
+              setInnerState(() {
                 loading = false;
               });
               if (response.body != null &&
@@ -788,7 +802,7 @@ class _LoginPageState extends State<LoginPage> {
                     fontSize: 16.0);
               }
             } else {
-              setState(() {
+              setInnerState(() {
                 loading = false;
               });
               Fluttertoast.showToast(
@@ -812,7 +826,7 @@ class _LoginPageState extends State<LoginPage> {
               fontSize: 16.0);
         }
       } else {
-        setState(() {
+        setInnerState(() {
           loading = false;
         });
         Fluttertoast.showToast(
