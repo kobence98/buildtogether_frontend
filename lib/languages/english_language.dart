@@ -113,6 +113,21 @@ class LanguageEn extends Languages {
   @override
   String get verificationEmailResentMessage => 'We sent you a new verification email!';
 
+  @override
+  String get acceptPolicyLabel => 'I read and agree to the INNO mobile application\'s ';
+
+  @override
+  String get privacyPolicyLabel => 'Privacy Policy';
+
+  @override
+  String get acceptPolicyWarningMessage => 'You must accept to the Privacy Policy to finish registration!';
+
+  @override
+  String get privacyPolicyTitle => 'Privacy Policy';
+
+  @override
+  String get backLabel => 'Back';
+
   //CHANGE LOCATION WIDGET
 
   @override

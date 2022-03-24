@@ -70,6 +70,16 @@ abstract class Languages {
 
   String get verificationEmailResentMessage;
 
+  String get acceptPolicyLabel;
+
+  String get privacyPolicyLabel;
+
+  String get acceptPolicyWarningMessage;
+
+  String get privacyPolicyTitle;
+
+  String get backLabel;
+
   //CHANGE LOCATION WIDGET
 
   String get countryCodesErrorMessage;

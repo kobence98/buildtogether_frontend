@@ -2,7 +2,9 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_frontend/auth/auth_sqflite_handler.dart';
 import 'package:flutter_frontend/auth/auth_user.dart';
 import 'package:flutter_frontend/languages/english_language.dart';
@@ -46,6 +48,7 @@ class _LoginPageState extends State<LoginPage> {
   List<String> countryCodes = [];
   String? _chosenCountryCode;
   late Languages languages;
+  bool isPolicyAccepted = false;
 
   @override
   void initState() {
@@ -284,8 +287,7 @@ class _LoginPageState extends State<LoginPage> {
               if (user.roles.contains('ROLE_COMPANY') &&
                   !user.isCompanyActive) {
                 Fluttertoast.showToast(
-                    msg:
-                        languages.subscribeWarningMessage,
+                    msg: languages.subscribeWarningMessage,
                     toastLength: Toast.LENGTH_LONG,
                     gravity: ToastGravity.CENTER,
                     timeInSecForIosWeb: 1,
@@ -296,8 +298,8 @@ class _LoginPageState extends State<LoginPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) =>
-                        MainWidget(session: session, user: user, languages: languages)),
+                    builder: (context) => MainWidget(
+                        session: session, user: user, languages: languages)),
               );
             } else {
               setState(() {
@@ -418,6 +420,47 @@ class _LoginPageState extends State<LoginPage> {
                       child: SingleChildScrollView(
                         child: Column(
                           children: [
+                            SizedBox(height: 5),
+                            ListTile(
+                              leading: Switch(
+                                value: isPolicyAccepted,
+                                onChanged: (value) {
+                                  setState(() {
+                                    isPolicyAccepted = value;
+                                  });
+                                },
+                                activeTrackColor: Colors.yellow.shade200,
+                                activeColor: Colors.yellow.shade600,
+                                inactiveTrackColor: Colors.white,
+                              ),
+                              title: Container(
+                                child: Center(
+                                  child: RichText(
+                                    text: new TextSpan(
+                                      children: <TextSpan>[
+                                        new TextSpan(
+                                            text: languages.acceptPolicyLabel,
+                                            style: new TextStyle(
+                                                color: Colors.white)),
+                                        new TextSpan(
+                                            text: languages.privacyPolicyLabel,
+                                            style: new TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.yellow),
+                                            recognizer:
+                                                new TapGestureRecognizer()
+                                                  ..onTap = () =>
+                                                      _onPrivacyPolicyTap()),
+                                        new TextSpan(
+                                            text: '!',
+                                            style: new TextStyle(
+                                                color: Colors.white)),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
                             Center(
                               child: Container(
                                 padding: EdgeInsets.only(left: 20.0),
@@ -483,7 +526,9 @@ class _LoginPageState extends State<LoginPage> {
                                       : _regNameController,
                                   cursorColor: Colors.black,
                                   decoration: InputDecoration(
-                                    hintText: company ? languages.companyNameLabel : languages.nameLabel,
+                                    hintText: company
+                                        ? languages.companyNameLabel
+                                        : languages.nameLabel,
                                     hintStyle: TextStyle(
                                         color: Colors.black.withOpacity(0.5)),
                                   ),
@@ -513,7 +558,9 @@ class _LoginPageState extends State<LoginPage> {
                               title: Container(
                                 child: Center(
                                   child: Text(
-                                    languages.switchBetweenCompanyAndSimpleUserLabel(company),
+                                    languages
+                                        .switchBetweenCompanyAndSimpleUserLabel(
+                                            company),
                                     style: TextStyle(color: Colors.white),
                                   ),
                                 ),
@@ -536,8 +583,8 @@ class _LoginPageState extends State<LoginPage> {
                                           style: TextStyle(fontSize: 20),
                                           decoration: new InputDecoration
                                                   .collapsed(
-                                              hintText:
-                                                  languages.companyDescriptionTipLabel),
+                                              hintText: languages
+                                                  .companyDescriptionTipLabel),
                                           onChanged: (text) => setState(() {})),
                                     ),
                                   )
@@ -660,6 +707,15 @@ class _LoginPageState extends State<LoginPage> {
           backgroundColor: Colors.red,
           textColor: Colors.white,
           fontSize: 16.0);
+    } else if (!isPolicyAccepted) {
+      Fluttertoast.showToast(
+          msg: languages.acceptPolicyWarningMessage,
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
     } else {
       if (_regPasswordController.text == _regPassAgainController.text) {
         if (_regEmailController.text.split(' ').first.isNotEmpty &&
@@ -715,22 +771,19 @@ class _LoginPageState extends State<LoginPage> {
                         loading = false;
                       });
                       Fluttertoast.showToast(
-                          msg:
-                              languages.successfulRegistrationMessage,
+                          msg: languages.successfulRegistrationMessage,
                           toastLength: Toast.LENGTH_LONG,
                           gravity: ToastGravity.CENTER,
                           timeInSecForIosWeb: 1,
                           backgroundColor: Colors.green,
                           textColor: Colors.white,
                           fontSize: 16.0);
-                    }
-                    else{
+                    } else {
                       setInnerState(() {
                         loading = false;
                       });
                       Fluttertoast.showToast(
-                          msg:
-                          languages.globalServerErrorMessage,
+                          msg: languages.globalServerErrorMessage,
                           toastLength: Toast.LENGTH_LONG,
                           gravity: ToastGravity.CENTER,
                           timeInSecForIosWeb: 1,
@@ -754,8 +807,7 @@ class _LoginPageState extends State<LoginPage> {
                 _regCompanyDescriptionController.clear();
                 Navigator.of(context).pop();
                 Fluttertoast.showToast(
-                    msg:
-                    languages.successfulRegistrationMessage,
+                    msg: languages.successfulRegistrationMessage,
                     toastLength: Toast.LENGTH_LONG,
                     gravity: ToastGravity.CENTER,
                     timeInSecForIosWeb: 1,
@@ -939,8 +991,7 @@ class _LoginPageState extends State<LoginPage> {
           loading = false;
         });
         Fluttertoast.showToast(
-            msg:
-                languages.forgottenPasswordErrorMessage,
+            msg: languages.forgottenPasswordErrorMessage,
             toastLength: Toast.LENGTH_LONG,
             gravity: ToastGravity.CENTER,
             timeInSecForIosWeb: 1,
@@ -987,5 +1038,46 @@ class _LoginPageState extends State<LoginPage> {
             fontSize: 16.0);
       }
     });
+  }
+
+  //TODO atatvédelmi szabályzatot lecserélni
+  void _onPrivacyPolicyTap() {
+    showDialog(
+        context: context,
+        useRootNavigator: false,
+        builder: (context) {
+          return AlertDialog(
+            backgroundColor: Colors.grey[900],
+            title: Text(
+              languages.privacyPolicyTitle,
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                  color: Colors.yellow),
+            ),
+            content: Center(
+              child: Container(
+                height: 500,
+                padding: EdgeInsets.all(20.0),
+                color: Colors.yellow,
+                child: SingleChildScrollView(
+                  child: Text(
+                      'Itt lesz majd az adatfelhasználási feltétel leírása! Most pedig, hogy több soros hosszú szövegh legyen fnisda öbf 8ewbew fbewa öbfew bfwa bfe bwf ebw8 FB8EWZBf8 weBO8F BWE8öf bew8BF8WEb f8ewb 8fb w8eöf bwÖ FBWE8ö vf8wezö V8FZWEÖ v8özfwe F8VZÖw v8öfwe 8FÖW ve8föWEV FVWö8 fvw8EÖ FV8WE v8öfWE V8FÖEwv 8öfwe Ö8 F8weö v8föw VÖ8F W8ZEF BUAWZEFA REZV AUSVZUFS VUFI Vböfid ga bgra bigraeob igrea grae  fas dhföa nhfa öwgf8öeg wa8öfg ew8öfgweaög fweag öfwea ö8fwgae f weöagf aweg f8öwea gf8öew af8awe 8fwa öe8öf gawe8ö fgawe8ö fgua öbfeb awufvewa ifw auefuwavbufiawe vfua wevufia weuiv awufewa fwa fewaf awe fawe wae faw '),
+                ),
+              ),
+            ),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text(
+                  languages.backLabel,
+                  style: TextStyle(color: Colors.yellow),
+                ),
+              ),
+            ],
+          );
+        });
   }
 }

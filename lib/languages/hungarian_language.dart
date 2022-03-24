@@ -108,6 +108,21 @@ class LanguageHu extends Languages {
   @override
   String get verificationEmailResentMessage => 'Elküldtük az új megerősítő emailt!';
 
+  @override
+  String get acceptPolicyLabel => 'Elolvastam és egyetértek az INNO mobilapplikáció ';
+
+  @override
+  String get privacyPolicyLabel => 'Adatvédelmi Szabályzatával';
+
+  @override
+  String get acceptPolicyWarningMessage => 'A regisztráció befejezéséhez el kell fogadnod az Adatvédelmi Szabályzatot!';
+
+  @override
+  String get privacyPolicyTitle => 'Adatvédelmi Szabályzat';
+
+  @override
+  String get backLabel => 'Vissza';
+
   //CHANGE LOCATION WIDGET
 
   @override

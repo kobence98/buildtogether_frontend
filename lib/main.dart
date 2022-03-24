@@ -50,7 +50,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    SystemChrome.setEnabledSystemUIOverlays([]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
     languagesSqfLiteHandler.retrieveLanguageCode().then((languageCode) {
       if (languageCode == null) {
         languages = LanguageEn();
