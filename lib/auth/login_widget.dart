@@ -443,7 +443,7 @@ class _LoginPageState extends State<LoginPage> {
                                             style: new TextStyle(
                                                 color: Colors.white)),
                                         new TextSpan(
-                                            text: languages.privacyPolicyLabel,
+                                            text: languages.userPolicyLabel,
                                             style: new TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 color: Colors.yellow),
@@ -1049,7 +1049,7 @@ class _LoginPageState extends State<LoginPage> {
           return AlertDialog(
             backgroundColor: Colors.grey[900],
             title: Text(
-              languages.privacyPolicyTitle,
+              languages.userPolicyTitle,
               style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 20,
@@ -1062,7 +1062,7 @@ class _LoginPageState extends State<LoginPage> {
                 color: Colors.yellow,
                 child: SingleChildScrollView(
                   child: Text(
-                      'Itt lesz majd az adatfelhasználási feltétel leírása! Most pedig, hogy több soros hosszú szövegh legyen fnisda öbf 8ewbew fbewa öbfew bfwa bfe bwf ebw8 FB8EWZBf8 weBO8F BWE8öf bew8BF8WEb f8ewb 8fb w8eöf bwÖ FBWE8ö vf8wezö V8FZWEÖ v8özfwe F8VZÖw v8öfwe 8FÖW ve8föWEV FVWö8 fvw8EÖ FV8WE v8öfWE V8FÖEwv 8öfwe Ö8 F8weö v8föw VÖ8F W8ZEF BUAWZEFA REZV AUSVZUFS VUFI Vböfid ga bgra bigraeob igrea grae  fas dhföa nhfa öwgf8öeg wa8öfg ew8öfgweaög fweag öfwea ö8fwgae f weöagf aweg f8öwea gf8öew af8awe 8fwa öe8öf gawe8ö fgawe8ö fgua öbfeb awufvewa ifw auefuwavbufiawe vfua wevufia weuiv awufewa fwa fewaf awe fawe wae faw '),
+                      languages.userPolicyText),
                 ),
               ),
             ),

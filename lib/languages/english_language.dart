@@ -117,16 +117,19 @@ class LanguageEn extends Languages {
   String get acceptPolicyLabel => 'I read and agree to the INNO mobile application\'s ';
 
   @override
-  String get privacyPolicyLabel => 'Privacy Policy';
+  String get userPolicyLabel => 'User Policy';
 
   @override
-  String get acceptPolicyWarningMessage => 'You must accept to the Privacy Policy to finish registration!';
+  String get acceptPolicyWarningMessage => 'You must accept to the User Policy to finish registration!';
 
   @override
-  String get privacyPolicyTitle => 'Privacy Policy';
+  String get userPolicyTitle => 'User Policy';
 
   @override
   String get backLabel => 'Back';
+
+  @override
+  String get userPolicyText => 'In this application there is some user generated content, in form of posts and comments. The User Poloicy specifies, that posting offensive and profane content is not allowed. If the user break this rule, than the operator of the application has the right to remove the content, or in extreme situations the user as well.';
 
   //CHANGE LOCATION WIDGET
 

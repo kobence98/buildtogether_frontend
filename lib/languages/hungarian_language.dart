@@ -112,16 +112,19 @@ class LanguageHu extends Languages {
   String get acceptPolicyLabel => 'Elolvastam és egyetértek az INNO mobilapplikáció ';
 
   @override
-  String get privacyPolicyLabel => 'Adatvédelmi Szabályzatával';
+  String get userPolicyLabel => 'Felhasználói Szabályzatával';
 
   @override
-  String get acceptPolicyWarningMessage => 'A regisztráció befejezéséhez el kell fogadnod az Adatvédelmi Szabályzatot!';
+  String get acceptPolicyWarningMessage => 'A regisztráció befejezéséhez el kell fogadnod a Felhasználói Szabályzatot!';
 
   @override
-  String get privacyPolicyTitle => 'Adatvédelmi Szabályzat';
+  String get userPolicyTitle => 'Felhasználói Szabályzat';
 
   @override
   String get backLabel => 'Vissza';
+
+  @override
+  String get userPolicyText => 'Ebben az applikációban felhasználók által generált tartalom van, posztok és kommentek formájában. A Felhasználói Szabályzat előírja, hogy nem szabad sem offenzív, sem trágár tartalmat poszolni és kommentelni. Ha ezt a felhasználó nem tartja be, akkor az alkalmazás üzemeltetője jogosult eltávolítani a tartalmat, szélsőséges esetben akár a felhasználót is.';
 
   //CHANGE LOCATION WIDGET
 

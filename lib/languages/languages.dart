@@ -72,13 +72,15 @@ abstract class Languages {
 
   String get acceptPolicyLabel;
 
-  String get privacyPolicyLabel;
+  String get userPolicyLabel;
 
   String get acceptPolicyWarningMessage;
 
-  String get privacyPolicyTitle;
+  String get userPolicyTitle;
 
   String get backLabel;
+
+  String get userPolicyText;
 
   //CHANGE LOCATION WIDGET
 
