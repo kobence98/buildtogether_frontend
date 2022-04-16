@@ -690,9 +690,6 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
               textColor: Colors.white,
               fontSize: 16.0);
         }
-        setState((){
-          innerLoading = false;
-        });
       }
       else {
         Fluttertoast.showToast(
@@ -703,10 +700,10 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
             backgroundColor: Colors.red,
             textColor: Colors.white,
             fontSize: 16.0);
-        setState((){
-          innerLoading = false;
-        });
       }
+      setState((){
+        innerLoading = false;
+      });
     });
   }
 

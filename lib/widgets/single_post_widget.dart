@@ -621,9 +621,6 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
               textColor: Colors.white,
               fontSize: 16.0);
         }
-        setState((){
-          innerLoading = false;
-        });
       }
       else {
         Fluttertoast.showToast(
@@ -634,10 +631,10 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
             backgroundColor: Colors.red,
             textColor: Colors.white,
             fontSize: 16.0);
-        setState((){
-          innerLoading = false;
-        });
       }
+      setState((){
+        innerLoading = false;
+      });
     });
   }
 
