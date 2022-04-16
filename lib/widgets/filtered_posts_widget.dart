@@ -37,6 +37,11 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
   bool loading = false;
   late Languages languages;
 
+
+  bool innerLoading = false;
+  final TextEditingController _reportReasonTextFieldController = TextEditingController();
+  final TextEditingController _couponCodeController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -169,6 +174,162 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
                                         DateFormatter.formatDate(post.createdDate, languages),
                                         style: TextStyle(color: Colors.white),
                                       ),
+                                      Container(
+                                        margin:
+                                        EdgeInsets.only(left: 5),
+                                        child: PopupMenuButton(
+                                          child: Icon(
+                                            Icons.more_horiz,
+                                            color: Colors.white,
+                                          ),
+                                          itemBuilder: (context) {
+                                            return List.generate(
+                                                widget.user.companyId == post.companyId
+                                                    ? 3
+                                                    : 1, (index) {
+                                              if (index == 0) {
+                                                return PopupMenuItem(
+                                                  child: Text(
+                                                      widget.user.companyId == post.companyId || widget.user.userId == post.creatorId ? languages
+                                                          .deleteLabel : languages
+                                                          .reportLabel),
+                                                  value: 0,
+                                                );
+                                              } else if (index == 1) {
+                                                return PopupMenuItem(
+                                                  child: Text(languages
+                                                      .contactCreatorLabel),
+                                                  value: 1,
+                                                );
+                                              } else {
+                                                return PopupMenuItem(
+                                                  child: Text(post
+                                                      .implemented
+                                                      ? languages
+                                                      .notImplementedLabel
+                                                      : languages
+                                                      .implementedLabel),
+                                                  value: 2,
+                                                );
+                                              }
+                                            });
+                                          },
+                                          onSelected: (index) {
+                                            if (index == 0) {
+                                              if (widget.user.companyId == post.companyId || widget.user.userId == post.creatorId) {
+                                                widget.session
+                                                    .delete('/api/posts/' +
+                                                    post.postId
+                                                        .toString())
+                                                    .then((response) {
+                                                  if (response
+                                                      .statusCode ==
+                                                      200) {
+                                                    Fluttertoast.showToast(
+                                                        msg: languages
+                                                            .successfulDeleteMessage,
+                                                        toastLength: Toast
+                                                            .LENGTH_LONG,
+                                                        gravity:
+                                                        ToastGravity
+                                                            .CENTER,
+                                                        timeInSecForIosWeb:
+                                                        1,
+                                                        backgroundColor:
+                                                        Colors
+                                                            .green,
+                                                        textColor:
+                                                        Colors
+                                                            .white,
+                                                        fontSize: 16.0);
+                                                    setState(() {
+                                                      Navigator.of(context).pop();
+                                                    });
+                                                  } else {
+                                                    Fluttertoast.showToast(
+                                                        msg: languages
+                                                            .globalServerErrorMessage,
+                                                        toastLength: Toast
+                                                            .LENGTH_LONG,
+                                                        gravity:
+                                                        ToastGravity
+                                                            .CENTER,
+                                                        timeInSecForIosWeb:
+                                                        1,
+                                                        backgroundColor:
+                                                        Colors.red,
+                                                        textColor:
+                                                        Colors
+                                                            .white,
+                                                        fontSize: 16.0);
+                                                  }
+                                                });
+                                              }
+                                              else {
+                                                onReportTap(post);
+                                              }
+                                            } else if (index == 1) {
+                                              _onContactCreatorTap(
+                                                  post);
+                                            } else {
+                                              widget.session
+                                                  .post(
+                                                  '/api/posts/' +
+                                                      post.postId
+                                                          .toString() +
+                                                      '/implemented',
+                                                  Map<String,
+                                                      dynamic>())
+                                                  .then((response) {
+                                                if (response
+                                                    .statusCode ==
+                                                    200) {
+                                                  Fluttertoast.showToast(
+                                                      msg:
+                                                      "${languages.successLabel}!",
+                                                      toastLength: Toast
+                                                          .LENGTH_LONG,
+                                                      gravity:
+                                                      ToastGravity
+                                                          .CENTER,
+                                                      timeInSecForIosWeb:
+                                                      1,
+                                                      backgroundColor:
+                                                      Colors
+                                                          .green,
+                                                      textColor:
+                                                      Colors
+                                                          .white,
+                                                      fontSize: 16.0);
+                                                  setState(() {
+                                                    post
+                                                        .implemented = !post
+                                                        .implemented;
+
+                                                  });
+                                                } else {
+                                                  Fluttertoast.showToast(
+                                                      msg: languages
+                                                          .globalServerErrorMessage,
+                                                      toastLength: Toast
+                                                          .LENGTH_LONG,
+                                                      gravity:
+                                                      ToastGravity
+                                                          .CENTER,
+                                                      timeInSecForIosWeb:
+                                                      1,
+                                                      backgroundColor:
+                                                      Colors.red,
+                                                      textColor:
+                                                      Colors
+                                                          .white,
+                                                      fontSize: 16.0);
+                                                }
+                                              });
+                                            }
+                                          },
+                                        ),
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -220,7 +381,7 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
                                           );
                                         },
                                         onTap: (isLiked) {
-                                          return _onLikeButton(isLiked, index);
+                                          return post.creatorId == widget.user.userId ? _onLikeOwnButtonPressed() : _onLikeButton(isLiked, index);
                                         },
                                         likeCount: post.likeNumber,
                                       ),
@@ -409,5 +570,298 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
             }
           })
         });
+  }
+
+  void onReportTap(Post post) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return StatefulBuilder(builder: (context, setState) {
+            return innerLoading
+                ? Container(
+              child: Center(
+                child: CircularProgressIndicator(
+                  color: Colors.yellow,
+                ),
+              ),
+            )
+                : AlertDialog(
+              backgroundColor: Colors.yellow,
+              title: Text(
+                languages.reportUserAndPostTitleLabel,
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                    color: Colors.black),
+              ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    color: Colors.black,
+                    padding: EdgeInsets.all(2),
+                    child: Center(
+                      child: Container(
+                        padding: EdgeInsets.only(left: 20.0),
+                        color: Colors.yellow.withOpacity(0.7),
+                        child: TextField(
+                          style: TextStyle(color: Colors.black),
+                          maxLength: 256,
+                          controller: _reportReasonTextFieldController,
+                          cursorColor: Colors.black,
+                          decoration: InputDecoration(
+                            hintText: languages.reportReasonHintLabel,
+                            hintStyle: TextStyle(
+                                color: Colors.black.withOpacity(0.5)),
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    _reportReasonTextFieldController.clear();
+                  },
+                  child: Text(
+                    languages.cancelLabel,
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {
+                    _onSendReportTap(post.postId, context, setState);
+                    setState(() {
+                      innerLoading = true;
+                    });
+                  },
+                  child: Text(
+                    languages.sendLabel,
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ),
+              ],
+            );
+          });
+        });
+  }
+
+  void _onSendReportTap(int postId, context, setState) {
+    dynamic data = <String, dynamic>{
+      'reason': _reportReasonTextFieldController.text,
+    };
+    widget.session.postJson('/api/posts/$postId/report', data).then((
+        response) {
+      if (response.statusCode == 200) {
+        Navigator.of(context).pop();
+        _reportReasonTextFieldController.clear();
+        Fluttertoast.showToast(
+            msg: languages.successfulReportMessage,
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.green,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      }
+      else if (response.statusCode == 500) {
+        if (response.body != null &&
+            json.decode(response.body)['message'] != null &&
+            json.decode(response.body)['message'] ==
+                'Post is already reported!') {
+          Fluttertoast.showToast(
+              msg: languages.alreadyReportedPostMessage,
+              toastLength: Toast.LENGTH_LONG,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.red,
+              textColor: Colors.white,
+              fontSize: 16.0);
+        } else {
+          Fluttertoast.showToast(
+              msg: languages.globalErrorMessage,
+              toastLength: Toast.LENGTH_LONG,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.red,
+              textColor: Colors.white,
+              fontSize: 16.0);
+        }
+        setState((){
+          innerLoading = false;
+        });
+      }
+      else {
+        Fluttertoast.showToast(
+            msg: languages.globalServerErrorMessage,
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+        setState((){
+          innerLoading = false;
+        });
+      }
+    });
+  }
+
+  void _onContactCreatorTap(Post post) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return StatefulBuilder(builder: (context, setState) {
+            return innerLoading
+                ? Container(
+              child: Center(
+                child: CircularProgressIndicator(
+                  color: Colors.yellow,
+                ),
+              ),
+            )
+                : AlertDialog(
+              backgroundColor: Colors.yellow,
+              title: Text(
+                languages.thisIsTheContactEmailLabel,
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                    color: Colors.black),
+              ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    child: Center(
+                      child: Text(
+                        post.creatorEmail,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                            color: Colors.black),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Container(
+                    color: Colors.black,
+                    padding: EdgeInsets.all(2),
+                    child: Center(
+                      child: Container(
+                        padding: EdgeInsets.only(left: 20.0),
+                        color: Colors.yellow.withOpacity(0.7),
+                        child: TextField(
+                          style: TextStyle(color: Colors.black),
+                          controller: _couponCodeController,
+                          cursorColor: Colors.black,
+                          decoration: InputDecoration(
+                            hintText: languages.couponCodeLabel,
+                            hintStyle: TextStyle(
+                                color: Colors.black.withOpacity(0.5)),
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    _couponCodeController.clear();
+                  },
+                  child: Text(
+                    languages.cancelLabel,
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {
+                    _onSendCouponEmailTap(post.postId, context);
+                    setState(() {
+                      innerLoading = true;
+                    });
+                  },
+                  child: Text(
+                    languages.sendLabel,
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ),
+              ],
+            );
+          });
+        });
+  }
+
+  void _onSendCouponEmailTap(int postId, context) {
+    if (_couponCodeController.text.isEmpty) {
+      Fluttertoast.showToast(
+          msg: languages.fillAllFieldsWarningMessage,
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    } else {
+      dynamic body = <String, dynamic>{
+        'couponCode': _couponCodeController.text,
+      };
+      widget.session
+          .postJson(
+        '/api/posts/${postId.toString()}/sendCouponToCreator',
+        body,
+      )
+          .then((response) {
+        innerLoading = false;
+        if (response.statusCode == 200) {
+          Navigator.of(context).pop();
+          _couponCodeController.clear();
+          Fluttertoast.showToast(
+              msg: languages.successfulCouponSendMessage,
+              toastLength: Toast.LENGTH_LONG,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.green,
+              textColor: Colors.white,
+              fontSize: 16.0);
+        } else {
+          Fluttertoast.showToast(
+              msg: languages.globalServerErrorMessage,
+              toastLength: Toast.LENGTH_LONG,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.red,
+              textColor: Colors.white,
+              fontSize: 16.0);
+        }
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _couponCodeController.dispose();
+    _reportReasonTextFieldController.dispose();
+    super.dispose();
+  }
+
+  Future<bool> _onLikeOwnButtonPressed(){
+    Fluttertoast.showToast(
+        msg: languages.likeOwnPostWarningMessage,
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0);
+    return Future.value(false);
   }
 }

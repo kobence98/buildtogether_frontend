@@ -16,6 +16,10 @@ abstract class Languages {
 
   String get fillAllFieldsWarningMessage;
 
+  String get likeOwnPostWarningMessage;
+
+  String get likeOwnCommentWarningMessage;
+
   //MAIN
   String get subscribeWarningMessage;
 
@@ -134,6 +138,10 @@ abstract class Languages {
 
   String get emptyCommentWarningMessage;
 
+  String get reportUserAndCommentTitleLabel;
+
+  String get alreadyReportedCommentMessage;
+
   //CREATE POST WIDGET
 
   String get newPollOptionLabel;
@@ -199,6 +207,16 @@ abstract class Languages {
   String get couponCodeLabel;
 
   String get successfulCouponSendMessage;
+
+  String get reportLabel;
+
+  String get reportReasonHintLabel;
+
+  String get successfulReportMessage;
+
+  String get alreadyReportedPostMessage;
+
+  String get reportUserAndPostTitleLabel;
 
   //SETTINGS WIDGET
 

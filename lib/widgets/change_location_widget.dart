@@ -182,7 +182,7 @@ class _ChangeLocationWidgetState extends State<ChangeLocationWidget> {
       widget.session
           .postJson(
         '/api/users/setCountryCode',
-        jsonEncode(body),
+        body,
       )
           .then((response) {
         if (response.statusCode == 200) {

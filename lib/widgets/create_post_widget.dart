@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_frontend/entities/company_for_search.dart';
 import 'package:flutter_frontend/entities/session.dart';
 import 'package:flutter_frontend/entities/user.dart';
@@ -150,7 +151,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
         widget.session
             .postJson(
           '/api/posts',
-          jsonEncode(body),
+          body,
         )
             .then((response) {
           if (response.statusCode == 200) {
@@ -332,8 +333,8 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
             child: TextField(
               controller: _titleController,
               style: TextStyle(fontSize: 20),
-              decoration:
-                  new InputDecoration.collapsed(hintText: languages.titleOfIdeaLabel),
+              decoration: new InputDecoration.collapsed(
+                  hintText: languages.titleOfIdeaLabel),
             ),
           ),
           SizedBox(
@@ -350,8 +351,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                 controller: _descriptionController,
                 style: TextStyle(fontSize: 20),
                 decoration: new InputDecoration.collapsed(
-                    hintText:
-                        languages.writeHereYourIdeaLabel),
+                    hintText: languages.writeHereYourIdeaLabel),
                 onChanged: (text) => setState(() {})),
           ),
           Container(
@@ -583,7 +583,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
         widget.session
             .postJson(
           '/api/posts/poll',
-          jsonEncode(body),
+          body,
         )
             .then((response) {
           if (response.statusCode == 200) {

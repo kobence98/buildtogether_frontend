@@ -17,8 +17,9 @@ class Post{
   List<PollOption> pollOptions;
   int companyUserId;
   int companyImageId;
+  int creatorId;
 
-  Post({required this.postId, required this.title, required this.description, required this.companyName, required this.userName, required this.creatorEmail, required this.likeNumber, required this.liked, required this.companyId, required this.createdDate, required this.commentNumber, required this.implemented, required this.postType, required this.pollOptions, required this.companyUserId, required this.companyImageId});
+  Post({required this.postId, required this.title, required this.description, required this.companyName, required this.userName, required this.creatorEmail, required this.likeNumber, required this.liked, required this.companyId, required this.createdDate, required this.commentNumber, required this.implemented, required this.postType, required this.pollOptions, required this.companyUserId, required this.companyImageId, required this.creatorId});
 
   factory Post.fromJson(Map<String, dynamic> json) {
     String stringDate = json['createdDate'];
@@ -41,6 +42,7 @@ class Post{
           json['pollOptions'].map((po) => PollOption.fromJson(po))),
       companyUserId: json['companyUserId'],
       companyImageId: json['companyImageId'],
+      creatorId: json['creatorId'],
     );
   }
 }

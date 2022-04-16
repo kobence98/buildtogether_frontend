@@ -26,6 +26,12 @@ class LanguageHu extends Languages {
 
   @override
   String get fillAllFieldsWarningMessage => 'Töltsd ki az összes mezőt!';
+
+  @override
+  String get likeOwnPostWarningMessage => 'Nem like-olhatod a saját posztodat!';
+
+  @override
+  String get likeOwnCommentWarningMessage => 'Nem like-olhatod a saját kommentedet!';
   
   //MAIN
   @override
@@ -199,6 +205,12 @@ class LanguageHu extends Languages {
   @override
   String get emptyCommentWarningMessage => 'Ne hagyd üresen a kommentet!';
 
+  @override
+  String get reportUserAndCommentTitleLabel => 'A poszt és a készítője jelentéséhez kérünk add meg a jelentés okát:';
+
+  @override
+  String get alreadyReportedCommentMessage => 'Már jelentetted ezt a posztot!';
+
   //CREATE POST WIDGET
 
   @override
@@ -294,6 +306,22 @@ class LanguageHu extends Languages {
 
   @override
   String get successfulCouponSendMessage => 'Sikeres kuponküldés!';
+
+  @override
+  String get reportLabel => 'Jelentés';
+
+
+  @override
+  String get reportUserAndPostTitleLabel => 'A poszt és a készítője jelentéséhez kérünk add meg a jelentés okát:';
+
+  @override
+  String get reportReasonHintLabel => 'Indok';
+
+  @override
+  String get successfulReportMessage => 'Sikeres jelentés!';
+
+  @override
+  String get alreadyReportedPostMessage => 'Már jelentetted ezt a posztot!';
 
   //SETTINGS WIDGET
 

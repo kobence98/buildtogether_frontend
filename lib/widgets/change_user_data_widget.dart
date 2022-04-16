@@ -24,7 +24,7 @@ class ChangeUserDataWidget extends StatefulWidget {
 }
 
 class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
-  TextEditingController _nameController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   late bool _emailNotificationForCompany;
   late int _emailNotificationNumber;
@@ -357,7 +357,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
         widget.session
             .postJson(
           '/api/users/updateUser',
-          jsonEncode(body),
+          body,
         )
             .then((response) {
           if (response.statusCode == 200) {

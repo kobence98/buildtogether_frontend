@@ -33,7 +33,7 @@ class Session {
     Map<String, String> newHeaders = headers;
     newHeaders.addAll({'Content-type': 'application/json'});
     http.Response response =
-        await http.post(Uri.parse(domainName + url), body: data, headers: headers);
+        await http.post(Uri.parse(domainName + url), body: jsonEncode(data), headers: headers);
     updateCookie(response);
     return response;
   }

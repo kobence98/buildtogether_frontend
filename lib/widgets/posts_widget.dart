@@ -26,11 +26,10 @@ class PostsWidget extends StatefulWidget {
   final int initPage;
   final Languages languages;
 
-  const PostsWidget(
-      {required this.session,
-      required this.user,
-      required this.initPage,
-      required this.languages});
+  const PostsWidget({required this.session,
+    required this.user,
+    required this.initPage,
+    required this.languages});
 
   @override
   _PostsWidgetState createState() => _PostsWidgetState();
@@ -49,17 +48,18 @@ class _PostsWidgetState extends State<PostsWidget> {
   final TextEditingController _searchFieldController = TextEditingController();
   bool loading = false;
   RefreshController _refreshNewController =
-      RefreshController(initialRefresh: false);
+  RefreshController(initialRefresh: false);
   RefreshController _refreshBestController =
-      RefreshController(initialRefresh: false);
+  RefreshController(initialRefresh: false);
   RefreshController _refreshOwnController =
-      RefreshController(initialRefresh: false);
+  RefreshController(initialRefresh: false);
   List<SearchFieldNames> names = [];
   String? country;
   bool loadedPosts = false;
   late Languages languages;
   final TextEditingController _couponCodeController = TextEditingController();
   bool innerLoading = false;
+  final TextEditingController _reportReasonTextFieldController = TextEditingController();
 
   @override
   void initState() {
@@ -70,12 +70,15 @@ class _PostsWidgetState extends State<PostsWidget> {
 
   @override
   void dispose() {
+    _searchFieldController.dispose();
     _newScrollController.dispose();
     _bestScrollController.dispose();
     _ownScrollController.dispose();
     _refreshNewController.dispose();
     _refreshBestController.dispose();
     _refreshOwnController.dispose();
+    _couponCodeController.dispose();
+    _reportReasonTextFieldController.dispose();
     super.dispose();
   }
 
@@ -142,7 +145,7 @@ class _PostsWidgetState extends State<PostsWidget> {
                       if (response.statusCode == 200) {
                         widget.session.updateCookie(response);
                         Iterable l =
-                            json.decode(utf8.decode(response.bodyBytes));
+                        json.decode(utf8.decode(response.bodyBytes));
                         names = List<SearchFieldNames>.from(
                             l.map((name) => SearchFieldNames.fromJson(name)));
                         List<String> resultList = [];
@@ -162,7 +165,9 @@ class _PostsWidgetState extends State<PostsWidget> {
                       if (names
                           .where((nm) => nm.id.toString() == n)
                           .isNotEmpty) {
-                        name = names.where((nm) => nm.id.toString() == n).first;
+                        name = names
+                            .where((nm) => nm.id.toString() == n)
+                            .first;
                       }
                       return Container(
                         padding: EdgeInsets.all(1),
@@ -172,18 +177,18 @@ class _PostsWidgetState extends State<PostsWidget> {
                           child: ListTile(
                             leading: name != null
                                 ? CircleAvatar(
-                                    radius: 20,
-                                    backgroundImage: NetworkImage(
-                                      widget.session.domainName +
-                                          "/api/images/" +
-                                          name.imageId.toString(),
-                                      headers: widget.session.headers,
-                                    ),
-                                  )
+                              radius: 20,
+                              backgroundImage: NetworkImage(
+                                widget.session.domainName +
+                                    "/api/images/" +
+                                    name.imageId.toString(),
+                                headers: widget.session.headers,
+                              ),
+                            )
                                 : Icon(
-                                    Icons.lightbulb_outline_sharp,
-                                    color: Colors.yellow,
-                                  ),
+                              Icons.lightbulb_outline_sharp,
+                              color: Colors.yellow,
+                            ),
                             title: Text(
                               name == null ? n.toString() : name.name,
                               style: TextStyle(
@@ -281,435 +286,439 @@ class _PostsWidgetState extends State<PostsWidget> {
       color: Colors.black,
       child: loadedPosts
           ? Stack(
-              children: [
-                SmartRefresher(
-                  controller: _refreshController,
-                  onRefresh: () {
-                    _loadData();
-                  },
-                  header: WaterDropHeader(),
-                  child: actualPosts.isNotEmpty
-                      ? ListView.separated(
-                          controller: _scrollController,
-                          padding: EdgeInsets.only(bottom: 10),
-                          separatorBuilder: (context, index) => Divider(
-                                height: 1,
-                                color: Colors.grey.shade900,
+        children: [
+          SmartRefresher(
+            controller: _refreshController,
+            onRefresh: () {
+              _loadData();
+            },
+            header: WaterDropHeader(),
+            child: actualPosts.isNotEmpty
+                ? ListView.separated(
+                controller: _scrollController,
+                padding: EdgeInsets.only(bottom: 10),
+                separatorBuilder: (context, index) =>
+                    Divider(
+                      height: 1,
+                      color: Colors.grey.shade900,
+                    ),
+                itemCount: actualPosts.length,
+                itemBuilder: (context, index) {
+                  Post post = actualPosts.elementAt(index);
+                  return InkWell(
+                    child: Container(
+                      color: Colors.black,
+                      child: Column(
+                        children: [
+                          ListTile(
+                            leading: CircleAvatar(
+                              radius: 20,
+                              backgroundImage: NetworkImage(
+                                widget.session.domainName +
+                                    "/api/images/" +
+                                    post.companyImageId.toString(),
+                                headers: widget.session.headers,
                               ),
-                          itemCount: actualPosts.length,
-                          itemBuilder: (context, index) {
-                            Post post = actualPosts.elementAt(index);
-                            return InkWell(
-                              child: Container(
-                                color: Colors.black,
-                                child: Column(
-                                  children: [
-                                    ListTile(
-                                      leading: CircleAvatar(
-                                        radius: 20,
-                                        backgroundImage: NetworkImage(
-                                          widget.session.domainName +
-                                              "/api/images/" +
-                                              post.companyImageId.toString(),
-                                          headers: widget.session.headers,
+                            ),
+                            title: Column(
+                              crossAxisAlignment:
+                              CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  post.userName,
+                                  style:
+                                  TextStyle(color: Colors.white),
+                                ),
+                                SizedBox(
+                                  height: 1,
+                                ),
+                                InkWell(
+                                  child: Container(
+                                    padding: EdgeInsets.all(3),
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        border: Border.all(
+                                          color: Colors.black,
                                         ),
-                                      ),
-                                      title: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            post.userName,
-                                            style:
-                                                TextStyle(color: Colors.white),
-                                          ),
-                                          SizedBox(
-                                            height: 1,
-                                          ),
-                                          InkWell(
-                                            child: Container(
-                                              padding: EdgeInsets.all(3),
-                                              decoration: BoxDecoration(
-                                                  color: Colors.white,
-                                                  border: Border.all(
-                                                    color: Colors.black,
-                                                  ),
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                          Radius.circular(20))),
-                                              child: Text(
-                                                post.companyName,
-                                                style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                            ),
-                                            onTap: () {
-                                              _onCompanyTap(post.companyId);
-                                            },
-                                          ),
-                                        ],
-                                      ),
-                                      trailing: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          post.implemented
-                                              ? InkWell(
-                                                  child: Icon(
-                                                    Icons
-                                                        .lightbulb_outline_sharp,
-                                                    color: Colors.yellow,
-                                                  ),
-                                                  onTap: () {
-                                                    Fluttertoast.showToast(
-                                                        msg: languages
-                                                            .ideaIsImplementedMessage,
-                                                        toastLength:
-                                                            Toast.LENGTH_SHORT,
-                                                        gravity:
-                                                            ToastGravity.CENTER,
-                                                        timeInSecForIosWeb: 1,
-                                                        backgroundColor:
-                                                            Colors.green,
-                                                        textColor: Colors.white,
-                                                        fontSize: 16.0);
-                                                  },
-                                                )
-                                              : Container(),
-                                          Text(
-                                            DateFormatter.formatDate(
-                                                post.createdDate, languages),
-                                            style:
-                                                TextStyle(color: Colors.white),
-                                          ),
-                                          pageNumber == 3
-                                              ? Container(
-                                                  margin:
-                                                      EdgeInsets.only(left: 5),
-                                                  child: PopupMenuButton(
-                                                    child: Icon(
-                                                      Icons.more_horiz,
-                                                      color: Colors.white,
-                                                    ),
-                                                    itemBuilder: (context) {
-                                                      return List.generate(
-                                                          widget.user.roles
-                                                                  .contains(
-                                                                      'ROLE_COMPANY')
-                                                              ? 3
-                                                              : 1, (index) {
-                                                        if (index == 0) {
-                                                          return PopupMenuItem(
-                                                            child: Text(languages
-                                                                .deleteLabel),
-                                                            value: 0,
-                                                          );
-                                                        } else if (index == 1) {
-                                                          return PopupMenuItem(
-                                                            child: Text(languages
-                                                                .contactCreatorLabel),
-                                                            value: 1,
-                                                          );
-                                                        } else {
-                                                          return PopupMenuItem(
-                                                            child: Text(post
-                                                                    .implemented
-                                                                ? languages
-                                                                    .notImplementedLabel
-                                                                : languages
-                                                                    .implementedLabel),
-                                                            value: 2,
-                                                          );
-                                                        }
-                                                      });
-                                                    },
-                                                    onSelected: (index) {
-                                                      if (index == 0) {
-                                                        widget.session
-                                                            .delete('/api/posts/' +
-                                                                post.postId
-                                                                    .toString())
-                                                            .then((response) {
-                                                          if (response
-                                                                  .statusCode ==
-                                                              200) {
-                                                            Fluttertoast.showToast(
-                                                                msg: languages
-                                                                    .successfulDeleteMessage,
-                                                                toastLength: Toast
-                                                                    .LENGTH_LONG,
-                                                                gravity:
-                                                                    ToastGravity
-                                                                        .CENTER,
-                                                                timeInSecForIosWeb:
-                                                                    1,
-                                                                backgroundColor:
-                                                                    Colors
-                                                                        .green,
-                                                                textColor:
-                                                                    Colors
-                                                                        .white,
-                                                                fontSize: 16.0);
-                                                            setState(() {
-                                                              actualNewPosts
-                                                                  .remove(post);
-                                                              actualBestPosts
-                                                                  .remove(post);
-                                                              actualOwnPosts
-                                                                  .remove(post);
-                                                            });
-                                                          } else {
-                                                            Fluttertoast.showToast(
-                                                                msg: languages
-                                                                    .globalServerErrorMessage,
-                                                                toastLength: Toast
-                                                                    .LENGTH_LONG,
-                                                                gravity:
-                                                                    ToastGravity
-                                                                        .CENTER,
-                                                                timeInSecForIosWeb:
-                                                                    1,
-                                                                backgroundColor:
-                                                                    Colors.red,
-                                                                textColor:
-                                                                    Colors
-                                                                        .white,
-                                                                fontSize: 16.0);
-                                                          }
-                                                        });
-                                                      } else if (index == 1) {
-                                                        _onContactCreatorTap(
-                                                            post);
-                                                      } else {
-                                                        widget.session
-                                                            .post(
-                                                                '/api/posts/' +
-                                                                    post.postId
-                                                                        .toString() +
-                                                                    '/implemented',
-                                                                Map<String,
-                                                                    dynamic>())
-                                                            .then((response) {
-                                                          if (response
-                                                                  .statusCode ==
-                                                              200) {
-                                                            Fluttertoast.showToast(
-                                                                msg:
-                                                                    "${languages.successLabel}!",
-                                                                toastLength: Toast
-                                                                    .LENGTH_LONG,
-                                                                gravity:
-                                                                    ToastGravity
-                                                                        .CENTER,
-                                                                timeInSecForIosWeb:
-                                                                    1,
-                                                                backgroundColor:
-                                                                    Colors
-                                                                        .green,
-                                                                textColor:
-                                                                    Colors
-                                                                        .white,
-                                                                fontSize: 16.0);
-                                                            setState(() {
-                                                              bool imp = !post
-                                                                  .implemented;
-                                                              if (actualNewPosts
-                                                                  .where((p) {
-                                                                return p.postId ==
-                                                                    post.postId;
-                                                              }).isNotEmpty) {
-                                                                actualNewPosts
-                                                                    .where((p) {
-                                                                      return p.postId ==
-                                                                          post.postId;
-                                                                    })
-                                                                    .first
-                                                                    .implemented = imp;
-                                                              }
-                                                              if (actualBestPosts
-                                                                  .where((p) {
-                                                                return p.postId ==
-                                                                    post.postId;
-                                                              }).isNotEmpty) {
-                                                                actualBestPosts
-                                                                    .where((p) {
-                                                                      return p.postId ==
-                                                                          post.postId;
-                                                                    })
-                                                                    .first
-                                                                    .implemented = imp;
-                                                              }
-                                                              if (actualOwnPosts
-                                                                  .where((p) {
-                                                                return p.postId ==
-                                                                    post.postId;
-                                                              }).isNotEmpty) {
-                                                                actualOwnPosts
-                                                                    .where((p) {
-                                                                      return p.postId ==
-                                                                          post.postId;
-                                                                    })
-                                                                    .first
-                                                                    .implemented = imp;
-                                                              }
-                                                            });
-                                                          } else {
-                                                            Fluttertoast.showToast(
-                                                                msg: languages
-                                                                    .globalServerErrorMessage,
-                                                                toastLength: Toast
-                                                                    .LENGTH_LONG,
-                                                                gravity:
-                                                                    ToastGravity
-                                                                        .CENTER,
-                                                                timeInSecForIosWeb:
-                                                                    1,
-                                                                backgroundColor:
-                                                                    Colors.red,
-                                                                textColor:
-                                                                    Colors
-                                                                        .white,
-                                                                fontSize: 16.0);
-                                                          }
-                                                        });
-                                                      }
-                                                    },
-                                                  ),
-                                                )
-                                              : Container(),
-                                        ],
-                                      ),
+                                        borderRadius:
+                                        BorderRadius.all(
+                                            Radius.circular(20))),
+                                    child: Text(
+                                      post.companyName,
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontWeight:
+                                          FontWeight.bold),
                                     ),
-                                    ListTile(
-                                      title: Text(
-                                        post.title,
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 20),
-                                      ),
+                                  ),
+                                  onTap: () {
+                                    _onCompanyTap(post.companyId);
+                                  },
+                                ),
+                              ],
+                            ),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                post.implemented
+                                    ? InkWell(
+                                  child: Icon(
+                                    Icons
+                                        .lightbulb_outline_sharp,
+                                    color: Colors.yellow,
+                                  ),
+                                  onTap: () {
+                                    Fluttertoast.showToast(
+                                        msg: languages
+                                            .ideaIsImplementedMessage,
+                                        toastLength:
+                                        Toast.LENGTH_SHORT,
+                                        gravity:
+                                        ToastGravity.CENTER,
+                                        timeInSecForIosWeb: 1,
+                                        backgroundColor:
+                                        Colors.green,
+                                        textColor: Colors.white,
+                                        fontSize: 16.0);
+                                  },
+                                )
+                                    : Container(),
+                                Text(
+                                  DateFormatter.formatDate(
+                                      post.createdDate, languages),
+                                  style:
+                                  TextStyle(color: Colors.white),
+                                ),
+                                Container(
+                                  margin:
+                                  EdgeInsets.only(left: 5),
+                                  child: PopupMenuButton(
+                                    child: Icon(
+                                      Icons.more_horiz,
+                                      color: Colors.white,
                                     ),
-                                    Container(
-                                      height: 60,
-                                      padding: EdgeInsets.all(5),
-                                      alignment: Alignment.topLeft,
-                                      child: Text(
-                                        post.postType == 'SIMPLE_POST'
-                                            ? post.description
-                                            : languages
-                                                .clickHereToOpenThePollLabel,
-                                        style: TextStyle(color: Colors.white),
-                                      ),
+                                    itemBuilder: (context) {
+                                      return List.generate(
+                                          widget.user.companyId == post.companyId
+                                              ? 3
+                                              : 1, (index) {
+                                        if (index == 0) {
+                                          return PopupMenuItem(
+                                            child: Text(
+                                                widget.user.companyId == post.companyId || widget.user.userId == post.creatorId ? languages
+                                                    .deleteLabel : languages
+                                                    .reportLabel),
+                                            value: 0,
+                                          );
+                                        } else if (index == 1) {
+                                          return PopupMenuItem(
+                                            child: Text(languages
+                                                .contactCreatorLabel),
+                                            value: 1,
+                                          );
+                                        } else {
+                                          return PopupMenuItem(
+                                            child: Text(post
+                                                .implemented
+                                                ? languages
+                                                .notImplementedLabel
+                                                : languages
+                                                .implementedLabel),
+                                            value: 2,
+                                          );
+                                        }
+                                      });
+                                    },
+                                    onSelected: (index) {
+                                      if (index == 0) {
+                                        if (widget.user.companyId == post.companyId || widget.user.userId == post.creatorId) {
+                                          widget.session
+                                              .delete('/api/posts/' +
+                                              post.postId
+                                                  .toString())
+                                              .then((response) {
+                                            if (response
+                                                .statusCode ==
+                                                200) {
+                                              Fluttertoast.showToast(
+                                                  msg: languages
+                                                      .successfulDeleteMessage,
+                                                  toastLength: Toast
+                                                      .LENGTH_LONG,
+                                                  gravity:
+                                                  ToastGravity
+                                                      .CENTER,
+                                                  timeInSecForIosWeb:
+                                                  1,
+                                                  backgroundColor:
+                                                  Colors
+                                                      .green,
+                                                  textColor:
+                                                  Colors
+                                                      .white,
+                                                  fontSize: 16.0);
+                                              setState(() {
+                                                actualNewPosts
+                                                    .remove(post);
+                                                actualBestPosts
+                                                    .remove(post);
+                                                actualOwnPosts
+                                                    .remove(post);
+                                              });
+                                            } else {
+                                              Fluttertoast.showToast(
+                                                  msg: languages
+                                                      .globalServerErrorMessage,
+                                                  toastLength: Toast
+                                                      .LENGTH_LONG,
+                                                  gravity:
+                                                  ToastGravity
+                                                      .CENTER,
+                                                  timeInSecForIosWeb:
+                                                  1,
+                                                  backgroundColor:
+                                                  Colors.red,
+                                                  textColor:
+                                                  Colors
+                                                      .white,
+                                                  fontSize: 16.0);
+                                            }
+                                          });
+                                        }
+                                        else {
+                                          onReportTap(post);
+                                        }
+                                      } else if (index == 1) {
+                                        _onContactCreatorTap(
+                                            post);
+                                      } else {
+                                        widget.session
+                                            .post(
+                                            '/api/posts/' +
+                                                post.postId
+                                                    .toString() +
+                                                '/implemented',
+                                            Map<String,
+                                                dynamic>())
+                                            .then((response) {
+                                          if (response
+                                              .statusCode ==
+                                              200) {
+                                            Fluttertoast.showToast(
+                                                msg:
+                                                "${languages.successLabel}!",
+                                                toastLength: Toast
+                                                    .LENGTH_LONG,
+                                                gravity:
+                                                ToastGravity
+                                                    .CENTER,
+                                                timeInSecForIosWeb:
+                                                1,
+                                                backgroundColor:
+                                                Colors
+                                                    .green,
+                                                textColor:
+                                                Colors
+                                                    .white,
+                                                fontSize: 16.0);
+                                            setState(() {
+                                              bool imp = !post
+                                                  .implemented;
+                                              if (actualNewPosts
+                                                  .where((p) {
+                                                return p.postId ==
+                                                    post.postId;
+                                              }).isNotEmpty) {
+                                                actualNewPosts
+                                                    .where((p) {
+                                                  return p.postId ==
+                                                      post.postId;
+                                                })
+                                                    .first
+                                                    .implemented = imp;
+                                              }
+                                              if (actualBestPosts
+                                                  .where((p) {
+                                                return p.postId ==
+                                                    post.postId;
+                                              }).isNotEmpty) {
+                                                actualBestPosts
+                                                    .where((p) {
+                                                  return p.postId ==
+                                                      post.postId;
+                                                })
+                                                    .first
+                                                    .implemented = imp;
+                                              }
+                                              if (actualOwnPosts
+                                                  .where((p) {
+                                                return p.postId ==
+                                                    post.postId;
+                                              }).isNotEmpty) {
+                                                actualOwnPosts
+                                                    .where((p) {
+                                                  return p.postId ==
+                                                      post.postId;
+                                                })
+                                                    .first
+                                                    .implemented = imp;
+                                              }
+                                            });
+                                          } else {
+                                            Fluttertoast.showToast(
+                                                msg: languages
+                                                    .globalServerErrorMessage,
+                                                toastLength: Toast
+                                                    .LENGTH_LONG,
+                                                gravity:
+                                                ToastGravity
+                                                    .CENTER,
+                                                timeInSecForIosWeb:
+                                                1,
+                                                backgroundColor:
+                                                Colors.red,
+                                                textColor:
+                                                Colors
+                                                    .white,
+                                                fontSize: 16.0);
+                                          }
+                                        });
+                                      }
+                                    },
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                          ListTile(
+                            title: Text(
+                              post.title,
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20),
+                            ),
+                          ),
+                          Container(
+                            height: 60,
+                            padding: EdgeInsets.all(5),
+                            alignment: Alignment.topLeft,
+                            child: Text(
+                              post.postType == 'SIMPLE_POST'
+                                  ? post.description
+                                  : languages
+                                  .clickHereToOpenThePollLabel,
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                          Container(
+                            height: 40,
+                            child: Row(
+                              crossAxisAlignment:
+                              CrossAxisAlignment.center,
+                              mainAxisAlignment:
+                              MainAxisAlignment.spaceBetween,
+                              children: [
+                                LikeButton(
+                                  size: 20.0,
+                                  circleColor: CircleColor(
+                                      start: Colors.yellow.shade200,
+                                      end: Colors.yellow),
+                                  bubblesColor: BubblesColor(
+                                    dotPrimaryColor:
+                                    Colors.yellow.shade200,
+                                    dotSecondaryColor: Colors.yellow,
+                                  ),
+                                  isLiked: post.liked,
+                                  likeBuilder: (bool isLiked) {
+                                    return Icon(
+                                      Icons.lightbulb,
+                                      color: isLiked
+                                          ? Colors.yellow
+                                          : Colors.white,
+                                    );
+                                  },
+                                  onTap: (isLiked) {
+                                    return post.creatorId == widget.user.userId ? _onLikeOwnButtonPressed() : _onLikeButton(
+                                        isLiked, index, pageNumber);
+                                  },
+                                  likeCount: post.likeNumber,
+                                ),
+                                Row(
+                                  children: [
+                                    Text(
+                                      post.commentNumber.toString(),
+                                      style: TextStyle(
+                                          color: Colors.white),
                                     ),
-                                    Container(
-                                      height: 40,
-                                      child: Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          LikeButton(
-                                            size: 20.0,
-                                            circleColor: CircleColor(
-                                                start: Colors.yellow.shade200,
-                                                end: Colors.yellow),
-                                            bubblesColor: BubblesColor(
-                                              dotPrimaryColor:
-                                                  Colors.yellow.shade200,
-                                              dotSecondaryColor: Colors.yellow,
-                                            ),
-                                            isLiked: post.liked,
-                                            likeBuilder: (bool isLiked) {
-                                              return Icon(
-                                                Icons.lightbulb,
-                                                color: isLiked
-                                                    ? Colors.yellow
-                                                    : Colors.white,
-                                              );
-                                            },
-                                            onTap: (isLiked) {
-                                              return _onLikeButton(
-                                                  isLiked, index, pageNumber);
-                                            },
-                                            likeCount: post.likeNumber,
-                                          ),
-                                          Row(
-                                            children: [
-                                              Text(
-                                                post.commentNumber.toString(),
-                                                style: TextStyle(
-                                                    color: Colors.white),
-                                              ),
-                                              IconButton(
-                                                icon: Icon(Icons.comment),
-                                                color: Colors.white,
-                                                onPressed: () {
-                                                  Navigator.of(context).push(
-                                                      MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              CommentsWidget(
-                                                                session: widget
-                                                                    .session,
-                                                                postId:
-                                                                    post.postId,
-                                                                user:
-                                                                    widget.user,
-                                                                languages:
-                                                                    languages,
-                                                              )));
-                                                },
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    )
+                                    IconButton(
+                                      icon: Icon(Icons.comment),
+                                      color: Colors.white,
+                                      onPressed: () {
+                                        Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    CommentsWidget(
+                                                      session: widget
+                                                          .session,
+                                                      postId:
+                                                      post.postId,
+                                                      user:
+                                                      widget.user,
+                                                      languages:
+                                                      languages,
+                                                    )));
+                                      },
+                                    ),
                                   ],
                                 ),
-                              ),
-                              onTap: () {
-                                _onPostTap(index, pageNumber);
-                              },
-                            );
-                          })
-                      : Container(
-                          child: Center(
-                            child: Text(
-                              languages.noPostInYourAreaLabel,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  fontSize: 20,
-                                  color: Colors.yellow,
-                                  fontWeight: FontWeight.bold),
+                              ],
                             ),
-                          ),
-                        ),
-                ),
-                loading
-                    ? Align(
-                        alignment: Alignment.bottomCenter,
-                        child: Container(
-                          width: 80,
-                          height: 80,
-                          child: Center(
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      )
-                    : Container(),
-              ],
-            )
-          : Container(
+                          )
+                        ],
+                      ),
+                    ),
+                    onTap: () {
+                      _onPostTap(index, pageNumber);
+                    },
+                  );
+                })
+                : Container(
               child: Center(
-                child: CircularProgressIndicator(
-                  color: Colors.yellow,
+                child: Text(
+                  languages.noPostInYourAreaLabel,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.yellow,
+                      fontWeight: FontWeight.bold),
                 ),
               ),
             ),
+          ),
+          loading
+              ? Align(
+            alignment: Alignment.bottomCenter,
+            child: Container(
+              width: 80,
+              height: 80,
+              child: Center(
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          )
+              : Container(),
+        ],
+      )
+          : Container(
+        child: Center(
+          child: CircularProgressIndicator(
+            color: Colors.yellow,
+          ),
+        ),
+      ),
     );
   }
 
@@ -750,7 +759,7 @@ class _PostsWidgetState extends State<PostsWidget> {
       if (response.statusCode == 200) {
         setState(() {
           Company company =
-              Company.fromJson(json.decode(utf8.decode(response.bodyBytes)));
+          Company.fromJson(json.decode(utf8.decode(response.bodyBytes)));
           showDialog(
               context: context,
               useRootNavigator: false,
@@ -816,7 +825,10 @@ class _PostsWidgetState extends State<PostsWidget> {
     }
     dynamic response = await widget.session.post(
         "/api/posts/" +
-            actualPosts.elementAt(index).postId.toString() +
+            actualPosts
+                .elementAt(index)
+                .postId
+                .toString() +
             "/like",
         new Map<String, dynamic>());
     if (response.statusCode == 200) {
@@ -844,24 +856,26 @@ class _PostsWidgetState extends State<PostsWidget> {
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => SinglePostWidget(
+          builder: (context) =>
+              SinglePostWidget(
                 post: actualPosts.elementAt(index),
                 session: widget.session,
                 user: widget.user,
                 languages: languages,
               )),
-    ).whenComplete(() => {
-          widget.session
-              .get('/api/posts/' + actualPosts[index].postId.toString())
-              .then((response) {
-            if (response.statusCode == 200) {
-              setState(() {
-                actualPosts[index] =
-                    Post.fromJson(json.decode(utf8.decode(response.bodyBytes)));
-              });
-            }
-          })
-        });
+    ).whenComplete(() =>
+    {
+      widget.session
+          .get('/api/posts/' + actualPosts[index].postId.toString())
+          .then((response) {
+        if (response.statusCode == 200) {
+          setState(() {
+            actualPosts[index] =
+                Post.fromJson(json.decode(utf8.decode(response.bodyBytes)));
+          });
+        }
+      })
+    });
   }
 
   void refresh() {
@@ -871,21 +885,21 @@ class _PostsWidgetState extends State<PostsWidget> {
   void _loadData() {
     _newScrollController.addListener(() {
       if (_newScrollController.position.pixels >=
-              _newScrollController.position.maxScrollExtent &&
+          _newScrollController.position.maxScrollExtent &&
           !loading) {
         _loadNew(1);
       }
     });
     _bestScrollController.addListener(() {
       if (_bestScrollController.position.pixels >=
-              _bestScrollController.position.maxScrollExtent &&
+          _bestScrollController.position.maxScrollExtent &&
           !loading) {
         _loadNew(2);
       }
     });
     _ownScrollController.addListener(() {
       if (_ownScrollController.position.pixels >=
-              _ownScrollController.position.maxScrollExtent &&
+          _ownScrollController.position.maxScrollExtent &&
           !loading) {
         _loadNew(3);
       }
@@ -893,7 +907,9 @@ class _PostsWidgetState extends State<PostsWidget> {
     CountryCodes.init().then((success) {
       if (success) {
         Locale? deviceLocale = CountryCodes.getDeviceLocale();
-        country = CountryCodes.detailsForLocale(deviceLocale).name;
+        country = CountryCodes
+            .detailsForLocale(deviceLocale)
+            .name;
       }
       Map<String, dynamic> body = {
         'countryCode': widget.user.setByLocale
@@ -904,7 +920,7 @@ class _PostsWidgetState extends State<PostsWidget> {
         if (response.statusCode == 200) {
           setState(() {
             Map<String, dynamic> body =
-                json.decode(utf8.decode(response.bodyBytes));
+            json.decode(utf8.decode(response.bodyBytes));
 
             bestPosts = List<Post>.from(
                 body['bestPosts'].map((model) => Post.fromJson(model)));
@@ -932,15 +948,18 @@ class _PostsWidgetState extends State<PostsWidget> {
   void _onSearchButtonPressed() {
     Navigator.of(context)
         .push(MaterialPageRoute(
-            builder: (context) => FilteredPostsWidget(
-                  session: widget.session,
-                  pattern: _searchFieldController.text,
-                  user: widget.user,
-                  languages: languages,
-                )))
+        builder: (context) =>
+            FilteredPostsWidget(
+              session: widget.session,
+              pattern: _searchFieldController.text,
+              user: widget.user,
+              languages: languages,
+            )))
         .whenComplete(
-            () => Navigator.of(context).pushReplacement(MaterialPageRoute(
-                builder: (context) => PostsWidget(
+            () =>
+            Navigator.of(context).pushReplacement(MaterialPageRoute(
+                builder: (context) =>
+                    PostsWidget(
                       session: widget.session,
                       user: widget.user,
                       initPage: 1,
@@ -955,84 +974,85 @@ class _PostsWidgetState extends State<PostsWidget> {
           return StatefulBuilder(builder: (context, setState) {
             return innerLoading
                 ? Container(
+              child: Center(
+                child: CircularProgressIndicator(
+                  color: Colors.yellow,
+                ),
+              ),
+            )
+                : AlertDialog(
+              backgroundColor: Colors.yellow,
+              title: Text(
+                languages.thisIsTheContactEmailLabel,
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                    color: Colors.black),
+              ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
                     child: Center(
-                      child: CircularProgressIndicator(
-                        color: Colors.yellow,
+                      child: Text(
+                        post.creatorEmail,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                            color: Colors.black),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Container(
+                    color: Colors.black,
+                    padding: EdgeInsets.all(2),
+                    child: Center(
+                      child: Container(
+                        padding: EdgeInsets.only(left: 20.0),
+                        color: Colors.yellow.withOpacity(0.7),
+                        child: TextField(
+                          style: TextStyle(color: Colors.black),
+                          controller: _couponCodeController,
+                          cursorColor: Colors.black,
+                          decoration: InputDecoration(
+                            hintText: languages.couponCodeLabel,
+                            hintStyle: TextStyle(
+                                color: Colors.black.withOpacity(0.5)),
+                          ),
+                        ),
                       ),
                     ),
                   )
-                : AlertDialog(
-                    backgroundColor: Colors.yellow,
-                    title: Text(
-                      languages.thisIsTheContactEmailLabel,
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                          color: Colors.black),
-                    ),
-                    content: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                          child: Center(
-                            child: Text(
-                              post.creatorEmail,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20,
-                                  color: Colors.black),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Container(
-                          color: Colors.black,
-                          padding: EdgeInsets.all(2),
-                          child: Center(
-                            child: Container(
-                              padding: EdgeInsets.only(left: 20.0),
-                              color: Colors.yellow.withOpacity(0.7),
-                              child: TextField(
-                                style: TextStyle(color: Colors.black),
-                                controller: _couponCodeController,
-                                cursorColor: Colors.black,
-                                decoration: InputDecoration(
-                                  hintText: languages.couponCodeLabel,
-                                  hintStyle: TextStyle(
-                                      color: Colors.black.withOpacity(0.5)),
-                                ),
-                              ),
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                    actions: <Widget>[
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: Text(
-                          languages.cancelLabel,
-                          style: TextStyle(color: Colors.black),
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          _onSendCouponEmailTap(post.postId, context);
-                          setState((){
-                            innerLoading = true;
-                          });
-                        },
-                        child: Text(
-                          languages.sendLabel,
-                          style: TextStyle(color: Colors.black),
-                        ),
-                      ),
-                    ],
-                  );
+                ],
+              ),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    _couponCodeController.clear();
+                  },
+                  child: Text(
+                    languages.cancelLabel,
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {
+                    _onSendCouponEmailTap(post.postId, context);
+                    setState(() {
+                      innerLoading = true;
+                    });
+                  },
+                  child: Text(
+                    languages.sendLabel,
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ),
+              ],
+            );
           });
         });
   }
@@ -1054,12 +1074,13 @@ class _PostsWidgetState extends State<PostsWidget> {
       widget.session
           .postJson(
         '/api/posts/${postId.toString()}/sendCouponToCreator',
-        jsonEncode(body),
+        body,
       )
           .then((response) {
         innerLoading = false;
         if (response.statusCode == 200) {
           Navigator.of(context).pop();
+          _couponCodeController.clear();
           Fluttertoast.showToast(
               msg: languages.successfulCouponSendMessage,
               toastLength: Toast.LENGTH_LONG,
@@ -1080,5 +1101,155 @@ class _PostsWidgetState extends State<PostsWidget> {
         }
       });
     }
+  }
+
+  void onReportTap(Post post) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return StatefulBuilder(builder: (context, setState) {
+            return innerLoading
+                ? Container(
+              child: Center(
+                child: CircularProgressIndicator(
+                  color: Colors.yellow,
+                ),
+              ),
+            )
+                : AlertDialog(
+              backgroundColor: Colors.yellow,
+              title: Text(
+                languages.reportUserAndPostTitleLabel,
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                    color: Colors.black),
+              ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    color: Colors.black,
+                    padding: EdgeInsets.all(2),
+                    child: Center(
+                      child: Container(
+                        padding: EdgeInsets.only(left: 20.0),
+                        color: Colors.yellow.withOpacity(0.7),
+                        child: TextField(
+                          style: TextStyle(color: Colors.black),
+                          maxLength: 256,
+                          controller: _reportReasonTextFieldController,
+                          cursorColor: Colors.black,
+                          decoration: InputDecoration(
+                            hintText: languages.reportReasonHintLabel,
+                            hintStyle: TextStyle(
+                                color: Colors.black.withOpacity(0.5)),
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    _reportReasonTextFieldController.clear();
+                  },
+                  child: Text(
+                    languages.cancelLabel,
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {
+                    _onSendReportTap(post.postId, context, setState);
+                    setState(() {
+                      innerLoading = true;
+                    });
+                  },
+                  child: Text(
+                    languages.sendLabel,
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ),
+              ],
+            );
+          });
+        });
+  }
+
+  void _onSendReportTap(int postId, context, setState) {
+    dynamic data = <String, dynamic>{
+      'reason': _reportReasonTextFieldController.text,
+    };
+    widget.session.postJson('/api/posts/$postId/report', data).then((
+        response) {
+      if (response.statusCode == 200) {
+        Navigator.of(context).pop();
+        _reportReasonTextFieldController.clear();
+        Fluttertoast.showToast(
+            msg: languages.successfulReportMessage,
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.green,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      }
+      else if (response.statusCode == 500) {
+        if (response.body != null &&
+            json.decode(response.body)['message'] != null &&
+            json.decode(response.body)['message'] ==
+                'Post is already reported!') {
+          Fluttertoast.showToast(
+              msg: languages.alreadyReportedPostMessage,
+              toastLength: Toast.LENGTH_LONG,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.red,
+              textColor: Colors.white,
+              fontSize: 16.0);
+        } else {
+          Fluttertoast.showToast(
+              msg: languages.globalErrorMessage,
+              toastLength: Toast.LENGTH_LONG,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.red,
+              textColor: Colors.white,
+              fontSize: 16.0);
+        }
+        setState((){
+          innerLoading = false;
+        });
+      }
+      else {
+        Fluttertoast.showToast(
+            msg: languages.globalServerErrorMessage,
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+        setState((){
+          innerLoading = false;
+        });
+      }
+    });
+  }
+
+  Future<bool> _onLikeOwnButtonPressed(){
+    Fluttertoast.showToast(
+        msg: languages.likeOwnPostWarningMessage,
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0);
+    return Future.value(false);
   }
 }

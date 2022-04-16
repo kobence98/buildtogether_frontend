@@ -33,6 +33,9 @@ class _CommentsWidgetState extends State<CommentsWidget> {
   late bool loading;
   late Languages languages;
 
+  bool innerLoading = false;
+  final TextEditingController _reportReasonTextFieldController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -89,7 +92,7 @@ class _CommentsWidgetState extends State<CommentsWidget> {
                     child: ListView.separated(
                       padding: EdgeInsets.only(bottom: 10),
                       separatorBuilder: (context, index) => Divider(
-                        height: 1,
+                        thickness: 1,
                         color: Colors.white,
                       ),
                       itemCount: comments.length,
@@ -99,84 +102,77 @@ class _CommentsWidgetState extends State<CommentsWidget> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             ListTile(
-                              leading: Container(
-                                padding: EdgeInsets.all(3),
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    border: Border.all(
-                                      color: Colors.black,
-                                    ),
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(20))),
-                                child: Text(
-                                  comment.userName,
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold),
+                                leading: Container(
+                                  padding: EdgeInsets.all(3),
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      border: Border.all(
+                                        color: Colors.black,
+                                      ),
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(20))),
+                                  child: Text(
+                                    comment.userName,
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold),
+                                  ),
                                 ),
-                              ),
-                              title: Text(
-                                comment.text,
-                                style: TextStyle(color: Colors.white),
-                              ),
-                              trailing: comment.userId == widget.user.userId
-                                  ? Container(
-                                      child: PopupMenuButton(
-                                          child: Icon(
-                                            Icons.more_horiz,
-                                            color: Colors.white,
-                                          ),
-                                          itemBuilder: (context) {
-                                            return List.generate(1, (index) {
-                                              return PopupMenuItem(
-                                                child:
-                                                    Text(languages.deleteLabel),
-                                                value: 0,
-                                              );
-                                            });
-                                          },
-                                          onSelected: (index) {
-                                            widget.session
-                                                .delete('/api/comments/' +
-                                                    comment.commentId
-                                                        .toString())
-                                                .then((response) {
-                                              if (response.statusCode == 200) {
-                                                Fluttertoast.showToast(
-                                                    msg: languages
-                                                        .successfulDeleteMessage,
-                                                    toastLength:
-                                                        Toast.LENGTH_LONG,
-                                                    gravity:
-                                                        ToastGravity.CENTER,
-                                                    timeInSecForIosWeb: 1,
-                                                    backgroundColor:
-                                                        Colors.green,
-                                                    textColor: Colors.white,
-                                                    fontSize: 16.0);
-                                                setState(() {
-                                                  comments.remove(comment);
-                                                });
-                                              } else {
-                                                Fluttertoast.showToast(
-                                                    msg: languages
-                                                        .globalServerErrorMessage,
-                                                    toastLength:
-                                                        Toast.LENGTH_LONG,
-                                                    gravity:
-                                                        ToastGravity.CENTER,
-                                                    timeInSecForIosWeb: 1,
-                                                    backgroundColor: Colors.red,
-                                                    textColor: Colors.white,
-                                                    fontSize: 16.0);
-                                              }
-                                            });
-                                          }),
-                                    )
-                                  : Container(
-                                      width: 1,
-                                    ),
-                            ),
+                                title: Text(
+                                  comment.text,
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                trailing: Container(
+                                  child: PopupMenuButton(
+                                      child: Icon(
+                                        Icons.more_horiz,
+                                        color: Colors.white,
+                                      ),
+                                      itemBuilder: (context) {
+                                        return List.generate(1, (index) {
+                                          return PopupMenuItem(
+                                            child: Text(comment.userId == widget.user.userId ? languages.deleteLabel : languages.reportLabel),
+                                            value: 0,
+                                          );
+                                        });
+                                      },
+                                      onSelected: (index) {
+                                        if(comment.userId == widget.user.userId){
+                                          widget.session
+                                              .delete('/api/comments/' +
+                                              comment.commentId.toString())
+                                              .then((response) {
+                                            if (response.statusCode == 200) {
+                                              Fluttertoast.showToast(
+                                                  msg: languages
+                                                      .successfulDeleteMessage,
+                                                  toastLength: Toast.LENGTH_LONG,
+                                                  gravity: ToastGravity.CENTER,
+                                                  timeInSecForIosWeb: 1,
+                                                  backgroundColor: Colors.green,
+                                                  textColor: Colors.white,
+                                                  fontSize: 16.0);
+                                              setState(() {
+                                                comments.remove(comment);
+                                              });
+                                            } else {
+                                              Fluttertoast.showToast(
+                                                  msg: languages
+                                                      .globalServerErrorMessage,
+                                                  toastLength: Toast.LENGTH_LONG,
+                                                  gravity: ToastGravity.CENTER,
+                                                  timeInSecForIosWeb: 1,
+                                                  backgroundColor: Colors.red,
+                                                  textColor: Colors.white,
+                                                  fontSize: 16.0);
+                                            }
+                                          });
+                                        }
+                                        else{
+                                          onReportTap(comment);
+                                        }
+                                      }),
+                                )),
                             Container(
                               height: 40,
                               margin: EdgeInsets.only(left: 5),
@@ -204,12 +200,13 @@ class _CommentsWidgetState extends State<CommentsWidget> {
                                       );
                                     },
                                     onTap: (isLiked) {
-                                      return _onLikeButton(isLiked, comment);
+                                      return comment.userId == widget.user.userId ? _onLikeOwnButtonPressed() : _onLikeButton(isLiked, comment);
                                     },
                                     likeCount: comment.likeNumber,
                                   ),
                                   Text(
-                                    DateFormatter.formatDate(comment.createdDate, languages),
+                                    DateFormatter.formatDate(
+                                        comment.createdDate, languages),
                                     style: TextStyle(color: Colors.white),
                                   ),
                                 ],
@@ -287,6 +284,7 @@ class _CommentsWidgetState extends State<CommentsWidget> {
                         child: TextButton(
                           onPressed: () {
                             Navigator.of(context).pop();
+                            _commentController.clear();
                           },
                           child: Text(
                             languages.closeLabel,
@@ -334,7 +332,7 @@ class _CommentsWidgetState extends State<CommentsWidget> {
         widget.session
             .postJson(
           '/api/posts/' + widget.postId.toString() + '/comments',
-          jsonEncode(body),
+          body,
         )
             .then((response) {
           if (response.statusCode == 200) {
@@ -344,6 +342,7 @@ class _CommentsWidgetState extends State<CommentsWidget> {
             setState(() {
               comments.add(comment);
               loading = false;
+              _commentController.clear();
               Fluttertoast.showToast(
                   msg: languages.commentAddedMessage,
                   toastLength: Toast.LENGTH_LONG,
@@ -398,5 +397,153 @@ class _CommentsWidgetState extends State<CommentsWidget> {
     } else {
       return isLiked;
     }
+  }
+
+
+  void onReportTap(Comment comment) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return StatefulBuilder(builder: (context, setState) {
+            return innerLoading
+                ? Container(
+              child: Center(
+                child: CircularProgressIndicator(
+                  color: Colors.yellow,
+                ),
+              ),
+            )
+                : AlertDialog(
+              backgroundColor: Colors.yellow,
+              title: Text(
+                languages.reportUserAndCommentTitleLabel,
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                    color: Colors.black),
+              ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    color: Colors.black,
+                    padding: EdgeInsets.all(2),
+                    child: Center(
+                      child: Container(
+                        padding: EdgeInsets.only(left: 20.0),
+                        color: Colors.yellow.withOpacity(0.7),
+                        child: TextField(
+                          style: TextStyle(color: Colors.black),
+                          controller: _reportReasonTextFieldController,
+                          cursorColor: Colors.black,
+                          decoration: InputDecoration(
+                            hintText: languages.reportReasonHintLabel,
+                            hintStyle: TextStyle(
+                                color: Colors.black.withOpacity(0.5)),
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text(
+                    languages.cancelLabel,
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {
+                    _onSendReportTap(comment.commentId, context, setState);
+                    setState(() {
+                      innerLoading = true;
+                    });
+                  },
+                  child: Text(
+                    languages.sendLabel,
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ),
+              ],
+            );
+          });
+        });
+  }
+
+  void _onSendReportTap(int commentId, context, setState) {
+    dynamic data = <String, dynamic>{
+      'reason': _reportReasonTextFieldController.text,
+    };
+    widget.session.postJson('/api/comments/$commentId/report', data).then((
+        response) {
+      if (response.statusCode == 200) {
+        Navigator.of(context).pop();
+        Fluttertoast.showToast(
+            msg: languages.successfulReportMessage,
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.green,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      }
+      else if (response.statusCode == 500) {
+        if (response.body != null &&
+            json.decode(response.body)['message'] != null &&
+            json.decode(response.body)['message'] ==
+                'Comment is already reported!') {
+          Fluttertoast.showToast(
+              msg: languages.alreadyReportedCommentMessage,
+              toastLength: Toast.LENGTH_LONG,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.red,
+              textColor: Colors.white,
+              fontSize: 16.0);
+        } else {
+          Fluttertoast.showToast(
+              msg: languages.globalErrorMessage,
+              toastLength: Toast.LENGTH_LONG,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.red,
+              textColor: Colors.white,
+              fontSize: 16.0);
+        }
+        setState((){
+          innerLoading = false;
+        });
+      }
+      else {
+        Fluttertoast.showToast(
+            msg: languages.globalServerErrorMessage,
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+        setState((){
+          innerLoading = false;
+        });
+      }
+    });
+  }
+
+  Future<bool> _onLikeOwnButtonPressed(){
+    Fluttertoast.showToast(
+        msg: languages.likeOwnCommentWarningMessage,
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0);
+    return Future.value(false);
   }
 }

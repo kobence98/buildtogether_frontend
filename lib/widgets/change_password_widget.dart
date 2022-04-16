@@ -135,7 +135,7 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
         widget.session
             .postJson(
           '/api/users/changePassword',
-          jsonEncode(body),
+          body,
         )
             .then((response) {
           if (response.statusCode == 200) {

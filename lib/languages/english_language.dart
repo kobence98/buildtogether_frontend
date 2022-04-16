@@ -28,6 +28,12 @@ class LanguageEn extends Languages {
   @override
   String get fillAllFieldsWarningMessage => 'Fill all of the fields!';
 
+  @override
+  String get likeOwnPostWarningMessage => 'You can\'t like your own post!';
+
+  @override
+  String get likeOwnCommentWarningMessage => 'You can\'t like your own comment!';
+
   //MAIN
   @override
   String get subscribeWarningMessage =>
@@ -204,6 +210,12 @@ class LanguageEn extends Languages {
   @override
   String get emptyCommentWarningMessage => 'Don\'t let the comment empty!';
 
+  @override
+  String get reportUserAndCommentTitleLabel => 'To report this comment and the creator give us the reason please:';
+
+  @override
+  String get alreadyReportedCommentMessage => 'You already reported this comment!';
+
   //CREATE POST WIDGET
 
   @override
@@ -299,6 +311,21 @@ class LanguageEn extends Languages {
 
   @override
   String get successfulCouponSendMessage => 'Successful coupon sending!';
+
+  @override
+  String get reportLabel => 'Report';
+
+  @override
+  String get reportUserAndPostTitleLabel => 'To report this post and the creator give us the reason please:';
+
+  @override
+  String get reportReasonHintLabel => 'Reason';
+
+  @override
+  String get successfulReportMessage => 'Successful report!';
+
+  @override
+  String get alreadyReportedPostMessage => 'You already reported this post!';
 
   //SETTINGS WIDGET
 
