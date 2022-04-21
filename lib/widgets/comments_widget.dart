@@ -451,6 +451,7 @@ class _CommentsWidgetState extends State<CommentsWidget> {
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).pop();
+                    _reportReasonTextFieldController.clear();
                   },
                   child: Text(
                     languages.cancelLabel,
@@ -483,6 +484,8 @@ class _CommentsWidgetState extends State<CommentsWidget> {
         response) {
       if (response.statusCode == 200) {
         Navigator.of(context).pop();
+        _reportReasonTextFieldController.clear();
+        innerLoading = false;
         Fluttertoast.showToast(
             msg: languages.successfulReportMessage,
             toastLength: Toast.LENGTH_LONG,
