@@ -1041,7 +1041,7 @@ class _PostsWidgetState extends State<PostsWidget> {
                 ),
                 TextButton(
                   onPressed: () {
-                    _onSendCouponEmailTap(post.postId, context);
+                    _onSendCouponEmailTap(post.postId, context, setState);
                     setState(() {
                       innerLoading = true;
                     });
@@ -1057,7 +1057,7 @@ class _PostsWidgetState extends State<PostsWidget> {
         });
   }
 
-  void _onSendCouponEmailTap(int postId, context) {
+  void _onSendCouponEmailTap(int postId, context, setOutterState) {
     if (_couponCodeController.text.isEmpty) {
       Fluttertoast.showToast(
           msg: languages.fillAllFieldsWarningMessage,
@@ -1077,7 +1077,6 @@ class _PostsWidgetState extends State<PostsWidget> {
         body,
       )
           .then((response) {
-        innerLoading = false;
         if (response.statusCode == 200) {
           Navigator.of(context).pop();
           _couponCodeController.clear();
@@ -1099,6 +1098,9 @@ class _PostsWidgetState extends State<PostsWidget> {
               textColor: Colors.white,
               fontSize: 16.0);
         }
+        setOutterState(() {
+          innerLoading = false;
+        });
       });
     }
   }

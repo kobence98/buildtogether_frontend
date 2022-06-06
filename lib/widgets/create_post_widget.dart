@@ -72,27 +72,24 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
               initialIndex: 0,
               length: 2,
               child: Scaffold(
-                appBar: AppBar(
-                  backgroundColor: Colors.black,
-                  automaticallyImplyLeading: false,
-                  bottom: TabBar(
-                      labelColor: Colors.yellow,
-                      indicatorColor: Colors.yellow,
-                      tabs: [
-                        Tab(
-                          child: Text(
-                            languages.simplePostLabel,
-                            style: TextStyle(color: Colors.yellow),
-                          ),
+                backgroundColor: Colors.black,
+                appBar: TabBar(
+                    labelColor: Colors.yellow,
+                    indicatorColor: Colors.yellow,
+                    tabs: [
+                      Tab(
+                        child: Text(
+                          languages.simplePostLabel,
+                          style: TextStyle(color: Colors.yellow),
                         ),
-                        Tab(
-                          child: Text(
-                            languages.pollPostLabel,
-                            style: TextStyle(color: Colors.yellow),
-                          ),
+                      ),
+                      Tab(
+                        child: Text(
+                          languages.pollPostLabel,
+                          style: TextStyle(color: Colors.yellow),
                         ),
-                      ]),
-                ),
+                      ),
+                    ]),
                 body: TabBarView(
                     children: [_simplePostWidget(), _pollPostWidget()]),
               ),
@@ -179,7 +176,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
   Widget _simplePostWidget() {
     return Container(
       color: Colors.black,
-      child: Column(
+      child: ListView(
         children: [
           SizedBox(
             height: 30,
