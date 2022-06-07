@@ -78,166 +78,168 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       body: Container(
         color: Colors.black,
-        child: loading
-            ? Container(
-                child: Center(
-                  child: CircularProgressIndicator(
-                    color: Colors.yellow,
-                  ),
-                ),
-              )
-            : Center(
-                child: Container(
-                  padding:
-                      EdgeInsets.all(MediaQuery.of(context).size.height * 0.02),
-                  width: 600,
-                  height: 1000,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Center(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            InkWell(
-                              child: CircleAvatar(
-                                backgroundColor: Colors.white,
-                                radius: 30,
-                                foregroundImage: AssetImage(
-                                    'icons/flags/png/gb.png',
-                                    package: 'country_icons'),
-                              ),
-                              onTap: () {
-                                setState(() {
-                                  languages = LanguageEn();
-                                  languagesSqfLiteHandler.insertLanguageCode(
-                                      LanguageCode(code: 'en', id: 0));
-                                });
-                              },
-                            ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            InkWell(
-                              child: CircleAvatar(
-                                backgroundColor: Colors.white,
-                                radius: 30,
-                                foregroundImage: AssetImage(
-                                    'icons/flags/png/hu.png',
-                                    package: 'country_icons'),
-                              ),
-                              onTap: () {
-                                setState(() {
-                                  languages = LanguageHu();
-                                  languagesSqfLiteHandler.insertLanguageCode(
-                                      LanguageCode(code: 'hu', id: 0));
-                                });
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Center(
-                        child: Container(
-                          padding: EdgeInsets.only(left: 20.0),
-                          color: Colors.yellow.withOpacity(0.7),
-                          child: TextField(
-                            style: TextStyle(color: Colors.black),
-                            controller: _emailController,
-                            cursorColor: Colors.black,
-                            keyboardType: TextInputType.emailAddress,
-                            decoration: InputDecoration(
-                              hintText: languages.emailLabel,
-                              hintStyle: TextStyle(
-                                  color: Colors.black.withOpacity(0.5)),
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 5),
-                      Center(
-                        child: Container(
-                          padding: EdgeInsets.only(left: 20.0),
-                          color: Colors.yellow.withOpacity(0.7),
-                          child: TextField(
-                            enableSuggestions: false,
-                            autocorrect: false,
-                            obscureText: true,
-                            style: TextStyle(color: Colors.black),
-                            controller: _passwordController,
-                            cursorColor: Colors.black,
-                            decoration: InputDecoration(
-                              hintText: languages.passwordLabel,
-                              hintStyle: TextStyle(
-                                  color: Colors.black.withOpacity(0.5)),
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 10),
-                      Center(
-                        child: ButtonTheme(
-                          height: 50,
-                          minWidth: 300,
-                          child: ElevatedButton(
-                            style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all<Color>(
-                                  Colors.yellow),
-                            ),
-                            onPressed: onLoginPressed,
-                            child: Text(
-                              languages.loginLabel,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20,
-                                  color: Colors.black),
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 10),
-                      Center(
-                        child: ButtonTheme(
-                          height: 50,
-                          minWidth: 300,
-                          child: ElevatedButton(
-                            onPressed: onRegistrationPressed,
-                            style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all<Color>(
-                                  Colors.yellow),
-                            ),
-                            child: Text(
-                              languages.registrationLabel,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20,
-                                  color: Colors.black),
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 5),
-                      Center(
-                        child: Container(
-                          child: InkWell(
-                            child: Text(
-                              languages.forgottenPasswordLabel,
-                              style: TextStyle(
-                                  fontStyle: FontStyle.italic,
-                                  fontSize: 15,
-                                  color: Colors.yellow),
-                            ),
-                            onTap: _onForgottenPasswordTap,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+        child: SafeArea(
+          child: loading
+              ? Container(
+            child: Center(
+              child: CircularProgressIndicator(
+                color: Colors.yellow,
               ),
+            ),
+          )
+              : Center(
+            child: Container(
+              padding:
+              EdgeInsets.all(MediaQuery.of(context).size.height * 0.02),
+              width: 600,
+              height: 1000,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        InkWell(
+                          child: CircleAvatar(
+                            backgroundColor: Colors.white,
+                            radius: 30,
+                            foregroundImage: AssetImage(
+                                'icons/flags/png/gb.png',
+                                package: 'country_icons'),
+                          ),
+                          onTap: () {
+                            setState(() {
+                              languages = LanguageEn();
+                              languagesSqfLiteHandler.insertLanguageCode(
+                                  LanguageCode(code: 'en', id: 0));
+                            });
+                          },
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        InkWell(
+                          child: CircleAvatar(
+                            backgroundColor: Colors.white,
+                            radius: 30,
+                            foregroundImage: AssetImage(
+                                'icons/flags/png/hu.png',
+                                package: 'country_icons'),
+                          ),
+                          onTap: () {
+                            setState(() {
+                              languages = LanguageHu();
+                              languagesSqfLiteHandler.insertLanguageCode(
+                                  LanguageCode(code: 'hu', id: 0));
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Center(
+                    child: Container(
+                      padding: EdgeInsets.only(left: 20.0),
+                      color: Colors.yellow.withOpacity(0.7),
+                      child: TextField(
+                        style: TextStyle(color: Colors.black),
+                        controller: _emailController,
+                        cursorColor: Colors.black,
+                        keyboardType: TextInputType.emailAddress,
+                        decoration: InputDecoration(
+                          hintText: languages.emailLabel,
+                          hintStyle: TextStyle(
+                              color: Colors.black.withOpacity(0.5)),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 5),
+                  Center(
+                    child: Container(
+                      padding: EdgeInsets.only(left: 20.0),
+                      color: Colors.yellow.withOpacity(0.7),
+                      child: TextField(
+                        enableSuggestions: false,
+                        autocorrect: false,
+                        obscureText: true,
+                        style: TextStyle(color: Colors.black),
+                        controller: _passwordController,
+                        cursorColor: Colors.black,
+                        decoration: InputDecoration(
+                          hintText: languages.passwordLabel,
+                          hintStyle: TextStyle(
+                              color: Colors.black.withOpacity(0.5)),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  Center(
+                    child: ButtonTheme(
+                      height: 50,
+                      minWidth: 300,
+                      child: ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              Colors.yellow),
+                        ),
+                        onPressed: onLoginPressed,
+                        child: Text(
+                          languages.loginLabel,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                              color: Colors.black),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  Center(
+                    child: ButtonTheme(
+                      height: 50,
+                      minWidth: 300,
+                      child: ElevatedButton(
+                        onPressed: onRegistrationPressed,
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              Colors.yellow),
+                        ),
+                        child: Text(
+                          languages.registrationLabel,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                              color: Colors.black),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 5),
+                  Center(
+                    child: Container(
+                      child: InkWell(
+                        child: Text(
+                          languages.forgottenPasswordLabel,
+                          style: TextStyle(
+                              fontStyle: FontStyle.italic,
+                              fontSize: 15,
+                              color: Colors.yellow),
+                        ),
+                        onTap: _onForgottenPasswordTap,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -319,7 +321,7 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                             )
                           : AlertDialog(
-                              backgroundColor: Colors.black,
+                        backgroundColor: Colors.grey[900],
                               title: Text(
                                 languages.confirmationWarningMessage,
                                 style: TextStyle(
@@ -914,7 +916,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   )
                 : AlertDialog(
-                    backgroundColor: Colors.black,
+              backgroundColor: Colors.grey[900],
                     title: Text(
                       languages.forgottenPasswordHintLabel,
                       style: TextStyle(

@@ -87,179 +87,181 @@ class _PostsWidgetState extends State<PostsWidget> {
     return DefaultTabController(
       initialIndex: widget.initPage,
       length: 3,
-      child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.black,
-          automaticallyImplyLeading: false,
-          title: Container(
-            height: 40,
-            padding: EdgeInsets.only(left: 5, right: 5),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border.all(
+      child: SafeArea(
+        child: Scaffold(
+          appBar: AppBar(
+            backgroundColor: Colors.black,
+            automaticallyImplyLeading: false,
+            title: Container(
+              height: 40,
+              padding: EdgeInsets.only(left: 5, right: 5),
+              decoration: BoxDecoration(
                 color: Colors.white,
+                border: Border.all(
+                  color: Colors.white,
+                ),
+                borderRadius: BorderRadius.all(
+                  Radius.circular(20),
+                ),
               ),
-              borderRadius: BorderRadius.all(
-                Radius.circular(20),
-              ),
-            ),
-            child: Row(
-              children: [
-                Flexible(
-                  child: TypeAheadField(
-                    noItemsFoundBuilder: (context) {
-                      return Container(
-                        padding: EdgeInsets.all(1),
-                        color: Colors.yellow,
-                        child: Container(
-                          color: Colors.black,
-                          child: ListTile(
-                            leading: Icon(
-                              Icons.not_interested_rounded,
-                              color: Colors.yellow,
-                            ),
-                            title: Text(
-                              languages.noItemsFoundLabel,
-                              style: TextStyle(
-                                  color: Colors.yellow,
-                                  fontStyle: FontStyle.italic,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20),
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                    textFieldConfiguration: TextFieldConfiguration(
-                      decoration: new InputDecoration.collapsed(
-                          hintText: languages.searchLabel),
-                      controller: _searchFieldController,
-                      cursorColor: Colors.black,
-                      autofocus: false,
-                      style: TextStyle(fontSize: 20),
-                      onEditingComplete: _onSearchButtonPressed,
-                    ),
-                    suggestionsCallback: (pattern) async {
-                      dynamic response = await widget.session
-                          .get("/api/searchField/" + pattern);
-                      if (response.statusCode == 200) {
-                        widget.session.updateCookie(response);
-                        Iterable l =
-                        json.decode(utf8.decode(response.bodyBytes));
-                        names = List<SearchFieldNames>.from(
-                            l.map((name) => SearchFieldNames.fromJson(name)));
-                        List<String> resultList = [];
-                        names.forEach((name) {
-                          if (name.id != null) {
-                            resultList.add(name.id.toString());
-                          } else {
-                            resultList.add(name.name);
-                          }
-                        });
-                        return resultList;
-                      }
-                      return [];
-                    },
-                    itemBuilder: (context, n) {
-                      SearchFieldNames? name;
-                      if (names
-                          .where((nm) => nm.id.toString() == n)
-                          .isNotEmpty) {
-                        name = names
-                            .where((nm) => nm.id.toString() == n)
-                            .first;
-                      }
-                      return Container(
-                        padding: EdgeInsets.all(1),
-                        color: Colors.yellow,
-                        child: Container(
-                          color: Colors.black,
-                          child: ListTile(
-                            leading: name != null
-                                ? CircleAvatar(
-                              radius: 20,
-                              backgroundImage: NetworkImage(
-                                widget.session.domainName +
-                                    "/api/images/" +
-                                    name.imageId.toString(),
-                                headers: widget.session.headers,
+              child: Row(
+                children: [
+                  Flexible(
+                    child: TypeAheadField(
+                      noItemsFoundBuilder: (context) {
+                        return Container(
+                          padding: EdgeInsets.all(1),
+                          color: Colors.yellow,
+                          child: Container(
+                            color: Colors.black,
+                            child: ListTile(
+                              leading: Icon(
+                                Icons.not_interested_rounded,
+                                color: Colors.yellow,
                               ),
-                            )
-                                : Icon(
-                              Icons.lightbulb_outline_sharp,
-                              color: Colors.yellow,
-                            ),
-                            title: Text(
-                              name == null ? n.toString() : name.name,
-                              style: TextStyle(
-                                  color: Colors.yellow,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20),
+                              title: Text(
+                                languages.noItemsFoundLabel,
+                                style: TextStyle(
+                                    color: Colors.yellow,
+                                    fontStyle: FontStyle.italic,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20),
+                              ),
                             ),
                           ),
-                        ),
-                      );
-                    },
-                    onSuggestionSelected: (n) {
-                      String name;
-                      if (names
-                          .where((nm) => nm.id.toString() == n)
-                          .isNotEmpty) {
-                        name = names
+                        );
+                      },
+                      textFieldConfiguration: TextFieldConfiguration(
+                        decoration: new InputDecoration.collapsed(
+                            hintText: languages.searchLabel),
+                        controller: _searchFieldController,
+                        cursorColor: Colors.black,
+                        autofocus: false,
+                        style: TextStyle(fontSize: 20),
+                        onEditingComplete: _onSearchButtonPressed,
+                      ),
+                      suggestionsCallback: (pattern) async {
+                        dynamic response = await widget.session
+                            .get("/api/searchField/" + pattern);
+                        if (response.statusCode == 200) {
+                          widget.session.updateCookie(response);
+                          Iterable l =
+                          json.decode(utf8.decode(response.bodyBytes));
+                          names = List<SearchFieldNames>.from(
+                              l.map((name) => SearchFieldNames.fromJson(name)));
+                          List<String> resultList = [];
+                          names.forEach((name) {
+                            if (name.id != null) {
+                              resultList.add(name.id.toString());
+                            } else {
+                              resultList.add(name.name);
+                            }
+                          });
+                          return resultList;
+                        }
+                        return [];
+                      },
+                      itemBuilder: (context, n) {
+                        SearchFieldNames? name;
+                        if (names
                             .where((nm) => nm.id.toString() == n)
-                            .first
-                            .name;
-                      } else {
-                        name = n.toString();
-                      }
-                      _searchFieldController.text = name.toString();
-                      _onSearchButtonPressed();
-                    },
-                  ),
-                  flex: 8,
-                ),
-                Flexible(
-                  child: IconButton(
-                    icon: Icon(
-                      Icons.search,
-                      color: Colors.black,
+                            .isNotEmpty) {
+                          name = names
+                              .where((nm) => nm.id.toString() == n)
+                              .first;
+                        }
+                        return Container(
+                          padding: EdgeInsets.all(1),
+                          color: Colors.yellow,
+                          child: Container(
+                            color: Colors.black,
+                            child: ListTile(
+                              leading: name != null
+                                  ? CircleAvatar(
+                                radius: 20,
+                                backgroundImage: NetworkImage(
+                                  widget.session.domainName +
+                                      "/api/images/" +
+                                      name.imageId.toString(),
+                                  headers: widget.session.headers,
+                                ),
+                              )
+                                  : Icon(
+                                Icons.lightbulb_outline_sharp,
+                                color: Colors.yellow,
+                              ),
+                              title: Text(
+                                name == null ? n.toString() : name.name,
+                                style: TextStyle(
+                                    color: Colors.yellow,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                      onSuggestionSelected: (n) {
+                        String name;
+                        if (names
+                            .where((nm) => nm.id.toString() == n)
+                            .isNotEmpty) {
+                          name = names
+                              .where((nm) => nm.id.toString() == n)
+                              .first
+                              .name;
+                        } else {
+                          name = n.toString();
+                        }
+                        _searchFieldController.text = name.toString();
+                        _onSearchButtonPressed();
+                      },
                     ),
-                    onPressed: _onSearchButtonPressed,
+                    flex: 8,
                   ),
-                  flex: 1,
-                ),
-              ],
+                  Flexible(
+                    child: IconButton(
+                      icon: Icon(
+                        Icons.search,
+                        color: Colors.black,
+                      ),
+                      onPressed: _onSearchButtonPressed,
+                    ),
+                    flex: 1,
+                  ),
+                ],
+              ),
             ),
+            bottom: TabBar(
+                labelColor: Colors.yellow,
+                indicatorColor: Colors.yellow,
+                tabs: [
+                  Tab(
+                    child: Text(
+                      languages.newLabel,
+                      style: TextStyle(color: Colors.yellow),
+                    ),
+                  ),
+                  Tab(
+                    child: Text(
+                      languages.bestLabel,
+                      style: TextStyle(color: Colors.yellow),
+                    ),
+                  ),
+                  Tab(
+                    child: Text(
+                      languages.ownLabel,
+                      style: TextStyle(color: Colors.yellow),
+                    ),
+                  ),
+                ]),
           ),
-          bottom: TabBar(
-              labelColor: Colors.yellow,
-              indicatorColor: Colors.yellow,
-              tabs: [
-                Tab(
-                  child: Text(
-                    languages.newLabel,
-                    style: TextStyle(color: Colors.yellow),
-                  ),
-                ),
-                Tab(
-                  child: Text(
-                    languages.bestLabel,
-                    style: TextStyle(color: Colors.yellow),
-                  ),
-                ),
-                Tab(
-                  child: Text(
-                    languages.ownLabel,
-                    style: TextStyle(color: Colors.yellow),
-                  ),
-                ),
-              ]),
+          body: TabBarView(children: [
+            _postsWidget(1),
+            _postsWidget(2),
+            _postsWidget(3),
+          ]),
         ),
-        body: TabBarView(children: [
-          _postsWidget(1),
-          _postsWidget(2),
-          _postsWidget(3),
-        ]),
       ),
     );
   }

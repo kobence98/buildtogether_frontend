@@ -67,34 +67,36 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
   Widget build(BuildContext context) {
     return Container(
       color: Colors.black,
-      child: company && widget.user.isCompanyActive
-          ? DefaultTabController(
-              initialIndex: 0,
-              length: 2,
-              child: Scaffold(
-                backgroundColor: Colors.black,
-                appBar: TabBar(
-                    labelColor: Colors.yellow,
-                    indicatorColor: Colors.yellow,
-                    tabs: [
-                      Tab(
-                        child: Text(
-                          languages.simplePostLabel,
-                          style: TextStyle(color: Colors.yellow),
-                        ),
-                      ),
-                      Tab(
-                        child: Text(
-                          languages.pollPostLabel,
-                          style: TextStyle(color: Colors.yellow),
-                        ),
-                      ),
-                    ]),
-                body: TabBarView(
-                    children: [_simplePostWidget(), _pollPostWidget()]),
-              ),
-            )
-          : _simplePostWidget(),
+      child: SafeArea(
+        child: company && widget.user.isCompanyActive
+            ? DefaultTabController(
+          initialIndex: 0,
+          length: 2,
+          child: Scaffold(
+            backgroundColor: Colors.black,
+            appBar: TabBar(
+                labelColor: Colors.yellow,
+                indicatorColor: Colors.yellow,
+                tabs: [
+                  Tab(
+                    child: Text(
+                      languages.simplePostLabel,
+                      style: TextStyle(color: Colors.yellow),
+                    ),
+                  ),
+                  Tab(
+                    child: Text(
+                      languages.pollPostLabel,
+                      style: TextStyle(color: Colors.yellow),
+                    ),
+                  ),
+                ]),
+            body: TabBarView(
+                children: [_simplePostWidget(), _pollPostWidget()]),
+          ),
+        )
+            : _simplePostWidget(),
+      ),
     );
   }
 

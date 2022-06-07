@@ -14,7 +14,8 @@ class ChangePasswordWidget extends StatefulWidget {
   final User user;
   final Languages languages;
 
-  const ChangePasswordWidget({required this.session, required this.user, required this.languages});
+  const ChangePasswordWidget(
+      {required this.session, required this.user, required this.languages});
 
   @override
   _ChangePasswordWidgetState createState() => _ChangePasswordWidgetState();
@@ -34,81 +35,84 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-      ),
-      body: Container(
-        color: Colors.black,
-        child: Center(
-          child: Container(
-            padding: EdgeInsets.all(MediaQuery.of(context).size.height * 0.02),
-            width: 600,
-            height: 1000,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Center(
-                  child: Container(
-                    padding: EdgeInsets.only(left: 20.0),
-                    color: Colors.yellow.withOpacity(0.7),
-                    child: TextField(
-                      style: TextStyle(color: Colors.black),
-                      controller: _passController,
-                      cursorColor: Colors.black,
-                      enableSuggestions: false,
-                      autocorrect: false,
-                      obscureText: true,
-                      decoration: InputDecoration(
-                        hintText: languages.passwordLabel,
-                        hintStyle:
-                            TextStyle(color: Colors.black.withOpacity(0.5)),
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.black,
+        ),
+        body: Container(
+          color: Colors.black,
+          child: Center(
+            child: Container(
+              padding:
+                  EdgeInsets.all(MediaQuery.of(context).size.height * 0.02),
+              width: 600,
+              height: 1000,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Center(
+                    child: Container(
+                      padding: EdgeInsets.only(left: 20.0),
+                      color: Colors.yellow.withOpacity(0.7),
+                      child: TextField(
+                        style: TextStyle(color: Colors.black),
+                        controller: _passController,
+                        cursorColor: Colors.black,
+                        enableSuggestions: false,
+                        autocorrect: false,
+                        obscureText: true,
+                        decoration: InputDecoration(
+                          hintText: languages.passwordLabel,
+                          hintStyle:
+                              TextStyle(color: Colors.black.withOpacity(0.5)),
+                        ),
                       ),
                     ),
                   ),
-                ),
-                SizedBox(height: 10),
-                Center(
-                  child: Container(
-                    padding: EdgeInsets.only(left: 20.0),
-                    color: Colors.yellow.withOpacity(0.7),
-                    child: TextField(
-                      style: TextStyle(color: Colors.black),
-                      controller: _passAgainController,
-                      cursorColor: Colors.black,
-                      enableSuggestions: false,
-                      autocorrect: false,
-                      obscureText: true,
-                      decoration: InputDecoration(
-                        hintText: languages.passAgainLabel,
-                        hintStyle:
-                            TextStyle(color: Colors.black.withOpacity(0.5)),
+                  SizedBox(height: 10),
+                  Center(
+                    child: Container(
+                      padding: EdgeInsets.only(left: 20.0),
+                      color: Colors.yellow.withOpacity(0.7),
+                      child: TextField(
+                        style: TextStyle(color: Colors.black),
+                        controller: _passAgainController,
+                        cursorColor: Colors.black,
+                        enableSuggestions: false,
+                        autocorrect: false,
+                        obscureText: true,
+                        decoration: InputDecoration(
+                          hintText: languages.passAgainLabel,
+                          hintStyle:
+                              TextStyle(color: Colors.black.withOpacity(0.5)),
+                        ),
                       ),
                     ),
                   ),
-                ),
-                SizedBox(height: 5),
-                Center(
-                  child: ButtonTheme(
-                    height: 50,
-                    minWidth: 300,
-                    child: ElevatedButton(
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(Colors.yellow),
-                      ),
-                      onPressed: _onChangePressed,
-                      child: Text(
-                        languages.changePasswordLabel,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                            color: Colors.black),
+                  SizedBox(height: 5),
+                  Center(
+                    child: ButtonTheme(
+                      height: 50,
+                      minWidth: 300,
+                      child: ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(Colors.yellow),
+                        ),
+                        onPressed: _onChangePressed,
+                        child: Text(
+                          languages.changePasswordLabel,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                              color: Colors.black),
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
@@ -118,7 +122,7 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
 
   void _onChangePressed() {
     if (_passController.text == _passAgainController.text) {
-      if(_passController.text.isEmpty){
+      if (_passController.text.isEmpty) {
         Fluttertoast.showToast(
             msg: languages.fillAllFieldsWarningMessage,
             toastLength: Toast.LENGTH_LONG,
@@ -127,8 +131,7 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
             backgroundColor: Colors.red,
             textColor: Colors.white,
             fontSize: 16.0);
-      }
-      else{
+      } else {
         dynamic body = <String, String?>{
           'password': _passController.text,
         };
@@ -165,8 +168,7 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
           }
         });
       }
-    }
-    else{
+    } else {
       Fluttertoast.showToast(
           msg: languages.passwordsAreNotIdenticalWarningMessage,
           toastLength: Toast.LENGTH_LONG,

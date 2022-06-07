@@ -44,104 +44,106 @@ class _SettingsWidgetState extends State<SettingsWidget> {
 
     return Container(
       color: Colors.black,
-      child: ListView(
-        children: [
-          SizedBox(
-            height: 50,
-          ),
-          Container(
-            color: Colors.yellowAccent,
-            child: ListTile(
-              leading: Icon(
-                Icons.security,
-                color: Colors.black,
-              ),
-              title: Text(
-                languages.changePasswordLabel,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-              ),
-              onTap: _onChangePasswordTap,
+      child: SafeArea(
+        child: ListView(
+          children: [
+            SizedBox(
+              height: 50,
             ),
-          ),
-          SizedBox(height: 5),
-          Container(
-            color: Colors.yellowAccent,
-            child: ListTile(
-              leading: Icon(
-                Icons.perm_identity,
-                color: Colors.black,
+            Container(
+              color: Colors.yellowAccent,
+              child: ListTile(
+                leading: Icon(
+                  Icons.security,
+                  color: Colors.black,
+                ),
+                title: Text(
+                  languages.changePasswordLabel,
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                ),
+                onTap: _onChangePasswordTap,
               ),
-              title: Text(
-                languages.changeUserDataLabel,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-              ),
-              onTap: _onChangeUserDataTap,
             ),
-          ),
-          SizedBox(height: 5),
-          Container(
-            color: Colors.yellowAccent,
-            child: ListTile(
-              leading: Icon(
-                Icons.location_on,
-                color: Colors.black,
+            SizedBox(height: 5),
+            Container(
+              color: Colors.yellowAccent,
+              child: ListTile(
+                leading: Icon(
+                  Icons.perm_identity,
+                  color: Colors.black,
+                ),
+                title: Text(
+                  languages.changeUserDataLabel,
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                ),
+                onTap: _onChangeUserDataTap,
               ),
-              title: Text(
-                languages.changeLocationLabel,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-              ),
-              onTap: _onChangeLocationTap,
             ),
-          ),
-          SizedBox(height: 5),
-          Container(
-            color: Colors.yellowAccent,
-            child: ListTile(
-              leading: Icon(
-                Icons.language,
-                color: Colors.black,
+            SizedBox(height: 5),
+            Container(
+              color: Colors.yellowAccent,
+              child: ListTile(
+                leading: Icon(
+                  Icons.location_on,
+                  color: Colors.black,
+                ),
+                title: Text(
+                  languages.changeLocationLabel,
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                ),
+                onTap: _onChangeLocationTap,
               ),
-              title: Text(
-                languages.changeLanguageLabel,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-              ),
-              onTap: _onChangeLanguageTap,
             ),
-          ),
-          SizedBox(height: 5),
-          company
-              ? Container(
-                  color: Colors.yellowAccent,
-                  child: ListTile(
-                    leading: Icon(
-                      Icons.subscriptions,
-                      color: Colors.black,
-                    ),
-                    title: Text(
-                      languages.subscriptionHandlingLabel,
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                    ),
-                    onTap: _onSubscriptionHandlingTap,
-                  ),
-                )
-              : Container(),
-          SizedBox(height: company ? 5 : 0),
-          Container(
-            color: Colors.yellowAccent,
-            child: ListTile(
-              leading: Icon(
-                Icons.logout,
-                color: Colors.black,
+            SizedBox(height: 5),
+            Container(
+              color: Colors.yellowAccent,
+              child: ListTile(
+                leading: Icon(
+                  Icons.language,
+                  color: Colors.black,
+                ),
+                title: Text(
+                  languages.changeLanguageLabel,
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                ),
+                onTap: _onChangeLanguageTap,
               ),
-              title: Text(
-                languages.logoutLabel,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-              ),
-              onTap: _onLogoutTap,
             ),
-          ),
-        ],
+            SizedBox(height: 5),
+            company
+                ? Container(
+              color: Colors.yellowAccent,
+              child: ListTile(
+                leading: Icon(
+                  Icons.subscriptions,
+                  color: Colors.black,
+                ),
+                title: Text(
+                  languages.subscriptionHandlingLabel,
+                  style:
+                  TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                ),
+                onTap: _onSubscriptionHandlingTap,
+              ),
+            )
+                : Container(),
+            SizedBox(height: company ? 5 : 0),
+            Container(
+              color: Colors.yellowAccent,
+              child: ListTile(
+                leading: Icon(
+                  Icons.logout,
+                  color: Colors.black,
+                ),
+                title: Text(
+                  languages.logoutLabel,
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                ),
+                onTap: _onLogoutTap,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -278,7 +280,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                     ),
                   )
                 : AlertDialog(
-                    backgroundColor: Colors.black,
+              backgroundColor: Colors.grey[900],
                     title: Text(
                       '${languages.subscriptionHandlingLabel}.',
                       style: TextStyle(

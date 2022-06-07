@@ -69,382 +69,384 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        automaticallyImplyLeading: true,
-        title: Center(
-          child: Text(
-            widget.pattern,
-            style: TextStyle(
-                color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.black,
+          automaticallyImplyLeading: true,
+          title: Center(
+            child: Text(
+              widget.pattern,
+              style: TextStyle(
+                  color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
+            ),
           ),
         ),
-      ),
-      body: Container(
-        color: Colors.black,
-        child: actualPosts.isNotEmpty
-            ? Stack(
-                children: [
-                  ListView.separated(
-                      controller: _scrollController,
-                      padding: EdgeInsets.only(bottom: 10),
-                      separatorBuilder: (context, index) => Divider(
-                            height: 1,
-                            color: Colors.grey.shade900,
-                          ),
-                      itemCount: actualPosts.length,
-                      itemBuilder: (context, index) {
-                        Post post = actualPosts.elementAt(index);
-                        return InkWell(
-                          child: Container(
-                            color: Colors.black,
-                            child: Column(
-                              children: [
-                                ListTile(
-                                  leading: CircleAvatar(
-                                    radius: 20,
-                                    backgroundImage: NetworkImage(
-                                      widget.session.domainName +
-                                          "/api/images/" +
-                                          post.companyId.toString(),
-                                      headers: widget.session.headers,
-                                    ),
-                                  ),
-                                  title: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        post.userName,
-                                        style: TextStyle(color: Colors.white),
-                                      ),
-                                      SizedBox(
-                                        height: 1,
-                                      ),
-                                      InkWell(
-                                        child: Container(
-                                          padding: EdgeInsets.all(3),
-                                          decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              border: Border.all(
-                                                color: Colors.black,
-                                              ),
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(20))),
-                                          child: Text(
-                                            post.companyName,
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ),
-                                        onTap: () {
-                                          _onCompanyTap(post.companyId);
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                  trailing: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      post.implemented
-                                          ? InkWell(
-                                              child: Icon(
-                                                Icons.lightbulb_outline_sharp,
-                                                color: Colors.yellow,
-                                              ),
-                                              onTap: () {
-                                                Fluttertoast.showToast(
-                                                    msg: languages
-                                                        .ideaIsImplementedMessage,
-                                                    toastLength:
-                                                        Toast.LENGTH_SHORT,
-                                                    gravity:
-                                                        ToastGravity.CENTER,
-                                                    timeInSecForIosWeb: 1,
-                                                    backgroundColor:
-                                                        Colors.green,
-                                                    textColor: Colors.white,
-                                                    fontSize: 16.0);
-                                              },
-                                            )
-                                          : Container(),
-                                      Text(
-                                        DateFormatter.formatDate(post.createdDate, languages),
-                                        style: TextStyle(color: Colors.white),
-                                      ),
-                                      Container(
-                                        margin:
-                                        EdgeInsets.only(left: 5),
-                                        child: PopupMenuButton(
-                                          child: Icon(
-                                            Icons.more_horiz,
-                                            color: Colors.white,
-                                          ),
-                                          itemBuilder: (context) {
-                                            return List.generate(
-                                                widget.user.companyId == post.companyId
-                                                    ? 3
-                                                    : 1, (index) {
-                                              if (index == 0) {
-                                                return PopupMenuItem(
-                                                  child: Text(
-                                                      widget.user.companyId == post.companyId || widget.user.userId == post.creatorId ? languages
-                                                          .deleteLabel : languages
-                                                          .reportLabel),
-                                                  value: 0,
-                                                );
-                                              } else if (index == 1) {
-                                                return PopupMenuItem(
-                                                  child: Text(languages
-                                                      .contactCreatorLabel),
-                                                  value: 1,
-                                                );
-                                              } else {
-                                                return PopupMenuItem(
-                                                  child: Text(post
-                                                      .implemented
-                                                      ? languages
-                                                      .notImplementedLabel
-                                                      : languages
-                                                      .implementedLabel),
-                                                  value: 2,
-                                                );
-                                              }
-                                            });
-                                          },
-                                          onSelected: (index) {
-                                            if (index == 0) {
-                                              if (widget.user.companyId == post.companyId || widget.user.userId == post.creatorId) {
-                                                widget.session
-                                                    .delete('/api/posts/' +
-                                                    post.postId
-                                                        .toString())
-                                                    .then((response) {
-                                                  if (response
-                                                      .statusCode ==
-                                                      200) {
-                                                    Fluttertoast.showToast(
-                                                        msg: languages
-                                                            .successfulDeleteMessage,
-                                                        toastLength: Toast
-                                                            .LENGTH_LONG,
-                                                        gravity:
-                                                        ToastGravity
-                                                            .CENTER,
-                                                        timeInSecForIosWeb:
-                                                        1,
-                                                        backgroundColor:
-                                                        Colors
-                                                            .green,
-                                                        textColor:
-                                                        Colors
-                                                            .white,
-                                                        fontSize: 16.0);
-                                                    setState(() {
-                                                      Navigator.of(context).pop();
-                                                    });
-                                                  } else {
-                                                    Fluttertoast.showToast(
-                                                        msg: languages
-                                                            .globalServerErrorMessage,
-                                                        toastLength: Toast
-                                                            .LENGTH_LONG,
-                                                        gravity:
-                                                        ToastGravity
-                                                            .CENTER,
-                                                        timeInSecForIosWeb:
-                                                        1,
-                                                        backgroundColor:
-                                                        Colors.red,
-                                                        textColor:
-                                                        Colors
-                                                            .white,
-                                                        fontSize: 16.0);
-                                                  }
-                                                });
-                                              }
-                                              else {
-                                                onReportTap(post);
-                                              }
-                                            } else if (index == 1) {
-                                              _onContactCreatorTap(
-                                                  post);
-                                            } else {
-                                              widget.session
-                                                  .post(
-                                                  '/api/posts/' +
-                                                      post.postId
-                                                          .toString() +
-                                                      '/implemented',
-                                                  Map<String,
-                                                      dynamic>())
-                                                  .then((response) {
-                                                if (response
-                                                    .statusCode ==
-                                                    200) {
-                                                  Fluttertoast.showToast(
-                                                      msg:
-                                                      "${languages.successLabel}!",
-                                                      toastLength: Toast
-                                                          .LENGTH_LONG,
-                                                      gravity:
-                                                      ToastGravity
-                                                          .CENTER,
-                                                      timeInSecForIosWeb:
-                                                      1,
-                                                      backgroundColor:
-                                                      Colors
-                                                          .green,
-                                                      textColor:
-                                                      Colors
-                                                          .white,
-                                                      fontSize: 16.0);
-                                                  setState(() {
-                                                    post
-                                                        .implemented = !post
-                                                        .implemented;
-
-                                                  });
-                                                } else {
-                                                  Fluttertoast.showToast(
-                                                      msg: languages
-                                                          .globalServerErrorMessage,
-                                                      toastLength: Toast
-                                                          .LENGTH_LONG,
-                                                      gravity:
-                                                      ToastGravity
-                                                          .CENTER,
-                                                      timeInSecForIosWeb:
-                                                      1,
-                                                      backgroundColor:
-                                                      Colors.red,
-                                                      textColor:
-                                                      Colors
-                                                          .white,
-                                                      fontSize: 16.0);
-                                                }
-                                              });
-                                            }
-                                          },
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+        body: Container(
+          color: Colors.black,
+          child: actualPosts.isNotEmpty
+              ? Stack(
+            children: [
+              ListView.separated(
+                  controller: _scrollController,
+                  padding: EdgeInsets.only(bottom: 10),
+                  separatorBuilder: (context, index) => Divider(
+                    height: 1,
+                    color: Colors.grey.shade900,
+                  ),
+                  itemCount: actualPosts.length,
+                  itemBuilder: (context, index) {
+                    Post post = actualPosts.elementAt(index);
+                    return InkWell(
+                      child: Container(
+                        color: Colors.black,
+                        child: Column(
+                          children: [
+                            ListTile(
+                              leading: CircleAvatar(
+                                radius: 20,
+                                backgroundImage: NetworkImage(
+                                  widget.session.domainName +
+                                      "/api/images/" +
+                                      post.companyId.toString(),
+                                  headers: widget.session.headers,
                                 ),
-                                ListTile(
-                                  title: Text(
-                                    post.title,
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 20),
-                                  ),
-                                ),
-                                Container(
-                                  height: 60,
-                                  padding: EdgeInsets.all(5),
-                                  alignment: Alignment.topLeft,
-                                  child: Text(
-                                    post.postType == 'SIMPLE_POST'
-                                        ? post.description
-                                        : languages.clickHereToOpenThePollLabel,
+                              ),
+                              title: Column(
+                                crossAxisAlignment:
+                                CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    post.userName,
                                     style: TextStyle(color: Colors.white),
                                   ),
-                                ),
-                                Container(
-                                  height: 40,
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      LikeButton(
-                                        size: 20.0,
-                                        circleColor: CircleColor(
-                                            start: Colors.yellow.shade200,
-                                            end: Colors.yellow),
-                                        bubblesColor: BubblesColor(
-                                          dotPrimaryColor:
-                                              Colors.yellow.shade200,
-                                          dotSecondaryColor: Colors.yellow,
-                                        ),
-                                        isLiked: post.liked,
-                                        likeBuilder: (bool isLiked) {
-                                          return Icon(
-                                            Icons.lightbulb,
-                                            color: isLiked
-                                                ? Colors.yellow
-                                                : Colors.white,
-                                          );
-                                        },
-                                        onTap: (isLiked) {
-                                          return post.creatorId == widget.user.userId ? _onLikeOwnButtonPressed() : _onLikeButton(isLiked, index);
-                                        },
-                                        likeCount: post.likeNumber,
+                                  SizedBox(
+                                    height: 1,
+                                  ),
+                                  InkWell(
+                                    child: Container(
+                                      padding: EdgeInsets.all(3),
+                                      decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          border: Border.all(
+                                            color: Colors.black,
+                                          ),
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(20))),
+                                      child: Text(
+                                        post.companyName,
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold),
                                       ),
-                                      Row(
-                                        children: [
-                                          Text(
-                                            post.commentNumber.toString(),
-                                            style:
-                                                TextStyle(color: Colors.white),
-                                          ),
-                                          IconButton(
-                                            icon: Icon(Icons.comment),
-                                            color: Colors.white,
-                                            onPressed: () {
-                                              Navigator.of(context).push(
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          CommentsWidget(
-                                                            session:
-                                                                widget.session,
-                                                            postId: post.postId,
-                                                            user: widget.user,
-                                                            languages:
-                                                                languages,
-                                                          )));
-                                            },
-                                          ),
-                                        ],
+                                    ),
+                                    onTap: () {
+                                      _onCompanyTap(post.companyId);
+                                    },
+                                  ),
+                                ],
+                              ),
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  post.implemented
+                                      ? InkWell(
+                                    child: Icon(
+                                      Icons.lightbulb_outline_sharp,
+                                      color: Colors.yellow,
+                                    ),
+                                    onTap: () {
+                                      Fluttertoast.showToast(
+                                          msg: languages
+                                              .ideaIsImplementedMessage,
+                                          toastLength:
+                                          Toast.LENGTH_SHORT,
+                                          gravity:
+                                          ToastGravity.CENTER,
+                                          timeInSecForIosWeb: 1,
+                                          backgroundColor:
+                                          Colors.green,
+                                          textColor: Colors.white,
+                                          fontSize: 16.0);
+                                    },
+                                  )
+                                      : Container(),
+                                  Text(
+                                    DateFormatter.formatDate(post.createdDate, languages),
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                  Container(
+                                    margin:
+                                    EdgeInsets.only(left: 5),
+                                    child: PopupMenuButton(
+                                      child: Icon(
+                                        Icons.more_horiz,
+                                        color: Colors.white,
+                                      ),
+                                      itemBuilder: (context) {
+                                        return List.generate(
+                                            widget.user.companyId == post.companyId
+                                                ? 3
+                                                : 1, (index) {
+                                          if (index == 0) {
+                                            return PopupMenuItem(
+                                              child: Text(
+                                                  widget.user.companyId == post.companyId || widget.user.userId == post.creatorId ? languages
+                                                      .deleteLabel : languages
+                                                      .reportLabel),
+                                              value: 0,
+                                            );
+                                          } else if (index == 1) {
+                                            return PopupMenuItem(
+                                              child: Text(languages
+                                                  .contactCreatorLabel),
+                                              value: 1,
+                                            );
+                                          } else {
+                                            return PopupMenuItem(
+                                              child: Text(post
+                                                  .implemented
+                                                  ? languages
+                                                  .notImplementedLabel
+                                                  : languages
+                                                  .implementedLabel),
+                                              value: 2,
+                                            );
+                                          }
+                                        });
+                                      },
+                                      onSelected: (index) {
+                                        if (index == 0) {
+                                          if (widget.user.companyId == post.companyId || widget.user.userId == post.creatorId) {
+                                            widget.session
+                                                .delete('/api/posts/' +
+                                                post.postId
+                                                    .toString())
+                                                .then((response) {
+                                              if (response
+                                                  .statusCode ==
+                                                  200) {
+                                                Fluttertoast.showToast(
+                                                    msg: languages
+                                                        .successfulDeleteMessage,
+                                                    toastLength: Toast
+                                                        .LENGTH_LONG,
+                                                    gravity:
+                                                    ToastGravity
+                                                        .CENTER,
+                                                    timeInSecForIosWeb:
+                                                    1,
+                                                    backgroundColor:
+                                                    Colors
+                                                        .green,
+                                                    textColor:
+                                                    Colors
+                                                        .white,
+                                                    fontSize: 16.0);
+                                                setState(() {
+                                                  Navigator.of(context).pop();
+                                                });
+                                              } else {
+                                                Fluttertoast.showToast(
+                                                    msg: languages
+                                                        .globalServerErrorMessage,
+                                                    toastLength: Toast
+                                                        .LENGTH_LONG,
+                                                    gravity:
+                                                    ToastGravity
+                                                        .CENTER,
+                                                    timeInSecForIosWeb:
+                                                    1,
+                                                    backgroundColor:
+                                                    Colors.red,
+                                                    textColor:
+                                                    Colors
+                                                        .white,
+                                                    fontSize: 16.0);
+                                              }
+                                            });
+                                          }
+                                          else {
+                                            onReportTap(post);
+                                          }
+                                        } else if (index == 1) {
+                                          _onContactCreatorTap(
+                                              post);
+                                        } else {
+                                          widget.session
+                                              .post(
+                                              '/api/posts/' +
+                                                  post.postId
+                                                      .toString() +
+                                                  '/implemented',
+                                              Map<String,
+                                                  dynamic>())
+                                              .then((response) {
+                                            if (response
+                                                .statusCode ==
+                                                200) {
+                                              Fluttertoast.showToast(
+                                                  msg:
+                                                  "${languages.successLabel}!",
+                                                  toastLength: Toast
+                                                      .LENGTH_LONG,
+                                                  gravity:
+                                                  ToastGravity
+                                                      .CENTER,
+                                                  timeInSecForIosWeb:
+                                                  1,
+                                                  backgroundColor:
+                                                  Colors
+                                                      .green,
+                                                  textColor:
+                                                  Colors
+                                                      .white,
+                                                  fontSize: 16.0);
+                                              setState(() {
+                                                post
+                                                    .implemented = !post
+                                                    .implemented;
+
+                                              });
+                                            } else {
+                                              Fluttertoast.showToast(
+                                                  msg: languages
+                                                      .globalServerErrorMessage,
+                                                  toastLength: Toast
+                                                      .LENGTH_LONG,
+                                                  gravity:
+                                                  ToastGravity
+                                                      .CENTER,
+                                                  timeInSecForIosWeb:
+                                                  1,
+                                                  backgroundColor:
+                                                  Colors.red,
+                                                  textColor:
+                                                  Colors
+                                                      .white,
+                                                  fontSize: 16.0);
+                                            }
+                                          });
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            ListTile(
+                              title: Text(
+                                post.title,
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20),
+                              ),
+                            ),
+                            Container(
+                              height: 60,
+                              padding: EdgeInsets.all(5),
+                              alignment: Alignment.topLeft,
+                              child: Text(
+                                post.postType == 'SIMPLE_POST'
+                                    ? post.description
+                                    : languages.clickHereToOpenThePollLabel,
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+                            Container(
+                              height: 40,
+                              child: Row(
+                                crossAxisAlignment:
+                                CrossAxisAlignment.center,
+                                mainAxisAlignment:
+                                MainAxisAlignment.spaceBetween,
+                                children: [
+                                  LikeButton(
+                                    size: 20.0,
+                                    circleColor: CircleColor(
+                                        start: Colors.yellow.shade200,
+                                        end: Colors.yellow),
+                                    bubblesColor: BubblesColor(
+                                      dotPrimaryColor:
+                                      Colors.yellow.shade200,
+                                      dotSecondaryColor: Colors.yellow,
+                                    ),
+                                    isLiked: post.liked,
+                                    likeBuilder: (bool isLiked) {
+                                      return Icon(
+                                        Icons.lightbulb,
+                                        color: isLiked
+                                            ? Colors.yellow
+                                            : Colors.white,
+                                      );
+                                    },
+                                    onTap: (isLiked) {
+                                      return post.creatorId == widget.user.userId ? _onLikeOwnButtonPressed() : _onLikeButton(isLiked, index);
+                                    },
+                                    likeCount: post.likeNumber,
+                                  ),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        post.commentNumber.toString(),
+                                        style:
+                                        TextStyle(color: Colors.white),
+                                      ),
+                                      IconButton(
+                                        icon: Icon(Icons.comment),
+                                        color: Colors.white,
+                                        onPressed: () {
+                                          Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      CommentsWidget(
+                                                        session:
+                                                        widget.session,
+                                                        postId: post.postId,
+                                                        user: widget.user,
+                                                        languages:
+                                                        languages,
+                                                      )));
+                                        },
                                       ),
                                     ],
                                   ),
-                                )
-                              ],
-                            ),
-                          ),
-                          onTap: () {
-                            _onPostTap(index);
-                          },
-                        );
-                      }),
-                  loading
-                      ? Align(
-                          alignment: Alignment.bottomCenter,
-                          child: Container(
-                            width: 80,
-                            height: 80,
-                            child: Center(
-                              child: CircularProgressIndicator(
-                                color: Colors.white,
+                                ],
                               ),
-                            ),
-                          ),
-                        )
-                      : Container(),
-                ],
-              )
-            : Container(
-                child: Center(
-                  child: CircularProgressIndicator(
-                    color: Colors.yellow,
+                            )
+                          ],
+                        ),
+                      ),
+                      onTap: () {
+                        _onPostTap(index);
+                      },
+                    );
+                  }),
+              loading
+                  ? Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  width: 80,
+                  height: 80,
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      color: Colors.white,
+                    ),
                   ),
                 ),
+              )
+                  : Container(),
+            ],
+          )
+              : Container(
+            child: Center(
+              child: CircularProgressIndicator(
+                color: Colors.yellow,
               ),
+            ),
+          ),
+        ),
       ),
     );
   }

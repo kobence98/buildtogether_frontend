@@ -34,7 +34,8 @@ class _CommentsWidgetState extends State<CommentsWidget> {
   late Languages languages;
 
   bool innerLoading = false;
-  final TextEditingController _reportReasonTextFieldController = TextEditingController();
+  final TextEditingController _reportReasonTextFieldController =
+      TextEditingController();
 
   @override
   void initState() {
@@ -69,175 +70,189 @@ class _CommentsWidgetState extends State<CommentsWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-      ),
-      body: loading
-          ? Container(
-              color: Colors.black,
-              child: Center(
-                child: CircularProgressIndicator(
-                  color: Colors.yellow,
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.black,
+        ),
+        body: loading
+            ? Container(
+                color: Colors.black,
+                child: Center(
+                  child: CircularProgressIndicator(
+                    color: Colors.yellow,
+                  ),
                 ),
-              ),
-            )
-          : Container(
-              height: MediaQuery.of(context).size.height,
-              padding: EdgeInsets.only(bottom: 10),
-              color: Colors.black,
-              child: Column(
-                children: [
-                  Flexible(
-                    child: ListView.separated(
-                      padding: EdgeInsets.only(bottom: 10),
-                      separatorBuilder: (context, index) => Divider(
-                        thickness: 1,
-                        color: Colors.white,
-                      ),
-                      itemCount: comments.length,
-                      itemBuilder: (context, index) {
-                        Comment comment = comments.elementAt(index);
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            ListTile(
-                                leading: Container(
-                                  padding: EdgeInsets.all(3),
-                                  decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      border: Border.all(
-                                        color: Colors.black,
-                                      ),
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(20))),
-                                  child: Text(
-                                    comment.userName,
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                                title: Text(
-                                  comment.text,
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                                trailing: Container(
-                                  child: PopupMenuButton(
-                                      child: Icon(
-                                        Icons.more_horiz,
+              )
+            : Container(
+                height: MediaQuery.of(context).size.height,
+                padding: EdgeInsets.only(bottom: 10),
+                color: Colors.black,
+                child: Column(
+                  children: [
+                    Flexible(
+                      child: ListView.separated(
+                        padding: EdgeInsets.only(bottom: 10),
+                        separatorBuilder: (context, index) => Divider(
+                          thickness: 1,
+                          color: Colors.white,
+                        ),
+                        itemCount: comments.length,
+                        itemBuilder: (context, index) {
+                          Comment comment = comments.elementAt(index);
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ListTile(
+                                  leading: Container(
+                                    padding: EdgeInsets.all(3),
+                                    decoration: BoxDecoration(
                                         color: Colors.white,
-                                      ),
-                                      itemBuilder: (context) {
-                                        return List.generate(1, (index) {
-                                          return PopupMenuItem(
-                                            child: Text(comment.userId == widget.user.userId ? languages.deleteLabel : languages.reportLabel),
-                                            value: 0,
-                                          );
-                                        });
-                                      },
-                                      onSelected: (index) {
-                                        if(comment.userId == widget.user.userId){
-                                          widget.session
-                                              .delete('/api/comments/' +
-                                              comment.commentId.toString())
-                                              .then((response) {
-                                            if (response.statusCode == 200) {
-                                              Fluttertoast.showToast(
-                                                  msg: languages
-                                                      .successfulDeleteMessage,
-                                                  toastLength: Toast.LENGTH_LONG,
-                                                  gravity: ToastGravity.CENTER,
-                                                  timeInSecForIosWeb: 1,
-                                                  backgroundColor: Colors.green,
-                                                  textColor: Colors.white,
-                                                  fontSize: 16.0);
-                                              setState(() {
-                                                comments.remove(comment);
-                                              });
-                                            } else {
-                                              Fluttertoast.showToast(
-                                                  msg: languages
-                                                      .globalServerErrorMessage,
-                                                  toastLength: Toast.LENGTH_LONG,
-                                                  gravity: ToastGravity.CENTER,
-                                                  timeInSecForIosWeb: 1,
-                                                  backgroundColor: Colors.red,
-                                                  textColor: Colors.white,
-                                                  fontSize: 16.0);
-                                            }
-                                          });
-                                        }
-                                        else{
-                                          onReportTap(comment);
-                                        }
-                                      }),
-                                )),
-                            Container(
-                              height: 40,
-                              margin: EdgeInsets.only(left: 5),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  LikeButton(
-                                    size: 20.0,
-                                    circleColor: CircleColor(
-                                        start: Colors.yellow.shade200,
-                                        end: Colors.yellow),
-                                    bubblesColor: BubblesColor(
-                                      dotPrimaryColor: Colors.yellow.shade200,
-                                      dotSecondaryColor: Colors.yellow,
+                                        border: Border.all(
+                                          color: Colors.black,
+                                        ),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(20))),
+                                    child: Text(
+                                      comment.userName,
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold),
                                     ),
-                                    isLiked: comment.liked,
-                                    likeBuilder: (bool isLiked) {
-                                      return Icon(
-                                        Icons.lightbulb,
-                                        color: isLiked
-                                            ? Colors.yellow
-                                            : Colors.white,
-                                      );
-                                    },
-                                    onTap: (isLiked) {
-                                      return comment.userId == widget.user.userId ? _onLikeOwnButtonPressed() : _onLikeButton(isLiked, comment);
-                                    },
-                                    likeCount: comment.likeNumber,
                                   ),
-                                  Text(
-                                    DateFormatter.formatDate(
-                                        comment.createdDate, languages),
+                                  title: Text(
+                                    comment.text,
                                     style: TextStyle(color: Colors.white),
                                   ),
-                                ],
+                                  trailing: Container(
+                                    child: PopupMenuButton(
+                                        child: Icon(
+                                          Icons.more_horiz,
+                                          color: Colors.white,
+                                        ),
+                                        itemBuilder: (context) {
+                                          return List.generate(1, (index) {
+                                            return PopupMenuItem(
+                                              child: Text(comment.userId ==
+                                                      widget.user.userId
+                                                  ? languages.deleteLabel
+                                                  : languages.reportLabel),
+                                              value: 0,
+                                            );
+                                          });
+                                        },
+                                        onSelected: (index) {
+                                          if (comment.userId ==
+                                              widget.user.userId) {
+                                            widget.session
+                                                .delete('/api/comments/' +
+                                                    comment.commentId
+                                                        .toString())
+                                                .then((response) {
+                                              if (response.statusCode == 200) {
+                                                Fluttertoast.showToast(
+                                                    msg: languages
+                                                        .successfulDeleteMessage,
+                                                    toastLength:
+                                                        Toast.LENGTH_LONG,
+                                                    gravity:
+                                                        ToastGravity.CENTER,
+                                                    timeInSecForIosWeb: 1,
+                                                    backgroundColor:
+                                                        Colors.green,
+                                                    textColor: Colors.white,
+                                                    fontSize: 16.0);
+                                                setState(() {
+                                                  comments.remove(comment);
+                                                });
+                                              } else {
+                                                Fluttertoast.showToast(
+                                                    msg: languages
+                                                        .globalServerErrorMessage,
+                                                    toastLength:
+                                                        Toast.LENGTH_LONG,
+                                                    gravity:
+                                                        ToastGravity.CENTER,
+                                                    timeInSecForIosWeb: 1,
+                                                    backgroundColor: Colors.red,
+                                                    textColor: Colors.white,
+                                                    fontSize: 16.0);
+                                              }
+                                            });
+                                          } else {
+                                            onReportTap(comment);
+                                          }
+                                        }),
+                                  )),
+                              Container(
+                                height: 40,
+                                margin: EdgeInsets.only(left: 5),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    LikeButton(
+                                      size: 20.0,
+                                      circleColor: CircleColor(
+                                          start: Colors.yellow.shade200,
+                                          end: Colors.yellow),
+                                      bubblesColor: BubblesColor(
+                                        dotPrimaryColor: Colors.yellow.shade200,
+                                        dotSecondaryColor: Colors.yellow,
+                                      ),
+                                      isLiked: comment.liked,
+                                      likeBuilder: (bool isLiked) {
+                                        return Icon(
+                                          Icons.lightbulb,
+                                          color: isLiked
+                                              ? Colors.yellow
+                                              : Colors.white,
+                                        );
+                                      },
+                                      onTap: (isLiked) {
+                                        return comment.userId ==
+                                                widget.user.userId
+                                            ? _onLikeOwnButtonPressed()
+                                            : _onLikeButton(isLiked, comment);
+                                      },
+                                      likeCount: comment.likeNumber,
+                                    ),
+                                    Text(
+                                      DateFormatter.formatDate(
+                                          comment.createdDate, languages),
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
-                        );
-                      },
+                            ],
+                          );
+                        },
+                      ),
+                      flex: 8,
                     ),
-                    flex: 8,
-                  ),
-                  Flexible(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        _addComment();
-                      },
-                      style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(
-                              Colors.yellowAccent)),
-                      child: Center(
-                        child: Text(
-                          languages.addCommentLabel,
-                          style: TextStyle(color: Colors.black),
+                    Flexible(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          _addComment();
+                        },
+                        style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                                Colors.yellowAccent)),
+                        child: Center(
+                          child: Text(
+                            languages.addCommentLabel,
+                            style: TextStyle(color: Colors.black),
+                          ),
                         ),
                       ),
+                      flex: 1,
                     ),
-                    flex: 1,
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
+      ),
     );
   }
 
@@ -399,7 +414,6 @@ class _CommentsWidgetState extends State<CommentsWidget> {
     }
   }
 
-
   void onReportTap(Comment comment) {
     showDialog(
         context: context,
@@ -407,71 +421,72 @@ class _CommentsWidgetState extends State<CommentsWidget> {
           return StatefulBuilder(builder: (context, setState) {
             return innerLoading
                 ? Container(
-              child: Center(
-                child: CircularProgressIndicator(
-                  color: Colors.yellow,
-                ),
-              ),
-            )
-                : AlertDialog(
-              backgroundColor: Colors.yellow,
-              title: Text(
-                languages.reportUserAndCommentTitleLabel,
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                    color: Colors.black),
-              ),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    color: Colors.black,
-                    padding: EdgeInsets.all(2),
                     child: Center(
-                      child: Container(
-                        padding: EdgeInsets.only(left: 20.0),
-                        color: Colors.yellow.withOpacity(0.7),
-                        child: TextField(
-                          style: TextStyle(color: Colors.black),
-                          controller: _reportReasonTextFieldController,
-                          cursorColor: Colors.black,
-                          decoration: InputDecoration(
-                            hintText: languages.reportReasonHintLabel,
-                            hintStyle: TextStyle(
-                                color: Colors.black.withOpacity(0.5)),
-                          ),
-                        ),
+                      child: CircularProgressIndicator(
+                        color: Colors.yellow,
                       ),
                     ),
                   )
-                ],
-              ),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    _reportReasonTextFieldController.clear();
-                  },
-                  child: Text(
-                    languages.cancelLabel,
-                    style: TextStyle(color: Colors.black),
-                  ),
-                ),
-                TextButton(
-                  onPressed: () {
-                    _onSendReportTap(comment.commentId, context, setState);
-                    setState(() {
-                      innerLoading = true;
-                    });
-                  },
-                  child: Text(
-                    languages.sendLabel,
-                    style: TextStyle(color: Colors.black),
-                  ),
-                ),
-              ],
-            );
+                : AlertDialog(
+                    backgroundColor: Colors.yellow,
+                    title: Text(
+                      languages.reportUserAndCommentTitleLabel,
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                          color: Colors.black),
+                    ),
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          color: Colors.black,
+                          padding: EdgeInsets.all(2),
+                          child: Center(
+                            child: Container(
+                              padding: EdgeInsets.only(left: 20.0),
+                              color: Colors.yellow.withOpacity(0.7),
+                              child: TextField(
+                                style: TextStyle(color: Colors.black),
+                                controller: _reportReasonTextFieldController,
+                                cursorColor: Colors.black,
+                                decoration: InputDecoration(
+                                  hintText: languages.reportReasonHintLabel,
+                                  hintStyle: TextStyle(
+                                      color: Colors.black.withOpacity(0.5)),
+                                ),
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                    actions: <Widget>[
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          _reportReasonTextFieldController.clear();
+                        },
+                        child: Text(
+                          languages.cancelLabel,
+                          style: TextStyle(color: Colors.black),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          _onSendReportTap(
+                              comment.commentId, context, setState);
+                          setState(() {
+                            innerLoading = true;
+                          });
+                        },
+                        child: Text(
+                          languages.sendLabel,
+                          style: TextStyle(color: Colors.black),
+                        ),
+                      ),
+                    ],
+                  );
           });
         });
   }
@@ -480,8 +495,9 @@ class _CommentsWidgetState extends State<CommentsWidget> {
     dynamic data = <String, dynamic>{
       'reason': _reportReasonTextFieldController.text,
     };
-    widget.session.postJson('/api/comments/$commentId/report', data).then((
-        response) {
+    widget.session
+        .postJson('/api/comments/$commentId/report', data)
+        .then((response) {
       if (response.statusCode == 200) {
         Navigator.of(context).pop();
         _reportReasonTextFieldController.clear();
@@ -494,8 +510,7 @@ class _CommentsWidgetState extends State<CommentsWidget> {
             backgroundColor: Colors.green,
             textColor: Colors.white,
             fontSize: 16.0);
-      }
-      else if (response.statusCode == 500) {
+      } else if (response.statusCode == 500) {
         if (response.body != null &&
             json.decode(response.body)['message'] != null &&
             json.decode(response.body)['message'] ==
@@ -518,11 +533,10 @@ class _CommentsWidgetState extends State<CommentsWidget> {
               textColor: Colors.white,
               fontSize: 16.0);
         }
-        setState((){
+        setState(() {
           innerLoading = false;
         });
-      }
-      else {
+      } else {
         Fluttertoast.showToast(
             msg: languages.globalServerErrorMessage,
             toastLength: Toast.LENGTH_LONG,
@@ -531,14 +545,14 @@ class _CommentsWidgetState extends State<CommentsWidget> {
             backgroundColor: Colors.red,
             textColor: Colors.white,
             fontSize: 16.0);
-        setState((){
+        setState(() {
           innerLoading = false;
         });
       }
     });
   }
 
-  Future<bool> _onLikeOwnButtonPressed(){
+  Future<bool> _onLikeOwnButtonPressed() {
     Fluttertoast.showToast(
         msg: languages.likeOwnCommentWarningMessage,
         toastLength: Toast.LENGTH_LONG,
