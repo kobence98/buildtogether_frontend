@@ -81,164 +81,176 @@ class _LoginPageState extends State<LoginPage> {
         child: SafeArea(
           child: loading
               ? Container(
-            child: Center(
-              child: CircularProgressIndicator(
-                color: Colors.yellow,
-              ),
-            ),
-          )
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      color: Colors.yellow,
+                    ),
+                  ),
+                )
               : Center(
-            child: Container(
-              padding:
-              EdgeInsets.all(MediaQuery.of(context).size.height * 0.02),
-              width: 600,
-              height: 1000,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Center(
-                    child: Row(
+                  child: Container(
+                    padding: EdgeInsets.all(
+                        MediaQuery.of(context).size.height * 0.02),
+                    width: 600,
+                    height: 1000,
+                    child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        InkWell(
-                          child: CircleAvatar(
-                            backgroundColor: Colors.white,
-                            radius: 30,
-                            foregroundImage: AssetImage(
-                                'icons/flags/png/gb.png',
-                                package: 'country_icons'),
+                        Center(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              InkWell(
+                                child: CircleAvatar(
+                                  backgroundColor: Colors.white,
+                                  radius: 30,
+                                  foregroundImage: AssetImage(
+                                      'icons/flags/png/gb.png',
+                                      package: 'country_icons'),
+                                ),
+                                onTap: () {
+                                  setState(() {
+                                    languages = LanguageEn();
+                                    languagesSqfLiteHandler.insertLanguageCode(
+                                        LanguageCode(code: 'en', id: 0));
+                                  });
+                                },
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              InkWell(
+                                child: CircleAvatar(
+                                  backgroundColor: Colors.white,
+                                  radius: 30,
+                                  foregroundImage: AssetImage(
+                                      'icons/flags/png/hu.png',
+                                      package: 'country_icons'),
+                                ),
+                                onTap: () {
+                                  setState(() {
+                                    languages = LanguageHu();
+                                    languagesSqfLiteHandler.insertLanguageCode(
+                                        LanguageCode(code: 'hu', id: 0));
+                                  });
+                                },
+                              ),
+                            ],
                           ),
-                          onTap: () {
-                            setState(() {
-                              languages = LanguageEn();
-                              languagesSqfLiteHandler.insertLanguageCode(
-                                  LanguageCode(code: 'en', id: 0));
-                            });
-                          },
                         ),
                         SizedBox(
-                          width: 10,
+                          height: 10,
                         ),
-                        InkWell(
-                          child: CircleAvatar(
-                            backgroundColor: Colors.white,
-                            radius: 30,
-                            foregroundImage: AssetImage(
-                                'icons/flags/png/hu.png',
-                                package: 'country_icons'),
+                        Center(
+                          child: Container(
+                            padding: EdgeInsets.only(left: 20.0),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(10),
+                              ),
+                              color: Colors.yellow.withOpacity(0.7),
+                            ),
+                            child: TextField(
+                              style: TextStyle(color: Colors.black),
+                              controller: _emailController,
+                              cursorColor: Colors.black,
+                              keyboardType: TextInputType.emailAddress,
+                              decoration: InputDecoration(
+                                hintText: languages.emailLabel,
+                                hintStyle: TextStyle(
+                                    color: Colors.black.withOpacity(0.5)),
+                              ),
+                            ),
                           ),
-                          onTap: () {
-                            setState(() {
-                              languages = LanguageHu();
-                              languagesSqfLiteHandler.insertLanguageCode(
-                                  LanguageCode(code: 'hu', id: 0));
-                            });
-                          },
+                        ),
+                        SizedBox(height: 5),
+                        Center(
+                          child: Container(
+                            padding: EdgeInsets.only(left: 20.0),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(10),
+                              ),
+                              color: Colors.yellow.withOpacity(0.7),
+                            ),
+                            child: TextField(
+                              enableSuggestions: false,
+                              autocorrect: false,
+                              obscureText: true,
+                              style: TextStyle(color: Colors.black),
+                              controller: _passwordController,
+                              cursorColor: Colors.black,
+                              decoration: InputDecoration(
+                                hintText: languages.passwordLabel,
+                                hintStyle: TextStyle(
+                                    color: Colors.black.withOpacity(0.5)),
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 10),
+                        Center(
+                          child: ButtonTheme(
+                            height: 50,
+                            minWidth: 300,
+                            child: ElevatedButton(
+                              style: ButtonStyle(
+                                backgroundColor:
+                                    MaterialStateProperty.all<Color>(
+                                        Colors.yellow),
+                              ),
+                              onPressed: onLoginPressed,
+                              child: Text(
+                                languages.loginLabel,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20,
+                                    color: Colors.black),
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 10),
+                        Center(
+                          child: ButtonTheme(
+                            height: 50,
+                            minWidth: 300,
+                            child: ElevatedButton(
+                              onPressed: onRegistrationPressed,
+                              style: ButtonStyle(
+                                backgroundColor:
+                                    MaterialStateProperty.all<Color>(
+                                        Colors.yellow),
+                              ),
+                              child: Text(
+                                languages.registrationLabel,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20,
+                                    color: Colors.black),
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 5),
+                        Center(
+                          child: Container(
+                            child: InkWell(
+                              child: Text(
+                                languages.forgottenPasswordLabel,
+                                style: TextStyle(
+                                    fontStyle: FontStyle.italic,
+                                    fontSize: 15,
+                                    color: Colors.yellow),
+                              ),
+                              onTap: _onForgottenPasswordTap,
+                            ),
+                          ),
                         ),
                       ],
                     ),
                   ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Center(
-                    child: Container(
-                      padding: EdgeInsets.only(left: 20.0),
-                      color: Colors.yellow.withOpacity(0.7),
-                      child: TextField(
-                        style: TextStyle(color: Colors.black),
-                        controller: _emailController,
-                        cursorColor: Colors.black,
-                        keyboardType: TextInputType.emailAddress,
-                        decoration: InputDecoration(
-                          hintText: languages.emailLabel,
-                          hintStyle: TextStyle(
-                              color: Colors.black.withOpacity(0.5)),
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 5),
-                  Center(
-                    child: Container(
-                      padding: EdgeInsets.only(left: 20.0),
-                      color: Colors.yellow.withOpacity(0.7),
-                      child: TextField(
-                        enableSuggestions: false,
-                        autocorrect: false,
-                        obscureText: true,
-                        style: TextStyle(color: Colors.black),
-                        controller: _passwordController,
-                        cursorColor: Colors.black,
-                        decoration: InputDecoration(
-                          hintText: languages.passwordLabel,
-                          hintStyle: TextStyle(
-                              color: Colors.black.withOpacity(0.5)),
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 10),
-                  Center(
-                    child: ButtonTheme(
-                      height: 50,
-                      minWidth: 300,
-                      child: ElevatedButton(
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(
-                              Colors.yellow),
-                        ),
-                        onPressed: onLoginPressed,
-                        child: Text(
-                          languages.loginLabel,
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20,
-                              color: Colors.black),
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 10),
-                  Center(
-                    child: ButtonTheme(
-                      height: 50,
-                      minWidth: 300,
-                      child: ElevatedButton(
-                        onPressed: onRegistrationPressed,
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(
-                              Colors.yellow),
-                        ),
-                        child: Text(
-                          languages.registrationLabel,
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20,
-                              color: Colors.black),
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 5),
-                  Center(
-                    child: Container(
-                      child: InkWell(
-                        child: Text(
-                          languages.forgottenPasswordLabel,
-                          style: TextStyle(
-                              fontStyle: FontStyle.italic,
-                              fontSize: 15,
-                              color: Colors.yellow),
-                        ),
-                        onTap: _onForgottenPasswordTap,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
+                ),
         ),
       ),
     );
@@ -321,7 +333,7 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                             )
                           : AlertDialog(
-                        backgroundColor: Colors.grey[900],
+                              backgroundColor: Colors.grey[900],
                               title: Text(
                                 languages.confirmationWarningMessage,
                                 style: TextStyle(
@@ -466,7 +478,12 @@ class _LoginPageState extends State<LoginPage> {
                             Center(
                               child: Container(
                                 padding: EdgeInsets.only(left: 20.0),
-                                color: Colors.yellow.withOpacity(0.7),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(10),
+                                  ),
+                                  color: Colors.yellow.withOpacity(0.7),
+                                ),
                                 child: TextField(
                                   style: TextStyle(color: Colors.black),
                                   controller: _regEmailController,
@@ -484,7 +501,12 @@ class _LoginPageState extends State<LoginPage> {
                             Center(
                               child: Container(
                                 padding: EdgeInsets.only(left: 20.0),
-                                color: Colors.yellow.withOpacity(0.7),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(10),
+                                  ),
+                                  color: Colors.yellow.withOpacity(0.7),
+                                ),
                                 child: TextField(
                                   style: TextStyle(color: Colors.black),
                                   controller: _regPasswordController,
@@ -502,7 +524,12 @@ class _LoginPageState extends State<LoginPage> {
                             Center(
                               child: Container(
                                 padding: EdgeInsets.only(left: 20.0),
-                                color: Colors.yellow.withOpacity(0.7),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(10),
+                                  ),
+                                  color: Colors.yellow.withOpacity(0.7),
+                                ),
                                 child: TextField(
                                   style: TextStyle(color: Colors.black),
                                   controller: _regPassAgainController,
@@ -520,7 +547,12 @@ class _LoginPageState extends State<LoginPage> {
                             Center(
                               child: Container(
                                 padding: EdgeInsets.only(left: 20.0),
-                                color: Colors.yellow.withOpacity(0.7),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(10),
+                                  ),
+                                  color: Colors.yellow.withOpacity(0.7),
+                                ),
                                 child: TextField(
                                   style: TextStyle(color: Colors.black),
                                   controller: company
@@ -575,7 +607,12 @@ class _LoginPageState extends State<LoginPage> {
                                       height: 300,
                                       margin:
                                           EdgeInsets.only(left: 10, right: 10),
-                                      color: Colors.yellow.withOpacity(0.7),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.all(
+                                          Radius.circular(10),
+                                        ),
+                                        color: Colors.yellow.withOpacity(0.7),
+                                      ),
                                       padding: EdgeInsets.all(4),
                                       child: TextField(
                                           maxLines: 3000,
@@ -916,7 +953,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   )
                 : AlertDialog(
-              backgroundColor: Colors.grey[900],
+                    backgroundColor: Colors.grey[900],
                     title: Text(
                       languages.forgottenPasswordHintLabel,
                       style: TextStyle(
@@ -924,23 +961,30 @@ class _LoginPageState extends State<LoginPage> {
                           fontSize: 20,
                           color: Colors.yellow),
                     ),
-                    content: Center(
-                      child: Container(
-                        padding: EdgeInsets.only(left: 20.0),
-                        color: Colors.yellow.withOpacity(0.7),
-                        child: TextField(
-                          style: TextStyle(color: Colors.black),
-                          controller: _forgottenPasswordEmailController,
-                          cursorColor: Colors.black,
-                          keyboardType: TextInputType.emailAddress,
-                          decoration: InputDecoration(
-                            hintText: languages.emailLabel,
-                            hintStyle:
-                                TextStyle(color: Colors.black.withOpacity(0.5)),
+                    content: Column(mainAxisSize: MainAxisSize.min, children: [
+                      Center(
+                        child: Container(
+                          padding: EdgeInsets.only(left: 20.0),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(10),
+                            ),
+                            color: Colors.yellow.withOpacity(0.7),
+                          ),
+                          child: TextField(
+                            style: TextStyle(color: Colors.black),
+                            controller: _forgottenPasswordEmailController,
+                            cursorColor: Colors.black,
+                            keyboardType: TextInputType.emailAddress,
+                            decoration: InputDecoration(
+                              hintText: languages.emailLabel,
+                              hintStyle: TextStyle(
+                                  color: Colors.black.withOpacity(0.5)),
+                            ),
                           ),
                         ),
-                      ),
-                    ),
+                      )
+                    ]),
                     actions: <Widget>[
                       TextButton(
                         onPressed: () {
@@ -1063,8 +1107,7 @@ class _LoginPageState extends State<LoginPage> {
                 padding: EdgeInsets.all(20.0),
                 color: Colors.yellow,
                 child: SingleChildScrollView(
-                  child: Text(
-                      languages.userPolicyText),
+                  child: Text(languages.userPolicyText),
                 ),
               ),
             ),

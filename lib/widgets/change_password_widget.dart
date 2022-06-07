@@ -54,7 +54,12 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
                   Center(
                     child: Container(
                       padding: EdgeInsets.only(left: 20.0),
-                      color: Colors.yellow.withOpacity(0.7),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(10),
+                        ),
+                        color: Colors.yellow.withOpacity(0.7),
+                      ),
                       child: TextField(
                         style: TextStyle(color: Colors.black),
                         controller: _passController,
@@ -74,7 +79,12 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
                   Center(
                     child: Container(
                       padding: EdgeInsets.only(left: 20.0),
-                      color: Colors.yellow.withOpacity(0.7),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(10),
+                        ),
+                        color: Colors.yellow.withOpacity(0.7),
+                      ),
                       child: TextField(
                         style: TextStyle(color: Colors.black),
                         controller: _passAgainController,

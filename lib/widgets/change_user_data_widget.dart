@@ -124,7 +124,12 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                               Flexible(
                                 child: Container(
                                   padding: EdgeInsets.only(left: 20.0),
-                                  color: Colors.yellow.withOpacity(0.7),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(10),
+                                    ),
+                                    color: Colors.yellow.withOpacity(0.7),
+                                  ),
                                   child: TextField(
                                     style: TextStyle(color: Colors.black),
                                     controller: _nameController,
@@ -146,7 +151,12 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                             ? Container(
                                 height: 200,
                                 margin: EdgeInsets.only(left: 10, right: 10),
-                                color: Colors.yellow,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(10),
+                            ),
+                            color: Colors.yellow,
+                          ),
                                 padding: EdgeInsets.all(4),
                                 child: TextField(
                                     maxLines: 3000,

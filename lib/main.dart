@@ -97,15 +97,18 @@ class _MyHomePageState extends State<MyHomePage> {
                         fontSize: 16.0);
                   }
                   setState(() {
-                    mainWidget = MainWidget(session: session, user: user, languages: languages,);
+                    mainWidget = MainWidget(
+                      session: session,
+                      user: user,
+                      languages: languages,
+                    );
                   });
                 }
               });
             } else {
               authSqfLiteHandler.deleteUsers();
               Fluttertoast.showToast(
-                  msg:
-                      languages.automaticLoginErrorMessage,
+                  msg: languages.automaticLoginErrorMessage,
                   toastLength: Toast.LENGTH_LONG,
                   gravity: ToastGravity.CENTER,
                   timeInSecForIosWeb: 1,
@@ -128,12 +131,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    if (MediaQuery.of(context).viewInsets.bottom != 0) {
-      SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-          overlays: [SystemUiOverlay.bottom]);
-    } else {
-      SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
-    }
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
     return mainWidget;
   }
 }

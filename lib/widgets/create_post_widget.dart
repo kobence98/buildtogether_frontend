@@ -47,9 +47,14 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
     pollControllers.add(TextEditingController());
     pollOptions.add(
       Container(
-        margin: EdgeInsets.only(left: 10, right: 10),
+        margin: EdgeInsets.only(left: 10, right: 10, top: 10),
         padding: EdgeInsets.only(left: 20.0),
-        color: Colors.white,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(
+            Radius.circular(10),
+          ),
+          color: Colors.white,
+        ),
         child: TextField(
           style: TextStyle(color: Colors.black),
           controller: pollControllers.first,
@@ -68,35 +73,36 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
     return Container(
       color: Colors.black,
       child: SafeArea(
-        child: company && widget.user.isCompanyActive
-            ? DefaultTabController(
-          initialIndex: 0,
-          length: 2,
-          child: Scaffold(
-            backgroundColor: Colors.black,
-            appBar: TabBar(
-                labelColor: Colors.yellow,
-                indicatorColor: Colors.yellow,
-                tabs: [
-                  Tab(
-                    child: Text(
-                      languages.simplePostLabel,
-                      style: TextStyle(color: Colors.yellow),
-                    ),
+          child: company && widget.user.isCompanyActive
+              ? DefaultTabController(
+                  initialIndex: 0,
+                  length: 2,
+                  child: Scaffold(
+                    backgroundColor: Colors.black,
+                    appBar: TabBar(
+                        labelColor: Colors.yellow,
+                        indicatorColor: Colors.yellow,
+                        tabs: [
+                          Tab(
+                            child: Text(
+                              languages.simplePostLabel,
+                              style: TextStyle(color: Colors.yellow),
+                            ),
+                          ),
+                          Tab(
+                            child: Text(
+                              languages.pollPostLabel,
+                              style: TextStyle(color: Colors.yellow),
+                            ),
+                          ),
+                        ]),
+                    body: TabBarView(
+                        children: [_simplePostWidget(), _pollPostWidget()]),
                   ),
-                  Tab(
-                    child: Text(
-                      languages.pollPostLabel,
-                      style: TextStyle(color: Colors.yellow),
-                    ),
-                  ),
-                ]),
-            body: TabBarView(
-                children: [_simplePostWidget(), _pollPostWidget()]),
-          ),
-        )
-            : _simplePostWidget(),
-      ),
+                )
+              : Scaffold(
+                  body: _simplePostWidget(),
+                )),
     );
   }
 
@@ -179,6 +185,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
     return Container(
       color: Colors.black,
       child: ListView(
+        physics: const AlwaysScrollableScrollPhysics(),
         children: [
           SizedBox(
             height: 30,
@@ -196,7 +203,12 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
               ? Container(
                   height: 35,
                   margin: EdgeInsets.only(left: 10, right: 10),
-                  color: Colors.white,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(10),
+                    ),
+                    color: Colors.white,
+                  ),
                   padding: EdgeInsets.all(4),
                   child: TypeAheadField(
                     noItemsFoundBuilder: (context) {
@@ -327,7 +339,12 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
           ),
           Container(
             margin: EdgeInsets.only(left: 10, right: 10),
-            color: Colors.white,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(
+                Radius.circular(10),
+              ),
+              color: Colors.white,
+            ),
             padding: EdgeInsets.all(4),
             child: TextField(
               controller: _titleController,
@@ -342,7 +359,12 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
           Container(
             height: MediaQuery.of(context).size.height - (company ? 450 : 350),
             margin: EdgeInsets.only(left: 10, right: 10),
-            color: Colors.white,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(
+                Radius.circular(10),
+              ),
+              color: Colors.white,
+            ),
             padding: EdgeInsets.all(4),
             child: TextField(
                 maxLines: 3000,
@@ -405,7 +427,12 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                   } else if (index == 3) {
                     return Container(
                       margin: EdgeInsets.only(left: 10, right: 10),
-                      color: Colors.white,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(10),
+                        ),
+                        color: Colors.white,
+                      ),
                       padding: EdgeInsets.all(4),
                       child: TextField(
                         cursorColor: Colors.black,
@@ -493,9 +520,14 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
       pollControllers.add(textEditingController);
       pollOptions.add(
         Container(
-          margin: EdgeInsets.only(left: 10, right: 10),
+          margin: EdgeInsets.only(left: 10, right: 10, top: 10),
           padding: EdgeInsets.only(left: 20.0),
-          color: Colors.white,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.all(
+              Radius.circular(10),
+            ),
+            color: Colors.white,
+          ),
           child: Row(
             children: [
               Flexible(

@@ -271,18 +271,23 @@ class _CommentsWidgetState extends State<CommentsWidget> {
                     ),
                   )
                 : AlertDialog(
-                    backgroundColor: Colors.black,
+                    backgroundColor: Colors.grey[900],
                     title: Center(
                       child: Text(
                         languages.addCommentLabel,
-                        style: TextStyle(
+                        style: TextStyle(color: Colors.yellow,
                             fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                     ),
                     content: Container(
                       height: MediaQuery.of(context).size.height - 350,
                       margin: EdgeInsets.only(left: 10, right: 10),
-                      color: Colors.white,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(10),
+                        ),
+                        color: Colors.white,
+                      ),
                       padding: EdgeInsets.all(4),
                       child: TextField(
                           maxLines: 3000,
@@ -295,7 +300,12 @@ class _CommentsWidgetState extends State<CommentsWidget> {
                     ),
                     actions: <Widget>[
                       Container(
-                        color: Colors.yellow,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(10),
+                          ),
+                          color: Colors.yellow,
+                        ),
                         child: TextButton(
                           onPressed: () {
                             Navigator.of(context).pop();
@@ -308,7 +318,12 @@ class _CommentsWidgetState extends State<CommentsWidget> {
                         ),
                       ),
                       Container(
-                        color: Colors.yellow,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(10),
+                          ),
+                          color: Colors.yellow,
+                        ),
                         child: TextButton(
                           onPressed: () {
                             _addCommentToList(setInnerState);

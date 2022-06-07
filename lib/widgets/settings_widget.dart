@@ -51,7 +51,12 @@ class _SettingsWidgetState extends State<SettingsWidget> {
               height: 50,
             ),
             Container(
-              color: Colors.yellowAccent,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(10),
+                ),
+                color: Colors.yellowAccent,
+              ),
               child: ListTile(
                 leading: Icon(
                   Icons.security,
@@ -66,7 +71,12 @@ class _SettingsWidgetState extends State<SettingsWidget> {
             ),
             SizedBox(height: 5),
             Container(
-              color: Colors.yellowAccent,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(10),
+                ),
+                color: Colors.yellowAccent,
+              ),
               child: ListTile(
                 leading: Icon(
                   Icons.perm_identity,
@@ -81,7 +91,12 @@ class _SettingsWidgetState extends State<SettingsWidget> {
             ),
             SizedBox(height: 5),
             Container(
-              color: Colors.yellowAccent,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(10),
+                ),
+                color: Colors.yellowAccent,
+              ),
               child: ListTile(
                 leading: Icon(
                   Icons.location_on,
@@ -96,7 +111,12 @@ class _SettingsWidgetState extends State<SettingsWidget> {
             ),
             SizedBox(height: 5),
             Container(
-              color: Colors.yellowAccent,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(10),
+                ),
+                color: Colors.yellowAccent,
+              ),
               child: ListTile(
                 leading: Icon(
                   Icons.language,
@@ -112,7 +132,12 @@ class _SettingsWidgetState extends State<SettingsWidget> {
             SizedBox(height: 5),
             company
                 ? Container(
-              color: Colors.yellowAccent,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(10),
+                ),
+                color: Colors.yellowAccent,
+              ),
               child: ListTile(
                 leading: Icon(
                   Icons.subscriptions,
@@ -129,7 +154,12 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                 : Container(),
             SizedBox(height: company ? 5 : 0),
             Container(
-              color: Colors.yellowAccent,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(10),
+                ),
+                color: Colors.yellowAccent,
+              ),
               child: ListTile(
                 leading: Icon(
                   Icons.logout,
@@ -197,13 +227,13 @@ class _SettingsWidgetState extends State<SettingsWidget> {
         context: context,
         builder: (context) {
           return AlertDialog(
-                  backgroundColor: Colors.yellow,
+                  backgroundColor: Colors.grey[900],
                   title: Text(
                     languages.changeLanguageLabel,
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 20,
-                        color: Colors.black),
+                        color: Colors.yellow),
                   ),
                   content: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -257,7 +287,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                       },
                       child: Text(
                         languages.cancelLabel,
-                        style: TextStyle(color: Colors.black),
+                        style: TextStyle(color: Colors.yellow),
                       ),
                     ),
                   ],
