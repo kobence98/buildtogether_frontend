@@ -68,6 +68,9 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
                         autocorrect: false,
                         obscureText: true,
                         decoration: InputDecoration(
+                          focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide.none
+                          ),
                           hintText: languages.passwordLabel,
                           hintStyle:
                               TextStyle(color: Colors.black.withOpacity(0.5)),
@@ -93,6 +96,9 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
                         autocorrect: false,
                         obscureText: true,
                         decoration: InputDecoration(
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide.none
+                          ),
                           hintText: languages.passAgainLabel,
                           hintStyle:
                               TextStyle(color: Colors.black.withOpacity(0.5)),

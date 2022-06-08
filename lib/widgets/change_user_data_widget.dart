@@ -135,6 +135,8 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                                     controller: _nameController,
                                     cursorColor: Colors.black,
                                     decoration: InputDecoration(
+                                      focusedBorder: OutlineInputBorder(
+                                          borderSide: BorderSide.none),
                                       hintText: widget.user.name,
                                       hintStyle: TextStyle(
                                           color: Colors.black.withOpacity(0.5)),
@@ -151,16 +153,17 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                             ? Container(
                                 height: 200,
                                 margin: EdgeInsets.only(left: 10, right: 10),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(10),
-                            ),
-                            color: Colors.yellow,
-                          ),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(10),
+                                  ),
+                                  color: Colors.yellow,
+                                ),
                                 padding: EdgeInsets.all(4),
                                 child: TextField(
                                     maxLines: 3000,
                                     maxLength: 2048,
+                                    cursorColor: Colors.black,
                                     controller: _descriptionController,
                                     style: TextStyle(fontSize: 20),
                                     decoration: new InputDecoration.collapsed(

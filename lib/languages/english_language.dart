@@ -84,7 +84,7 @@ class LanguageEn extends Languages {
       "Switch if you are a " + (company ? "simple user." : "company.");
 
   @override
-  String get companyDescriptionTipLabel => 'This is where you should write your company\'s description. Maximum of 256 characters.';
+  String get companyDescriptionTipLabel => 'This is where you should write your company\'s description. Maximum of 1024 characters.';
 
   @override
   String get addCompanyLogoLabel => 'Add company logo:';
@@ -369,4 +369,9 @@ class LanguageEn extends Languages {
 
   @override
   String get dayLetter => 'd';
+
+  //SINGLE POST WIDGET
+
+  @override
+  String get numberOfVotesLabel => 'Number of votes';
 }

@@ -1005,17 +1005,30 @@ class _PostsWidgetState extends State<PostsWidget> {
                           height: 10,
                         ),
                         Container(
-                          color: Colors.black,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(10),
+                            ),
+                            color: Colors.black,
+                          ),
                           padding: EdgeInsets.all(2),
                           child: Center(
                             child: Container(
                               padding: EdgeInsets.only(left: 20.0),
-                              color: Colors.yellow.withOpacity(0.7),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(10),
+                                ),
+                                color: Colors.yellow.withOpacity(0.7),
+                              ),
                               child: TextField(
                                 style: TextStyle(color: Colors.black),
                                 controller: _couponCodeController,
                                 cursorColor: Colors.black,
                                 decoration: InputDecoration(
+                                  focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide.none
+                                  ),
                                   hintText: languages.couponCodeLabel,
                                   hintStyle: TextStyle(
                                       color: Colors.black.withOpacity(0.5)),

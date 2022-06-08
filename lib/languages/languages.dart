@@ -247,4 +247,8 @@ abstract class Languages {
   String get hourLetter;
 
   String get dayLetter;
+
+  //SINGLE POST WIDGET
+
+  String get numberOfVotesLabel;
 }

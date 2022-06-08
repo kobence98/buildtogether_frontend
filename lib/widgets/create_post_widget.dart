@@ -57,6 +57,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
         ),
         child: TextField(
           style: TextStyle(color: Colors.black),
+          maxLength: 40,
           controller: pollControllers.first,
           cursorColor: Colors.black,
           decoration: InputDecoration(
@@ -434,6 +435,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                 child: TextField(
                   cursorColor: Colors.black,
                   controller: _titleController,
+                  maxLength: 256,
                   style: TextStyle(fontSize: 20),
                   decoration: new InputDecoration.collapsed(
                       hintText: languages.pollShortDescriptionLabel),
@@ -521,6 +523,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                   style: TextStyle(color: Colors.black),
                   controller: textEditingController,
                   cursorColor: Colors.black,
+                  maxLength: 40,
                   decoration: InputDecoration(
                     hintText: languages.newPollOptionLabel,
                     hintStyle: TextStyle(color: Colors.black.withOpacity(0.5)),

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_frontend/entities/company.dart';
+import 'package:flutter_frontend/entities/poll_option.dart';
 import 'package:flutter_frontend/entities/post.dart';
 import 'package:flutter_frontend/entities/session.dart';
 import 'package:flutter_frontend/entities/user.dart';
@@ -37,6 +38,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
   final TextEditingController _reportReasonTextFieldController =
       TextEditingController();
   final TextEditingController _couponCodeController = TextEditingController();
+  late bool voted;
 
   @override
   void initState() {
@@ -46,6 +48,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
 
   @override
   Widget build(BuildContext context) {
+    voted = widget.post.pollOptions.any((element) => element.liked);
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -293,6 +296,15 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                           },
                           likeCount: widget.post.likeNumber,
                         ),
+                        voted ? InkWell(
+                          child: Text(
+                            'Remove my vote',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontStyle: FontStyle.italic),
+                          ),
+                          onTap: _onRemovePollVote,
+                        ) : Container(),
                         Row(
                           children: [
                             Text(
@@ -408,10 +420,12 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
   Widget _pollWidget(Post post) {
     List<dynamic> polls = [];
     Map<dynamic, dynamic> voteData = {};
-    post.pollOptions.forEach((option) {
+
+    for(PollOption option in post.pollOptions){
       polls.add(
         Polls.options(
-            title: option.title!,
+            title: "${option.title!}",
+            // + (voted ? ' (${option.likeNumber})' : '') --> ha valahogyan meg lehetne oldani hogy ezt megjelenítse
             value: double.parse(option.likeNumber.toString())),
       );
       for (int i = 0; i < option.likeNumber; i++) {
@@ -423,10 +437,13 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
           widget.user.userId.toString(): post.pollOptions.indexOf(option) + 1
         });
       }
-    });
+    }
     return Polls(
       children: polls,
-      question: Text(''),
+      question: Text(
+        '${languages.numberOfVotesLabel}: ${post.pollOptions.map((e) => e.likeNumber).reduce((a, b) => a + b)}',
+        style: TextStyle(color: Colors.white, fontStyle: FontStyle.italic),
+      ),
       currentUser: widget.user.userId.toString(),
       creatorID: widget.post.companyUserId.toString(),
       voteData: voteData,
@@ -753,5 +770,33 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
         textColor: Colors.white,
         fontSize: 16.0);
     return Future.value(false);
+  }
+
+  _onRemovePollVote() {
+    Post post = widget.post;
+    widget.session
+        .delete(
+        '/api/posts/' +
+            post.postId.toString() +
+            '/pollVote')
+        .then((response) {
+      if (response.statusCode == 200) {
+        setState(() {
+          post.pollOptions.where((element) => element.liked).first.likeNumber--;
+          post.pollOptions.forEach((option) {
+            option.liked = false;
+          });
+        });
+      } else {
+        Fluttertoast.showToast(
+            msg: languages.globalErrorMessage,
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      }
+    });
   }
 }

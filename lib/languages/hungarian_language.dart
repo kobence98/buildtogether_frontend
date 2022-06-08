@@ -79,7 +79,7 @@ class LanguageHu extends Languages {
       "Nyomd meg a kapcsolót, ha te egy " + (company ? "egyszerű felhasználó" : "céges felhasználó") + " vagy.";
 
   @override
-  String get companyDescriptionTipLabel => 'Ide írjad a cégedet bemutató rövid leírást. Maximum 256 karakterből állhat.';
+  String get companyDescriptionTipLabel => 'Ide írjad a cégedet bemutató rövid leírást. Maximum 1024 karakterből állhat.';
 
   @override
   String get addCompanyLogoLabel => 'Cég logó hozzáadása';
@@ -365,4 +365,9 @@ class LanguageHu extends Languages {
 
   @override
   String get dayLetter => 'n';
+
+  //SINGLE POST WIDGET
+
+  @override
+  String get numberOfVotesLabel => 'Szavazatok száma';
 }
