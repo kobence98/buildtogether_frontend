@@ -400,117 +400,103 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
   Widget _pollPostWidget() {
     return Container(
       color: Colors.black,
-      child: Column(
-        children: [
-          Flexible(
-            child: ListView.builder(
-                itemCount: pollOptions.length + 6,
-                itemBuilder: (BuildContext context, int index) {
-                  if (index == 0) {
-                    return SizedBox(
-                      height: 30,
-                    );
-                  } else if (index == 1) {
-                    return ListTile(
-                      title: Text(
-                        languages.whatIsYourIdeaLabel,
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20),
-                      ),
-                    );
-                  } else if (index == 2) {
-                    return SizedBox(
-                      height: 10,
-                    );
-                  } else if (index == 3) {
-                    return Container(
-                      margin: EdgeInsets.only(left: 10, right: 10),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(10),
-                        ),
-                        color: Colors.white,
-                      ),
-                      padding: EdgeInsets.all(4),
-                      child: TextField(
-                        cursorColor: Colors.black,
-                        controller: _titleController,
-                        style: TextStyle(fontSize: 20),
-                        decoration: new InputDecoration.collapsed(
-                            hintText: languages.pollShortDescriptionLabel),
-                      ),
-                    );
-                  } else if (index == 4) {
-                    return ListTile(
-                      title: Text(
-                        '${languages.pollOptionsLabel}:',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16),
-                      ),
-                    );
-                  }
-                  if (index < pollOptions.length + 5) {
-                    return pollOptions.elementAt(index - 5);
-                  } else {
-                    return Container(
-                      margin: EdgeInsets.only(top: 20),
-                      child: Center(
-                        child: ButtonTheme(
-                          height: 70,
-                          minWidth: MediaQuery.of(context).size.width - 5,
-                          child: ElevatedButton(
-                            style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all<Color>(
-                                  Colors.yellow),
-                            ),
-                            onPressed: _onAddOptionPressed,
-                            child: Text(
-                              languages.addOptionLabel,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20,
-                                  color: Colors.black),
-                            ),
-                          ),
-                        ),
-                      ),
-                    );
-                  }
-                }),
-            flex: 7,
-          ),
-          Flexible(
-            child: Container(
-              margin: EdgeInsets.only(left: 10, right: 10),
-              child: ElevatedButton(
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all<Color>(
-                      isButtonEnabled
-                          ? Colors.yellowAccent
-                          : Colors.yellow.shade200),
+      child: ListView.builder(
+          itemCount: pollOptions.length + 7,
+          itemBuilder: (BuildContext context, int index) {
+            if (index == 0) {
+              return SizedBox(
+                height: 30,
+              );
+            } else if (index == 1) {
+              return ListTile(
+                title: Text(
+                  languages.whatIsYourIdeaLabel,
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20),
                 ),
-                onPressed: isButtonEnabled ? _onPostPollPressed : null,
-                child: ListTile(
-                  title: Center(
-                    child: Text(languages.POSTLabel),
+              );
+            } else if (index == 2) {
+              return SizedBox(
+                height: 10,
+              );
+            } else if (index == 3) {
+              return Container(
+                margin: EdgeInsets.only(left: 10, right: 10),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(10),
+                  ),
+                  color: Colors.white,
+                ),
+                padding: EdgeInsets.all(4),
+                child: TextField(
+                  cursorColor: Colors.black,
+                  controller: _titleController,
+                  style: TextStyle(fontSize: 20),
+                  decoration: new InputDecoration.collapsed(
+                      hintText: languages.pollShortDescriptionLabel),
+                ),
+              );
+            } else if (index == 4) {
+              return ListTile(
+                title: Text(
+                  '${languages.pollOptionsLabel}:',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16),
+                ),
+              );
+            }
+            if (index < pollOptions.length + 5) {
+              return pollOptions.elementAt(index - 5);
+            } else if (index == pollOptions.length + 5) {
+              return Container(
+                margin: EdgeInsets.only(top: 20),
+                child: Center(
+                  child: ButtonTheme(
+                    height: 70,
+                    minWidth: MediaQuery.of(context).size.width - 5,
+                    child: ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                            Colors.yellowAccent),
+                      ),
+                      onPressed: _onAddOptionPressed,
+                      child: Text(
+                        languages.addOptionLabel,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                            color: Colors.black),
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
-            flex: 1,
-          ),
-          Flexible(
-            child: Container(
-              color: Colors.black,
-            ),
-            flex: 1,
-          ),
-        ],
-      ),
+              );
+            } else {
+              return Container(
+                alignment: Alignment.bottomCenter,
+                margin: EdgeInsets.only(left: 10, right: 10, top: 20),
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                        isButtonEnabled
+                            ? Colors.yellowAccent
+                            : Colors.yellow.shade200),
+                  ),
+                  onPressed: isButtonEnabled ? _onPostPollPressed : null,
+                  child: ListTile(
+                    title: Center(
+                      child: Text(languages.POSTLabel),
+                    ),
+                  ),
+                ),
+              );
+            }
+          }),
     );
   }
 

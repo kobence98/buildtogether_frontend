@@ -305,8 +305,8 @@ class _PostsWidgetState extends State<PostsWidget> {
                           controller: _scrollController,
                           padding: EdgeInsets.only(bottom: 10),
                           separatorBuilder: (context, index) => Divider(
-                                height: 1,
-                                color: Colors.grey.shade900,
+                                height: 5,
+                                color: Colors.grey.shade700,
                               ),
                           itemCount: actualPosts.length,
                           itemBuilder: (context, index) {

@@ -22,12 +22,19 @@ class DateFormatter {
     }
     return createdDate.year.toString() +
         '.' +
-        createdDate.month.toString() +
+        _zeroToOneDigitNumbers(createdDate.month) +
         '.' +
-        createdDate.day.toString() +
+        _zeroToOneDigitNumbers(createdDate.day) +
         '.' +
-        createdDate.hour.toString() +
+        _zeroToOneDigitNumbers(createdDate.hour) +
         ':' +
-        createdDate.minute.toString();
+        _zeroToOneDigitNumbers(createdDate.minute);
+  }
+
+  static String _zeroToOneDigitNumbers(int number) {
+    if (number < 10 && number >= -10) {
+      return '0$number';
+    }
+    return number.toString();
   }
 }
