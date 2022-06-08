@@ -182,6 +182,8 @@ abstract class Languages {
 
   String get clickHereToOpenThePollLabel;
 
+  String get noPostWithFilters;
+
   //POSTS WIDGET
 
   String get searchLabel;

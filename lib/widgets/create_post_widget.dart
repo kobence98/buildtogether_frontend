@@ -35,6 +35,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
   List<TextEditingController> pollControllers = [];
   List<Widget> pollOptions = [];
   late bool isButtonEnabled;
+  int nameLength = 0;
 
   late Languages languages;
 
@@ -61,6 +62,8 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
           controller: pollControllers.first,
           cursorColor: Colors.black,
           decoration: InputDecoration(
+            counterText: '',
+            focusedBorder: OutlineInputBorder(borderSide: BorderSide.none),
             hintText: languages.newPollOptionLabel,
             hintStyle: TextStyle(color: Colors.black.withOpacity(0.5)),
           ),
@@ -431,13 +434,16 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                   ),
                   color: Colors.white,
                 ),
-                padding: EdgeInsets.all(4),
+                padding: EdgeInsets.all(10),
                 child: TextField(
                   cursorColor: Colors.black,
                   controller: _titleController,
                   maxLength: 256,
                   style: TextStyle(fontSize: 20),
-                  decoration: new InputDecoration.collapsed(
+                  decoration: new InputDecoration(
+                    isCollapsed: true,
+                      counterText: '',
+                      focusedBorder: OutlineInputBorder(borderSide: BorderSide.none),
                       hintText: languages.pollShortDescriptionLabel),
                 ),
               );
@@ -524,7 +530,14 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                   controller: textEditingController,
                   cursorColor: Colors.black,
                   maxLength: 40,
+                  onChanged: (val) {
+                    setState(() {
+                      nameLength = val.length;
+                    });
+                  },
                   decoration: InputDecoration(
+                    counterText: '',
+                    focusedBorder: OutlineInputBorder(borderSide: BorderSide.none),
                     hintText: languages.newPollOptionLabel,
                     hintStyle: TextStyle(color: Colors.black.withOpacity(0.5)),
                   ),

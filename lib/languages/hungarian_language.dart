@@ -214,7 +214,7 @@ class LanguageHu extends Languages {
   //CREATE POST WIDGET
 
   @override
-  String get newPollOptionLabel => 'Új szavazási lehetőség';
+  String get newPollOptionLabel => 'Új szavazási lehetőség (max 40 karakter)';
 
   @override
   String get simplePostLabel => 'Egyszerű poszt';
@@ -247,7 +247,7 @@ class LanguageHu extends Languages {
   String get POSTLabel => 'POSZTOLÁS';
 
   @override
-  String get pollShortDescriptionLabel => 'Szavazás rövid leírása';
+  String get pollShortDescriptionLabel => 'Szavazás rövid leírása (max 256 karakter)';
 
   @override
   String get pollOptionsLabel => 'Szavazási lehetőségek';
@@ -268,6 +268,9 @@ class LanguageHu extends Languages {
 
   @override
   String get clickHereToOpenThePollLabel => 'Kattints ide a szavazás megnyitásához!';
+
+  @override
+  String get noPostWithFilters => 'Nincsen a keresésednek megfelelő találat! Kérlek ellenőrizd, hogy nem írtál-e félre valamit!';
 
   //POSTS WIDGET
 

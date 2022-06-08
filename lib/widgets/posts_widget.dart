@@ -773,7 +773,7 @@ class _PostsWidgetState extends State<PostsWidget> {
               useRootNavigator: false,
               builder: (context) {
                 return AlertDialog(
-                  backgroundColor: Colors.black,
+                  backgroundColor: Colors.grey[900],
                   title: Row(
                     children: [
                       CircleAvatar(
@@ -813,7 +813,10 @@ class _PostsWidgetState extends State<PostsWidget> {
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
-                        child: Text(languages.closeLabel)),
+                        child: Text(
+                          languages.closeLabel,
+                          style: TextStyle(color: Colors.yellow),
+                        )),
                   ],
                 );
               });
@@ -879,10 +882,6 @@ class _PostsWidgetState extends State<PostsWidget> {
             }
           })
         });
-  }
-
-  void refresh() {
-    initState();
   }
 
   void _loadData() {
@@ -955,14 +954,10 @@ class _PostsWidgetState extends State<PostsWidget> {
                   user: widget.user,
                   languages: languages,
                 )))
-        .whenComplete(
-            () => Navigator.of(context).pushReplacement(MaterialPageRoute(
-                builder: (context) => PostsWidget(
-                      session: widget.session,
-                      user: widget.user,
-                      initPage: 1,
-                      languages: languages,
-                    ))));
+        .whenComplete(() {
+      _searchFieldController.clear();
+      FocusManager.instance.primaryFocus?.unfocus();
+        });
   }
 
   void _onContactCreatorTap(Post post) {
@@ -1027,8 +1022,7 @@ class _PostsWidgetState extends State<PostsWidget> {
                                 cursorColor: Colors.black,
                                 decoration: InputDecoration(
                                   focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide.none
-                                  ),
+                                      borderSide: BorderSide.none),
                                   hintText: languages.couponCodeLabel,
                                   hintStyle: TextStyle(
                                       color: Colors.black.withOpacity(0.5)),

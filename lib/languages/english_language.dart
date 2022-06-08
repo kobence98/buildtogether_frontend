@@ -219,7 +219,7 @@ class LanguageEn extends Languages {
   //CREATE POST WIDGET
 
   @override
-  String get newPollOptionLabel => 'New poll option';
+  String get newPollOptionLabel => 'New poll option (max 40 characters)';
 
   @override
   String get simplePostLabel => 'Simple post';
@@ -252,7 +252,7 @@ class LanguageEn extends Languages {
   String get POSTLabel => 'POST';
 
   @override
-  String get pollShortDescriptionLabel => 'Short description for the poll';
+  String get pollShortDescriptionLabel => 'Short description for the poll (max 256 characters)';
 
   @override
   String get pollOptionsLabel => 'Poll options';
@@ -273,6 +273,9 @@ class LanguageEn extends Languages {
 
   @override
   String get clickHereToOpenThePollLabel => 'Click here to open the poll!';
+
+  @override
+  String get noPostWithFilters => 'There are no matching posts for your search! Please check to see if you misspelled anything!';
 
   //POSTS WIDGET
 

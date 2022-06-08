@@ -201,54 +201,6 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                                 ),
                               ),
                             ),
-                            SizedBox(height: 5),
-                            Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(10),
-                                ),
-                                color: Colors.yellow,
-                              ),
-                              padding: EdgeInsets.all(1),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(10),
-                                  ),
-                                  color: Colors.black,
-                                ),
-                                child: ListTile(
-                                  leading: Switch(
-                                    value: company,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        company = value;
-                                        if (company == true) {
-                                          _regCompanyNameController.text =
-                                              _regNameController.text;
-                                        } else {
-                                          _regNameController.text =
-                                              _regCompanyNameController.text;
-                                        }
-                                      });
-                                    },
-                                    activeTrackColor: Colors.yellow.shade200,
-                                    activeColor: Colors.yellow.shade600,
-                                    inactiveTrackColor: Colors.white,
-                                  ),
-                                  title: Container(
-                                    child: Center(
-                                      child: Text(
-                                        languages
-                                            .switchBetweenCompanyAndSimpleUserLabel(
-                                                company),
-                                        style: TextStyle(color: Colors.white),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
                             SizedBox(height: company ? 5 : 0),
                             company
                                 ? Center(
@@ -389,6 +341,54 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                                     ),
                                   )
                                 : Container(),
+                            SizedBox(height: 5),
+                            Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(10),
+                                ),
+                                color: Colors.yellow,
+                              ),
+                              padding: EdgeInsets.all(1),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(10),
+                                  ),
+                                  color: Colors.black,
+                                ),
+                                child: ListTile(
+                                  leading: Switch(
+                                    value: company,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        company = value;
+                                        if (company == true) {
+                                          _regCompanyNameController.text =
+                                              _regNameController.text;
+                                        } else {
+                                          _regNameController.text =
+                                              _regCompanyNameController.text;
+                                        }
+                                      });
+                                    },
+                                    activeTrackColor: Colors.yellow.shade200,
+                                    activeColor: Colors.yellow.shade600,
+                                    inactiveTrackColor: Colors.white,
+                                  ),
+                                  title: Container(
+                                    child: Center(
+                                      child: Text(
+                                        languages
+                                            .switchBetweenCompanyAndSimpleUserLabel(
+                                            company),
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
                             SizedBox(height: 5),
                             Container(
                               decoration: BoxDecoration(
