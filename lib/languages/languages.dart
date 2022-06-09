@@ -220,6 +220,8 @@ abstract class Languages {
 
   String get reportUserAndPostTitleLabel;
 
+  String get fillTheSearchFieldWarningMessage;
+
   //SETTINGS WIDGET
 
   String get changeUserDataLabel;
@@ -253,4 +255,6 @@ abstract class Languages {
   //SINGLE POST WIDGET
 
   String get numberOfVotesLabel;
+
+  String get removeMyVoteLabel;
 }

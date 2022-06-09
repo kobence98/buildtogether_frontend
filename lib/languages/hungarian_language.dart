@@ -326,6 +326,9 @@ class LanguageHu extends Languages {
   @override
   String get alreadyReportedPostMessage => 'Már jelentetted ezt a posztot!';
 
+  @override
+  String get fillTheSearchFieldWarningMessage => 'Írj be legalább 1 karaktert a kereséshez!';
+
   //SETTINGS WIDGET
 
   @override
@@ -373,4 +376,7 @@ class LanguageHu extends Languages {
 
   @override
   String get numberOfVotesLabel => 'Szavazatok száma';
+
+  @override
+  String get removeMyVoteLabel => 'Szavazat visszavonása';
 }

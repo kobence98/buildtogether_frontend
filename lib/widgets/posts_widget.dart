@@ -946,18 +946,30 @@ class _PostsWidgetState extends State<PostsWidget> {
   }
 
   void _onSearchButtonPressed() {
-    Navigator.of(context)
-        .push(MaterialPageRoute(
-            builder: (context) => FilteredPostsWidget(
-                  session: widget.session,
-                  pattern: _searchFieldController.text,
-                  user: widget.user,
-                  languages: languages,
-                )))
-        .whenComplete(() {
-      _searchFieldController.clear();
-      FocusManager.instance.primaryFocus?.unfocus();
-        });
+    if(_searchFieldController.text.isEmpty){
+      Fluttertoast.showToast(
+          msg: languages.fillTheSearchFieldWarningMessage,
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }
+    else{
+      Navigator.of(context)
+          .push(MaterialPageRoute(
+          builder: (context) => FilteredPostsWidget(
+            session: widget.session,
+            pattern: _searchFieldController.text,
+            user: widget.user,
+            languages: languages,
+          )))
+          .whenComplete(() {
+        _searchFieldController.clear();
+        FocusManager.instance.primaryFocus?.unfocus();
+      });
+    }
   }
 
   void _onContactCreatorTap(Post post) {

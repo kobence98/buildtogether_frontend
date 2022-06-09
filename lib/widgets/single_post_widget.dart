@@ -298,7 +298,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                         ),
                         voted ? InkWell(
                           child: Text(
-                            'Remove my vote',
+                            languages.removeMyVoteLabel,
                             style: TextStyle(
                                 color: Colors.white,
                                 fontStyle: FontStyle.italic),

@@ -330,6 +330,9 @@ class LanguageEn extends Languages {
   @override
   String get alreadyReportedPostMessage => 'You already reported this post!';
 
+  @override
+  String get fillTheSearchFieldWarningMessage => 'You shall write at least 1 character to the search field!';
+
   //SETTINGS WIDGET
 
   @override
@@ -377,4 +380,7 @@ class LanguageEn extends Languages {
 
   @override
   String get numberOfVotesLabel => 'Number of votes';
+
+  @override
+  String get removeMyVoteLabel => 'Remove my vote';
 }
