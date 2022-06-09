@@ -32,7 +32,22 @@ class LanguageHu extends Languages {
 
   @override
   String get likeOwnCommentWarningMessage => 'Nem like-olhatod a saját kommentedet!';
-  
+
+  @override
+  String get banUserLabel => 'Készítő tiltása';
+
+  @override
+  String get successfulBanMessage => 'Sikeres tiltás!';
+
+  @override
+  String get banLabel => 'Tiltás';
+
+  @override
+  String get banCreatorConfirmQuestionLabel => 'Ha tiltod a poszt készítőjét, akkor semmilyen posztot és kommentet nem fogsz tőle látni, ameddig ki nem veszed a tiltást a beállításokban. Biztosan akarod tiltani?';
+
+  @override
+  String get banOwnAccountWarningMessage => 'Nem tilthatod a saját fiókodat!';
+
   //MAIN
   @override
   String get subscribeWarningMessage => 'A céged csak akkor lesz elérhető a felhasználók számára, ha a beállításoknál feliratkozol!';
@@ -211,6 +226,9 @@ class LanguageHu extends Languages {
   @override
   String get alreadyReportedCommentMessage => 'Már jelentetted ezt a posztot!';
 
+  @override
+  String get banCommenterConfirmQuestionLabel => 'Ha tiltod ezt a kommentelőt, akkor semmilyen posztot és kommentet nem fogsz tőle látni, ameddig ki nem veszed a tiltást a beállításokban. Biztosan akarod tiltani?';
+
   //CREATE POST WIDGET
 
   @override
@@ -358,6 +376,9 @@ class LanguageHu extends Languages {
   @override
   String get changeLanguageLabel => 'Nyelv megváltoztatása';
 
+  @override
+  String get handleBansLabel => 'Felhasználói tiltások kezelése';
+
   //DATE FORMATTER
 
   @override
@@ -379,4 +400,15 @@ class LanguageHu extends Languages {
 
   @override
   String get removeMyVoteLabel => 'Szavazat visszavonása';
+
+  //BANNED USERS WIDGET
+
+  @override
+  String get noBannedUsers => 'Nincsenek tiltott felhasználók a listában!';
+
+  @override
+  String get idLabel => 'Felhasználó azonosító';
+
+  @override
+  String get successfulBanDeleteMessage => 'Sikeres eltávolítás!';
 }

@@ -131,56 +131,67 @@ class _CommentsWidgetState extends State<CommentsWidget> {
                                           color: Colors.white,
                                         ),
                                         itemBuilder: (context) {
-                                          return List.generate(1, (index) {
-                                            return PopupMenuItem(
-                                              child: Text(comment.userId ==
+                                          return List.generate(2, (index) {
+                                            if(index == 0){
+                                              return PopupMenuItem(
+                                                  child: Text(comment.userId ==
                                                       widget.user.userId
-                                                  ? languages.deleteLabel
-                                                  : languages.reportLabel),
-                                              value: 0,
-                                            );
+                                                      ? languages.deleteLabel
+                                                      : languages.reportLabel),
+                                                  value: 0,);
+                                            }
+                                            else{
+                                              return PopupMenuItem(
+                                                child: Text(languages.banUserLabel),
+                                                value: 1,);
+                                            }
                                           });
                                         },
                                         onSelected: (index) {
-                                          if (comment.userId ==
-                                              widget.user.userId) {
-                                            widget.session
-                                                .delete('/api/comments/' +
-                                                    comment.commentId
-                                                        .toString())
-                                                .then((response) {
-                                              if (response.statusCode == 200) {
-                                                Fluttertoast.showToast(
-                                                    msg: languages
-                                                        .successfulDeleteMessage,
-                                                    toastLength:
-                                                        Toast.LENGTH_LONG,
-                                                    gravity:
-                                                        ToastGravity.CENTER,
-                                                    timeInSecForIosWeb: 1,
-                                                    backgroundColor:
-                                                        Colors.green,
-                                                    textColor: Colors.white,
-                                                    fontSize: 16.0);
-                                                setState(() {
-                                                  comments.remove(comment);
-                                                });
-                                              } else {
-                                                Fluttertoast.showToast(
-                                                    msg: languages
-                                                        .globalServerErrorMessage,
-                                                    toastLength:
-                                                        Toast.LENGTH_LONG,
-                                                    gravity:
-                                                        ToastGravity.CENTER,
-                                                    timeInSecForIosWeb: 1,
-                                                    backgroundColor: Colors.red,
-                                                    textColor: Colors.white,
-                                                    fontSize: 16.0);
-                                              }
-                                            });
-                                          } else {
-                                            onReportTap(comment);
+                                          if(index == 0){
+                                            if (comment.userId ==
+                                                widget.user.userId) {
+                                              widget.session
+                                                  .delete('/api/comments/' +
+                                                  comment.commentId
+                                                      .toString())
+                                                  .then((response) {
+                                                if (response.statusCode == 200) {
+                                                  Fluttertoast.showToast(
+                                                      msg: languages
+                                                          .successfulDeleteMessage,
+                                                      toastLength:
+                                                      Toast.LENGTH_LONG,
+                                                      gravity:
+                                                      ToastGravity.CENTER,
+                                                      timeInSecForIosWeb: 1,
+                                                      backgroundColor:
+                                                      Colors.green,
+                                                      textColor: Colors.white,
+                                                      fontSize: 16.0);
+                                                  setState(() {
+                                                    comments.remove(comment);
+                                                  });
+                                                } else {
+                                                  Fluttertoast.showToast(
+                                                      msg: languages
+                                                          .globalServerErrorMessage,
+                                                      toastLength:
+                                                      Toast.LENGTH_LONG,
+                                                      gravity:
+                                                      ToastGravity.CENTER,
+                                                      timeInSecForIosWeb: 1,
+                                                      backgroundColor: Colors.red,
+                                                      textColor: Colors.white,
+                                                      fontSize: 16.0);
+                                                }
+                                              });
+                                            } else {
+                                              onReportTap(comment);
+                                            }
+                                          }
+                                          else{
+                                            _onBanUserTap(comment.userId);
                                           }
                                         }),
                                   )),
@@ -577,5 +588,89 @@ class _CommentsWidgetState extends State<CommentsWidget> {
         textColor: Colors.white,
         fontSize: 16.0);
     return Future.value(false);
+  }
+
+  void _onBanUserTap(int creatorId) {
+    if(creatorId == widget.user.userId){
+      Fluttertoast.showToast(
+          msg: languages.banOwnAccountWarningMessage,
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }
+    else{
+      showDialog(
+          context: context,
+          builder: (context) {
+            return StatefulBuilder(builder: (context, setInnerState) {
+              return innerLoading
+                  ? Container(
+                child: Center(
+                  child: CircularProgressIndicator(
+                    color: Colors.yellow,
+                  ),
+                ),
+              )
+                  : AlertDialog(
+                backgroundColor: Colors.yellow,
+                title: Text(
+                  languages.banCommenterConfirmQuestionLabel,
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                      color: Colors.black),
+                ),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text(
+                      languages.cancelLabel,
+                      style: TextStyle(color: Colors.black),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      innerLoading = true;
+                      widget.session.postJson('/api/users/banUser/$creatorId', Map()).then((response) {
+                        setInnerState((){
+                          innerLoading = false;
+                        });
+                        if (response.statusCode == 200) {
+                          Navigator.of(context).pop();
+                          Fluttertoast.showToast(
+                              msg: languages.successfulBanMessage,
+                              toastLength: Toast.LENGTH_LONG,
+                              gravity: ToastGravity.CENTER,
+                              timeInSecForIosWeb: 1,
+                              backgroundColor: Colors.green,
+                              textColor: Colors.white,
+                              fontSize: 16.0);
+                        } else {
+                          Fluttertoast.showToast(
+                              msg: languages.globalServerErrorMessage,
+                              toastLength: Toast.LENGTH_LONG,
+                              gravity: ToastGravity.CENTER,
+                              timeInSecForIosWeb: 1,
+                              backgroundColor: Colors.red,
+                              textColor: Colors.white,
+                              fontSize: 16.0);
+                        }
+                      });
+                    },
+                    child: Text(
+                      languages.banLabel,
+                      style: TextStyle(color: Colors.black),
+                    ),
+                  ),
+                ],
+              );
+            });
+          });
+    }
   }
 }

@@ -20,6 +20,16 @@ abstract class Languages {
 
   String get likeOwnCommentWarningMessage;
 
+  String get banUserLabel;
+
+  String get successfulBanMessage;
+
+  String get banLabel;
+
+  String get banCreatorConfirmQuestionLabel;
+
+  String get banOwnAccountWarningMessage;
+
   //MAIN
   String get subscribeWarningMessage;
 
@@ -142,6 +152,8 @@ abstract class Languages {
 
   String get alreadyReportedCommentMessage;
 
+  String get banCommenterConfirmQuestionLabel;
+
   //CREATE POST WIDGET
 
   String get newPollOptionLabel;
@@ -242,6 +254,8 @@ abstract class Languages {
 
   String get changeLanguageLabel;
 
+  String get handleBansLabel;
+
   //DATE FORMATTER
 
   String get minuteLetter;
@@ -257,4 +271,12 @@ abstract class Languages {
   String get numberOfVotesLabel;
 
   String get removeMyVoteLabel;
+
+  //BANNED USERS WIDGET
+
+  String get noBannedUsers;
+
+  String get idLabel;
+
+  String get successfulBanDeleteMessage;
 }

@@ -406,8 +406,8 @@ class _PostsWidgetState extends State<PostsWidget> {
                                                 return List.generate(
                                                     widget.user.companyId ==
                                                             post.companyId
-                                                        ? 3
-                                                        : 1, (index) {
+                                                        ? 4
+                                                        : 2, (index) {
                                                   if (index == 0) {
                                                     return PopupMenuItem(
                                                       child: Text(widget.user
@@ -426,8 +426,14 @@ class _PostsWidgetState extends State<PostsWidget> {
                                                   } else if (index == 1) {
                                                     return PopupMenuItem(
                                                       child: Text(languages
-                                                          .contactCreatorLabel),
+                                                          .banUserLabel),
                                                       value: 1,
+                                                    );
+                                                  } else if (index == 2) {
+                                                    return PopupMenuItem(
+                                                      child: Text(languages
+                                                          .contactCreatorLabel),
+                                                      value: 2,
                                                     );
                                                   } else {
                                                     return PopupMenuItem(
@@ -437,7 +443,7 @@ class _PostsWidgetState extends State<PostsWidget> {
                                                               .notImplementedLabel
                                                           : languages
                                                               .implementedLabel),
-                                                      value: 2,
+                                                      value: 3,
                                                     );
                                                   }
                                                 });
@@ -500,6 +506,8 @@ class _PostsWidgetState extends State<PostsWidget> {
                                                     onReportTap(post);
                                                   }
                                                 } else if (index == 1) {
+                                                  _onBanUserTap(post.creatorId);
+                                                } else if (index == 2) {
                                                   _onContactCreatorTap(post);
                                                 } else {
                                                   widget.session
@@ -946,7 +954,7 @@ class _PostsWidgetState extends State<PostsWidget> {
   }
 
   void _onSearchButtonPressed() {
-    if(_searchFieldController.text.isEmpty){
+    if (_searchFieldController.text.isEmpty) {
       Fluttertoast.showToast(
           msg: languages.fillTheSearchFieldWarningMessage,
           toastLength: Toast.LENGTH_LONG,
@@ -955,16 +963,15 @@ class _PostsWidgetState extends State<PostsWidget> {
           backgroundColor: Colors.red,
           textColor: Colors.white,
           fontSize: 16.0);
-    }
-    else{
+    } else {
       Navigator.of(context)
           .push(MaterialPageRoute(
-          builder: (context) => FilteredPostsWidget(
-            session: widget.session,
-            pattern: _searchFieldController.text,
-            user: widget.user,
-            languages: languages,
-          )))
+              builder: (context) => FilteredPostsWidget(
+                    session: widget.session,
+                    pattern: _searchFieldController.text,
+                    user: widget.user,
+                    languages: languages,
+                  )))
           .whenComplete(() {
         _searchFieldController.clear();
         FocusManager.instance.primaryFocus?.unfocus();
@@ -1264,5 +1271,89 @@ class _PostsWidgetState extends State<PostsWidget> {
         textColor: Colors.white,
         fontSize: 16.0);
     return Future.value(false);
+  }
+
+  void _onBanUserTap(int creatorId) {
+    if(creatorId == widget.user.userId){
+      Fluttertoast.showToast(
+          msg: languages.banOwnAccountWarningMessage,
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }
+    else{
+      showDialog(
+          context: context,
+          builder: (context) {
+            return StatefulBuilder(builder: (context, setInnerState) {
+              return innerLoading
+                  ? Container(
+                child: Center(
+                  child: CircularProgressIndicator(
+                    color: Colors.yellow,
+                  ),
+                ),
+              )
+                  : AlertDialog(
+                backgroundColor: Colors.yellow,
+                title: Text(
+                  languages.banCreatorConfirmQuestionLabel,
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                      color: Colors.black),
+                ),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text(
+                      languages.cancelLabel,
+                      style: TextStyle(color: Colors.black),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      innerLoading = true;
+                      widget.session.postJson('/api/users/banUser/$creatorId', Map()).then((response) {
+                        setInnerState((){
+                          innerLoading = false;
+                        });
+                        if (response.statusCode == 200) {
+                          Navigator.of(context).pop();
+                          Fluttertoast.showToast(
+                              msg: languages.successfulBanMessage,
+                              toastLength: Toast.LENGTH_LONG,
+                              gravity: ToastGravity.CENTER,
+                              timeInSecForIosWeb: 1,
+                              backgroundColor: Colors.green,
+                              textColor: Colors.white,
+                              fontSize: 16.0);
+                        } else {
+                          Fluttertoast.showToast(
+                              msg: languages.globalServerErrorMessage,
+                              toastLength: Toast.LENGTH_LONG,
+                              gravity: ToastGravity.CENTER,
+                              timeInSecForIosWeb: 1,
+                              backgroundColor: Colors.red,
+                              textColor: Colors.white,
+                              fontSize: 16.0);
+                        }
+                      });
+                    },
+                    child: Text(
+                      languages.banLabel,
+                      style: TextStyle(color: Colors.black),
+                    ),
+                  ),
+                ],
+              );
+            });
+          });
+    }
   }
 }

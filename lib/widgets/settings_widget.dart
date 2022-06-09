@@ -12,6 +12,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'change_location_widget.dart';
 import 'change_password_widget.dart';
 import 'change_user_data_widget.dart';
+import 'handle_bans_widget.dart';
 
 class SettingsWidget extends StatefulWidget {
   final Session session;
@@ -107,6 +108,26 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                 ),
                 onTap: _onChangeLocationTap,
+              ),
+            ),
+            SizedBox(height: 5),
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(10),
+                ),
+                color: Colors.yellowAccent,
+              ),
+              child: ListTile(
+                leading: Icon(
+                  Icons.not_interested,
+                  color: Colors.black,
+                ),
+                title: Text(
+                  languages.handleBansLabel,
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                ),
+                onTap: _onHandleBansTap,
               ),
             ),
             SizedBox(height: 5),
@@ -393,5 +414,14 @@ class _SettingsWidgetState extends State<SettingsWidget> {
             fontSize: 16.0);
       }
     });
+  }
+
+  void _onHandleBansTap() {
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => HandleBansWidget(
+          user: widget.user,
+          session: widget.session,
+          languages: languages,
+        )));
   }
 }

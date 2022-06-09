@@ -51,20 +51,6 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
 
     company = widget.user.roles.contains('ROLE_COMPANY');
 
-    if (company) {
-      widget.session
-          .get('/api/companies/' + widget.user.companyId.toString())
-          .then((response) {
-        if (response.statusCode == 200) {
-          setState(() {
-            companyData =
-                Company.fromJson(json.decode(utf8.decode(response.bodyBytes)));
-            _descriptionController.text = companyData!.description;
-          });
-        }
-      });
-    }
-
     countryCodes.add("Global");
     widget.session.get('/api/companies/countryCodes').then((response) {
       if (response.statusCode == 200) {
@@ -74,9 +60,24 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
         _chosenCountryCode = widget.user.companyCountryCode == null
             ? 'Global'
             : widget.user.companyCountryCode;
-        setState(() {
-          _countryCodesLoaded = true;
-        });
+        if (company) {
+          widget.session
+              .get('/api/companies/' + widget.user.companyId.toString())
+              .then((response) {
+            if (response.statusCode == 200) {
+              setState(() {
+                companyData = Company.fromJson(
+                    json.decode(utf8.decode(response.bodyBytes)));
+                _descriptionController.text = companyData!.description;
+                _countryCodesLoaded = true;
+              });
+            }
+          });
+        } else {
+          setState(() {
+            _countryCodesLoaded = true;
+          });
+        }
       } else {
         Fluttertoast.showToast(
             msg: languages.countryCodesErrorMessage,
@@ -338,7 +339,11 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                   ),
                 ),
               )
-            : Container(),
+            : Center(
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                ),
+              ),
       ),
     );
   }

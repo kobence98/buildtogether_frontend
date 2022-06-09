@@ -34,6 +34,21 @@ class LanguageEn extends Languages {
   @override
   String get likeOwnCommentWarningMessage => 'You can\'t like your own comment!';
 
+  @override
+  String get banUserLabel => 'Ban creator';
+
+  @override
+  String get successfulBanMessage => 'Successful ban!';
+
+  @override
+  String get banLabel => 'Ban';
+
+  @override
+  String get banCreatorConfirmQuestionLabel => 'If you ban the creator of this post you wont see his/her posts and comments until you unlock the ban in the settings. Are you sure you want to ban this user?';
+
+  @override
+  String get banOwnAccountWarningMessage => 'You can\'t ban your own account!';
+
   //MAIN
   @override
   String get subscribeWarningMessage =>
@@ -216,6 +231,9 @@ class LanguageEn extends Languages {
   @override
   String get alreadyReportedCommentMessage => 'You already reported this comment!';
 
+  @override
+  String get banCommenterConfirmQuestionLabel => 'If you ban this commenter you wont see his/her posts and comments until you unlock the ban in the settings. Are you sure you want to ban this user?';
+
   //CREATE POST WIDGET
 
   @override
@@ -362,6 +380,9 @@ class LanguageEn extends Languages {
   @override
   String get changeLanguageLabel => 'Change language';
 
+  @override
+  String get handleBansLabel => 'Handle user bans';
+
   //DATE FORMATTER
 
   @override
@@ -383,4 +404,15 @@ class LanguageEn extends Languages {
 
   @override
   String get removeMyVoteLabel => 'Remove my vote';
+
+  //BANNED USERS WIDGET
+
+  @override
+  String get noBannedUsers => 'There is no banned users in the list!';
+
+  @override
+  String get idLabel => 'User id';
+
+  @override
+  String get successfulBanDeleteMessage => 'Successful remove!';
 }
