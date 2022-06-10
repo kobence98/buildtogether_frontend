@@ -361,7 +361,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
             height: 20,
           ),
           Container(
-            height: MediaQuery.of(context).size.height - (company ? 450 : 350),
+            // height: MediaQuery.of(context).size.height - (company ? 450 : 350),
             margin: EdgeInsets.only(left: 10, right: 10),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.all(
@@ -371,7 +371,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
             ),
             padding: EdgeInsets.all(4),
             child: TextField(
-                maxLines: 3000,
+                maxLines: null,
                 maxLength: 2048,
                 controller: _descriptionController,
                 style: TextStyle(fontSize: 20),

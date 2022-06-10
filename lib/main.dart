@@ -20,7 +20,6 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  //TODO megváltoztatni a téma színét anélkül, hogy a visszanyíl ikon eltűnne
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

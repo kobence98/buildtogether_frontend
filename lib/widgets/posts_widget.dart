@@ -135,6 +135,7 @@ class _PostsWidgetState extends State<PostsWidget> {
                             ),
                           );
                         },
+                        minCharsForSuggestions: 1,
                         textFieldConfiguration: TextFieldConfiguration(
                           decoration: new InputDecoration.collapsed(
                               hintText: languages.searchLabel),
@@ -142,7 +143,7 @@ class _PostsWidgetState extends State<PostsWidget> {
                           cursorColor: Colors.black,
                           autofocus: false,
                           style: TextStyle(fontSize: 20),
-                          onEditingComplete: _onSearchButtonPressed,
+                          onEditingComplete: _onSearchComplete,
                         ),
                         suggestionsCallback: (pattern) async {
                           dynamic response = await widget.session
@@ -979,6 +980,25 @@ class _PostsWidgetState extends State<PostsWidget> {
     }
   }
 
+  void _onSearchComplete(){
+    if (_searchFieldController.text.isEmpty) {
+      FocusManager.instance.primaryFocus?.unfocus();
+    } else {
+      Navigator.of(context)
+          .push(MaterialPageRoute(
+          builder: (context) => FilteredPostsWidget(
+            session: widget.session,
+            pattern: _searchFieldController.text,
+            user: widget.user,
+            languages: languages,
+          )))
+          .whenComplete(() {
+        _searchFieldController.clear();
+        FocusManager.instance.primaryFocus?.unfocus();
+      });
+    }
+  }
+
   void _onContactCreatorTap(Post post) {
     showDialog(
         context: context,
@@ -1274,7 +1294,7 @@ class _PostsWidgetState extends State<PostsWidget> {
   }
 
   void _onBanUserTap(int creatorId) {
-    if(creatorId == widget.user.userId){
+    if (creatorId == widget.user.userId) {
       Fluttertoast.showToast(
           msg: languages.banOwnAccountWarningMessage,
           toastLength: Toast.LENGTH_LONG,
@@ -1283,75 +1303,77 @@ class _PostsWidgetState extends State<PostsWidget> {
           backgroundColor: Colors.red,
           textColor: Colors.white,
           fontSize: 16.0);
-    }
-    else{
+    } else {
       showDialog(
           context: context,
           builder: (context) {
             return StatefulBuilder(builder: (context, setInnerState) {
               return innerLoading
                   ? Container(
-                child: Center(
-                  child: CircularProgressIndicator(
-                    color: Colors.yellow,
-                  ),
-                ),
-              )
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          color: Colors.yellow,
+                        ),
+                      ),
+                    )
                   : AlertDialog(
-                backgroundColor: Colors.yellow,
-                title: Text(
-                  languages.banCreatorConfirmQuestionLabel,
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                      color: Colors.black),
-                ),
-                actions: <Widget>[
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Text(
-                      languages.cancelLabel,
-                      style: TextStyle(color: Colors.black),
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      innerLoading = true;
-                      widget.session.postJson('/api/users/banUser/$creatorId', Map()).then((response) {
-                        setInnerState((){
-                          innerLoading = false;
-                        });
-                        if (response.statusCode == 200) {
-                          Navigator.of(context).pop();
-                          Fluttertoast.showToast(
-                              msg: languages.successfulBanMessage,
-                              toastLength: Toast.LENGTH_LONG,
-                              gravity: ToastGravity.CENTER,
-                              timeInSecForIosWeb: 1,
-                              backgroundColor: Colors.green,
-                              textColor: Colors.white,
-                              fontSize: 16.0);
-                        } else {
-                          Fluttertoast.showToast(
-                              msg: languages.globalServerErrorMessage,
-                              toastLength: Toast.LENGTH_LONG,
-                              gravity: ToastGravity.CENTER,
-                              timeInSecForIosWeb: 1,
-                              backgroundColor: Colors.red,
-                              textColor: Colors.white,
-                              fontSize: 16.0);
-                        }
-                      });
-                    },
-                    child: Text(
-                      languages.banLabel,
-                      style: TextStyle(color: Colors.black),
-                    ),
-                  ),
-                ],
-              );
+                      backgroundColor: Colors.yellow,
+                      title: Text(
+                        languages.banCreatorConfirmQuestionLabel,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                            color: Colors.black),
+                      ),
+                      actions: <Widget>[
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Text(
+                            languages.cancelLabel,
+                            style: TextStyle(color: Colors.black),
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            innerLoading = true;
+                            widget.session
+                                .postJson(
+                                    '/api/users/banUser/$creatorId', Map())
+                                .then((response) {
+                              setInnerState(() {
+                                innerLoading = false;
+                              });
+                              if (response.statusCode == 200) {
+                                Navigator.of(context).pop();
+                                Fluttertoast.showToast(
+                                    msg: languages.successfulBanMessage,
+                                    toastLength: Toast.LENGTH_LONG,
+                                    gravity: ToastGravity.CENTER,
+                                    timeInSecForIosWeb: 1,
+                                    backgroundColor: Colors.green,
+                                    textColor: Colors.white,
+                                    fontSize: 16.0);
+                              } else {
+                                Fluttertoast.showToast(
+                                    msg: languages.globalServerErrorMessage,
+                                    toastLength: Toast.LENGTH_LONG,
+                                    gravity: ToastGravity.CENTER,
+                                    timeInSecForIosWeb: 1,
+                                    backgroundColor: Colors.red,
+                                    textColor: Colors.white,
+                                    fontSize: 16.0);
+                              }
+                            });
+                          },
+                          child: Text(
+                            languages.banLabel,
+                            style: TextStyle(color: Colors.black),
+                          ),
+                        ),
+                      ],
+                    );
             });
           });
     }
