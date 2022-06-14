@@ -238,6 +238,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                         ),
                       );
                     },
+                    minCharsForSuggestions: 1,
                     textFieldConfiguration: TextFieldConfiguration(
                       decoration: new InputDecoration.collapsed(
                           hintText: languages.companyNameLabel),
@@ -293,11 +294,13 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                       );
                     },
                     onSuggestionSelected: (suggestion) {
-                      CompanyForSearch company = companies
-                          .where((cp) => cp.id.toString() == suggestion)
-                          .first;
-                      _companyNameController.text = company.name;
-                      _selectedCompany = company;
+                      setState(() {
+                        CompanyForSearch company = companies
+                            .where((cp) => cp.id.toString() == suggestion)
+                            .first;
+                        _companyNameController.text = company.name;
+                        _selectedCompany = company;
+                      });
                     },
                   ),
                 )
@@ -332,6 +335,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                         onTap: () {
                           setState(() {
                             _selectedCompany = null;
+                            _companyNameController.clear();
                           });
                         },
                       ),
