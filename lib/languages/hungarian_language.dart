@@ -379,6 +379,18 @@ class LanguageHu extends Languages {
   @override
   String get handleBansLabel => 'Felhasználói tiltások kezelése';
 
+  @override
+  String get deleteAccountLabel => 'Felhasználói fiók törlése';
+
+  @override
+  String get deleteAccountWarningTitle => 'FELHASZNÁLÓI FIÓK TÖRLÉSE!';
+
+  @override
+  String get deleteAccountWarningMessage => 'FIGYELEM, HA MEGNYOMOD A TÖRLÉS GOMBOT, AKKOR AZ ÖSSZES HOZZÁD TARTOZÓ KONTENT TÖRLŐDNI FOG AZ ALKALMAZÁSBÓL! BIZTOSAN AKAROD FOLYTATNI?';
+
+  @override
+  String get successfulAccountDeleteMessage => 'Sikeres felhasználói fiók törlés!';
+
   //DATE FORMATTER
 
   @override

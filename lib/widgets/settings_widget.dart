@@ -193,6 +193,26 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                 onTap: _onLogoutTap,
               ),
             ),
+            SizedBox(height: 5),
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(10),
+                ),
+                color: Colors.yellowAccent,
+              ),
+              child: ListTile(
+                leading: Icon(
+                  Icons.delete_forever,
+                  color: Colors.black,
+                ),
+                title: Text(
+                  languages.deleteAccountLabel,
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                ),
+                onTap: _onDeleteAccountTap,
+              ),
+            ),
           ],
         ),
       ),
@@ -423,5 +443,98 @@ class _SettingsWidgetState extends State<SettingsWidget> {
           session: widget.session,
           languages: languages,
         )));
+  }
+
+  void _onDeleteAccountTap() {
+    showDialog(
+        context: context,
+        useRootNavigator: false,
+        builder: (context) {
+          return StatefulBuilder(builder: (context, setState) {
+            return loading
+                ? Container(
+              child: Center(
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                ),
+              ),
+            )
+                : AlertDialog(
+              backgroundColor: Colors.red,
+              title: Text(
+                languages.deleteAccountWarningTitle,
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                    color: Colors.white),
+              ),
+              content: Container(
+                child: Text(languages.deleteAccountWarningMessage,
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                      color: Colors.white),
+                ),
+              ),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text(
+                    languages.cancelLabel,
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {
+                    _onDeleteAccountDeleteButtonTap(setState);
+                  },
+                  child: Text(
+                    languages.deleteLabel,
+                    style: TextStyle(color: Colors.white),
+                  ),
+                )
+              ],
+            );
+          });
+        });
+  }
+
+  _onDeleteAccountDeleteButtonTap(setState) {
+    setState(() {
+      loading = true;
+    });
+    widget.session
+        .delete(
+        '/api/users')
+        .then((response) {
+      if (response.statusCode == 200) {
+        loading = false;
+        widget.session.updateCookie(response);
+        authSqfLiteHandler.deleteUsers();
+        Phoenix.rebirth(context);
+        Fluttertoast.showToast(
+            msg: languages.successfulAccountDeleteMessage,
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.green,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      } else {
+        setState(() {
+          loading = false;
+        });
+        Fluttertoast.showToast(
+            msg: languages.globalErrorMessage,
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      }
+    });
   }
 }

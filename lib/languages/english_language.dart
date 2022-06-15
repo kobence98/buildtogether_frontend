@@ -383,6 +383,18 @@ class LanguageEn extends Languages {
   @override
   String get handleBansLabel => 'Handle user bans';
 
+  @override
+  String get deleteAccountLabel => 'Delete user account';
+
+  @override
+  String get deleteAccountWarningTitle => 'DELETE USER ACCOUNT!';
+
+  @override
+  String get deleteAccountWarningMessage => 'WARNING! IF YOU PUSH THE DELETE BUTTON, ALL OF YOUR CONTENT WILL BE DELETED FROM THE APPLICATION! DO YOU WANT TO CONTINUE?';
+
+  @override
+  String get successfulAccountDeleteMessage => 'Successful user account delete!';
+
   //DATE FORMATTER
 
   @override

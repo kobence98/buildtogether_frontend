@@ -256,6 +256,14 @@ abstract class Languages {
 
   String get handleBansLabel;
 
+  String get deleteAccountLabel;
+
+  String get deleteAccountWarningTitle;
+
+  String get deleteAccountWarningMessage;
+
+  String get successfulAccountDeleteMessage;
+
   //DATE FORMATTER
 
   String get minuteLetter;
