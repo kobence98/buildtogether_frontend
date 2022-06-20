@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:country_codes/country_codes.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_frontend/entities/company.dart';
@@ -300,7 +301,15 @@ class _PostsWidgetState extends State<PostsWidget> {
                   onRefresh: () {
                     _loadData();
                   },
-                  header: WaterDropHeader(),
+                  header: WaterDropHeader(
+                    refresh: SizedBox(
+                      width: 25.0,
+                      height: 25.0,
+                      child: defaultTargetPlatform == TargetPlatform.iOS
+                          ? const CupertinoActivityIndicator()
+                          : const CircularProgressIndicator(strokeWidth: 2.0, color: Colors.yellow,),
+                    ),
+                  ),
                   child: actualPosts.isNotEmpty
                       ? ListView.separated(
                           controller: _scrollController,
@@ -946,12 +955,12 @@ class _PostsWidgetState extends State<PostsWidget> {
                 0, ownPosts.length < 10 ? ownPosts.length : 10);
           });
           loadedPosts = true;
+          _refreshNewController.refreshCompleted();
+          _refreshBestController.refreshCompleted();
+          _refreshOwnController.refreshCompleted();
         }
       });
     });
-    _refreshNewController.refreshCompleted();
-    _refreshBestController.refreshCompleted();
-    _refreshOwnController.refreshCompleted();
   }
 
   void _onSearchButtonPressed() {
