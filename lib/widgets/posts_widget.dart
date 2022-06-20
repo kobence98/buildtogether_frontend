@@ -113,6 +113,19 @@ class _PostsWidgetState extends State<PostsWidget> {
                   children: [
                     Flexible(
                       child: TypeAheadField(
+                        loadingBuilder: (context){
+                          return Container(
+                            height: 50,
+                            padding: EdgeInsets.all(1),
+                            color: Colors.yellow,
+                            child: Container(
+                              color: Colors.black,
+                              child: Center(
+                                child: Image(image: new AssetImage("assets/images/loading_breath.gif")),
+                              )
+                            ),
+                          );
+                        },
                         noItemsFoundBuilder: (context) {
                           return Container(
                             padding: EdgeInsets.all(1),
@@ -305,9 +318,7 @@ class _PostsWidgetState extends State<PostsWidget> {
                     refresh: SizedBox(
                       width: 25.0,
                       height: 25.0,
-                      child: defaultTargetPlatform == TargetPlatform.iOS
-                          ? const CupertinoActivityIndicator()
-                          : const CircularProgressIndicator(strokeWidth: 2.0, color: Colors.yellow,),
+                      child: Image(image: new AssetImage("assets/images/loading_spin.gif"))
                     ),
                   ),
                   child: actualPosts.isNotEmpty
@@ -726,12 +737,11 @@ class _PostsWidgetState extends State<PostsWidget> {
                     ? Align(
                         alignment: Alignment.bottomCenter,
                         child: Container(
+                          margin: EdgeInsets.only(bottom: 20),
                           width: 80,
                           height: 80,
                           child: Center(
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
-                            ),
+                            child: Image(image: new AssetImage("assets/images/loading_spin.gif")),
                           ),
                         ),
                       )
@@ -740,9 +750,7 @@ class _PostsWidgetState extends State<PostsWidget> {
             )
           : Container(
               child: Center(
-                child: CircularProgressIndicator(
-                  color: Colors.yellow,
-                ),
+                child: Image(image: new AssetImage("assets/images/loading_breath.gif")),
               ),
             ),
     );
@@ -1016,9 +1024,7 @@ class _PostsWidgetState extends State<PostsWidget> {
             return innerLoading
                 ? Container(
                     child: Center(
-                      child: CircularProgressIndicator(
-                        color: Colors.yellow,
-                      ),
+                      child: Image(image: new AssetImage("assets/images/loading_breath.gif")),
                     ),
                   )
                 : AlertDialog(
@@ -1166,9 +1172,7 @@ class _PostsWidgetState extends State<PostsWidget> {
             return innerLoading
                 ? Container(
                     child: Center(
-                      child: CircularProgressIndicator(
-                        color: Colors.yellow,
-                      ),
+                      child: Image(image: new AssetImage("assets/images/loading_breath.gif")),
                     ),
                   )
                 : AlertDialog(
@@ -1320,9 +1324,7 @@ class _PostsWidgetState extends State<PostsWidget> {
               return innerLoading
                   ? Container(
                       child: Center(
-                        child: CircularProgressIndicator(
-                          color: Colors.yellow,
-                        ),
+                        child: Image(image: new AssetImage("assets/images/loading_breath.gif")),
                       ),
                     )
                   : AlertDialog(

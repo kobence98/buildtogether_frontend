@@ -498,9 +498,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
             return innerLoading
                 ? Container(
                     child: Center(
-                      child: CircularProgressIndicator(
-                        color: Colors.yellow,
-                      ),
+                      child: Image(image: new AssetImage("assets/images/loading_breath.gif")),
                     ),
                   )
                 : AlertDialog(
@@ -630,9 +628,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
             return innerLoading
                 ? Container(
                     child: Center(
-                      child: CircularProgressIndicator(
-                        color: Colors.yellow,
-                      ),
+                      child: Image(image: new AssetImage("assets/images/loading_breath.gif")),
                     ),
                   )
                 : AlertDialog(
@@ -839,9 +835,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
               return innerLoading
                   ? Container(
                 child: Center(
-                  child: CircularProgressIndicator(
-                    color: Colors.yellow,
-                  ),
+                  child: Image(image: new AssetImage("assets/images/loading_breath.gif")),
                 ),
               )
                   : AlertDialog(

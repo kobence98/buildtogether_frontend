@@ -79,9 +79,7 @@ class _CommentsWidgetState extends State<CommentsWidget> {
             ? Container(
                 color: Colors.black,
                 child: Center(
-                  child: CircularProgressIndicator(
-                    color: Colors.yellow,
-                  ),
+                  child: Image(image: new AssetImage("assets/images/loading_breath.gif")),
                 ),
               )
             : Container(
@@ -276,9 +274,7 @@ class _CommentsWidgetState extends State<CommentsWidget> {
             return loading
                 ? Container(
                     child: Center(
-                      child: CircularProgressIndicator(
-                        color: Colors.yellow,
-                      ),
+                      child: Image(image: new AssetImage("assets/images/loading_breath.gif")),
                     ),
                   )
                 : AlertDialog(
@@ -448,9 +444,7 @@ class _CommentsWidgetState extends State<CommentsWidget> {
             return innerLoading
                 ? Container(
                     child: Center(
-                      child: CircularProgressIndicator(
-                        color: Colors.yellow,
-                      ),
+                      child: Image(image: new AssetImage("assets/images/loading_breath.gif")),
                     ),
                   )
                 : AlertDialog(
@@ -609,9 +603,7 @@ class _CommentsWidgetState extends State<CommentsWidget> {
               return innerLoading
                   ? Container(
                 child: Center(
-                  child: CircularProgressIndicator(
-                    color: Colors.yellow,
-                  ),
+                  child: Image(image: new AssetImage("assets/images/loading_breath.gif")),
                 ),
               )
                   : AlertDialog(

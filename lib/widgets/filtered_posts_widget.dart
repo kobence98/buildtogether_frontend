@@ -92,9 +92,7 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
           child: dataLoading
               ? Container(
                   child: Center(
-                    child: CircularProgressIndicator(
-                      color: Colors.yellow,
-                    ),
+                    child: Image(image: new AssetImage("assets/images/loading_breath.gif")),
                   ),
                 )
               : actualPosts.isEmpty ? Container(
@@ -453,9 +451,7 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
                   width: 80,
                   height: 80,
                   child: Center(
-                    child: CircularProgressIndicator(
-                      color: Colors.white,
-                    ),
+                    child: Image(image: new AssetImage("assets/images/loading_breath.gif")),
                   ),
                 ),
               )
@@ -601,9 +597,7 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
             return innerLoading
                 ? Container(
                     child: Center(
-                      child: CircularProgressIndicator(
-                        color: Colors.yellow,
-                      ),
+                      child: Image(image: new AssetImage("assets/images/loading_breath.gif")),
                     ),
                   )
                 : AlertDialog(
@@ -733,9 +727,7 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
             return innerLoading
                 ? Container(
                     child: Center(
-                      child: CircularProgressIndicator(
-                        color: Colors.yellow,
-                      ),
+                      child: Image(image: new AssetImage("assets/images/loading_breath.gif")),
                     ),
                   )
                 : AlertDialog(
@@ -913,9 +905,7 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
               return innerLoading
                   ? Container(
                 child: Center(
-                  child: CircularProgressIndicator(
-                    color: Colors.yellow,
-                  ),
+                  child: Image(image: new AssetImage("assets/images/loading_breath.gif")),
                 ),
               )
                   : AlertDialog(

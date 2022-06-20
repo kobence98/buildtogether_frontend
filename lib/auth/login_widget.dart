@@ -57,9 +57,7 @@ class _LoginPageState extends State<LoginPage> {
             child: loading
                 ? Container(
               child: Center(
-                child: CircularProgressIndicator(
-                  color: Colors.yellow,
-                ),
+                child: Image(image: new AssetImage("assets/images/loading_breath.gif")),
               ),
             )
                 : Center(
@@ -301,9 +299,7 @@ class _LoginPageState extends State<LoginPage> {
                       return loading
                           ? Container(
                               child: Center(
-                                child: CircularProgressIndicator(
-                                  color: Colors.yellow,
-                                ),
+                                child: Image(image: new AssetImage("assets/images/loading_breath.gif")),
                               ),
                             )
                           : AlertDialog(
@@ -394,13 +390,11 @@ class _LoginPageState extends State<LoginPage> {
         context: context,
         useRootNavigator: false,
         builder: (context) {
-          return StatefulBuilder(builder: (context, setState) {
+          return StatefulBuilder(builder: (context, setInnerState) {
             return loading
                 ? Container(
                     child: Center(
-                      child: CircularProgressIndicator(
-                        color: Colors.yellow,
-                      ),
+                      child: Image(image: new AssetImage("assets/images/loading_breath.gif")),
                     ),
                   )
                 : AlertDialog(
@@ -450,7 +444,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       TextButton(
                         onPressed: () {
-                          _onForgottenPasswordSendTap(setState);
+                          _onForgottenPasswordSendTap(setInnerState);
                         },
                         child: Text(
                           languages.sendLabel,
@@ -463,8 +457,8 @@ class _LoginPageState extends State<LoginPage> {
         });
   }
 
-  void _onForgottenPasswordSendTap(setState) {
-    setState(() {
+  void _onForgottenPasswordSendTap(setInnerState) {
+    setInnerState(() {
       loading = true;
     });
     session
@@ -473,8 +467,10 @@ class _LoginPageState extends State<LoginPage> {
                 _forgottenPasswordEmailController.text,
             Map<String, dynamic>())
         .then((response) {
-      if (response.statusCode == 200) {
+      setState(() {
         loading = false;
+      });
+      if (response.statusCode == 200) {
         Navigator.of(context).pop();
         _forgottenPasswordEmailController.clear();
         Fluttertoast.showToast(
@@ -486,9 +482,6 @@ class _LoginPageState extends State<LoginPage> {
             textColor: Colors.white,
             fontSize: 16.0);
       } else {
-        setState(() {
-          loading = false;
-        });
         Fluttertoast.showToast(
             msg: languages.forgottenPasswordErrorMessage,
             toastLength: Toast.LENGTH_LONG,

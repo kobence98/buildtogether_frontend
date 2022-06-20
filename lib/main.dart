@@ -40,9 +40,7 @@ class _MyHomePageState extends State<MyHomePage> {
   late Languages languages;
   Widget mainWidget = Container(
     child: Center(
-      child: CircularProgressIndicator(
-        color: Colors.yellow,
-      ),
+      child: Image(image: new AssetImage("assets/images/loading_breath.gif")),
     ),
   );
 

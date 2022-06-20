@@ -345,9 +345,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
             return loading
                 ? Container(
                     child: Center(
-                      child: CircularProgressIndicator(
-                        color: Colors.yellow,
-                      ),
+                      child: Image(image: new AssetImage("assets/images/loading_breath.gif")),
                     ),
                   )
                 : AlertDialog(
@@ -454,9 +452,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
             return loading
                 ? Container(
               child: Center(
-                child: CircularProgressIndicator(
-                  color: Colors.white,
-                ),
+                child: Image(image: new AssetImage("assets/images/loading_breath.gif")),
               ),
             )
                 : AlertDialog(

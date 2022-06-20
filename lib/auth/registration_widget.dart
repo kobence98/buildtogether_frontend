@@ -74,9 +74,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
         body: loading
             ? Container(
                 child: Center(
-                  child: CircularProgressIndicator(
-                    color: Colors.yellow,
-                  ),
+                  child: Image(image: new AssetImage("assets/images/loading_breath.gif")),
                 ),
               )
             : Container(

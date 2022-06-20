@@ -67,9 +67,7 @@ class _HandleBansWidgetState extends State<HandleBansWidget> {
         body: _dataLoaded
             ? _bannedListWidget()
             : Center(
-                child: CircularProgressIndicator(
-                  color: Colors.yellow,
-                ),
+                child: Image(image: new AssetImage("assets/images/loading_breath.gif")),
               ),
       ),
     );

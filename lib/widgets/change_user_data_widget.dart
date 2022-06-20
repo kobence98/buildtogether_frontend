@@ -339,11 +339,12 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                   ),
                 ),
               )
-            : Center(
-                child: CircularProgressIndicator(
-                  color: Colors.white,
-                ),
-              ),
+            : Container(
+          color: Colors.black,
+          child: Center(
+            child: Image(image: new AssetImage("assets/images/loading_breath.gif")),
+          ),
+        )
       ),
     );
   }
