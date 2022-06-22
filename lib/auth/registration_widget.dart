@@ -74,7 +74,9 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
         body: loading
             ? Container(
                 child: Center(
-                  child: Image(image: new AssetImage("assets/images/loading_breath.gif")),
+                  child: Image(
+                      image:
+                          new AssetImage("assets/images/loading_breath.gif")),
                 ),
               )
             : Container(
@@ -380,7 +382,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                                       child: Text(
                                         languages
                                             .switchBetweenCompanyAndSimpleUserLabel(
-                                            company),
+                                                company),
                                         style: TextStyle(color: Colors.white),
                                       ),
                                     ),
@@ -526,6 +528,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                     _chosenCountryCode == 'Global'
                 ? null
                 : _chosenCountryCode,
+            'language': languages.countryCode,
           };
           setState(() {
             loading = true;

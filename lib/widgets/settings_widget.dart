@@ -251,7 +251,11 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                   session: widget.session,
                   languages: languages,
                 )))
-        .whenComplete(() => Phoenix.rebirth(context));
+        .then((message) {
+          if(message != null && message == 'DATA_CHANGED'){
+            Phoenix.rebirth(context);
+          }
+    });
   }
 
   void _onChangeLocationTap() {
@@ -294,8 +298,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                                 ),
                                 onTap: () {
                                   languagesSqfLiteHandler.insertLanguageCode(
-                                      LanguageCode(code: 'en', id: 0));
-                                  Phoenix.rebirth(context);
+                                      LanguageCode(code: 'en', id: 0)).whenComplete(() => Phoenix.rebirth(context));
                                 },
                               ),
                               SizedBox(
@@ -311,8 +314,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                                 ),
                                 onTap: () {
                                   languagesSqfLiteHandler.insertLanguageCode(
-                                      LanguageCode(code: 'hu', id: 0));
-                                  Phoenix.rebirth(context);
+                                      LanguageCode(code: 'hu', id: 0)).whenComplete(() => Phoenix.rebirth(context));
                                 },
                               ),
                             ],

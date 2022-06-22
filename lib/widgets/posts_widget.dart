@@ -1,10 +1,7 @@
 import 'dart:convert';
 
 import 'package:country_codes/country_codes.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_frontend/entities/company.dart';
 import 'package:flutter_frontend/entities/post.dart';
 import 'package:flutter_frontend/entities/search_field_names.dart';
@@ -338,14 +335,17 @@ class _PostsWidgetState extends State<PostsWidget> {
                                 child: Column(
                                   children: [
                                     ListTile(
-                                      leading: CircleAvatar(
-                                        radius: 20,
-                                        backgroundImage: NetworkImage(
-                                          widget.session.domainName +
-                                              "/api/images/" +
-                                              post.companyImageId.toString(),
-                                          headers: widget.session.headers,
+                                      leading: InkWell(
+                                        child: CircleAvatar(
+                                          radius: 20,
+                                          backgroundImage: NetworkImage(
+                                            widget.session.domainName +
+                                                "/api/images/" +
+                                                post.companyImageId.toString(),
+                                            headers: widget.session.headers,
+                                          ),
                                         ),
+                                        onTap: () => _onCompanyTap(post.companyId),
                                       ),
                                       title: Column(
                                         crossAxisAlignment:

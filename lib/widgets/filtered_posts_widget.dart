@@ -124,14 +124,17 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
                         child: Column(
                           children: [
                             ListTile(
-                              leading: CircleAvatar(
-                                radius: 20,
-                                backgroundImage: NetworkImage(
-                                  widget.session.domainName +
-                                      "/api/images/" +
-                                      post.companyId.toString(),
-                                  headers: widget.session.headers,
+                              leading: InkWell(
+                                child: CircleAvatar(
+                                  radius: 20,
+                                  backgroundImage: NetworkImage(
+                                    widget.session.domainName +
+                                        "/api/images/" +
+                                        post.companyImageId.toString(),
+                                    headers: widget.session.headers,
+                                  ),
                                 ),
+                                onTap: () => _onCompanyTap(post.companyId),
                               ),
                               title: Column(
                                 crossAxisAlignment:

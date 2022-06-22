@@ -64,14 +64,17 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
               child: Column(
                 children: [
                   ListTile(
-                    leading: CircleAvatar(
-                      radius: 20,
-                      backgroundImage: NetworkImage(
-                        widget.session.domainName +
-                            "/api/images/" +
-                            widget.post.companyId.toString(),
-                        headers: widget.session.headers,
+                    leading: InkWell(
+                      child: CircleAvatar(
+                        radius: 20,
+                        backgroundImage: NetworkImage(
+                          widget.session.domainName +
+                              "/api/images/" +
+                              widget.post.companyImageId.toString(),
+                          headers: widget.session.headers,
+                        ),
                       ),
+                      onTap: () => _onCompanyTap(widget.post.companyId),
                     ),
                     title: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -214,7 +217,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                                 }
                               } else if (index == 1) {
                                 _onBanUserTap(widget.post.creatorId);
-                              }  else if (index == 2) {
+                              } else if (index == 2) {
                                 _onContactCreatorTap(widget.post);
                               } else {
                                 widget.session
@@ -303,15 +306,17 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                           },
                           likeCount: widget.post.likeNumber,
                         ),
-                        voted ? InkWell(
-                          child: Text(
-                            languages.removeMyVoteLabel,
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontStyle: FontStyle.italic),
-                          ),
-                          onTap: _onRemovePollVote,
-                        ) : Container(),
+                        voted
+                            ? InkWell(
+                                child: Text(
+                                  languages.removeMyVoteLabel,
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontStyle: FontStyle.italic),
+                                ),
+                                onTap: _onRemovePollVote,
+                              )
+                            : Container(),
                         Row(
                           children: [
                             Text(
@@ -398,7 +403,10 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
-                        child: Text(languages.closeLabel, style: TextStyle(color: Colors.yellow),)),
+                        child: Text(
+                          languages.closeLabel,
+                          style: TextStyle(color: Colors.yellow),
+                        )),
                   ],
                 );
               });
@@ -428,7 +436,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
     List<dynamic> polls = [];
     Map<dynamic, dynamic> voteData = {};
 
-    for(PollOption option in post.pollOptions){
+    for (PollOption option in post.pollOptions) {
       polls.add(
         Polls.options(
             title: "${option.title!}",
@@ -498,7 +506,9 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
             return innerLoading
                 ? Container(
                     child: Center(
-                      child: Image(image: new AssetImage("assets/images/loading_breath.gif")),
+                      child: Image(
+                          image: new AssetImage(
+                              "assets/images/loading_breath.gif")),
                     ),
                   )
                 : AlertDialog(
@@ -628,7 +638,9 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
             return innerLoading
                 ? Container(
                     child: Center(
-                      child: Image(image: new AssetImage("assets/images/loading_breath.gif")),
+                      child: Image(
+                          image: new AssetImage(
+                              "assets/images/loading_breath.gif")),
                     ),
                   )
                 : AlertDialog(
@@ -680,8 +692,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                                 cursorColor: Colors.black,
                                 decoration: InputDecoration(
                                   focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide.none
-                                  ),
+                                      borderSide: BorderSide.none),
                                   hintText: languages.couponCodeLabel,
                                   hintStyle: TextStyle(
                                       color: Colors.black.withOpacity(0.5)),
@@ -791,10 +802,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
   _onRemovePollVote() {
     Post post = widget.post;
     widget.session
-        .delete(
-        '/api/posts/' +
-            post.postId.toString() +
-            '/pollVote')
+        .delete('/api/posts/' + post.postId.toString() + '/pollVote')
         .then((response) {
       if (response.statusCode == 200) {
         setState(() {
@@ -817,7 +825,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
   }
 
   void _onBanUserTap(int creatorId) {
-    if(creatorId == widget.user.userId){
+    if (creatorId == widget.user.userId) {
       Fluttertoast.showToast(
           msg: languages.banOwnAccountWarningMessage,
           toastLength: Toast.LENGTH_LONG,
@@ -826,73 +834,77 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
           backgroundColor: Colors.red,
           textColor: Colors.white,
           fontSize: 16.0);
-    }
-    else{
+    } else {
       showDialog(
           context: context,
           builder: (context) {
             return StatefulBuilder(builder: (context, setInnerState) {
               return innerLoading
                   ? Container(
-                child: Center(
-                  child: Image(image: new AssetImage("assets/images/loading_breath.gif")),
-                ),
-              )
+                      child: Center(
+                        child: Image(
+                            image: new AssetImage(
+                                "assets/images/loading_breath.gif")),
+                      ),
+                    )
                   : AlertDialog(
-                backgroundColor: Colors.yellow,
-                title: Text(
-                  languages.banCreatorConfirmQuestionLabel,
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                      color: Colors.black),
-                ),
-                actions: <Widget>[
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Text(
-                      languages.cancelLabel,
-                      style: TextStyle(color: Colors.black),
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      innerLoading = true;
-                      widget.session.postJson('/api/users/banUser/$creatorId', Map()).then((response) {
-                        setInnerState((){
-                          innerLoading = false;
-                        });
-                        if (response.statusCode == 200) {
-                          Navigator.of(context).pop();
-                          Fluttertoast.showToast(
-                              msg: languages.successfulBanMessage,
-                              toastLength: Toast.LENGTH_LONG,
-                              gravity: ToastGravity.CENTER,
-                              timeInSecForIosWeb: 1,
-                              backgroundColor: Colors.green,
-                              textColor: Colors.white,
-                              fontSize: 16.0);
-                        } else {
-                          Fluttertoast.showToast(
-                              msg: languages.globalServerErrorMessage,
-                              toastLength: Toast.LENGTH_LONG,
-                              gravity: ToastGravity.CENTER,
-                              timeInSecForIosWeb: 1,
-                              backgroundColor: Colors.red,
-                              textColor: Colors.white,
-                              fontSize: 16.0);
-                        }
-                      });
-                    },
-                    child: Text(
-                      languages.banLabel,
-                      style: TextStyle(color: Colors.black),
-                    ),
-                  ),
-                ],
-              );
+                      backgroundColor: Colors.yellow,
+                      title: Text(
+                        languages.banCreatorConfirmQuestionLabel,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                            color: Colors.black),
+                      ),
+                      actions: <Widget>[
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Text(
+                            languages.cancelLabel,
+                            style: TextStyle(color: Colors.black),
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            innerLoading = true;
+                            widget.session
+                                .postJson(
+                                    '/api/users/banUser/$creatorId', Map())
+                                .then((response) {
+                              setInnerState(() {
+                                innerLoading = false;
+                              });
+                              if (response.statusCode == 200) {
+                                Navigator.of(context).pop();
+                                Fluttertoast.showToast(
+                                    msg: languages.successfulBanMessage,
+                                    toastLength: Toast.LENGTH_LONG,
+                                    gravity: ToastGravity.CENTER,
+                                    timeInSecForIosWeb: 1,
+                                    backgroundColor: Colors.green,
+                                    textColor: Colors.white,
+                                    fontSize: 16.0);
+                              } else {
+                                Fluttertoast.showToast(
+                                    msg: languages.globalServerErrorMessage,
+                                    toastLength: Toast.LENGTH_LONG,
+                                    gravity: ToastGravity.CENTER,
+                                    timeInSecForIosWeb: 1,
+                                    backgroundColor: Colors.red,
+                                    textColor: Colors.white,
+                                    fontSize: 16.0);
+                              }
+                            });
+                          },
+                          child: Text(
+                            languages.banLabel,
+                            style: TextStyle(color: Colors.black),
+                          ),
+                        ),
+                      ],
+                    );
             });
           });
     }

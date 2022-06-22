@@ -407,7 +407,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                         backgroundColor: Colors.green,
                         textColor: Colors.white,
                         fontSize: 16.0);
-                    Navigator.of(context).pop();
+                    Navigator.of(context).pop('DATA_CHANGED');
                   } else {
                     Fluttertoast.showToast(
                         msg: languages.pictureUpdateErrorMessage,
@@ -429,7 +429,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                   backgroundColor: Colors.green,
                   textColor: Colors.white,
                   fontSize: 16.0);
-              Navigator.of(context).pop();
+              Navigator.of(context).pop('DATA_CHANGED');
             }
           } else {
             Fluttertoast.showToast(

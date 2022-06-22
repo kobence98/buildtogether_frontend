@@ -295,7 +295,7 @@ class _LoginPageState extends State<LoginPage> {
                   context: context,
                   useRootNavigator: false,
                   builder: (context) {
-                    return StatefulBuilder(builder: (context, setState) {
+                    return StatefulBuilder(builder: (context, setInnerState) {
                       return loading
                           ? Container(
                               child: Center(
@@ -335,7 +335,7 @@ class _LoginPageState extends State<LoginPage> {
                                 ),
                                 TextButton(
                                   onPressed: () {
-                                    _onVerificationEmailResent(setState);
+                                    _onVerificationEmailResent(setInnerState);
                                   },
                                   child: Text(
                                     languages.requestNewVerificationEmailLabel,
@@ -463,14 +463,14 @@ class _LoginPageState extends State<LoginPage> {
     });
     session
         .post(
-            '/api/users/forgotPassword/' +
-                _forgottenPasswordEmailController.text,
+            '/api/users/forgotPassword/${_forgottenPasswordEmailController.text}/${languages.countryCode}',
             Map<String, dynamic>())
         .then((response) {
-      setState(() {
-        loading = false;
-      });
+
       if (response.statusCode == 200) {
+        setState(() {
+          loading = false;
+        });
         Navigator.of(context).pop();
         _forgottenPasswordEmailController.clear();
         Fluttertoast.showToast(
@@ -482,6 +482,9 @@ class _LoginPageState extends State<LoginPage> {
             textColor: Colors.white,
             fontSize: 16.0);
       } else {
+        setInnerState(() {
+          loading = false;
+        });
         Fluttertoast.showToast(
             msg: languages.forgottenPasswordErrorMessage,
             toastLength: Toast.LENGTH_LONG,
@@ -494,18 +497,19 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
-  void _onVerificationEmailResent(StateSetter setState) {
-    setState(() {
+  void _onVerificationEmailResent(StateSetter setInnerState) {
+    setInnerState(() {
       loading = true;
     });
     session
         .postDomainJson(
-            '/api/users/resendVerification/' +
-                _emailController.text.split(' ').first,
+            '/api/users/resendVerification/${_emailController.text.split(' ').first}/${languages.countryCode}',
             Map<String, String?>())
         .then((response) {
       if (response.statusCode == 200) {
-        loading = false;
+        setState(() {
+          loading = false;
+        });
         Navigator.of(context).pop();
         _forgottenPasswordEmailController.clear();
         Fluttertoast.showToast(
@@ -517,7 +521,7 @@ class _LoginPageState extends State<LoginPage> {
             textColor: Colors.white,
             fontSize: 16.0);
       } else {
-        setState(() {
+        setInnerState(() {
           loading = false;
         });
         Fluttertoast.showToast(
