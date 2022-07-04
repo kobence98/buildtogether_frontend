@@ -6,6 +6,7 @@ import 'package:flutter_frontend/entities/user.dart';
 import 'package:flutter_frontend/languages/language_code.dart';
 import 'package:flutter_frontend/languages/languages.dart';
 import 'package:flutter_frontend/languages/languages_sqflite_handler.dart';
+import 'package:flutter_frontend/widgets/liked_posts_widget.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -51,6 +52,26 @@ class _SettingsWidgetState extends State<SettingsWidget> {
             SizedBox(
               height: 50,
             ),
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(10),
+                ),
+                color: Colors.yellowAccent,
+              ),
+              child: ListTile(
+                leading: Icon(
+                  Icons.lightbulb,
+                  color: Colors.black,
+                ),
+                title: Text(
+                  languages.likedPostsLabel,
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                ),
+                onTap: _onLikedPostsTap,
+              ),
+            ),
+            SizedBox(height: 5),
             Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.all(
@@ -534,5 +555,14 @@ class _SettingsWidgetState extends State<SettingsWidget> {
             fontSize: 16.0);
       }
     });
+  }
+
+  void _onLikedPostsTap() {
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => LikedPostsWidget(
+          user: widget.user,
+          session: widget.session,
+          languages: languages,
+        )));
   }
 }

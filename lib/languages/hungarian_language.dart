@@ -423,4 +423,9 @@ class LanguageHu extends Languages {
 
   @override
   String get successfulBanDeleteMessage => 'Sikeres eltávolítás!';
+
+  //LIKED POSTS WIDGET
+
+  @override
+  String get likedPostsLabel => 'Likeolt posztok';
 }

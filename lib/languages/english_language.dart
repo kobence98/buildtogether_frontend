@@ -427,4 +427,9 @@ class LanguageEn extends Languages {
 
   @override
   String get successfulBanDeleteMessage => 'Successful remove!';
+
+  //LIKED POSTS WIDGET
+
+  @override
+  String get likedPostsLabel => 'Liked posts';
 }

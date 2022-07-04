@@ -287,4 +287,8 @@ abstract class Languages {
   String get idLabel;
 
   String get successfulBanDeleteMessage;
+
+  //LIKED POSTS WIDGET
+
+  String get likedPostsLabel;
 }
