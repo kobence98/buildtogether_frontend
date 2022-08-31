@@ -147,6 +147,9 @@ class LanguageHu extends Languages {
   @override
   String get userPolicyText => 'Ebben az applikációban felhasználók által generált tartalom van, posztok és kommentek formájában. A Felhasználói Szabályzat előírja, hogy nem szabad sem offenzív, sem trágár tartalmat poszolni és kommentelni. Ha ezt a felhasználó nem tartja be, akkor az alkalmazás üzemeltetője jogosult eltávolítani a tartalmat, szélsőséges esetben akár a felhasználót is.';
 
+  @override
+  String get imageFileSizeIsTooBigExceptionMessage => 'Túl nagy a kép fájl mérete, légyszíves töltsél fel egy 1 MB-nál kisebb képet!';
+
   //CHANGE LOCATION WIDGET
 
   @override

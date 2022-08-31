@@ -688,6 +688,17 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
     await Permission.photos.request();
     final ImagePicker _picker = ImagePicker();
     image = await _picker.pickImage(source: ImageSource.gallery);
+    if(image != null && (await image!.readAsBytes()).lengthInBytes >= 1048576){
+      image = null;
+      Fluttertoast.showToast(
+          msg: languages.imageFileSizeIsTooBigExceptionMessage,
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }
     setState(() {});
   }
 

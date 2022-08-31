@@ -152,6 +152,9 @@ class LanguageEn extends Languages {
   @override
   String get userPolicyText => 'In this application there is some user generated content, in form of posts and comments. The User Poloicy specifies, that posting offensive and profane content is not allowed. If the user break this rule, than the operator of the application has the right to remove the content, or in extreme situations the user as well.';
 
+  @override
+  String get imageFileSizeIsTooBigExceptionMessage => 'Image file size is too big, please upload an image less than 1 MB!';
+
   //CHANGE LOCATION WIDGET
 
   @override

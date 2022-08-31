@@ -96,6 +96,8 @@ abstract class Languages {
 
   String get userPolicyText;
 
+  String get imageFileSizeIsTooBigExceptionMessage;
+
   //CHANGE LOCATION WIDGET
 
   String get countryCodesErrorMessage;
