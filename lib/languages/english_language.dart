@@ -49,6 +49,9 @@ class LanguageEn extends Languages {
   @override
   String get banOwnAccountWarningMessage => 'You can\'t ban your own account!';
 
+  @override
+  String get locationErrorMessage => 'There is something wrong with the localization! In the settings you can manually set your location!';
+
   //MAIN
   @override
   String get subscribeWarningMessage =>

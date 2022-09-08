@@ -276,7 +276,7 @@ class _LoginPageState extends State<LoginPage> {
                     msg: languages.subscribeWarningMessage,
                     toastLength: Toast.LENGTH_LONG,
                     gravity: ToastGravity.CENTER,
-                    timeInSecForIosWeb: 1,
+                    timeInSecForIosWeb: 4,
                     backgroundColor: Colors.yellow,
                     textColor: Colors.black,
                     fontSize: 16.0);
@@ -357,7 +357,7 @@ class _LoginPageState extends State<LoginPage> {
             msg: languages.wrongCredentialsErrorMessage,
             toastLength: Toast.LENGTH_LONG,
             gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 1,
+            timeInSecForIosWeb: 4,
             backgroundColor: Colors.red,
             textColor: Colors.white,
             fontSize: 16.0);
@@ -369,7 +369,7 @@ class _LoginPageState extends State<LoginPage> {
             msg: res.toString(),
             toastLength: Toast.LENGTH_LONG,
             gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 1,
+            timeInSecForIosWeb: 4,
             backgroundColor: Colors.red,
             textColor: Colors.white,
             fontSize: 16.0);
@@ -477,7 +477,7 @@ class _LoginPageState extends State<LoginPage> {
             msg: languages.forgottenPasswordSentMessage,
             toastLength: Toast.LENGTH_LONG,
             gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 1,
+            timeInSecForIosWeb: 4,
             backgroundColor: Colors.green,
             textColor: Colors.white,
             fontSize: 16.0);
@@ -489,7 +489,7 @@ class _LoginPageState extends State<LoginPage> {
             msg: languages.forgottenPasswordErrorMessage,
             toastLength: Toast.LENGTH_LONG,
             gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 1,
+            timeInSecForIosWeb: 4,
             backgroundColor: Colors.red,
             textColor: Colors.white,
             fontSize: 16.0);
@@ -516,7 +516,7 @@ class _LoginPageState extends State<LoginPage> {
             msg: languages.verificationEmailResentMessage,
             toastLength: Toast.LENGTH_LONG,
             gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 1,
+            timeInSecForIosWeb: 4,
             backgroundColor: Colors.green,
             textColor: Colors.white,
             fontSize: 16.0);
@@ -528,7 +528,7 @@ class _LoginPageState extends State<LoginPage> {
             msg: languages.globalErrorMessage,
             toastLength: Toast.LENGTH_LONG,
             gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 1,
+            timeInSecForIosWeb: 4,
             backgroundColor: Colors.red,
             textColor: Colors.white,
             fontSize: 16.0);

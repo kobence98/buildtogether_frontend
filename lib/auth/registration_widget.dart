@@ -58,7 +58,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
             msg: languages.globalErrorMessage,
             toastLength: Toast.LENGTH_LONG,
             gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 1,
+            timeInSecForIosWeb: 4,
             backgroundColor: Colors.red,
             textColor: Colors.white,
             fontSize: 16.0);
@@ -493,7 +493,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
           msg: languages.profanityWarningMessage,
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
+          timeInSecForIosWeb: 4,
           backgroundColor: Colors.red,
           textColor: Colors.white,
           fontSize: 16.0);
@@ -502,7 +502,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
           msg: languages.acceptPolicyWarningMessage,
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
+          timeInSecForIosWeb: 4,
           backgroundColor: Colors.red,
           textColor: Colors.white,
           fontSize: 16.0);
@@ -565,7 +565,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                           msg: languages.successfulRegistrationMessage,
                           toastLength: Toast.LENGTH_LONG,
                           gravity: ToastGravity.CENTER,
-                          timeInSecForIosWeb: 1,
+                          timeInSecForIosWeb: 4,
                           backgroundColor: Colors.green,
                           textColor: Colors.white,
                           fontSize: 16.0);
@@ -577,7 +577,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                           msg: languages.globalServerErrorMessage,
                           toastLength: Toast.LENGTH_LONG,
                           gravity: ToastGravity.CENTER,
-                          timeInSecForIosWeb: 1,
+                          timeInSecForIosWeb: 4,
                           backgroundColor: Colors.red,
                           textColor: Colors.white,
                           fontSize: 16.0);
@@ -601,7 +601,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                     msg: languages.successfulRegistrationMessage,
                     toastLength: Toast.LENGTH_LONG,
                     gravity: ToastGravity.CENTER,
-                    timeInSecForIosWeb: 1,
+                    timeInSecForIosWeb: 4,
                     backgroundColor: Colors.green,
                     textColor: Colors.white,
                     fontSize: 16.0);
@@ -614,7 +614,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                   msg: languages.wrongEmailFormatWarningMessage,
                   toastLength: Toast.LENGTH_LONG,
                   gravity: ToastGravity.CENTER,
-                  timeInSecForIosWeb: 1,
+                  timeInSecForIosWeb: 4,
                   backgroundColor: Colors.red,
                   textColor: Colors.white,
                   fontSize: 16.0);
@@ -630,7 +630,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                     msg: languages.emailIsAlreadyInUseWarningMessage,
                     toastLength: Toast.LENGTH_LONG,
                     gravity: ToastGravity.CENTER,
-                    timeInSecForIosWeb: 1,
+                    timeInSecForIosWeb: 4,
                     backgroundColor: Colors.red,
                     textColor: Colors.white,
                     fontSize: 16.0);
@@ -639,7 +639,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                     msg: languages.globalErrorMessage,
                     toastLength: Toast.LENGTH_LONG,
                     gravity: ToastGravity.CENTER,
-                    timeInSecForIosWeb: 1,
+                    timeInSecForIosWeb: 4,
                     backgroundColor: Colors.red,
                     textColor: Colors.white,
                     fontSize: 16.0);
@@ -652,7 +652,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                   msg: response.toString(),
                   toastLength: Toast.LENGTH_LONG,
                   gravity: ToastGravity.CENTER,
-                  timeInSecForIosWeb: 1,
+                  timeInSecForIosWeb: 4,
                   backgroundColor: Colors.red,
                   textColor: Colors.white,
                   fontSize: 16.0);
@@ -663,7 +663,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
               msg: languages.fillAllFieldsProperlyWarningMessage,
               toastLength: Toast.LENGTH_LONG,
               gravity: ToastGravity.CENTER,
-              timeInSecForIosWeb: 1,
+              timeInSecForIosWeb: 4,
               backgroundColor: Colors.red,
               textColor: Colors.white,
               fontSize: 16.0);
@@ -676,7 +676,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
             msg: languages.passwordsAreNotIdenticalWarningMessage,
             toastLength: Toast.LENGTH_LONG,
             gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 1,
+            timeInSecForIosWeb: 4,
             backgroundColor: Colors.red,
             textColor: Colors.white,
             fontSize: 16.0);
@@ -694,7 +694,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
           msg: languages.imageFileSizeIsTooBigExceptionMessage,
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
+          timeInSecForIosWeb: 4,
           backgroundColor: Colors.red,
           textColor: Colors.white,
           fontSize: 16.0);

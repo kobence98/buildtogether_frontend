@@ -83,7 +83,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
             msg: languages.countryCodesErrorMessage,
             toastLength: Toast.LENGTH_LONG,
             gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 1,
+            timeInSecForIosWeb: 4,
             backgroundColor: Colors.red,
             textColor: Colors.white,
             fontSize: 16.0);
@@ -356,7 +356,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
           msg: languages.profanityWarningMessage,
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
+          timeInSecForIosWeb: 4,
           backgroundColor: Colors.red,
           textColor: Colors.white,
           fontSize: 16.0);
@@ -403,7 +403,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                         msg: languages.successfulCompanyDataChangeLabel,
                         toastLength: Toast.LENGTH_LONG,
                         gravity: ToastGravity.CENTER,
-                        timeInSecForIosWeb: 1,
+                        timeInSecForIosWeb: 4,
                         backgroundColor: Colors.green,
                         textColor: Colors.white,
                         fontSize: 16.0);
@@ -413,7 +413,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                         msg: languages.pictureUpdateErrorMessage,
                         toastLength: Toast.LENGTH_LONG,
                         gravity: ToastGravity.CENTER,
-                        timeInSecForIosWeb: 1,
+                        timeInSecForIosWeb: 4,
                         backgroundColor: Colors.red,
                         textColor: Colors.white,
                         fontSize: 16.0);
@@ -425,7 +425,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                   msg: languages.successfulDataChangeLabel,
                   toastLength: Toast.LENGTH_LONG,
                   gravity: ToastGravity.CENTER,
-                  timeInSecForIosWeb: 1,
+                  timeInSecForIosWeb: 4,
                   backgroundColor: Colors.green,
                   textColor: Colors.white,
                   fontSize: 16.0);
@@ -436,7 +436,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                 msg: languages.globalErrorMessage,
                 toastLength: Toast.LENGTH_LONG,
                 gravity: ToastGravity.CENTER,
-                timeInSecForIosWeb: 1,
+                timeInSecForIosWeb: 4,
                 backgroundColor: Colors.red,
                 textColor: Colors.white,
                 fontSize: 16.0);
@@ -449,7 +449,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                 : languages.fillAllFieldsWarningMessage,
             toastLength: Toast.LENGTH_LONG,
             gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 1,
+            timeInSecForIosWeb: 4,
             backgroundColor: Colors.red,
             textColor: Colors.white,
             fontSize: 16.0);

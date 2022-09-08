@@ -143,7 +143,7 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
             msg: languages.fillAllFieldsWarningMessage,
             toastLength: Toast.LENGTH_LONG,
             gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 1,
+            timeInSecForIosWeb: 4,
             backgroundColor: Colors.red,
             textColor: Colors.white,
             fontSize: 16.0);
@@ -168,7 +168,7 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
                 msg: languages.successfulPasswordChangeMessage,
                 toastLength: Toast.LENGTH_LONG,
                 gravity: ToastGravity.CENTER,
-                timeInSecForIosWeb: 1,
+                timeInSecForIosWeb: 4,
                 backgroundColor: Colors.green,
                 textColor: Colors.white,
                 fontSize: 16.0);
@@ -177,7 +177,7 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
                 msg: languages.globalErrorMessage,
                 toastLength: Toast.LENGTH_LONG,
                 gravity: ToastGravity.CENTER,
-                timeInSecForIosWeb: 1,
+                timeInSecForIosWeb: 4,
                 backgroundColor: Colors.red,
                 textColor: Colors.white,
                 fontSize: 16.0);
@@ -189,7 +189,7 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
           msg: languages.passwordsAreNotIdenticalWarningMessage,
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
+          timeInSecForIosWeb: 4,
           backgroundColor: Colors.green,
           textColor: Colors.white,
           fontSize: 16.0);

@@ -51,5 +51,7 @@
     <string>INNO</string>
     <key>NSPhotoLibraryUsageDescription</key>
     <string>App needs gallery permission to work</string>
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>App needs location to locate your country for posts, if you don't want to allow, just pick a location from the settings.</string>
 </dict>
 </plist>

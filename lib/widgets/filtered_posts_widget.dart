@@ -62,7 +62,7 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
         setState(() {
           widget.session.updateCookie(response);
           Iterable l = json.decode(utf8.decode(response.bodyBytes));
-          posts = List<Post>.from(l.map((model) => Post.fromJson(model)));
+          posts = List<Post>.from(l.map((model) => Post.fromJson(model))).reversed.toList();
           actualPosts = posts.sublist(0, posts.length < 10 ? posts.length : 10);
           dataLoading = false;
         });
@@ -187,7 +187,7 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
                                           Toast.LENGTH_SHORT,
                                           gravity:
                                           ToastGravity.CENTER,
-                                          timeInSecForIosWeb: 1,
+                                          timeInSecForIosWeb: 4,
                                           backgroundColor:
                                           Colors.green,
                                           textColor: Colors.white,
@@ -271,7 +271,7 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
                                                     Toast.LENGTH_LONG,
                                                     gravity: ToastGravity
                                                         .CENTER,
-                                                    timeInSecForIosWeb: 1,
+                                                    timeInSecForIosWeb: 4,
                                                     backgroundColor:
                                                     Colors.green,
                                                     textColor:
@@ -289,7 +289,7 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
                                                     Toast.LENGTH_LONG,
                                                     gravity: ToastGravity
                                                         .CENTER,
-                                                    timeInSecForIosWeb: 1,
+                                                    timeInSecForIosWeb: 4,
                                                     backgroundColor:
                                                     Colors.red,
                                                     textColor:
@@ -322,7 +322,7 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
                                                   Toast.LENGTH_LONG,
                                                   gravity:
                                                   ToastGravity.CENTER,
-                                                  timeInSecForIosWeb: 1,
+                                                  timeInSecForIosWeb: 4,
                                                   backgroundColor:
                                                   Colors.green,
                                                   textColor: Colors.white,
@@ -339,7 +339,7 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
                                                   Toast.LENGTH_LONG,
                                                   gravity:
                                                   ToastGravity.CENTER,
-                                                  timeInSecForIosWeb: 1,
+                                                  timeInSecForIosWeb: 4,
                                                   backgroundColor:
                                                   Colors.red,
                                                   textColor: Colors.white,
@@ -679,7 +679,7 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
             msg: languages.successfulReportMessage,
             toastLength: Toast.LENGTH_LONG,
             gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 1,
+            timeInSecForIosWeb: 4,
             backgroundColor: Colors.green,
             textColor: Colors.white,
             fontSize: 16.0);
@@ -692,7 +692,7 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
               msg: languages.alreadyReportedPostMessage,
               toastLength: Toast.LENGTH_LONG,
               gravity: ToastGravity.CENTER,
-              timeInSecForIosWeb: 1,
+              timeInSecForIosWeb: 4,
               backgroundColor: Colors.red,
               textColor: Colors.white,
               fontSize: 16.0);
@@ -701,7 +701,7 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
               msg: languages.globalErrorMessage,
               toastLength: Toast.LENGTH_LONG,
               gravity: ToastGravity.CENTER,
-              timeInSecForIosWeb: 1,
+              timeInSecForIosWeb: 4,
               backgroundColor: Colors.red,
               textColor: Colors.white,
               fontSize: 16.0);
@@ -711,7 +711,7 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
             msg: languages.globalServerErrorMessage,
             toastLength: Toast.LENGTH_LONG,
             gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 1,
+            timeInSecForIosWeb: 4,
             backgroundColor: Colors.red,
             textColor: Colors.white,
             fontSize: 16.0);
@@ -828,7 +828,7 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
           msg: languages.fillAllFieldsWarningMessage,
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
+          timeInSecForIosWeb: 4,
           backgroundColor: Colors.red,
           textColor: Colors.white,
           fontSize: 16.0);
@@ -849,7 +849,7 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
               msg: languages.successfulCouponSendMessage,
               toastLength: Toast.LENGTH_LONG,
               gravity: ToastGravity.CENTER,
-              timeInSecForIosWeb: 1,
+              timeInSecForIosWeb: 4,
               backgroundColor: Colors.green,
               textColor: Colors.white,
               fontSize: 16.0);
@@ -858,7 +858,7 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
               msg: languages.globalServerErrorMessage,
               toastLength: Toast.LENGTH_LONG,
               gravity: ToastGravity.CENTER,
-              timeInSecForIosWeb: 1,
+              timeInSecForIosWeb: 4,
               backgroundColor: Colors.red,
               textColor: Colors.white,
               fontSize: 16.0);
@@ -882,7 +882,7 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
         msg: languages.likeOwnPostWarningMessage,
         toastLength: Toast.LENGTH_LONG,
         gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 1,
+        timeInSecForIosWeb: 4,
         backgroundColor: Colors.red,
         textColor: Colors.white,
         fontSize: 16.0);
@@ -895,7 +895,7 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
           msg: languages.banOwnAccountWarningMessage,
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
+          timeInSecForIosWeb: 4,
           backgroundColor: Colors.red,
           textColor: Colors.white,
           fontSize: 16.0);
@@ -943,7 +943,7 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
                               msg: languages.successfulBanMessage,
                               toastLength: Toast.LENGTH_LONG,
                               gravity: ToastGravity.CENTER,
-                              timeInSecForIosWeb: 1,
+                              timeInSecForIosWeb: 4,
                               backgroundColor: Colors.green,
                               textColor: Colors.white,
                               fontSize: 16.0);
@@ -952,7 +952,7 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
                               msg: languages.globalServerErrorMessage,
                               toastLength: Toast.LENGTH_LONG,
                               gravity: ToastGravity.CENTER,
-                              timeInSecForIosWeb: 1,
+                              timeInSecForIosWeb: 4,
                               backgroundColor: Colors.red,
                               textColor: Colors.white,
                               fontSize: 16.0);

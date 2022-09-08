@@ -121,7 +121,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
           msg: languages.profanityWarningMessage,
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
+          timeInSecForIosWeb: 4,
           backgroundColor: Colors.red,
           textColor: Colors.white,
           fontSize: 16.0);
@@ -134,7 +134,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
             msg: languages.companyChooseHintLabel,
             toastLength: Toast.LENGTH_LONG,
             gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 1,
+            timeInSecForIosWeb: 4,
             backgroundColor: Colors.red,
             textColor: Colors.white,
             fontSize: 16.0);
@@ -147,7 +147,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
             msg: languages.fillAllFieldsWarningMessage,
             toastLength: Toast.LENGTH_LONG,
             gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 1,
+            timeInSecForIosWeb: 4,
             backgroundColor: Colors.red,
             textColor: Colors.white,
             fontSize: 16.0);
@@ -174,7 +174,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                 msg: languages.postIsOutMessage,
                 toastLength: Toast.LENGTH_LONG,
                 gravity: ToastGravity.CENTER,
-                timeInSecForIosWeb: 1,
+                timeInSecForIosWeb: 4,
                 backgroundColor: Colors.green,
                 textColor: Colors.white,
                 fontSize: 16.0);
@@ -382,6 +382,9 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                 decoration: new InputDecoration.collapsed(
                     hintText: languages.writeHereYourIdeaLabel),
                 onChanged: (text) => setState(() {})),
+          ),
+          SizedBox(
+            height: 20,
           ),
           Container(
             margin: EdgeInsets.only(left: 10, right: 10),
@@ -591,7 +594,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
           msg: languages.profanityWarningMessage,
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
+          timeInSecForIosWeb: 4,
           backgroundColor: Colors.red,
           textColor: Colors.white,
           fontSize: 16.0);
@@ -604,7 +607,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
             msg: languages.fillAllFieldsWithPollOptionWarningMessage,
             toastLength: Toast.LENGTH_LONG,
             gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 1,
+            timeInSecForIosWeb: 4,
             backgroundColor: Colors.red,
             textColor: Colors.white,
             fontSize: 16.0);
@@ -634,7 +637,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                 msg: languages.yourPostIsOutMessage,
                 toastLength: Toast.LENGTH_LONG,
                 gravity: ToastGravity.CENTER,
-                timeInSecForIosWeb: 1,
+                timeInSecForIosWeb: 4,
                 backgroundColor: Colors.green,
                 textColor: Colors.white,
                 fontSize: 16.0);

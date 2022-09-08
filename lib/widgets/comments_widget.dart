@@ -57,7 +57,7 @@ class _CommentsWidgetState extends State<CommentsWidget> {
             msg: languages.globalErrorMessage,
             toastLength: Toast.LENGTH_LONG,
             gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 1,
+            timeInSecForIosWeb: 4,
             backgroundColor: Colors.red,
             textColor: Colors.white,
             fontSize: 16.0);
@@ -162,7 +162,7 @@ class _CommentsWidgetState extends State<CommentsWidget> {
                                                       Toast.LENGTH_LONG,
                                                       gravity:
                                                       ToastGravity.CENTER,
-                                                      timeInSecForIosWeb: 1,
+                                                      timeInSecForIosWeb: 4,
                                                       backgroundColor:
                                                       Colors.green,
                                                       textColor: Colors.white,
@@ -178,7 +178,7 @@ class _CommentsWidgetState extends State<CommentsWidget> {
                                                       Toast.LENGTH_LONG,
                                                       gravity:
                                                       ToastGravity.CENTER,
-                                                      timeInSecForIosWeb: 1,
+                                                      timeInSecForIosWeb: 4,
                                                       backgroundColor: Colors.red,
                                                       textColor: Colors.white,
                                                       fontSize: 16.0);
@@ -359,7 +359,7 @@ class _CommentsWidgetState extends State<CommentsWidget> {
           msg: languages.profanityWarningMessage,
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
+          timeInSecForIosWeb: 4,
           backgroundColor: Colors.red,
           textColor: Colors.white,
           fontSize: 16.0);
@@ -384,7 +384,7 @@ class _CommentsWidgetState extends State<CommentsWidget> {
                   msg: languages.commentAddedMessage,
                   toastLength: Toast.LENGTH_LONG,
                   gravity: ToastGravity.CENTER,
-                  timeInSecForIosWeb: 1,
+                  timeInSecForIosWeb: 4,
                   backgroundColor: Colors.green,
                   textColor: Colors.white,
                   fontSize: 16.0);
@@ -397,7 +397,7 @@ class _CommentsWidgetState extends State<CommentsWidget> {
                 msg: languages.globalErrorMessage,
                 toastLength: Toast.LENGTH_LONG,
                 gravity: ToastGravity.CENTER,
-                timeInSecForIosWeb: 1,
+                timeInSecForIosWeb: 4,
                 backgroundColor: Colors.red,
                 textColor: Colors.white,
                 fontSize: 16.0);
@@ -411,7 +411,7 @@ class _CommentsWidgetState extends State<CommentsWidget> {
             msg: languages.emptyCommentWarningMessage,
             toastLength: Toast.LENGTH_LONG,
             gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 1,
+            timeInSecForIosWeb: 4,
             backgroundColor: Colors.red,
             textColor: Colors.white,
             fontSize: 16.0);
@@ -526,7 +526,7 @@ class _CommentsWidgetState extends State<CommentsWidget> {
             msg: languages.successfulReportMessage,
             toastLength: Toast.LENGTH_LONG,
             gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 1,
+            timeInSecForIosWeb: 4,
             backgroundColor: Colors.green,
             textColor: Colors.white,
             fontSize: 16.0);
@@ -539,7 +539,7 @@ class _CommentsWidgetState extends State<CommentsWidget> {
               msg: languages.alreadyReportedCommentMessage,
               toastLength: Toast.LENGTH_LONG,
               gravity: ToastGravity.CENTER,
-              timeInSecForIosWeb: 1,
+              timeInSecForIosWeb: 4,
               backgroundColor: Colors.red,
               textColor: Colors.white,
               fontSize: 16.0);
@@ -548,7 +548,7 @@ class _CommentsWidgetState extends State<CommentsWidget> {
               msg: languages.globalErrorMessage,
               toastLength: Toast.LENGTH_LONG,
               gravity: ToastGravity.CENTER,
-              timeInSecForIosWeb: 1,
+              timeInSecForIosWeb: 4,
               backgroundColor: Colors.red,
               textColor: Colors.white,
               fontSize: 16.0);
@@ -561,7 +561,7 @@ class _CommentsWidgetState extends State<CommentsWidget> {
             msg: languages.globalServerErrorMessage,
             toastLength: Toast.LENGTH_LONG,
             gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 1,
+            timeInSecForIosWeb: 4,
             backgroundColor: Colors.red,
             textColor: Colors.white,
             fontSize: 16.0);
@@ -577,7 +577,7 @@ class _CommentsWidgetState extends State<CommentsWidget> {
         msg: languages.likeOwnCommentWarningMessage,
         toastLength: Toast.LENGTH_LONG,
         gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 1,
+        timeInSecForIosWeb: 4,
         backgroundColor: Colors.red,
         textColor: Colors.white,
         fontSize: 16.0);
@@ -590,7 +590,7 @@ class _CommentsWidgetState extends State<CommentsWidget> {
           msg: languages.banOwnAccountWarningMessage,
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
+          timeInSecForIosWeb: 4,
           backgroundColor: Colors.red,
           textColor: Colors.white,
           fontSize: 16.0);
@@ -638,7 +638,7 @@ class _CommentsWidgetState extends State<CommentsWidget> {
                               msg: languages.successfulBanMessage,
                               toastLength: Toast.LENGTH_LONG,
                               gravity: ToastGravity.CENTER,
-                              timeInSecForIosWeb: 1,
+                              timeInSecForIosWeb: 4,
                               backgroundColor: Colors.green,
                               textColor: Colors.white,
                               fontSize: 16.0);
@@ -647,7 +647,7 @@ class _CommentsWidgetState extends State<CommentsWidget> {
                               msg: languages.globalServerErrorMessage,
                               toastLength: Toast.LENGTH_LONG,
                               gravity: ToastGravity.CENTER,
-                              timeInSecForIosWeb: 1,
+                              timeInSecForIosWeb: 4,
                               backgroundColor: Colors.red,
                               textColor: Colors.white,
                               fontSize: 16.0);

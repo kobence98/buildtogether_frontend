@@ -88,7 +88,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         msg: languages.subscribeWarningMessage,
                         toastLength: Toast.LENGTH_LONG,
                         gravity: ToastGravity.CENTER,
-                        timeInSecForIosWeb: 1,
+                        timeInSecForIosWeb: 4,
                         backgroundColor: Colors.yellow,
                         textColor: Colors.black,
                         fontSize: 16.0);
@@ -108,7 +108,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   msg: languages.automaticLoginErrorMessage,
                   toastLength: Toast.LENGTH_LONG,
                   gravity: ToastGravity.CENTER,
-                  timeInSecForIosWeb: 1,
+                  timeInSecForIosWeb: 4,
                   backgroundColor: Colors.red,
                   textColor: Colors.white,
                   fontSize: 16.0);

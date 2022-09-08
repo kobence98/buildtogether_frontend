@@ -123,7 +123,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                                       msg: languages.ideaIsImplementedMessage,
                                       toastLength: Toast.LENGTH_SHORT,
                                       gravity: ToastGravity.CENTER,
-                                      timeInSecForIosWeb: 1,
+                                      timeInSecForIosWeb: 4,
                                       backgroundColor: Colors.green,
                                       textColor: Colors.white,
                                       fontSize: 16.0);
@@ -193,7 +193,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                                               languages.successfulDeleteMessage,
                                           toastLength: Toast.LENGTH_LONG,
                                           gravity: ToastGravity.CENTER,
-                                          timeInSecForIosWeb: 1,
+                                          timeInSecForIosWeb: 4,
                                           backgroundColor: Colors.green,
                                           textColor: Colors.white,
                                           fontSize: 16.0);
@@ -206,7 +206,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                                               .globalServerErrorMessage,
                                           toastLength: Toast.LENGTH_LONG,
                                           gravity: ToastGravity.CENTER,
-                                          timeInSecForIosWeb: 1,
+                                          timeInSecForIosWeb: 4,
                                           backgroundColor: Colors.red,
                                           textColor: Colors.white,
                                           fontSize: 16.0);
@@ -232,7 +232,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                                         msg: "${languages.successLabel}!",
                                         toastLength: Toast.LENGTH_LONG,
                                         gravity: ToastGravity.CENTER,
-                                        timeInSecForIosWeb: 1,
+                                        timeInSecForIosWeb: 4,
                                         backgroundColor: Colors.green,
                                         textColor: Colors.white,
                                         fontSize: 16.0);
@@ -245,7 +245,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                                         msg: languages.globalServerErrorMessage,
                                         toastLength: Toast.LENGTH_LONG,
                                         gravity: ToastGravity.CENTER,
-                                        timeInSecForIosWeb: 1,
+                                        timeInSecForIosWeb: 4,
                                         backgroundColor: Colors.red,
                                         textColor: Colors.white,
                                         fontSize: 16.0);
@@ -488,7 +488,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                 msg: languages.globalErrorMessage,
                 toastLength: Toast.LENGTH_LONG,
                 gravity: ToastGravity.CENTER,
-                timeInSecForIosWeb: 1,
+                timeInSecForIosWeb: 4,
                 backgroundColor: Colors.red,
                 textColor: Colors.white,
                 fontSize: 16.0);
@@ -587,7 +587,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
             msg: languages.successfulReportMessage,
             toastLength: Toast.LENGTH_LONG,
             gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 1,
+            timeInSecForIosWeb: 4,
             backgroundColor: Colors.green,
             textColor: Colors.white,
             fontSize: 16.0);
@@ -600,7 +600,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
               msg: languages.alreadyReportedPostMessage,
               toastLength: Toast.LENGTH_LONG,
               gravity: ToastGravity.CENTER,
-              timeInSecForIosWeb: 1,
+              timeInSecForIosWeb: 4,
               backgroundColor: Colors.red,
               textColor: Colors.white,
               fontSize: 16.0);
@@ -609,7 +609,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
               msg: languages.globalErrorMessage,
               toastLength: Toast.LENGTH_LONG,
               gravity: ToastGravity.CENTER,
-              timeInSecForIosWeb: 1,
+              timeInSecForIosWeb: 4,
               backgroundColor: Colors.red,
               textColor: Colors.white,
               fontSize: 16.0);
@@ -619,7 +619,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
             msg: languages.globalServerErrorMessage,
             toastLength: Toast.LENGTH_LONG,
             gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 1,
+            timeInSecForIosWeb: 4,
             backgroundColor: Colors.red,
             textColor: Colors.white,
             fontSize: 16.0);
@@ -738,7 +738,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
           msg: languages.fillAllFieldsWarningMessage,
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
+          timeInSecForIosWeb: 4,
           backgroundColor: Colors.red,
           textColor: Colors.white,
           fontSize: 16.0);
@@ -759,7 +759,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
               msg: languages.successfulCouponSendMessage,
               toastLength: Toast.LENGTH_LONG,
               gravity: ToastGravity.CENTER,
-              timeInSecForIosWeb: 1,
+              timeInSecForIosWeb: 4,
               backgroundColor: Colors.green,
               textColor: Colors.white,
               fontSize: 16.0);
@@ -768,7 +768,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
               msg: languages.globalServerErrorMessage,
               toastLength: Toast.LENGTH_LONG,
               gravity: ToastGravity.CENTER,
-              timeInSecForIosWeb: 1,
+              timeInSecForIosWeb: 4,
               backgroundColor: Colors.red,
               textColor: Colors.white,
               fontSize: 16.0);
@@ -792,7 +792,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
         msg: languages.likeOwnPostWarningMessage,
         toastLength: Toast.LENGTH_LONG,
         gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 1,
+        timeInSecForIosWeb: 4,
         backgroundColor: Colors.red,
         textColor: Colors.white,
         fontSize: 16.0);
@@ -816,7 +816,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
             msg: languages.globalErrorMessage,
             toastLength: Toast.LENGTH_LONG,
             gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 1,
+            timeInSecForIosWeb: 4,
             backgroundColor: Colors.red,
             textColor: Colors.white,
             fontSize: 16.0);
@@ -830,7 +830,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
           msg: languages.banOwnAccountWarningMessage,
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
+          timeInSecForIosWeb: 4,
           backgroundColor: Colors.red,
           textColor: Colors.white,
           fontSize: 16.0);
@@ -882,7 +882,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                                     msg: languages.successfulBanMessage,
                                     toastLength: Toast.LENGTH_LONG,
                                     gravity: ToastGravity.CENTER,
-                                    timeInSecForIosWeb: 1,
+                                    timeInSecForIosWeb: 4,
                                     backgroundColor: Colors.green,
                                     textColor: Colors.white,
                                     fontSize: 16.0);
@@ -891,7 +891,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                                     msg: languages.globalServerErrorMessage,
                                     toastLength: Toast.LENGTH_LONG,
                                     gravity: ToastGravity.CENTER,
-                                    timeInSecForIosWeb: 1,
+                                    timeInSecForIosWeb: 4,
                                     backgroundColor: Colors.red,
                                     textColor: Colors.white,
                                     fontSize: 16.0);

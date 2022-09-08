@@ -48,6 +48,9 @@ class LanguageHu extends Languages {
   @override
   String get banOwnAccountWarningMessage => 'Nem tilthatod a saját fiókodat!';
 
+  @override
+  String get locationErrorMessage => 'Valami hiba van a helyzet felismeréssel! A beállításoknál kézzel is beállíthatod a helyzetedet!';
+
   //MAIN
   @override
   String get subscribeWarningMessage => 'A céged csak akkor lesz elérhető a felhasználók számára, ha a beállításoknál feliratkozol!';

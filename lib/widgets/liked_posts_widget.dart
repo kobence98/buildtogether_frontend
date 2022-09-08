@@ -184,7 +184,7 @@ class _LikedPostsWidgetState extends State<LikedPostsWidget> {
                                           Toast.LENGTH_SHORT,
                                           gravity:
                                           ToastGravity.CENTER,
-                                          timeInSecForIosWeb: 1,
+                                          timeInSecForIosWeb: 4,
                                           backgroundColor:
                                           Colors.green,
                                           textColor: Colors.white,
@@ -268,7 +268,7 @@ class _LikedPostsWidgetState extends State<LikedPostsWidget> {
                                                     Toast.LENGTH_LONG,
                                                     gravity: ToastGravity
                                                         .CENTER,
-                                                    timeInSecForIosWeb: 1,
+                                                    timeInSecForIosWeb: 4,
                                                     backgroundColor:
                                                     Colors.green,
                                                     textColor:
@@ -286,7 +286,7 @@ class _LikedPostsWidgetState extends State<LikedPostsWidget> {
                                                     Toast.LENGTH_LONG,
                                                     gravity: ToastGravity
                                                         .CENTER,
-                                                    timeInSecForIosWeb: 1,
+                                                    timeInSecForIosWeb: 4,
                                                     backgroundColor:
                                                     Colors.red,
                                                     textColor:
@@ -319,7 +319,7 @@ class _LikedPostsWidgetState extends State<LikedPostsWidget> {
                                                   Toast.LENGTH_LONG,
                                                   gravity:
                                                   ToastGravity.CENTER,
-                                                  timeInSecForIosWeb: 1,
+                                                  timeInSecForIosWeb: 4,
                                                   backgroundColor:
                                                   Colors.green,
                                                   textColor: Colors.white,
@@ -336,7 +336,7 @@ class _LikedPostsWidgetState extends State<LikedPostsWidget> {
                                                   Toast.LENGTH_LONG,
                                                   gravity:
                                                   ToastGravity.CENTER,
-                                                  timeInSecForIosWeb: 1,
+                                                  timeInSecForIosWeb: 4,
                                                   backgroundColor:
                                                   Colors.red,
                                                   textColor: Colors.white,
@@ -676,7 +676,7 @@ class _LikedPostsWidgetState extends State<LikedPostsWidget> {
             msg: languages.successfulReportMessage,
             toastLength: Toast.LENGTH_LONG,
             gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 1,
+            timeInSecForIosWeb: 4,
             backgroundColor: Colors.green,
             textColor: Colors.white,
             fontSize: 16.0);
@@ -689,7 +689,7 @@ class _LikedPostsWidgetState extends State<LikedPostsWidget> {
               msg: languages.alreadyReportedPostMessage,
               toastLength: Toast.LENGTH_LONG,
               gravity: ToastGravity.CENTER,
-              timeInSecForIosWeb: 1,
+              timeInSecForIosWeb: 4,
               backgroundColor: Colors.red,
               textColor: Colors.white,
               fontSize: 16.0);
@@ -698,7 +698,7 @@ class _LikedPostsWidgetState extends State<LikedPostsWidget> {
               msg: languages.globalErrorMessage,
               toastLength: Toast.LENGTH_LONG,
               gravity: ToastGravity.CENTER,
-              timeInSecForIosWeb: 1,
+              timeInSecForIosWeb: 4,
               backgroundColor: Colors.red,
               textColor: Colors.white,
               fontSize: 16.0);
@@ -708,7 +708,7 @@ class _LikedPostsWidgetState extends State<LikedPostsWidget> {
             msg: languages.globalServerErrorMessage,
             toastLength: Toast.LENGTH_LONG,
             gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 1,
+            timeInSecForIosWeb: 4,
             backgroundColor: Colors.red,
             textColor: Colors.white,
             fontSize: 16.0);
@@ -825,7 +825,7 @@ class _LikedPostsWidgetState extends State<LikedPostsWidget> {
           msg: languages.fillAllFieldsWarningMessage,
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
+          timeInSecForIosWeb: 4,
           backgroundColor: Colors.red,
           textColor: Colors.white,
           fontSize: 16.0);
@@ -846,7 +846,7 @@ class _LikedPostsWidgetState extends State<LikedPostsWidget> {
               msg: languages.successfulCouponSendMessage,
               toastLength: Toast.LENGTH_LONG,
               gravity: ToastGravity.CENTER,
-              timeInSecForIosWeb: 1,
+              timeInSecForIosWeb: 4,
               backgroundColor: Colors.green,
               textColor: Colors.white,
               fontSize: 16.0);
@@ -855,7 +855,7 @@ class _LikedPostsWidgetState extends State<LikedPostsWidget> {
               msg: languages.globalServerErrorMessage,
               toastLength: Toast.LENGTH_LONG,
               gravity: ToastGravity.CENTER,
-              timeInSecForIosWeb: 1,
+              timeInSecForIosWeb: 4,
               backgroundColor: Colors.red,
               textColor: Colors.white,
               fontSize: 16.0);
@@ -879,7 +879,7 @@ class _LikedPostsWidgetState extends State<LikedPostsWidget> {
         msg: languages.likeOwnPostWarningMessage,
         toastLength: Toast.LENGTH_LONG,
         gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 1,
+        timeInSecForIosWeb: 4,
         backgroundColor: Colors.red,
         textColor: Colors.white,
         fontSize: 16.0);
@@ -892,7 +892,7 @@ class _LikedPostsWidgetState extends State<LikedPostsWidget> {
           msg: languages.banOwnAccountWarningMessage,
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
+          timeInSecForIosWeb: 4,
           backgroundColor: Colors.red,
           textColor: Colors.white,
           fontSize: 16.0);
@@ -940,7 +940,7 @@ class _LikedPostsWidgetState extends State<LikedPostsWidget> {
                               msg: languages.successfulBanMessage,
                               toastLength: Toast.LENGTH_LONG,
                               gravity: ToastGravity.CENTER,
-                              timeInSecForIosWeb: 1,
+                              timeInSecForIosWeb: 4,
                               backgroundColor: Colors.green,
                               textColor: Colors.white,
                               fontSize: 16.0);
@@ -949,7 +949,7 @@ class _LikedPostsWidgetState extends State<LikedPostsWidget> {
                               msg: languages.globalServerErrorMessage,
                               toastLength: Toast.LENGTH_LONG,
                               gravity: ToastGravity.CENTER,
-                              timeInSecForIosWeb: 1,
+                              timeInSecForIosWeb: 4,
                               backgroundColor: Colors.red,
                               textColor: Colors.white,
                               fontSize: 16.0);

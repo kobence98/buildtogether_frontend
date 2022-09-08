@@ -30,6 +30,8 @@ abstract class Languages {
 
   String get banOwnAccountWarningMessage;
 
+  String get locationErrorMessage;
+
   //MAIN
   String get subscribeWarningMessage;
 

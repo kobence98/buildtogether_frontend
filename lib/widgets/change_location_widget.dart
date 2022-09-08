@@ -48,7 +48,7 @@ class _ChangeLocationWidgetState extends State<ChangeLocationWidget> {
             msg: languages.countryCodesErrorMessage,
             toastLength: Toast.LENGTH_LONG,
             gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 1,
+            timeInSecForIosWeb: 4,
             backgroundColor: Colors.red,
             textColor: Colors.white,
             fontSize: 16.0);
@@ -171,7 +171,7 @@ class _ChangeLocationWidgetState extends State<ChangeLocationWidget> {
           msg: languages.chooseLocationWarningLabel,
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
+          timeInSecForIosWeb: 4,
           backgroundColor: Colors.red,
           textColor: Colors.white,
           fontSize: 16.0);
@@ -195,7 +195,7 @@ class _ChangeLocationWidgetState extends State<ChangeLocationWidget> {
               msg: languages.successfulLocationChangeMessage,
               toastLength: Toast.LENGTH_LONG,
               gravity: ToastGravity.CENTER,
-              timeInSecForIosWeb: 1,
+              timeInSecForIosWeb: 4,
               backgroundColor: Colors.green,
               textColor: Colors.white,
               fontSize: 16.0);
@@ -204,7 +204,7 @@ class _ChangeLocationWidgetState extends State<ChangeLocationWidget> {
               msg: languages.globalErrorMessage,
               toastLength: Toast.LENGTH_LONG,
               gravity: ToastGravity.CENTER,
-              timeInSecForIosWeb: 1,
+              timeInSecForIosWeb: 4,
               backgroundColor: Colors.red,
               textColor: Colors.white,
               fontSize: 16.0);

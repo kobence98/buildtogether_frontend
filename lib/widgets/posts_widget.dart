@@ -12,8 +12,11 @@ import 'package:flutter_frontend/static/date_formatter.dart';
 import 'package:flutter_frontend/widgets/single_post_widget.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:geocode/geocode.dart';
 import 'package:like_button/like_button.dart';
+import 'package:location/location.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:translator/translator.dart';
 
 import 'comments_widget.dart';
 import 'filtered_posts_widget.dart';
@@ -110,17 +113,18 @@ class _PostsWidgetState extends State<PostsWidget> {
                   children: [
                     Flexible(
                       child: TypeAheadField(
-                        loadingBuilder: (context){
+                        loadingBuilder: (context) {
                           return Container(
                             height: 50,
                             padding: EdgeInsets.all(1),
                             color: Colors.yellow,
                             child: Container(
-                              color: Colors.black,
-                              child: Center(
-                                child: Image(image: new AssetImage("assets/images/loading_breath.gif")),
-                              )
-                            ),
+                                color: Colors.black,
+                                child: Center(
+                                  child: Image(
+                                      image: new AssetImage(
+                                          "assets/images/loading_breath.gif")),
+                                )),
                           );
                         },
                         noItemsFoundBuilder: (context) {
@@ -313,10 +317,11 @@ class _PostsWidgetState extends State<PostsWidget> {
                   },
                   header: WaterDropHeader(
                     refresh: SizedBox(
-                      width: 25.0,
-                      height: 25.0,
-                      child: Image(image: new AssetImage("assets/images/loading_spin.gif"))
-                    ),
+                        width: 25.0,
+                        height: 25.0,
+                        child: Image(
+                            image: new AssetImage(
+                                "assets/images/loading_spin.gif"))),
                   ),
                   child: actualPosts.isNotEmpty
                       ? ListView.separated(
@@ -345,7 +350,8 @@ class _PostsWidgetState extends State<PostsWidget> {
                                             headers: widget.session.headers,
                                           ),
                                         ),
-                                        onTap: () => _onCompanyTap(post.companyId),
+                                        onTap: () =>
+                                            _onCompanyTap(post.companyId),
                                       ),
                                       title: Column(
                                         crossAxisAlignment:
@@ -402,7 +408,7 @@ class _PostsWidgetState extends State<PostsWidget> {
                                                             Toast.LENGTH_SHORT,
                                                         gravity:
                                                             ToastGravity.CENTER,
-                                                        timeInSecForIosWeb: 1,
+                                                        timeInSecForIosWeb: 4,
                                                         backgroundColor:
                                                             Colors.green,
                                                         textColor: Colors.white,
@@ -549,7 +555,7 @@ class _PostsWidgetState extends State<PostsWidget> {
                                                               Toast.LENGTH_LONG,
                                                           gravity: ToastGravity
                                                               .CENTER,
-                                                          timeInSecForIosWeb: 1,
+                                                          timeInSecForIosWeb: 4,
                                                           backgroundColor:
                                                               Colors.green,
                                                           textColor:
@@ -609,7 +615,7 @@ class _PostsWidgetState extends State<PostsWidget> {
                                                               Toast.LENGTH_LONG,
                                                           gravity: ToastGravity
                                                               .CENTER,
-                                                          timeInSecForIosWeb: 1,
+                                                          timeInSecForIosWeb: 4,
                                                           backgroundColor:
                                                               Colors.red,
                                                           textColor:
@@ -741,7 +747,9 @@ class _PostsWidgetState extends State<PostsWidget> {
                           width: 80,
                           height: 80,
                           child: Center(
-                            child: Image(image: new AssetImage("assets/images/loading_spin.gif")),
+                            child: Image(
+                                image: new AssetImage(
+                                    "assets/images/loading_spin.gif")),
                           ),
                         ),
                       )
@@ -750,7 +758,8 @@ class _PostsWidgetState extends State<PostsWidget> {
             )
           : Container(
               child: Center(
-                child: Image(image: new AssetImage("assets/images/loading_breath.gif")),
+                child: Image(
+                    image: new AssetImage("assets/images/loading_breath.gif")),
               ),
             ),
     );
@@ -932,42 +941,31 @@ class _PostsWidgetState extends State<PostsWidget> {
         _loadNew(3);
       }
     });
-    CountryCodes.init().then((success) {
-      if (success) {
-        Locale? deviceLocale = CountryCodes.getDeviceLocale();
-        country = CountryCodes.detailsForLocale(deviceLocale).name;
+    Location location = new Location();
+    location.serviceEnabled().then((_serviceEnabled) {
+      if (_serviceEnabled) {
+        location.requestService().then((_serviceEnabled) {
+          if (_serviceEnabled) {
+            location.hasPermission().then((_permissionGranted) {
+              if (_permissionGranted == PermissionStatus.denied) {
+                location.requestPermission().then((_permissionGranted) {
+                  if (_permissionGranted != PermissionStatus.granted) {
+                    //Fluttertoast
+                  } else {
+                    location.getLocation().then((_locationData) {
+                      _getPostsDataWithLocation(_locationData);
+                    });
+                  }
+                });
+              } else if (_permissionGranted == PermissionStatus.granted) {
+                location.getLocation().then((_locationData) {
+                  _getPostsDataWithLocation(_locationData);
+                });
+              }
+            });
+          }
+        });
       }
-      Map<String, dynamic> body = {
-        'countryCode': widget.user.setByLocale
-            ? country
-            : (widget.user.locale == null ? 'Global' : widget.user.locale),
-      };
-      widget.session.post('/api/posts/getPosts', body).then((response) {
-        if (response.statusCode == 200) {
-          setState(() {
-            Map<String, dynamic> body =
-                json.decode(utf8.decode(response.bodyBytes));
-
-            bestPosts = List<Post>.from(
-                body['bestPosts'].map((model) => Post.fromJson(model)));
-            newPosts = List<Post>.from(
-                body['newPosts'].map((model) => Post.fromJson(model)));
-            ownPosts = List<Post>.from(
-                body['ownPosts'].map((model) => Post.fromJson(model)));
-
-            actualNewPosts = newPosts.sublist(
-                0, newPosts.length < 10 ? newPosts.length : 10);
-            actualBestPosts = bestPosts.sublist(
-                0, bestPosts.length < 10 ? bestPosts.length : 10);
-            actualOwnPosts = ownPosts.sublist(
-                0, ownPosts.length < 10 ? ownPosts.length : 10);
-          });
-          loadedPosts = true;
-          _refreshNewController.refreshCompleted();
-          _refreshBestController.refreshCompleted();
-          _refreshOwnController.refreshCompleted();
-        }
-      });
     });
   }
 
@@ -977,7 +975,7 @@ class _PostsWidgetState extends State<PostsWidget> {
           msg: languages.fillTheSearchFieldWarningMessage,
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
+          timeInSecForIosWeb: 4,
           backgroundColor: Colors.red,
           textColor: Colors.white,
           fontSize: 16.0);
@@ -997,18 +995,18 @@ class _PostsWidgetState extends State<PostsWidget> {
     }
   }
 
-  void _onSearchComplete(){
+  void _onSearchComplete() {
     if (_searchFieldController.text.isEmpty) {
       FocusManager.instance.primaryFocus?.unfocus();
     } else {
       Navigator.of(context)
           .push(MaterialPageRoute(
-          builder: (context) => FilteredPostsWidget(
-            session: widget.session,
-            pattern: _searchFieldController.text,
-            user: widget.user,
-            languages: languages,
-          )))
+              builder: (context) => FilteredPostsWidget(
+                    session: widget.session,
+                    pattern: _searchFieldController.text,
+                    user: widget.user,
+                    languages: languages,
+                  )))
           .whenComplete(() {
         _searchFieldController.clear();
         FocusManager.instance.primaryFocus?.unfocus();
@@ -1024,7 +1022,9 @@ class _PostsWidgetState extends State<PostsWidget> {
             return innerLoading
                 ? Container(
                     child: Center(
-                      child: Image(image: new AssetImage("assets/images/loading_breath.gif")),
+                      child: Image(
+                          image: new AssetImage(
+                              "assets/images/loading_breath.gif")),
                     ),
                   )
                 : AlertDialog(
@@ -1122,7 +1122,7 @@ class _PostsWidgetState extends State<PostsWidget> {
           msg: languages.fillAllFieldsWarningMessage,
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
+          timeInSecForIosWeb: 4,
           backgroundColor: Colors.red,
           textColor: Colors.white,
           fontSize: 16.0);
@@ -1143,7 +1143,7 @@ class _PostsWidgetState extends State<PostsWidget> {
               msg: languages.successfulCouponSendMessage,
               toastLength: Toast.LENGTH_LONG,
               gravity: ToastGravity.CENTER,
-              timeInSecForIosWeb: 1,
+              timeInSecForIosWeb: 4,
               backgroundColor: Colors.green,
               textColor: Colors.white,
               fontSize: 16.0);
@@ -1152,7 +1152,7 @@ class _PostsWidgetState extends State<PostsWidget> {
               msg: languages.globalServerErrorMessage,
               toastLength: Toast.LENGTH_LONG,
               gravity: ToastGravity.CENTER,
-              timeInSecForIosWeb: 1,
+              timeInSecForIosWeb: 4,
               backgroundColor: Colors.red,
               textColor: Colors.white,
               fontSize: 16.0);
@@ -1172,7 +1172,9 @@ class _PostsWidgetState extends State<PostsWidget> {
             return innerLoading
                 ? Container(
                     child: Center(
-                      child: Image(image: new AssetImage("assets/images/loading_breath.gif")),
+                      child: Image(
+                          image: new AssetImage(
+                              "assets/images/loading_breath.gif")),
                     ),
                   )
                 : AlertDialog(
@@ -1251,7 +1253,7 @@ class _PostsWidgetState extends State<PostsWidget> {
             msg: languages.successfulReportMessage,
             toastLength: Toast.LENGTH_LONG,
             gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 1,
+            timeInSecForIosWeb: 4,
             backgroundColor: Colors.green,
             textColor: Colors.white,
             fontSize: 16.0);
@@ -1264,7 +1266,7 @@ class _PostsWidgetState extends State<PostsWidget> {
               msg: languages.alreadyReportedPostMessage,
               toastLength: Toast.LENGTH_LONG,
               gravity: ToastGravity.CENTER,
-              timeInSecForIosWeb: 1,
+              timeInSecForIosWeb: 4,
               backgroundColor: Colors.red,
               textColor: Colors.white,
               fontSize: 16.0);
@@ -1273,7 +1275,7 @@ class _PostsWidgetState extends State<PostsWidget> {
               msg: languages.globalErrorMessage,
               toastLength: Toast.LENGTH_LONG,
               gravity: ToastGravity.CENTER,
-              timeInSecForIosWeb: 1,
+              timeInSecForIosWeb: 4,
               backgroundColor: Colors.red,
               textColor: Colors.white,
               fontSize: 16.0);
@@ -1283,7 +1285,7 @@ class _PostsWidgetState extends State<PostsWidget> {
             msg: languages.globalServerErrorMessage,
             toastLength: Toast.LENGTH_LONG,
             gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 1,
+            timeInSecForIosWeb: 4,
             backgroundColor: Colors.red,
             textColor: Colors.white,
             fontSize: 16.0);
@@ -1299,7 +1301,7 @@ class _PostsWidgetState extends State<PostsWidget> {
         msg: languages.likeOwnPostWarningMessage,
         toastLength: Toast.LENGTH_LONG,
         gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 1,
+        timeInSecForIosWeb: 4,
         backgroundColor: Colors.red,
         textColor: Colors.white,
         fontSize: 16.0);
@@ -1312,7 +1314,7 @@ class _PostsWidgetState extends State<PostsWidget> {
           msg: languages.banOwnAccountWarningMessage,
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
+          timeInSecForIosWeb: 4,
           backgroundColor: Colors.red,
           textColor: Colors.white,
           fontSize: 16.0);
@@ -1324,7 +1326,9 @@ class _PostsWidgetState extends State<PostsWidget> {
               return innerLoading
                   ? Container(
                       child: Center(
-                        child: Image(image: new AssetImage("assets/images/loading_breath.gif")),
+                        child: Image(
+                            image: new AssetImage(
+                                "assets/images/loading_breath.gif")),
                       ),
                     )
                   : AlertDialog(
@@ -1362,7 +1366,7 @@ class _PostsWidgetState extends State<PostsWidget> {
                                     msg: languages.successfulBanMessage,
                                     toastLength: Toast.LENGTH_LONG,
                                     gravity: ToastGravity.CENTER,
-                                    timeInSecForIosWeb: 1,
+                                    timeInSecForIosWeb: 4,
                                     backgroundColor: Colors.green,
                                     textColor: Colors.white,
                                     fontSize: 16.0);
@@ -1371,7 +1375,7 @@ class _PostsWidgetState extends State<PostsWidget> {
                                     msg: languages.globalServerErrorMessage,
                                     toastLength: Toast.LENGTH_LONG,
                                     gravity: ToastGravity.CENTER,
-                                    timeInSecForIosWeb: 1,
+                                    timeInSecForIosWeb: 4,
                                     backgroundColor: Colors.red,
                                     textColor: Colors.white,
                                     fontSize: 16.0);
@@ -1388,5 +1392,66 @@ class _PostsWidgetState extends State<PostsWidget> {
             });
           });
     }
+  }
+
+  void _getPostsDataWithLocation(LocationData locationData) {
+    try {
+      GeoCode()
+          .reverseGeocoding(
+              latitude: locationData.latitude!,
+              longitude: locationData.longitude!)
+          .then((address) {
+        country = CountryCodes.countryCodes()
+            .where((cc) => (cc!.alpha2Code == address.countryCode))
+            .first!
+            .name;
+        GoogleTranslator().translate(country!).then((enCountry) {
+          Map<String, dynamic> body = {
+            'countryCode': widget.user.setByLocale
+                ? enCountry.text
+                : (widget.user.locale == null ? 'Global' : widget.user.locale),
+          };
+          widget.session.post('/api/posts/getPosts', body).then((response) {
+            if (response.statusCode == 200) {
+              setState(() {
+                Map<String, dynamic> body =
+                    json.decode(utf8.decode(response.bodyBytes));
+
+                bestPosts = List<Post>.from(
+                    body['bestPosts'].map((model) => Post.fromJson(model)));
+                newPosts = List<Post>.from(
+                    body['newPosts'].map((model) => Post.fromJson(model)));
+                ownPosts = List<Post>.from(
+                    body['ownPosts'].map((model) => Post.fromJson(model)));
+
+                actualNewPosts = newPosts.sublist(
+                    0, newPosts.length < 10 ? newPosts.length : 10);
+                actualBestPosts = bestPosts.sublist(
+                    0, bestPosts.length < 10 ? bestPosts.length : 10);
+                actualOwnPosts = ownPosts.sublist(
+                    0, ownPosts.length < 10 ? ownPosts.length : 10);
+              });
+              loadedPosts = true;
+              _refreshNewController.refreshCompleted();
+              _refreshBestController.refreshCompleted();
+              _refreshOwnController.refreshCompleted();
+            }
+          });
+        });
+      });
+    } catch (e) {
+      locationErrorToast();
+    }
+  }
+
+  void locationErrorToast() {
+    Fluttertoast.showToast(
+        msg: languages.locationErrorMessage,
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 4,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0);
   }
 }
