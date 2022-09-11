@@ -941,32 +941,90 @@ class _PostsWidgetState extends State<PostsWidget> {
         _loadNew(3);
       }
     });
-    Location location = new Location();
-    location.serviceEnabled().then((_serviceEnabled) {
-      if (_serviceEnabled) {
-        location.requestService().then((_serviceEnabled) {
-          if (_serviceEnabled) {
-            location.hasPermission().then((_permissionGranted) {
-              if (_permissionGranted == PermissionStatus.denied) {
-                location.requestPermission().then((_permissionGranted) {
-                  if (_permissionGranted != PermissionStatus.granted) {
-                    //Fluttertoast
-                  } else {
-                    location.getLocation().then((_locationData) {
-                      _getPostsDataWithLocation(_locationData);
-                    });
-                  }
-                });
-              } else if (_permissionGranted == PermissionStatus.granted) {
-                location.getLocation().then((_locationData) {
-                  _getPostsDataWithLocation(_locationData);
-                });
-              }
-            });
-          }
-        });
-      }
-    });
+    if (widget.user.setByLocale) {
+      Location location = new Location();
+      location.serviceEnabled().then((_serviceEnabled) {
+        if (_serviceEnabled) {
+          location.requestService().then((_serviceEnabled) {
+            if (_serviceEnabled) {
+              location.hasPermission().then((_permissionGranted) {
+                if (_permissionGranted == PermissionStatus.denied) {
+                  location.requestPermission().then((_permissionGranted) {
+                    if (_permissionGranted != PermissionStatus.granted) {
+                      locationErrorToast();
+                      setState(() {
+                        loading = false;
+                        loadedPosts = true;
+                        _refreshNewController.refreshCompleted();
+                        _refreshBestController.refreshCompleted();
+                        _refreshOwnController.refreshCompleted();
+                      });
+                    } else {
+                      location.getLocation().then((_locationData) {
+                        _getPostsDataWithLocation(_locationData);
+                      });
+                    }
+                  });
+                } else if (_permissionGranted == PermissionStatus.granted) {
+                  location.getLocation().then((_locationData) {
+                    _getPostsDataWithLocation(_locationData);
+                  });
+                }
+              });
+            } else {
+              locationErrorToast();
+              setState(() {
+                loading = false;
+                loadedPosts = true;
+                _refreshNewController.refreshCompleted();
+                _refreshBestController.refreshCompleted();
+                _refreshOwnController.refreshCompleted();
+              });
+            }
+          });
+        } else {
+          locationErrorToast();
+          setState(() {
+            loading = false;
+            loadedPosts = true;
+            _refreshNewController.refreshCompleted();
+            _refreshBestController.refreshCompleted();
+            _refreshOwnController.refreshCompleted();
+          });
+        }
+      });
+    } else {
+      Map<String, dynamic> body = {
+        'countryCode':
+            (widget.user.locale == null ? 'Global' : widget.user.locale),
+      };
+      widget.session.post('/api/posts/getPosts', body).then((response) {
+        if (response.statusCode == 200) {
+          setState(() {
+            Map<String, dynamic> body =
+                json.decode(utf8.decode(response.bodyBytes));
+
+            bestPosts = List<Post>.from(
+                body['bestPosts'].map((model) => Post.fromJson(model)));
+            newPosts = List<Post>.from(
+                body['newPosts'].map((model) => Post.fromJson(model)));
+            ownPosts = List<Post>.from(
+                body['ownPosts'].map((model) => Post.fromJson(model)));
+
+            actualNewPosts = newPosts.sublist(
+                0, newPosts.length < 10 ? newPosts.length : 10);
+            actualBestPosts = bestPosts.sublist(
+                0, bestPosts.length < 10 ? bestPosts.length : 10);
+            actualOwnPosts = ownPosts.sublist(
+                0, ownPosts.length < 10 ? ownPosts.length : 10);
+          });
+          loadedPosts = true;
+          _refreshNewController.refreshCompleted();
+          _refreshBestController.refreshCompleted();
+          _refreshOwnController.refreshCompleted();
+        }
+      });
+    }
   }
 
   void _onSearchButtonPressed() {
@@ -1406,11 +1464,7 @@ class _PostsWidgetState extends State<PostsWidget> {
             .first!
             .name;
         GoogleTranslator().translate(country!).then((enCountry) {
-          Map<String, dynamic> body = {
-            'countryCode': widget.user.setByLocale
-                ? enCountry.text
-                : (widget.user.locale == null ? 'Global' : widget.user.locale),
-          };
+          Map<String, dynamic> body = {'countryCode': enCountry.text};
           widget.session.post('/api/posts/getPosts', body).then((response) {
             if (response.statusCode == 200) {
               setState(() {
@@ -1441,6 +1495,13 @@ class _PostsWidgetState extends State<PostsWidget> {
       });
     } catch (e) {
       locationErrorToast();
+      setState(() {
+        loading = false;
+        loadedPosts = true;
+        _refreshNewController.refreshCompleted();
+        _refreshBestController.refreshCompleted();
+        _refreshOwnController.refreshCompleted();
+      });
     }
   }
 
