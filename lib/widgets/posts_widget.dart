@@ -12,11 +12,12 @@ import 'package:flutter_frontend/static/date_formatter.dart';
 import 'package:flutter_frontend/widgets/single_post_widget.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:geocode/geocode.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:like_button/like_button.dart';
 import 'package:location/location.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:translator/translator.dart';
+import 'package:location/location.dart' as loc;
 
 import 'comments_widget.dart';
 import 'filtered_posts_widget.dart';
@@ -942,7 +943,7 @@ class _PostsWidgetState extends State<PostsWidget> {
       }
     });
     if (widget.user.setByLocale) {
-      Location location = new Location();
+      loc.Location location = new loc.Location();
       location.serviceEnabled().then((_serviceEnabled) {
         if (_serviceEnabled) {
           location.requestService().then((_serviceEnabled) {
@@ -1454,17 +1455,21 @@ class _PostsWidgetState extends State<PostsWidget> {
 
   void _getPostsDataWithLocation(LocationData locationData) {
     try {
-      GeoCode()
-          .reverseGeocoding(
-              latitude: locationData.latitude!,
-              longitude: locationData.longitude!)
+      placemarkFromCoordinates(locationData.latitude!, locationData.longitude!)
           .then((address) {
-        country = CountryCodes.countryCodes()
-            .where((cc) => (cc!.alpha2Code == address.countryCode))
-            .first!
-            .name;
-        GoogleTranslator().translate(country!).then((enCountry) {
-          Map<String, dynamic> body = {'countryCode': enCountry.text};
+        if (address.isEmpty || address.first.isoCountryCode == null) {
+          locationErrorToast();
+          setState(() {
+            loading = false;
+            loadedPosts = true;
+            _refreshNewController.refreshCompleted();
+            _refreshBestController.refreshCompleted();
+            _refreshOwnController.refreshCompleted();
+          });
+        } else {
+          Map<String, dynamic> body = {
+            'countryCode': address.first.isoCountryCode
+          };
           widget.session.post('/api/posts/getPosts', body).then((response) {
             if (response.statusCode == 200) {
               setState(() {
@@ -1491,7 +1496,7 @@ class _PostsWidgetState extends State<PostsWidget> {
               _refreshOwnController.refreshCompleted();
             }
           });
-        });
+        }
       });
     } catch (e) {
       locationErrorToast();
