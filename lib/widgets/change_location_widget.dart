@@ -38,6 +38,7 @@ class _ChangeLocationWidgetState extends State<ChangeLocationWidget> {
         Iterable l = json.decode(utf8.decode(response.bodyBytes));
         countryCodes.addAll(l.map((data) => data.toString()).toList());
         countryCodes.remove("Undefined");
+        countryCodes.sort();
         _chosenCountryCode =
             widget.user.locale == null ? 'Global' : widget.user.locale;
         setState(() {

@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_frontend/entities/company.dart';
 import 'package:flutter_frontend/entities/session.dart';
@@ -57,6 +56,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
         Iterable l = json.decode(utf8.decode(response.bodyBytes));
         countryCodes.addAll(l.map((data) => data.toString()).toList());
         countryCodes.remove("Undefined");
+        countryCodes.sort();
         _chosenCountryCode = widget.user.companyCountryCode == null
             ? 'Global'
             : widget.user.companyCountryCode;
@@ -95,257 +95,267 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.black,
-        ),
-        body: _countryCodesLoaded
-            ? Container(
-                color: Colors.black,
-                child: Center(
-                  child: Container(
-                    padding: EdgeInsets.all(
-                        MediaQuery.of(context).size.height * 0.02),
-                    child: ListView(
-                      children: [
-                        Center(
-                          child: Row(
-                            children: [
-                              Flexible(
-                                child: Container(
-                                  child: Text(
-                                    "${languages.nameLabel}: ",
+          appBar: AppBar(
+            backgroundColor: Colors.black,
+          ),
+          body: _countryCodesLoaded
+              ? Container(
+                  color: Colors.black,
+                  child: Center(
+                    child: Container(
+                      padding: EdgeInsets.all(
+                          MediaQuery.of(context).size.height * 0.02),
+                      child: ListView(
+                        children: [
+                          Center(
+                            child: Row(
+                              children: [
+                                Flexible(
+                                  child: Container(
+                                    child: Text(
+                                      "${languages.nameLabel}: ",
+                                      style: TextStyle(
+                                          color: Colors.yellow,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                  flex: 2,
+                                ),
+                                Flexible(
+                                  child: Container(
+                                    padding: EdgeInsets.only(left: 20.0),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(10),
+                                      ),
+                                      color: Colors.yellow.withOpacity(0.7),
+                                    ),
+                                    child: TextField(
+                                      style: TextStyle(color: Colors.black),
+                                      controller: _nameController,
+                                      cursorColor: Colors.black,
+                                      decoration: InputDecoration(
+                                        focusedBorder: OutlineInputBorder(
+                                            borderSide: BorderSide.none),
+                                        hintText: widget.user.name,
+                                        hintStyle: TextStyle(
+                                            color:
+                                                Colors.black.withOpacity(0.5)),
+                                      ),
+                                    ),
+                                  ),
+                                  flex: 4,
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: company ? 10 : 0),
+                          company
+                              ? Container(
+                                  height: 200,
+                                  margin: EdgeInsets.only(left: 10, right: 10),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(10),
+                                    ),
+                                    color: Colors.yellow,
+                                  ),
+                                  padding: EdgeInsets.all(4),
+                                  child: TextField(
+                                      maxLines: 3000,
+                                      maxLength: 2048,
+                                      cursorColor: Colors.black,
+                                      controller: _descriptionController,
+                                      style: TextStyle(fontSize: 20),
+                                      decoration: new InputDecoration.collapsed(
+                                          hintText: languages.descriptionLabel),
+                                      onChanged: (text) => setState(() {})),
+                                )
+                              : Container(),
+                          SizedBox(height: 20),
+                          company && companyData != null
+                              ? ListTile(
+                                  leading: Text(
+                                    '${languages.logoLabel}:',
                                     style: TextStyle(
                                         color: Colors.yellow,
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold),
                                   ),
-                                ),
-                                flex: 2,
-                              ),
-                              Flexible(
-                                child: Container(
-                                  padding: EdgeInsets.only(left: 20.0),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(10),
-                                    ),
-                                    color: Colors.yellow.withOpacity(0.7),
-                                  ),
-                                  child: TextField(
-                                    style: TextStyle(color: Colors.black),
-                                    controller: _nameController,
-                                    cursorColor: Colors.black,
-                                    decoration: InputDecoration(
-                                      focusedBorder: OutlineInputBorder(
-                                          borderSide: BorderSide.none),
-                                      hintText: widget.user.name,
-                                      hintStyle: TextStyle(
-                                          color: Colors.black.withOpacity(0.5)),
-                                    ),
-                                  ),
-                                ),
-                                flex: 4,
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: company ? 10 : 0),
-                        company
-                            ? Container(
-                                height: 200,
-                                margin: EdgeInsets.only(left: 10, right: 10),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(10),
-                                  ),
-                                  color: Colors.yellow,
-                                ),
-                                padding: EdgeInsets.all(4),
-                                child: TextField(
-                                    maxLines: 3000,
-                                    maxLength: 2048,
-                                    cursorColor: Colors.black,
-                                    controller: _descriptionController,
-                                    style: TextStyle(fontSize: 20),
-                                    decoration: new InputDecoration.collapsed(
-                                        hintText: languages.descriptionLabel),
-                                    onChanged: (text) => setState(() {})),
-                              )
-                            : Container(),
-                        SizedBox(height: 20),
-                        company && companyData != null
-                            ? ListTile(
-                                leading: Text(
-                                  '${languages.logoLabel}:',
-                                  style: TextStyle(
-                                      color: Colors.yellow,
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                title: image != null
-                                    ? InkWell(
-                                        child: Center(
-                                          child: CircleAvatar(
-                                            radius: 20,
-                                            backgroundImage:
-                                                FileImage(File(image!.path)),
+                                  title: image != null
+                                      ? InkWell(
+                                          child: Center(
+                                            child: CircleAvatar(
+                                              radius: 20,
+                                              backgroundImage:
+                                                  FileImage(File(image!.path)),
+                                            ),
                                           ),
+                                          onTap: () {
+                                            _addPicture(setState);
+                                          },
+                                        )
+                                      : InkWell(
+                                          child: Center(
+                                            child: CircleAvatar(
+                                              radius: 20,
+                                              backgroundImage: NetworkImage(
+                                                widget.session.domainName +
+                                                    "/api/images/" +
+                                                    companyData!.imageId
+                                                        .toString(),
+                                                headers: widget.session.headers,
+                                              ),
+                                            ),
+                                          ),
+                                          onTap: () {
+                                            _addPicture(setState);
+                                          },
                                         ),
-                                        onTap: () {
-                                          _addPicture(setState);
-                                        },
-                                      )
-                                    : InkWell(
+                                )
+                              : Container(),
+                          SizedBox(height: company ? 5 : 0),
+                          company
+                              ? Container(
+                                  child: Text(
+                                    languages.likesNotificationEmailTipLabel,
+                                    style: TextStyle(
+                                        color: Colors.yellow,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20),
+                                  ),
+                                )
+                              : Container(),
+                          SizedBox(height: company ? 5 : 0),
+                          company
+                              ? Container(
+                                  child: Row(
+                                    children: [
+                                      Flexible(
                                         child: Center(
-                                          child: CircleAvatar(
-                                            radius: 20,
-                                            backgroundImage: NetworkImage(
-                                              widget.session.domainName +
-                                                  "/api/images/" +
-                                                  companyData!.imageId
-                                                      .toString(),
-                                              headers: widget.session.headers,
+                                          child: Container(
+                                            child: Switch(
+                                              value:
+                                                  _emailNotificationForCompany,
+                                              onChanged: (value) {
+                                                setState(() {
+                                                  _emailNotificationForCompany =
+                                                      value;
+                                                });
+                                              },
+                                              activeTrackColor:
+                                                  Colors.yellow.shade200,
+                                              activeColor:
+                                                  Colors.yellow.shade600,
+                                              inactiveTrackColor: Colors.white,
                                             ),
                                           ),
                                         ),
-                                        onTap: () {
-                                          _addPicture(setState);
-                                        },
+                                        flex: 1,
                                       ),
-                              )
-                            : Container(),
-                        SizedBox(height: company ? 5 : 0),
-                        company
-                            ? Container(
-                                child: Text(
-                                  languages.likesNotificationEmailTipLabel,
-                                  style: TextStyle(
-                                      color: Colors.yellow,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20),
-                                ),
-                              )
-                            : Container(),
-                        SizedBox(height: company ? 5 : 0),
-                        company
-                            ? Container(
-                                child: Row(
-                                  children: [
-                                    Flexible(
-                                      child: Center(
-                                        child: Container(
-                                          child: Switch(
-                                            value: _emailNotificationForCompany,
-                                            onChanged: (value) {
-                                              setState(() {
-                                                _emailNotificationForCompany =
-                                                    value;
-                                              });
-                                            },
-                                            activeTrackColor:
-                                                Colors.yellow.shade200,
-                                            activeColor: Colors.yellow.shade600,
-                                            inactiveTrackColor: Colors.white,
-                                          ),
-                                        ),
-                                      ),
-                                      flex: 1,
-                                    ),
-                                    Flexible(
-                                      child: _emailNotificationForCompany
-                                          ? Center(
-                                              child: Container(
-                                                child: NumberPicker(
-                                                  value:
-                                                      _emailNotificationNumber,
-                                                  minValue: 100,
-                                                  textStyle: TextStyle(
-                                                      color: Colors.yellow),
-                                                  selectedTextStyle: TextStyle(
-                                                      color: Colors.yellow,
-                                                      fontSize: 30),
-                                                  step: 100,
-                                                  maxValue: 10000000,
-                                                  onChanged: (value) =>
-                                                      setState(() {
-                                                    _emailNotificationNumber =
-                                                        value;
-                                                  }),
+                                      Flexible(
+                                        child: _emailNotificationForCompany
+                                            ? Center(
+                                                child: Container(
+                                                  child: NumberPicker(
+                                                    value:
+                                                        _emailNotificationNumber,
+                                                    minValue: 100,
+                                                    textStyle: TextStyle(
+                                                        color: Colors.yellow),
+                                                    selectedTextStyle:
+                                                        TextStyle(
+                                                            color:
+                                                                Colors.yellow,
+                                                            fontSize: 30),
+                                                    step: 100,
+                                                    maxValue: 10000000,
+                                                    onChanged: (value) =>
+                                                        setState(() {
+                                                      _emailNotificationNumber =
+                                                          value;
+                                                    }),
+                                                  ),
                                                 ),
-                                              ),
-                                            )
-                                          : Container(),
-                                      flex: 1,
-                                    ),
-                                  ],
-                                ),
-                              )
-                            : Container(),
-                        SizedBox(height: company ? 5 : 0),
-                        company
-                            ? Container(
-                                child: DropdownButton<String>(
-                                  isExpanded: true,
-                                  focusColor: Colors.white,
-                                  value: _chosenCountryCode,
-                                  style: TextStyle(color: Colors.yellow),
-                                  iconEnabledColor: Colors.yellow,
-                                  dropdownColor: Colors.black,
-                                  items: countryCodes
-                                      .map<DropdownMenuItem<String>>(
-                                          (String value) {
-                                    return DropdownMenuItem<String>(
-                                      value: value,
-                                      child: Text(
-                                        value,
-                                        style: TextStyle(color: Colors.yellow),
+                                              )
+                                            : Container(),
+                                        flex: 1,
                                       ),
-                                    );
-                                  }).toList(),
-                                  onChanged: (String? value) {
-                                    setState(() {
-                                      _chosenCountryCode = value;
-                                    });
-                                  },
+                                    ],
+                                  ),
+                                )
+                              : Container(),
+                          SizedBox(height: company ? 5 : 0),
+                          company
+                              ? Container(
+                                  child: DropdownButton<String>(
+                                    isExpanded: true,
+                                    focusColor: Colors.white,
+                                    value: _chosenCountryCode,
+                                    style: TextStyle(color: Colors.yellow),
+                                    iconEnabledColor: Colors.yellow,
+                                    dropdownColor: Colors.black,
+                                    items: countryCodes
+                                        .map<DropdownMenuItem<String>>(
+                                            (String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(
+                                          value,
+                                          style:
+                                              TextStyle(color: Colors.yellow),
+                                        ),
+                                      );
+                                    }).toList(),
+                                    onChanged: (String? value) {
+                                      setState(() {
+                                        _chosenCountryCode = value;
+                                      });
+                                    },
+                                  ),
+                                )
+                              : Container(),
+                          SizedBox(
+                            height: company ? 20 : 0,
+                          ),
+                          Center(
+                            child: ButtonTheme(
+                              height: 50,
+                              minWidth: 300,
+                              child: ElevatedButton(
+                                style: ButtonStyle(
+                                  backgroundColor:
+                                      MaterialStateProperty.all<Color>(
+                                          Colors.yellow),
                                 ),
-                              )
-                            : Container(),
-                        SizedBox(
-                          height: company ? 20 : 0,
-                        ),
-                        Center(
-                          child: ButtonTheme(
-                            height: 50,
-                            minWidth: 300,
-                            child: ElevatedButton(
-                              style: ButtonStyle(
-                                backgroundColor:
-                                    MaterialStateProperty.all<Color>(
-                                        Colors.yellow),
-                              ),
-                              onPressed: _onChangePressed,
-                              child: Text(
-                                languages.changeDataLabel,
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 20,
-                                    color: Colors.black),
+                                onPressed: _onChangePressed,
+                                child: Text(
+                                  languages.changeDataLabel,
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20,
+                                      color: Colors.black),
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
+                          SizedBox(
+                            height: 30,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              )
-            : Container(
-          color: Colors.black,
-          child: Center(
-            child: Image(image: new AssetImage("assets/images/loading_breath.gif")),
-          ),
-        )
-      ),
+                )
+              : Container(
+                  color: Colors.black,
+                  child: Center(
+                    child: Image(
+                        image:
+                            new AssetImage("assets/images/loading_breath.gif")),
+                  ),
+                )),
     );
   }
 

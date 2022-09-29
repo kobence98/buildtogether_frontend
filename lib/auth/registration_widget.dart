@@ -53,6 +53,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
         Iterable l = json.decode(utf8.decode(response.bodyBytes));
         countryCodes.addAll(l.map((data) => data.toString()).toList());
         countryCodes.remove("Undefined");
+        countryCodes.sort();
       } else {
         Fluttertoast.showToast(
             msg: languages.globalErrorMessage,
