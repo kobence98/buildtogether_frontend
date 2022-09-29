@@ -1,8 +1,6 @@
 import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_frontend/entities/company_for_search.dart';
 import 'package:flutter_frontend/entities/session.dart';
 import 'package:flutter_frontend/entities/user.dart';
@@ -517,6 +515,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
 
   void _onAddOptionPressed() {
     setState(() {
+      FocusNode focusNode = FocusNode();
       TextEditingController textEditingController = TextEditingController();
       pollControllers.add(textEditingController);
       pollOptions.add(
@@ -533,6 +532,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
             children: [
               Flexible(
                 child: TextField(
+                  focusNode: focusNode,
                   style: TextStyle(color: Colors.black),
                   controller: textEditingController,
                   cursorColor: Colors.black,
@@ -572,6 +572,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
           ),
         ),
       );
+      focusNode.requestFocus();
     });
   }
 

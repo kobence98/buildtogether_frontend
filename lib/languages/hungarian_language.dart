@@ -380,6 +380,9 @@ class LanguageHu extends Languages {
   String get successfulSubscriptionMessage => 'Sikeres feliratkozás!';
 
   @override
+  String get successfulSubscriptionCancelMessage => 'Sikeres leiratkozás!';
+
+  @override
   String get changeLanguageLabel => 'Nyelv megváltoztatása';
 
   @override

@@ -433,14 +433,26 @@ class _SettingsWidgetState extends State<SettingsWidget> {
         loading = false;
         Navigator.of(context).pop();
         widget.user.isCompanyActive = !widget.user.isCompanyActive;
-        Fluttertoast.showToast(
-            msg: languages.successfulSubscriptionMessage,
-            toastLength: Toast.LENGTH_LONG,
-            gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 4,
-            backgroundColor: Colors.green,
-            textColor: Colors.white,
-            fontSize: 16.0);
+        if(widget.user.isCompanyActive){
+          Fluttertoast.showToast(
+              msg: languages.successfulSubscriptionMessage,
+              toastLength: Toast.LENGTH_LONG,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 4,
+              backgroundColor: Colors.green,
+              textColor: Colors.white,
+              fontSize: 16.0);
+        }
+        else{
+          Fluttertoast.showToast(
+              msg: languages.successfulSubscriptionCancelMessage,
+              toastLength: Toast.LENGTH_LONG,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 4,
+              backgroundColor: Colors.green,
+              textColor: Colors.white,
+              fontSize: 16.0);
+        }
       } else {
         setState(() {
           loading = false;

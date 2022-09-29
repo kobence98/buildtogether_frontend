@@ -384,6 +384,9 @@ class LanguageEn extends Languages {
   String get successfulSubscriptionMessage => 'Successful subscription!';
 
   @override
+  String get successfulSubscriptionCancelMessage => 'Successful unsubscription!';
+
+  @override
   String get changeLanguageLabel => 'Change language';
 
   @override

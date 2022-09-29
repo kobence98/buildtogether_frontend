@@ -256,6 +256,8 @@ abstract class Languages {
 
   String get successfulSubscriptionMessage;
 
+  String get successfulSubscriptionCancelMessage;
+
   String get changeLanguageLabel;
 
   String get handleBansLabel;
