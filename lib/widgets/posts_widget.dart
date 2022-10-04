@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:country_codes/country_codes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_frontend/entities/company.dart';
 import 'package:flutter_frontend/entities/post.dart';
@@ -10,14 +9,13 @@ import 'package:flutter_frontend/entities/user.dart';
 import 'package:flutter_frontend/languages/languages.dart';
 import 'package:flutter_frontend/static/date_formatter.dart';
 import 'package:flutter_frontend/widgets/single_post_widget.dart';
-import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:like_button/like_button.dart';
 import 'package:location/location.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:translator/translator.dart';
 import 'package:location/location.dart' as loc;
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import 'comments_widget.dart';
 import 'filtered_posts_widget.dart';
@@ -65,15 +63,45 @@ class _PostsWidgetState extends State<PostsWidget> {
   final TextEditingController _reportReasonTextFieldController =
       TextEditingController();
 
+  static const _pageSize = 10;
+
+  final PagingController<int, Post> _pagingController =
+  PagingController(firstPageKey: 0);
+
+
   @override
   void initState() {
     super.initState();
     languages = widget.languages;
     _loadData();
+    _pagingController.addPageRequestListener((pageKey) {
+      _fetchPage(pageKey);
+    });
+  }
+
+  Future<void> _fetchPage(int pageKey) async {
+    try {
+      dynamic data = <String, dynamic>{
+        'countryCode': (widget.user.locale == null ? 'Global' : widget.user.locale),
+        'pageNumber': pageKey % _pageSize,
+        'pageSize': _pageSize
+      };
+      List<Post> newItems = await widget.session.postJson('/api/posts/new', data);
+      final isLastPage = newItems.length < _pageSize;
+      if (isLastPage) {
+        _pagingController.appendLastPage(newItems);
+      } else {
+        final nextPageKey = pageKey + newItems.length;
+        _pagingController.appendPage(newItems, nextPageKey);
+      }
+    } catch (error) {
+      _pagingController.error = error;
+    }
   }
 
   @override
   void dispose() {
+    _pagingController.dispose();
     _searchFieldController.dispose();
     _newScrollController.dispose();
     _bestScrollController.dispose();
@@ -88,204 +116,600 @@ class _PostsWidgetState extends State<PostsWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.black,
-      child: DefaultTabController(
-        initialIndex: widget.initPage,
-        length: 3,
-        child: SafeArea(
-          child: Scaffold(
-            appBar: AppBar(
-              backgroundColor: Colors.black,
-              automaticallyImplyLeading: false,
-              title: Container(
-                height: 40,
-                padding: EdgeInsets.only(left: 5, right: 5),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(
-                    color: Colors.white,
+    return PagedListView<int, Post>(
+      pagingController: _pagingController,
+      builderDelegate: PagedChildBuilderDelegate<Post>(
+        itemBuilder: (context, post, postIndex) => InkWell(
+          child: Container(
+            color: Colors.black,
+            child: Column(
+              children: [
+                ListTile(
+                  leading: InkWell(
+                    child: CircleAvatar(
+                      radius: 20,
+                      backgroundImage: NetworkImage(
+                        widget.session.domainName +
+                            "/api/images/" +
+                            post.companyImageId.toString(),
+                        headers: widget.session.headers,
+                      ),
+                    ),
+                    onTap: () =>
+                        _onCompanyTap(post.companyId),
                   ),
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(20),
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    Flexible(
-                      child: TypeAheadField(
-                        loadingBuilder: (context) {
-                          return Container(
-                            height: 50,
-                            padding: EdgeInsets.all(1),
-                            color: Colors.yellow,
-                            child: Container(
+                  title: Column(
+                    crossAxisAlignment:
+                    CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        post.userName,
+                        style:
+                        TextStyle(color: Colors.white),
+                      ),
+                      SizedBox(
+                        height: 1,
+                      ),
+                      InkWell(
+                        child: Container(
+                          padding: EdgeInsets.all(3),
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(
                                 color: Colors.black,
-                                child: Center(
-                                  child: Image(
-                                      image: new AssetImage(
-                                          "assets/images/loading_breath.gif")),
-                                )),
-                          );
-                        },
-                        noItemsFoundBuilder: (context) {
-                          return Container(
-                            padding: EdgeInsets.all(1),
-                            color: Colors.yellow,
-                            child: Container(
-                              color: Colors.black,
-                              child: ListTile(
-                                leading: Icon(
-                                  Icons.not_interested_rounded,
-                                  color: Colors.yellow,
-                                ),
-                                title: Text(
-                                  languages.noItemsFoundLabel,
-                                  style: TextStyle(
-                                      color: Colors.yellow,
-                                      fontStyle: FontStyle.italic,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20),
-                                ),
                               ),
-                            ),
-                          );
-                        },
-                        minCharsForSuggestions: 1,
-                        textFieldConfiguration: TextFieldConfiguration(
-                          decoration: new InputDecoration.collapsed(
-                              hintText: languages.searchLabel),
-                          controller: _searchFieldController,
-                          cursorColor: Colors.black,
-                          autofocus: false,
-                          style: TextStyle(fontSize: 20),
-                          onEditingComplete: _onSearchComplete,
+                              borderRadius:
+                              BorderRadius.all(
+                                  Radius.circular(20))),
+                          child: Text(
+                            post.companyName,
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontWeight:
+                                FontWeight.bold),
+                          ),
                         ),
-                        suggestionsCallback: (pattern) async {
-                          dynamic response = await widget.session
-                              .get("/api/searchField/" + pattern);
-                          if (response.statusCode == 200) {
-                            widget.session.updateCookie(response);
-                            Iterable l =
-                                json.decode(utf8.decode(response.bodyBytes));
-                            names = List<SearchFieldNames>.from(l.map(
-                                (name) => SearchFieldNames.fromJson(name)));
-                            List<String> resultList = [];
-                            names.forEach((name) {
-                              if (name.id != null) {
-                                resultList.add(name.id.toString());
+                        onTap: () {
+                          _onCompanyTap(post.companyId);
+                        },
+                      ),
+                    ],
+                  ),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      post.implemented
+                          ? InkWell(
+                        child: Icon(
+                          Icons
+                              .lightbulb_outline_sharp,
+                          color: Colors.yellow,
+                        ),
+                        onTap: () {
+                          Fluttertoast.showToast(
+                              msg: languages
+                                  .ideaIsImplementedMessage,
+                              toastLength:
+                              Toast.LENGTH_SHORT,
+                              gravity:
+                              ToastGravity.CENTER,
+                              timeInSecForIosWeb: 4,
+                              backgroundColor:
+                              Colors.green,
+                              textColor: Colors.white,
+                              fontSize: 16.0);
+                        },
+                      )
+                          : Container(),
+                      Text(
+                        DateFormatter.formatDate(
+                            post.createdDate, languages),
+                        style:
+                        TextStyle(color: Colors.white),
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(left: 5),
+                        child: PopupMenuButton(
+                          child: Icon(
+                            Icons.more_horiz,
+                            color: Colors.white,
+                          ),
+                          itemBuilder: (context) {
+                            return List.generate(
+                                widget.user.companyId ==
+                                    post.companyId
+                                    ? 4
+                                    : 2, (index) {
+                              if (index == 0) {
+                                return PopupMenuItem(
+                                  child: Text(widget.user
+                                      .companyId ==
+                                      post
+                                          .companyId ||
+                                      widget.user
+                                          .userId ==
+                                          post.creatorId
+                                      ? languages
+                                      .deleteLabel
+                                      : languages
+                                      .reportLabel),
+                                  value: 0,
+                                );
+                              } else if (index == 1) {
+                                return PopupMenuItem(
+                                  child: Text(languages
+                                      .banUserLabel),
+                                  value: 1,
+                                );
+                              } else if (index == 2) {
+                                return PopupMenuItem(
+                                  child: Text(languages
+                                      .contactCreatorLabel),
+                                  value: 2,
+                                );
                               } else {
-                                resultList.add(name.name);
+                                return PopupMenuItem(
+                                  child: Text(post
+                                      .implemented
+                                      ? languages
+                                      .notImplementedLabel
+                                      : languages
+                                      .implementedLabel),
+                                  value: 3,
+                                );
                               }
                             });
-                            return resultList;
-                          }
-                          return [];
-                        },
-                        itemBuilder: (context, n) {
-                          SearchFieldNames? name;
-                          if (names
-                              .where((nm) => nm.id.toString() == n)
-                              .isNotEmpty) {
-                            name = names
-                                .where((nm) => nm.id.toString() == n)
-                                .first;
-                          }
-                          return Container(
-                            padding: EdgeInsets.all(1),
-                            color: Colors.yellow,
-                            child: Container(
-                              color: Colors.black,
-                              child: ListTile(
-                                leading: name != null
-                                    ? CircleAvatar(
-                                        radius: 20,
-                                        backgroundImage: NetworkImage(
-                                          widget.session.domainName +
-                                              "/api/images/" +
-                                              name.imageId.toString(),
-                                          headers: widget.session.headers,
-                                        ),
-                                      )
-                                    : Icon(
-                                        Icons.lightbulb_outline_sharp,
-                                        color: Colors.yellow,
-                                      ),
-                                title: Text(
-                                  name == null ? n.toString() : name.name,
-                                  style: TextStyle(
-                                      color: Colors.yellow,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20),
-                                ),
-                              ),
-                            ),
+                          },
+                          onSelected: (index) {
+                            if (index == 0) {
+                              if (widget.user.companyId ==
+                                  post.companyId ||
+                                  widget.user.userId ==
+                                      post.creatorId) {
+                                widget.session
+                                    .delete('/api/posts/' +
+                                    post.postId
+                                        .toString())
+                                    .then((response) {
+                                  if (response.statusCode ==
+                                      200) {
+                                    Fluttertoast.showToast(
+                                        msg: languages
+                                            .successfulDeleteMessage,
+                                        toastLength: Toast
+                                            .LENGTH_LONG,
+                                        gravity:
+                                        ToastGravity
+                                            .CENTER,
+                                        timeInSecForIosWeb:
+                                        1,
+                                        backgroundColor:
+                                        Colors.green,
+                                        textColor:
+                                        Colors.white,
+                                        fontSize: 16.0);
+                                    setState(() {
+                                      actualNewPosts
+                                          .remove(post);
+                                      actualBestPosts
+                                          .remove(post);
+                                      actualOwnPosts
+                                          .remove(post);
+                                    });
+                                  } else {
+                                    Fluttertoast.showToast(
+                                        msg: languages
+                                            .globalServerErrorMessage,
+                                        toastLength: Toast
+                                            .LENGTH_LONG,
+                                        gravity:
+                                        ToastGravity
+                                            .CENTER,
+                                        timeInSecForIosWeb:
+                                        1,
+                                        backgroundColor:
+                                        Colors.red,
+                                        textColor:
+                                        Colors.white,
+                                        fontSize: 16.0);
+                                  }
+                                });
+                              } else {
+                                onReportTap(post);
+                              }
+                            } else if (index == 1) {
+                              _onBanUserTap(post.creatorId);
+                            } else if (index == 2) {
+                              _onContactCreatorTap(post);
+                            } else {
+                              widget.session
+                                  .post(
+                                  '/api/posts/' +
+                                      post.postId
+                                          .toString() +
+                                      '/implemented',
+                                  Map<String,
+                                      dynamic>())
+                                  .then((response) {
+                                if (response.statusCode ==
+                                    200) {
+                                  Fluttertoast.showToast(
+                                      msg:
+                                      "${languages.successLabel}!",
+                                      toastLength:
+                                      Toast.LENGTH_LONG,
+                                      gravity: ToastGravity
+                                          .CENTER,
+                                      timeInSecForIosWeb: 4,
+                                      backgroundColor:
+                                      Colors.green,
+                                      textColor:
+                                      Colors.white,
+                                      fontSize: 16.0);
+                                  setState(() {
+                                    bool imp =
+                                    !post.implemented;
+                                    if (actualNewPosts
+                                        .where((p) {
+                                      return p.postId ==
+                                          post.postId;
+                                    }).isNotEmpty) {
+                                      actualNewPosts
+                                          .where((p) {
+                                        return p.postId ==
+                                            post.postId;
+                                      })
+                                          .first
+                                          .implemented =
+                                          imp;
+                                    }
+                                    if (actualBestPosts
+                                        .where((p) {
+                                      return p.postId ==
+                                          post.postId;
+                                    }).isNotEmpty) {
+                                      actualBestPosts
+                                          .where((p) {
+                                        return p.postId ==
+                                            post.postId;
+                                      })
+                                          .first
+                                          .implemented =
+                                          imp;
+                                    }
+                                    if (actualOwnPosts
+                                        .where((p) {
+                                      return p.postId ==
+                                          post.postId;
+                                    }).isNotEmpty) {
+                                      actualOwnPosts
+                                          .where((p) {
+                                        return p.postId ==
+                                            post.postId;
+                                      })
+                                          .first
+                                          .implemented =
+                                          imp;
+                                    }
+                                  });
+                                } else {
+                                  Fluttertoast.showToast(
+                                      msg: languages
+                                          .globalServerErrorMessage,
+                                      toastLength:
+                                      Toast.LENGTH_LONG,
+                                      gravity: ToastGravity
+                                          .CENTER,
+                                      timeInSecForIosWeb: 4,
+                                      backgroundColor:
+                                      Colors.red,
+                                      textColor:
+                                      Colors.white,
+                                      fontSize: 16.0);
+                                }
+                              });
+                            }
+                          },
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                ListTile(
+                  title: Text(
+                    post.title,
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20),
+                  ),
+                ),
+                Container(
+                  height: 60,
+                  padding: EdgeInsets.all(5),
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    post.postType == 'SIMPLE_POST'
+                        ? post.description
+                        : languages
+                        .clickHereToOpenThePollLabel,
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+                Container(
+                  height: 40,
+                  child: Row(
+                    crossAxisAlignment:
+                    CrossAxisAlignment.center,
+                    mainAxisAlignment:
+                    MainAxisAlignment.spaceBetween,
+                    children: [
+                      LikeButton(
+                        size: 20.0,
+                        circleColor: CircleColor(
+                            start: Colors.yellow.shade200,
+                            end: Colors.yellow),
+                        bubblesColor: BubblesColor(
+                          dotPrimaryColor:
+                          Colors.yellow.shade200,
+                          dotSecondaryColor: Colors.yellow,
+                        ),
+                        isLiked: post.liked,
+                        likeBuilder: (bool isLiked) {
+                          return Icon(
+                            Icons.lightbulb,
+                            color: isLiked
+                                ? Colors.yellow
+                                : Colors.white,
                           );
                         },
-                        onSuggestionSelected: (n) {
-                          String name;
-                          if (names
-                              .where((nm) => nm.id.toString() == n)
-                              .isNotEmpty) {
-                            name = names
-                                .where((nm) => nm.id.toString() == n)
-                                .first
-                                .name;
-                          } else {
-                            name = n.toString();
-                          }
-                          _searchFieldController.text = name.toString();
-                          _onSearchButtonPressed();
+                        onTap: (isLiked) {
+                          return post.creatorId ==
+                              widget.user.userId
+                              ? _onLikeOwnButtonPressed()
+                              : _onLikeButton(isLiked,
+                              postIndex, 1);
                         },
+                        likeCount: post.likeNumber,
                       ),
-                      flex: 8,
-                    ),
-                    Flexible(
-                      child: IconButton(
-                        icon: Icon(
-                          Icons.search,
-                          color: Colors.black,
-                        ),
-                        onPressed: _onSearchButtonPressed,
+                      Row(
+                        children: [
+                          Text(
+                            post.commentNumber.toString(),
+                            style: TextStyle(
+                                color: Colors.white),
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.comment),
+                            color: Colors.white,
+                            onPressed: () {
+                              Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          CommentsWidget(
+                                            session: widget
+                                                .session,
+                                            postId:
+                                            post.postId,
+                                            user:
+                                            widget.user,
+                                            languages:
+                                            languages,
+                                          )));
+                            },
+                          ),
+                        ],
                       ),
-                      flex: 1,
-                    ),
-                  ],
-                ),
-              ),
-              bottom: TabBar(
-                  labelColor: Colors.yellow,
-                  indicatorColor: Colors.yellow,
-                  tabs: [
-                    Tab(
-                      child: Text(
-                        languages.newLabel,
-                        style: TextStyle(color: Colors.yellow),
-                      ),
-                    ),
-                    Tab(
-                      child: Text(
-                        languages.bestLabel,
-                        style: TextStyle(color: Colors.yellow),
-                      ),
-                    ),
-                    Tab(
-                      child: Text(
-                        languages.ownLabel,
-                        style: TextStyle(color: Colors.yellow),
-                      ),
-                    ),
-                  ]),
+                    ],
+                  ),
+                )
+              ],
             ),
-            body: TabBarView(children: [
-              _postsWidget(1),
-              _postsWidget(2),
-              _postsWidget(3),
-            ]),
           ),
-        ),
+          onTap: () {
+            _onPostTap(postIndex, 1);
+          },
+        )
       ),
     );
+    // return Container(
+    //   color: Colors.black,
+    //   child: DefaultTabController(
+    //     initialIndex: widget.initPage,
+    //     length: 3,
+    //     child: SafeArea(
+    //       child: Scaffold(
+    //         appBar: AppBar(
+    //           backgroundColor: Colors.black,
+    //           automaticallyImplyLeading: false,
+    //           title: Container(
+    //             height: 40,
+    //             padding: EdgeInsets.only(left: 5, right: 5),
+    //             decoration: BoxDecoration(
+    //               color: Colors.white,
+    //               border: Border.all(
+    //                 color: Colors.white,
+    //               ),
+    //               borderRadius: BorderRadius.all(
+    //                 Radius.circular(20),
+    //               ),
+    //             ),
+    //             child: Row(
+    //               children: [
+    //                 Flexible(
+    //                   child: TypeAheadField(
+    //                     loadingBuilder: (context) {
+    //                       return Container(
+    //                         height: 50,
+    //                         padding: EdgeInsets.all(1),
+    //                         color: Colors.yellow,
+    //                         child: Container(
+    //                             color: Colors.black,
+    //                             child: Center(
+    //                               child: Image(
+    //                                   image: new AssetImage(
+    //                                       "assets/images/loading_breath.gif")),
+    //                             )),
+    //                       );
+    //                     },
+    //                     noItemsFoundBuilder: (context) {
+    //                       return Container(
+    //                         padding: EdgeInsets.all(1),
+    //                         color: Colors.yellow,
+    //                         child: Container(
+    //                           color: Colors.black,
+    //                           child: ListTile(
+    //                             leading: Icon(
+    //                               Icons.not_interested_rounded,
+    //                               color: Colors.yellow,
+    //                             ),
+    //                             title: Text(
+    //                               languages.noItemsFoundLabel,
+    //                               style: TextStyle(
+    //                                   color: Colors.yellow,
+    //                                   fontStyle: FontStyle.italic,
+    //                                   fontWeight: FontWeight.bold,
+    //                                   fontSize: 20),
+    //                             ),
+    //                           ),
+    //                         ),
+    //                       );
+    //                     },
+    //                     minCharsForSuggestions: 1,
+    //                     textFieldConfiguration: TextFieldConfiguration(
+    //                       decoration: new InputDecoration.collapsed(
+    //                           hintText: languages.searchLabel),
+    //                       controller: _searchFieldController,
+    //                       cursorColor: Colors.black,
+    //                       autofocus: false,
+    //                       style: TextStyle(fontSize: 20),
+    //                       onEditingComplete: _onSearchComplete,
+    //                     ),
+    //                     suggestionsCallback: (pattern) async {
+    //                       dynamic response = await widget.session
+    //                           .get("/api/searchField/" + pattern);
+    //                       if (response.statusCode == 200) {
+    //                         widget.session.updateCookie(response);
+    //                         Iterable l =
+    //                             json.decode(utf8.decode(response.bodyBytes));
+    //                         names = List<SearchFieldNames>.from(l.map(
+    //                             (name) => SearchFieldNames.fromJson(name)));
+    //                         List<String> resultList = [];
+    //                         names.forEach((name) {
+    //                           if (name.id != null) {
+    //                             resultList.add(name.id.toString());
+    //                           } else {
+    //                             resultList.add(name.name);
+    //                           }
+    //                         });
+    //                         return resultList;
+    //                       }
+    //                       return [];
+    //                     },
+    //                     itemBuilder: (context, n) {
+    //                       SearchFieldNames? name;
+    //                       if (names
+    //                           .where((nm) => nm.id.toString() == n)
+    //                           .isNotEmpty) {
+    //                         name = names
+    //                             .where((nm) => nm.id.toString() == n)
+    //                             .first;
+    //                       }
+    //                       return Container(
+    //                         padding: EdgeInsets.all(1),
+    //                         color: Colors.yellow,
+    //                         child: Container(
+    //                           color: Colors.black,
+    //                           child: ListTile(
+    //                             leading: name != null
+    //                                 ? CircleAvatar(
+    //                                     radius: 20,
+    //                                     backgroundImage: NetworkImage(
+    //                                       widget.session.domainName +
+    //                                           "/api/images/" +
+    //                                           name.imageId.toString(),
+    //                                       headers: widget.session.headers,
+    //                                     ),
+    //                                   )
+    //                                 : Icon(
+    //                                     Icons.lightbulb_outline_sharp,
+    //                                     color: Colors.yellow,
+    //                                   ),
+    //                             title: Text(
+    //                               name == null ? n.toString() : name.name,
+    //                               style: TextStyle(
+    //                                   color: Colors.yellow,
+    //                                   fontWeight: FontWeight.bold,
+    //                                   fontSize: 20),
+    //                             ),
+    //                           ),
+    //                         ),
+    //                       );
+    //                     },
+    //                     onSuggestionSelected: (n) {
+    //                       String name;
+    //                       if (names
+    //                           .where((nm) => nm.id.toString() == n)
+    //                           .isNotEmpty) {
+    //                         name = names
+    //                             .where((nm) => nm.id.toString() == n)
+    //                             .first
+    //                             .name;
+    //                       } else {
+    //                         name = n.toString();
+    //                       }
+    //                       _searchFieldController.text = name.toString();
+    //                       _onSearchButtonPressed();
+    //                     },
+    //                   ),
+    //                   flex: 8,
+    //                 ),
+    //                 Flexible(
+    //                   child: IconButton(
+    //                     icon: Icon(
+    //                       Icons.search,
+    //                       color: Colors.black,
+    //                     ),
+    //                     onPressed: _onSearchButtonPressed,
+    //                   ),
+    //                   flex: 1,
+    //                 ),
+    //               ],
+    //             ),
+    //           ),
+    //           bottom: TabBar(
+    //               labelColor: Colors.yellow,
+    //               indicatorColor: Colors.yellow,
+    //               tabs: [
+    //                 Tab(
+    //                   child: Text(
+    //                     languages.newLabel,
+    //                     style: TextStyle(color: Colors.yellow),
+    //                   ),
+    //                 ),
+    //                 Tab(
+    //                   child: Text(
+    //                     languages.bestLabel,
+    //                     style: TextStyle(color: Colors.yellow),
+    //                   ),
+    //                 ),
+    //                 Tab(
+    //                   child: Text(
+    //                     languages.ownLabel,
+    //                     style: TextStyle(color: Colors.yellow),
+    //                   ),
+    //                 ),
+    //               ]),
+    //         ),
+    //         body: TabBarView(children: [
+    //           _postsWidget(1),
+    //           _postsWidget(2),
+    //           _postsWidget(3),
+    //         ]),
+    //       ),
+    //     ),
+    //   ),
+    // );
   }
 
   Widget _postsWidget(int pageNumber) {
