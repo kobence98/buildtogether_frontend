@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_frontend/entities/company.dart';
 import 'package:flutter_frontend/entities/poll_option.dart';
@@ -11,7 +10,6 @@ import 'package:flutter_frontend/languages/languages.dart';
 import 'package:flutter_frontend/static/date_formatter.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:like_button/like_button.dart';
-import 'package:polls/polls.dart';
 
 import 'comments_widget.dart';
 
@@ -436,66 +434,68 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
     List<dynamic> polls = [];
     Map<dynamic, dynamic> voteData = {};
 
-    for (PollOption option in post.pollOptions) {
-      polls.add(
-        Polls.options(
-            title: "${option.title!}",
-            // + (voted ? ' (${option.likeNumber})' : '') --> ha valahogyan meg lehetne oldani hogy ezt megjelenítse
-            value: double.parse(option.likeNumber.toString())),
-      );
-      for (int i = 0; i < option.likeNumber; i++) {
-        voteData.addAll({i.toString(): post.pollOptions.indexOf(option) + 1});
-      }
-      if (option.liked) {
-        voteData.remove(voteData.values.last);
-        voteData.addAll({
-          widget.user.userId.toString(): post.pollOptions.indexOf(option) + 1
-        });
-      }
-    }
-    return Polls(
-      children: polls,
-      question: Text(
-        '${languages.numberOfVotesLabel}: ${post.pollOptions.map((e) => e.likeNumber).reduce((a, b) => a + b)}',
-        style: TextStyle(color: Colors.white, fontStyle: FontStyle.italic),
-      ),
-      currentUser: widget.user.userId.toString(),
-      creatorID: widget.post.companyUserId.toString(),
-      voteData: voteData,
-      userChoice: voteData[widget.user.userId.toString()],
-      onVoteBackgroundColor: Colors.yellow,
-      leadingBackgroundColor: Colors.yellow.shade800,
-      backgroundColor: Colors.white,
-      onVote: (choice) {
-        widget.session
-            .post(
-                '/api/posts/' +
-                    post.postId.toString() +
-                    '/pollVote/' +
-                    post.pollOptions.elementAt(choice - 1).pollId.toString(),
-                Map())
-            .then((response) {
-          if (response.statusCode == 200) {
-            setState(() {
-              post.pollOptions.forEach((option) {
-                option.liked = false;
-              });
-              post.pollOptions.elementAt(choice - 1).liked = true;
-              post.pollOptions.elementAt(choice - 1).likeNumber++;
-            });
-          } else {
-            Fluttertoast.showToast(
-                msg: languages.globalErrorMessage,
-                toastLength: Toast.LENGTH_LONG,
-                gravity: ToastGravity.CENTER,
-                timeInSecForIosWeb: 4,
-                backgroundColor: Colors.red,
-                textColor: Colors.white,
-                fontSize: 16.0);
-          }
-        });
-      },
-    );
+    //FIXME ezt kijavítani ha megy az egész így a 3-as flutterral és a pagerrel
+    return Container();
+    // for (PollOption option in post.pollOptions) {
+    //   polls.add(
+    //     Polls.options(
+    //         title: "${option.title!}",
+    //         // + (voted ? ' (${option.likeNumber})' : '') --> ha valahogyan meg lehetne oldani hogy ezt megjelenítse
+    //         value: double.parse(option.likeNumber.toString())),
+    //   );
+    //   for (int i = 0; i < option.likeNumber; i++) {
+    //     voteData.addAll({i.toString(): post.pollOptions.indexOf(option) + 1});
+    //   }
+    //   if (option.liked) {
+    //     voteData.remove(voteData.values.last);
+    //     voteData.addAll({
+    //       widget.user.userId.toString(): post.pollOptions.indexOf(option) + 1
+    //     });
+    //   }
+    // }
+    // return Polls(
+    //   children: polls,
+    //   question: Text(
+    //     '${languages.numberOfVotesLabel}: ${post.pollOptions.map((e) => e.likeNumber).reduce((a, b) => a + b)}',
+    //     style: TextStyle(color: Colors.white, fontStyle: FontStyle.italic),
+    //   ),
+    //   currentUser: widget.user.userId.toString(),
+    //   creatorID: widget.post.companyUserId.toString(),
+    //   voteData: voteData,
+    //   userChoice: voteData[widget.user.userId.toString()],
+    //   onVoteBackgroundColor: Colors.yellow,
+    //   leadingBackgroundColor: Colors.yellow.shade800,
+    //   backgroundColor: Colors.white,
+    //   onVote: (choice) {
+    //     widget.session
+    //         .post(
+    //             '/api/posts/' +
+    //                 post.postId.toString() +
+    //                 '/pollVote/' +
+    //                 post.pollOptions.elementAt(choice - 1).pollId.toString(),
+    //             Map())
+    //         .then((response) {
+    //       if (response.statusCode == 200) {
+    //         setState(() {
+    //           post.pollOptions.forEach((option) {
+    //             option.liked = false;
+    //           });
+    //           post.pollOptions.elementAt(choice - 1).liked = true;
+    //           post.pollOptions.elementAt(choice - 1).likeNumber++;
+    //         });
+    //       } else {
+    //         Fluttertoast.showToast(
+    //             msg: languages.globalErrorMessage,
+    //             toastLength: Toast.LENGTH_LONG,
+    //             gravity: ToastGravity.CENTER,
+    //             timeInSecForIosWeb: 4,
+    //             backgroundColor: Colors.red,
+    //             textColor: Colors.white,
+    //             fontSize: 16.0);
+    //       }
+    //     });
+    //   },
+    // );
   }
 
   void onReportTap(Post post) {

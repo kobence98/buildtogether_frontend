@@ -28,7 +28,7 @@ dependencies:
   numberpicker: ^2.1.1
   country_codes: ^2.1.1
   flutter_inapp_purchase: ^5.0.3
-  polls: ^1.0.1
+  simple_polls: ^1.0.8
   profanity_filter: ^2.0.0
   permission_handler: ^9.2.0
   location: ^4.2.0
