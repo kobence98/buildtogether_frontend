@@ -357,6 +357,9 @@ class LanguageEn extends Languages {
   @override
   String get fillTheSearchFieldWarningMessage => 'You shall write at least 1 character to the search field!';
 
+  @override
+  String get noMoreItemsLabel => 'No more posts available!';
+
   //SETTINGS WIDGET
 
   @override

@@ -15,7 +15,7 @@ class Post{
   int commentNumber;
   bool implemented;
   String postType;
-  List<PollOption> pollOptions;
+  List<PollOptionInno> pollOptions;
   int companyUserId;
   int companyImageId;
   int creatorId;
@@ -43,8 +43,8 @@ class Post{
       createdDate: createdDate.add(Duration(hours: difference)),
       implemented: json['implemented'],
       postType: json['postType'],
-      pollOptions: List<PollOption>.from(
-          json['pollOptions'].map((po) => PollOption.fromJson(po))),
+      pollOptions: List<PollOptionInno>.from(
+          json['pollOptions'].map((po) => PollOptionInno.fromJson(po))),
       companyUserId: json['companyUserId'],
       companyImageId: json['companyImageId'],
       creatorId: json['creatorId'],

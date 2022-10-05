@@ -238,6 +238,8 @@ abstract class Languages {
 
   String get fillTheSearchFieldWarningMessage;
 
+  String get noMoreItemsLabel;
+
   //SETTINGS WIDGET
 
   String get changeUserDataLabel;

@@ -12,6 +12,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:like_button/like_button.dart';
 
 import 'comments_widget.dart';
+import 'flutter_polls_inno.dart';
 
 class SinglePostWidget extends StatefulWidget {
   final Post post;
@@ -32,6 +33,7 @@ class SinglePostWidget extends StatefulWidget {
 class _SinglePostWidgetState extends State<SinglePostWidget> {
   late Languages languages;
 
+  late Post post;
   bool innerLoading = false;
   final TextEditingController _reportReasonTextFieldController =
       TextEditingController();
@@ -42,11 +44,12 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
   void initState() {
     super.initState();
     languages = widget.languages;
+    post = widget.post;
   }
 
   @override
   Widget build(BuildContext context) {
-    voted = widget.post.pollOptions.any((element) => element.liked);
+    voted = post.pollOptions.any((element) => element.liked);
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -68,17 +71,17 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                         backgroundImage: NetworkImage(
                           widget.session.domainName +
                               "/api/images/" +
-                              widget.post.companyImageId.toString(),
+                              post.companyImageId.toString(),
                           headers: widget.session.headers,
                         ),
                       ),
-                      onTap: () => _onCompanyTap(widget.post.companyId),
+                      onTap: () => _onCompanyTap(post.companyId),
                     ),
                     title: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          widget.post.userName,
+                          post.userName,
                           style: TextStyle(color: Colors.white),
                         ),
                         SizedBox(
@@ -95,14 +98,14 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(20))),
                             child: Text(
-                              widget.post.companyName,
+                              post.companyName,
                               style: TextStyle(
                                   color: Colors.black,
                                   fontWeight: FontWeight.bold),
                             ),
                           ),
                           onTap: () {
-                            _onCompanyTap(widget.post.companyId);
+                            _onCompanyTap(post.companyId);
                           },
                         ),
                       ],
@@ -110,7 +113,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        widget.post.implemented
+                        post.implemented
                             ? InkWell(
                                 child: Icon(
                                   Icons.lightbulb_outline_sharp,
@@ -130,7 +133,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                             : Container(),
                         Text(
                           DateFormatter.formatDate(
-                              widget.post.createdDate, languages),
+                              post.createdDate, languages),
                           style: TextStyle(color: Colors.white),
                         ),
                         Container(
@@ -142,15 +145,15 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                             ),
                             itemBuilder: (context) {
                               return List.generate(
-                                  widget.user.companyId == widget.post.companyId
+                                  widget.user.companyId == post.companyId
                                       ? 4
                                       : 2, (index) {
                                 if (index == 0) {
                                   return PopupMenuItem(
                                     child: Text(widget.user.companyId ==
-                                                widget.post.companyId ||
+                                                post.companyId ||
                                             widget.user.userId ==
-                                                widget.post.creatorId
+                                                post.creatorId
                                         ? languages.deleteLabel
                                         : languages.reportLabel),
                                     value: 0,
@@ -167,7 +170,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                                   );
                                 } else {
                                   return PopupMenuItem(
-                                    child: Text(widget.post.implemented
+                                    child: Text(post.implemented
                                         ? languages.notImplementedLabel
                                         : languages.implementedLabel),
                                     value: 3,
@@ -178,12 +181,12 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                             onSelected: (index) {
                               if (index == 0) {
                                 if (widget.user.companyId ==
-                                        widget.post.companyId ||
+                                        post.companyId ||
                                     widget.user.userId ==
-                                        widget.post.creatorId) {
+                                        post.creatorId) {
                                   widget.session
                                       .delete('/api/posts/' +
-                                          widget.post.postId.toString())
+                                          post.postId.toString())
                                       .then((response) {
                                     if (response.statusCode == 200) {
                                       Fluttertoast.showToast(
@@ -211,17 +214,17 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                                     }
                                   });
                                 } else {
-                                  onReportTap(widget.post);
+                                  onReportTap(post);
                                 }
                               } else if (index == 1) {
-                                _onBanUserTap(widget.post.creatorId);
+                                _onBanUserTap(post.creatorId);
                               } else if (index == 2) {
-                                _onContactCreatorTap(widget.post);
+                                _onContactCreatorTap(post);
                               } else {
                                 widget.session
                                     .post(
                                         '/api/posts/' +
-                                            widget.post.postId.toString() +
+                                            post.postId.toString() +
                                             '/implemented',
                                         Map<String, dynamic>())
                                     .then((response) {
@@ -235,8 +238,8 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                                         textColor: Colors.white,
                                         fontSize: 16.0);
                                     setState(() {
-                                      widget.post.implemented =
-                                          !widget.post.implemented;
+                                      post.implemented =
+                                          !post.implemented;
                                     });
                                   } else {
                                     Fluttertoast.showToast(
@@ -258,7 +261,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                   ),
                   ListTile(
                     title: Text(
-                      widget.post.title,
+                      post.title,
                       style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
@@ -268,15 +271,16 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                   Container(
                     padding: EdgeInsets.all(5),
                     alignment: Alignment.topLeft,
-                    child: widget.post.postType == 'SIMPLE_POST'
+                    child: post.postType == 'SIMPLE_POST'
                         ? Text(
-                            widget.post.description,
+                            post.description,
                             style: TextStyle(color: Colors.white),
                           )
-                        : _pollWidget(widget.post),
+                        : _pollWidget(post),
                   ),
                   Container(
                     height: 40,
+                    margin: EdgeInsets.only(bottom: 50),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -290,7 +294,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                             dotPrimaryColor: Colors.yellow.shade200,
                             dotSecondaryColor: Colors.yellow,
                           ),
-                          isLiked: widget.post.liked,
+                          isLiked: post.liked,
                           likeBuilder: (bool isLiked) {
                             return Icon(
                               Icons.lightbulb,
@@ -298,11 +302,11 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                             );
                           },
                           onTap: (isLiked) {
-                            return widget.post.creatorId == widget.user.userId
+                            return post.creatorId == widget.user.userId
                                 ? _onLikeOwnButtonPressed()
                                 : _onLikeButton(isLiked);
                           },
-                          likeCount: widget.post.likeNumber,
+                          likeCount: post.likeNumber,
                         ),
                         voted
                             ? InkWell(
@@ -318,7 +322,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                         Row(
                           children: [
                             Text(
-                              widget.post.commentNumber.toString(),
+                              post.commentNumber.toString(),
                               style: TextStyle(color: Colors.white),
                             ),
                             IconButton(
@@ -328,7 +332,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                                 Navigator.of(context).push(MaterialPageRoute(
                                     builder: (context) => CommentsWidget(
                                           session: widget.session,
-                                          postId: widget.post.postId,
+                                          postId: post.postId,
                                           user: widget.user,
                                           languages: languages,
                                         )));
@@ -415,14 +419,14 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
 
   Future<bool> _onLikeButton(bool isLiked) async {
     dynamic response = await widget.session.post(
-        "/api/posts/" + widget.post.postId.toString() + "/like",
+        "/api/posts/" + post.postId.toString() + "/like",
         new Map<String, dynamic>());
     if (response.statusCode == 200) {
-      widget.post.liked = !widget.post.liked;
-      if (widget.post.liked) {
-        widget.post.likeNumber++;
+      post.liked = !post.liked;
+      if (post.liked) {
+        post.likeNumber++;
       } else {
-        widget.post.likeNumber--;
+        post.likeNumber--;
       }
       return !isLiked;
     } else {
@@ -431,71 +435,35 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
   }
 
   Widget _pollWidget(Post post) {
-    List<dynamic> polls = [];
-    Map<dynamic, dynamic> voteData = {};
+    List<PollOption> polls = [];
+    for (PollOptionInno option in post.pollOptions) {
+      polls.add(PollOption(
+          id: option.pollId,
+          title: Text(option.title == null ? '' : option.title!),
+          votes: option.likeNumber));
+    }
 
-    //FIXME ezt kijavítani ha megy az egész így a 3-as flutterral és a pagerrel
-    return Container();
-    // for (PollOption option in post.pollOptions) {
-    //   polls.add(
-    //     Polls.options(
-    //         title: "${option.title!}",
-    //         // + (voted ? ' (${option.likeNumber})' : '') --> ha valahogyan meg lehetne oldani hogy ezt megjelenítse
-    //         value: double.parse(option.likeNumber.toString())),
-    //   );
-    //   for (int i = 0; i < option.likeNumber; i++) {
-    //     voteData.addAll({i.toString(): post.pollOptions.indexOf(option) + 1});
-    //   }
-    //   if (option.liked) {
-    //     voteData.remove(voteData.values.last);
-    //     voteData.addAll({
-    //       widget.user.userId.toString(): post.pollOptions.indexOf(option) + 1
-    //     });
-    //   }
-    // }
-    // return Polls(
-    //   children: polls,
-    //   question: Text(
-    //     '${languages.numberOfVotesLabel}: ${post.pollOptions.map((e) => e.likeNumber).reduce((a, b) => a + b)}',
-    //     style: TextStyle(color: Colors.white, fontStyle: FontStyle.italic),
-    //   ),
-    //   currentUser: widget.user.userId.toString(),
-    //   creatorID: widget.post.companyUserId.toString(),
-    //   voteData: voteData,
-    //   userChoice: voteData[widget.user.userId.toString()],
-    //   onVoteBackgroundColor: Colors.yellow,
-    //   leadingBackgroundColor: Colors.yellow.shade800,
-    //   backgroundColor: Colors.white,
-    //   onVote: (choice) {
-    //     widget.session
-    //         .post(
-    //             '/api/posts/' +
-    //                 post.postId.toString() +
-    //                 '/pollVote/' +
-    //                 post.pollOptions.elementAt(choice - 1).pollId.toString(),
-    //             Map())
-    //         .then((response) {
-    //       if (response.statusCode == 200) {
-    //         setState(() {
-    //           post.pollOptions.forEach((option) {
-    //             option.liked = false;
-    //           });
-    //           post.pollOptions.elementAt(choice - 1).liked = true;
-    //           post.pollOptions.elementAt(choice - 1).likeNumber++;
-    //         });
-    //       } else {
-    //         Fluttertoast.showToast(
-    //             msg: languages.globalErrorMessage,
-    //             toastLength: Toast.LENGTH_LONG,
-    //             gravity: ToastGravity.CENTER,
-    //             timeInSecForIosWeb: 4,
-    //             backgroundColor: Colors.red,
-    //             textColor: Colors.white,
-    //             fontSize: 16.0);
-    //       }
-    //     });
-    //   },
-    // );
+    List<PollOptionInno> likedPollOptions = post.pollOptions.where((po) => po.liked).toList();
+
+    return FlutterPollsInno(
+      pollOptionsFillColor: Colors.yellow,
+      votedBackgroundColor: Colors.yellow.shade600,
+      leadingVotedByUserProgessColor: Colors.red,
+      votedProgressColor: Colors.yellow.shade900,
+      leadingVotedProgessColor: Colors.yellow.shade900,
+      pollOptionsSplashColor: Colors.red,
+      hasVoted: voted,
+      pollId: 'POLLID',
+      onVoted: (PollOption pollOption, int newTotalVotes) {
+        return _onPollVoted(pollOption.id!);
+      },
+      pollTitle: Text(
+          '${languages.numberOfVotesLabel}: ${post.pollOptions.map((e) => e.likeNumber).reduce((a, b) => a + b)}',
+          style: TextStyle(color: Colors.white, fontStyle: FontStyle.italic),
+        ),
+      pollOptions: polls,
+      userVotedOptionId: likedPollOptions.isEmpty ? null : likedPollOptions.first.pollId,
+    );
   }
 
   void onReportTap(Post post) {
@@ -800,7 +768,6 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
   }
 
   _onRemovePollVote() {
-    Post post = widget.post;
     widget.session
         .delete('/api/posts/' + post.postId.toString() + '/pollVote')
         .then((response) {
@@ -907,6 +874,35 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                     );
             });
           });
+    }
+  }
+
+  Future<bool> _onPollVoted(int pollId) async {
+    dynamic response = await widget.session.post(
+        '/api/posts/' +
+            post.postId.toString() +
+            '/pollVote/' +
+            pollId.toString(),
+        Map());
+    if (response.statusCode == 200) {
+      setState(() {
+        post.pollOptions.forEach((option) {
+          option.liked = false;
+        });
+        post.pollOptions.where((po) => po.pollId == pollId).first.liked = true;
+        post.pollOptions.where((po) => po.pollId == pollId).first.likeNumber++;
+      });
+      return Future.value(true);
+    } else {
+      Fluttertoast.showToast(
+          msg: languages.globalErrorMessage,
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 4,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+      return Future.value(false);
     }
   }
 }

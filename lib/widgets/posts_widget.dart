@@ -11,11 +11,8 @@ import 'package:flutter_frontend/static/date_formatter.dart';
 import 'package:flutter_frontend/widgets/single_post_widget.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:like_button/like_button.dart';
-import 'package:location/location.dart';
-import 'package:location/location.dart' as loc;
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import '../entities/feed_type.dart';
@@ -39,15 +36,6 @@ class PostsWidget extends StatefulWidget {
 }
 
 class _PostsWidgetState extends State<PostsWidget> {
-  late List<Post> actualNewPosts = [];
-  late List<Post> actualBestPosts = [];
-  late List<Post> actualOwnPosts = [];
-  late List<Post> newPosts = [];
-  late List<Post> bestPosts = [];
-  late List<Post> ownPosts = [];
-  final ScrollController _newScrollController = ScrollController();
-  final ScrollController _bestScrollController = ScrollController();
-  final ScrollController _ownScrollController = ScrollController();
   final TextEditingController _searchFieldController = TextEditingController();
   bool loading = false;
   RefreshController _refreshNewController =
@@ -58,14 +46,16 @@ class _PostsWidgetState extends State<PostsWidget> {
       RefreshController(initialRefresh: false);
   List<SearchFieldNames> names = [];
   String? country;
-  bool loadedPosts = false;
+  bool loadedNewPosts = false;
+  bool loadedBestPosts = false;
+  bool loadedOwnPosts = false;
   late Languages languages;
   final TextEditingController _couponCodeController = TextEditingController();
   bool innerLoading = false;
   final TextEditingController _reportReasonTextFieldController =
       TextEditingController();
 
-  static const _pageSize = 10;
+  static const _pageSize = 20;
 
   final PagingController<int, Post> _pagingNewController =
       PagingController(firstPageKey: 0);
@@ -78,16 +68,7 @@ class _PostsWidgetState extends State<PostsWidget> {
   void initState() {
     super.initState();
     languages = widget.languages;
-    // _loadData();
-    _pagingNewController.addPageRequestListener((pageKey) {
-      _fetchPage(pageKey, FeedType.NEW);
-    });
-    _pagingBestController.addPageRequestListener((pageKey) {
-      _fetchPage(pageKey, FeedType.BEST);
-    });
-    _pagingOwnController.addPageRequestListener((pageKey) {
-      _fetchPage(pageKey, FeedType.OWN);
-    });
+    _initPageControllers();
   }
 
   Future<void> _fetchPage(int pageKey, FeedType feedType) async {
@@ -114,8 +95,8 @@ class _PostsWidgetState extends State<PostsWidget> {
         'pageNumber': pageKey / _pageSize,
         'pageSize': _pageSize
       };
-      dynamic body = json.decode(utf8.decode(
-          (await widget.session.postJson(url, data)).bodyBytes));
+      dynamic body = json.decode(
+          utf8.decode((await widget.session.postJson(url, data)).bodyBytes));
       List<Post> newItems =
           List<Post>.from(body.map((model) => Post.fromJson(model)));
       final isLastPage = newItems.length < _pageSize;
@@ -125,6 +106,17 @@ class _PostsWidgetState extends State<PostsWidget> {
         final nextPageKey = pageKey + newItems.length;
         pagingController.appendPage(newItems, nextPageKey);
       }
+      switch (feedType) {
+        case FeedType.NEW:
+          _refreshNewController.refreshCompleted();
+          break;
+        case FeedType.BEST:
+          _refreshBestController.refreshCompleted();
+          break;
+        case FeedType.OWN:
+          _refreshOwnController.refreshCompleted();
+          break;
+      }
     } catch (error) {
       pagingController.error = error;
     }
@@ -133,10 +125,9 @@ class _PostsWidgetState extends State<PostsWidget> {
   @override
   void dispose() {
     _pagingNewController.dispose();
+    _pagingOwnController.dispose();
+    _pagingBestController.dispose();
     _searchFieldController.dispose();
-    _newScrollController.dispose();
-    _bestScrollController.dispose();
-    _ownScrollController.dispose();
     _refreshNewController.dispose();
     _refreshBestController.dispose();
     _refreshOwnController.dispose();
@@ -318,13 +309,13 @@ class _PostsWidgetState extends State<PostsWidget> {
                   tabs: [
                     Tab(
                       child: Text(
-                        languages.newLabel,
+                        languages.bestLabel,
                         style: TextStyle(color: Colors.yellow),
                       ),
                     ),
                     Tab(
                       child: Text(
-                        languages.bestLabel,
+                        languages.newLabel,
                         style: TextStyle(color: Colors.yellow),
                       ),
                     ),
@@ -337,9 +328,9 @@ class _PostsWidgetState extends State<PostsWidget> {
                   ]),
             ),
             body: TabBarView(children: [
-              _postsWidget(_pagingNewController),
-              _postsWidget(_pagingBestController),
-              _postsWidget(_pagingOwnController),
+              _postsWidget(_pagingBestController, FeedType.BEST),
+              _postsWidget(_pagingNewController, FeedType.NEW),
+              _postsWidget(_pagingOwnController, FeedType.OWN),
             ]),
           ),
         ),
@@ -347,837 +338,370 @@ class _PostsWidgetState extends State<PostsWidget> {
     );
   }
 
-  Widget _postsWidget(PagingController<int, Post> pagingController) {
-    return PagedListView<int, Post>(
-      pagingController: pagingController,
-      builderDelegate: PagedChildBuilderDelegate<Post>(
-          itemBuilder: (context, post, postIndex) => InkWell(
-                child: Container(
-                  color: Colors.black,
-                  child: Column(
-                    children: [
-                      ListTile(
-                        leading: InkWell(
-                          child: CircleAvatar(
-                            radius: 20,
-                            backgroundImage: NetworkImage(
-                              widget.session.domainName +
-                                  "/api/images/" +
-                                  post.companyImageId.toString(),
-                              headers: widget.session.headers,
-                            ),
-                          ),
-                          onTap: () => _onCompanyTap(post.companyId),
+  Widget _postsWidget(
+      PagingController<int, Post> pagingController, FeedType feedType) {
+    RefreshController _refreshController;
+    switch (feedType) {
+      case FeedType.NEW:
+        _refreshController = _refreshNewController;
+        break;
+      case FeedType.BEST:
+        _refreshController = _refreshBestController;
+        break;
+      case FeedType.OWN:
+        _refreshController = _refreshOwnController;
+        break;
+    }
+    return Container(
+        color: Colors.black,
+        child: SmartRefresher(
+          controller: _refreshController,
+          onRefresh: () {
+              pagingController.refresh();
+          },
+          header: WaterDropHeader(
+            refresh: SizedBox(
+                width: 25.0,
+                height: 25.0,
+                child: Image(
+                    image: new AssetImage("assets/images/loading_spin.gif"))),
+          ),
+          child: PagedListView<int, Post>(
+            pagingController: pagingController,
+            builderDelegate: PagedChildBuilderDelegate<Post>(
+              noMoreItemsIndicatorBuilder: (context) => Container(color: Colors.black, height: 80, alignment: Alignment.topCenter,child: Text(languages.noMoreItemsLabel, style: TextStyle(color: Colors.yellow, fontStyle: FontStyle.italic, fontSize: 15),),),
+                newPageProgressIndicatorBuilder: (context) => Container(
+                      margin: EdgeInsets.only(bottom: 20),
+                      width: 80,
+                      height: 80,
+                      child: Center(
+                        child: Image(
+                          height: 30,
+                            width: 30,
+                            image: new AssetImage(
+                                "assets/images/loading_spin.gif")),
+                      ),
+                    ),
+                firstPageProgressIndicatorBuilder: (context) => _refreshController.isRefresh ? Container() : Container(
+                  child: Center(
+                    child: Image(
+                        image: new AssetImage(
+                            "assets/images/loading_breath.gif")),
+                  ),
+                ),
+                noItemsFoundIndicatorBuilder: (context) => Container(
+                      child: Center(
+                        child: Text(
+                          languages.noPostInYourAreaLabel,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontSize: 20,
+                              color: Colors.yellow,
+                              fontWeight: FontWeight.bold),
                         ),
-                        title: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                      ),
+                    ),
+                itemBuilder: (context, post, postIndex) => InkWell(
+                      child: Container(
+                        color: Colors.black,
+                        child: Column(
                           children: [
-                            Text(
-                              post.userName,
-                              style: TextStyle(color: Colors.white),
-                            ),
-                            SizedBox(
-                              height: 1,
-                            ),
-                            InkWell(
-                              child: Container(
-                                padding: EdgeInsets.all(3),
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    border: Border.all(
-                                      color: Colors.black,
-                                    ),
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(20))),
-                                child: Text(
-                                  post.companyName,
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold),
+                            ListTile(
+                              leading: InkWell(
+                                child: CircleAvatar(
+                                  radius: 20,
+                                  backgroundImage: NetworkImage(
+                                    widget.session.domainName +
+                                        "/api/images/" +
+                                        post.companyImageId.toString(),
+                                    headers: widget.session.headers,
+                                  ),
                                 ),
+                                onTap: () => _onCompanyTap(post.companyId),
                               ),
-                              onTap: () {
-                                _onCompanyTap(post.companyId);
-                              },
-                            ),
-                          ],
-                        ),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            post.implemented
-                                ? InkWell(
-                                    child: Icon(
-                                      Icons.lightbulb_outline_sharp,
-                                      color: Colors.yellow,
+                              title: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    post.userName,
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                  SizedBox(
+                                    height: 1,
+                                  ),
+                                  InkWell(
+                                    child: Container(
+                                      padding: EdgeInsets.all(3),
+                                      decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          border: Border.all(
+                                            color: Colors.black,
+                                          ),
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(20))),
+                                      child: Text(
+                                        post.companyName,
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold),
+                                      ),
                                     ),
                                     onTap: () {
-                                      Fluttertoast.showToast(
-                                          msg: languages
-                                              .ideaIsImplementedMessage,
-                                          toastLength: Toast.LENGTH_SHORT,
-                                          gravity: ToastGravity.CENTER,
-                                          timeInSecForIosWeb: 4,
-                                          backgroundColor: Colors.green,
-                                          textColor: Colors.white,
-                                          fontSize: 16.0);
+                                      _onCompanyTap(post.companyId);
                                     },
-                                  )
-                                : Container(),
-                            Text(
-                              DateFormatter.formatDate(
-                                  post.createdDate, languages),
-                              style: TextStyle(color: Colors.white),
-                            ),
-                            Container(
-                              margin: EdgeInsets.only(left: 5),
-                              child: PopupMenuButton(
-                                child: Icon(
-                                  Icons.more_horiz,
-                                  color: Colors.white,
-                                ),
-                                itemBuilder: (context) {
-                                  return List.generate(
-                                      widget.user.companyId == post.companyId
-                                          ? 4
-                                          : 2, (index) {
-                                    if (index == 0) {
-                                      return PopupMenuItem(
-                                        child: Text(widget.user.companyId ==
-                                                    post.companyId ||
-                                                widget.user.userId ==
-                                                    post.creatorId
-                                            ? languages.deleteLabel
-                                            : languages.reportLabel),
-                                        value: 0,
-                                      );
-                                    } else if (index == 1) {
-                                      return PopupMenuItem(
-                                        child: Text(languages.banUserLabel),
-                                        value: 1,
-                                      );
-                                    } else if (index == 2) {
-                                      return PopupMenuItem(
-                                        child:
-                                            Text(languages.contactCreatorLabel),
-                                        value: 2,
-                                      );
-                                    } else {
-                                      return PopupMenuItem(
-                                        child: Text(post.implemented
-                                            ? languages.notImplementedLabel
-                                            : languages.implementedLabel),
-                                        value: 3,
-                                      );
-                                    }
-                                  });
-                                },
-                                onSelected: (index) {
-                                  if (index == 0) {
-                                    if (widget.user.companyId ==
-                                            post.companyId ||
-                                        widget.user.userId == post.creatorId) {
-                                      widget.session
-                                          .delete('/api/posts/' +
-                                              post.postId.toString())
-                                          .then((response) {
-                                        if (response.statusCode == 200) {
-                                          Fluttertoast.showToast(
-                                              msg: languages
-                                                  .successfulDeleteMessage,
-                                              toastLength: Toast.LENGTH_LONG,
-                                              gravity: ToastGravity.CENTER,
-                                              timeInSecForIosWeb: 1,
-                                              backgroundColor: Colors.green,
-                                              textColor: Colors.white,
-                                              fontSize: 16.0);
-                                          setState(() {
-                                            actualNewPosts.remove(post);
-                                            actualBestPosts.remove(post);
-                                            actualOwnPosts.remove(post);
-                                          });
-                                        } else {
-                                          Fluttertoast.showToast(
-                                              msg: languages
-                                                  .globalServerErrorMessage,
-                                              toastLength: Toast.LENGTH_LONG,
-                                              gravity: ToastGravity.CENTER,
-                                              timeInSecForIosWeb: 1,
-                                              backgroundColor: Colors.red,
-                                              textColor: Colors.white,
-                                              fontSize: 16.0);
-                                        }
-                                      });
-                                    } else {
-                                      onReportTap(post);
-                                    }
-                                  } else if (index == 1) {
-                                    _onBanUserTap(post.creatorId);
-                                  } else if (index == 2) {
-                                    _onContactCreatorTap(post);
-                                  } else {
-                                    widget.session
-                                        .post(
-                                            '/api/posts/' +
-                                                post.postId.toString() +
-                                                '/implemented',
-                                            Map<String, dynamic>())
-                                        .then((response) {
-                                      if (response.statusCode == 200) {
-                                        Fluttertoast.showToast(
-                                            msg: "${languages.successLabel}!",
-                                            toastLength: Toast.LENGTH_LONG,
-                                            gravity: ToastGravity.CENTER,
-                                            timeInSecForIosWeb: 4,
-                                            backgroundColor: Colors.green,
-                                            textColor: Colors.white,
-                                            fontSize: 16.0);
-                                        setState(() {
-                                          bool imp = !post.implemented;
-                                          if (actualNewPosts.where((p) {
-                                            return p.postId == post.postId;
-                                          }).isNotEmpty) {
-                                            actualNewPosts
-                                                .where((p) {
-                                                  return p.postId ==
-                                                      post.postId;
-                                                })
-                                                .first
-                                                .implemented = imp;
-                                          }
-                                          if (actualBestPosts.where((p) {
-                                            return p.postId == post.postId;
-                                          }).isNotEmpty) {
-                                            actualBestPosts
-                                                .where((p) {
-                                                  return p.postId ==
-                                                      post.postId;
-                                                })
-                                                .first
-                                                .implemented = imp;
-                                          }
-                                          if (actualOwnPosts.where((p) {
-                                            return p.postId == post.postId;
-                                          }).isNotEmpty) {
-                                            actualOwnPosts
-                                                .where((p) {
-                                                  return p.postId ==
-                                                      post.postId;
-                                                })
-                                                .first
-                                                .implemented = imp;
+                                  ),
+                                ],
+                              ),
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  post.implemented
+                                      ? InkWell(
+                                          child: Icon(
+                                            Icons.lightbulb_outline_sharp,
+                                            color: Colors.yellow,
+                                          ),
+                                          onTap: () {
+                                            Fluttertoast.showToast(
+                                                msg: languages
+                                                    .ideaIsImplementedMessage,
+                                                toastLength: Toast.LENGTH_SHORT,
+                                                gravity: ToastGravity.CENTER,
+                                                timeInSecForIosWeb: 4,
+                                                backgroundColor: Colors.green,
+                                                textColor: Colors.white,
+                                                fontSize: 16.0);
+                                          },
+                                        )
+                                      : Container(),
+                                  Text(
+                                    DateFormatter.formatDate(
+                                        post.createdDate, languages),
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(left: 5),
+                                    child: PopupMenuButton(
+                                      child: Icon(
+                                        Icons.more_horiz,
+                                        color: Colors.white,
+                                      ),
+                                      itemBuilder: (context) {
+                                        return List.generate(
+                                            widget.user.companyId ==
+                                                    post.companyId
+                                                ? 4
+                                                : 2, (index) {
+                                          if (index == 0) {
+                                            return PopupMenuItem(
+                                              child: Text(
+                                                  widget.user.companyId ==
+                                                              post.companyId ||
+                                                          widget.user.userId ==
+                                                              post.creatorId
+                                                      ? languages.deleteLabel
+                                                      : languages.reportLabel),
+                                              value: 0,
+                                            );
+                                          } else if (index == 1) {
+                                            return PopupMenuItem(
+                                              child:
+                                                  Text(languages.banUserLabel),
+                                              value: 1,
+                                            );
+                                          } else if (index == 2) {
+                                            return PopupMenuItem(
+                                              child: Text(languages
+                                                  .contactCreatorLabel),
+                                              value: 2,
+                                            );
+                                          } else {
+                                            return PopupMenuItem(
+                                              child: Text(post.implemented
+                                                  ? languages
+                                                      .notImplementedLabel
+                                                  : languages.implementedLabel),
+                                              value: 3,
+                                            );
                                           }
                                         });
-                                      } else {
-                                        Fluttertoast.showToast(
-                                            msg: languages
-                                                .globalServerErrorMessage,
-                                            toastLength: Toast.LENGTH_LONG,
-                                            gravity: ToastGravity.CENTER,
-                                            timeInSecForIosWeb: 4,
-                                            backgroundColor: Colors.red,
-                                            textColor: Colors.white,
-                                            fontSize: 16.0);
-                                      }
-                                    });
-                                  }
-                                },
+                                      },
+                                      onSelected: (index) {
+                                        if (index == 0) {
+                                          if (widget.user.companyId ==
+                                                  post.companyId ||
+                                              widget.user.userId ==
+                                                  post.creatorId) {
+                                            widget.session
+                                                .delete('/api/posts/' +
+                                                    post.postId.toString())
+                                                .then((response) {
+                                              if (response.statusCode == 200) {
+                                                Fluttertoast.showToast(
+                                                    msg: languages
+                                                        .successfulDeleteMessage,
+                                                    toastLength:
+                                                        Toast.LENGTH_LONG,
+                                                    gravity:
+                                                        ToastGravity.CENTER,
+                                                    timeInSecForIosWeb: 1,
+                                                    backgroundColor:
+                                                        Colors.green,
+                                                    textColor: Colors.white,
+                                                    fontSize: 16.0);
+                                                pagingController.refresh();
+                                              } else {
+                                                Fluttertoast.showToast(
+                                                    msg: languages
+                                                        .globalServerErrorMessage,
+                                                    toastLength:
+                                                        Toast.LENGTH_LONG,
+                                                    gravity:
+                                                        ToastGravity.CENTER,
+                                                    timeInSecForIosWeb: 1,
+                                                    backgroundColor: Colors.red,
+                                                    textColor: Colors.white,
+                                                    fontSize: 16.0);
+                                              }
+                                            });
+                                          } else {
+                                            onReportTap(post);
+                                          }
+                                        } else if (index == 1) {
+                                          _onBanUserTap(post.creatorId);
+                                        } else if (index == 2) {
+                                          _onContactCreatorTap(post);
+                                        } else {
+                                          widget.session
+                                              .post(
+                                                  '/api/posts/' +
+                                                      post.postId.toString() +
+                                                      '/implemented',
+                                                  Map<String, dynamic>())
+                                              .then((response) {
+                                            if (response.statusCode == 200) {
+                                              Fluttertoast.showToast(
+                                                  msg:
+                                                      "${languages.successLabel}!",
+                                                  toastLength:
+                                                      Toast.LENGTH_LONG,
+                                                  gravity: ToastGravity.CENTER,
+                                                  timeInSecForIosWeb: 4,
+                                                  backgroundColor: Colors.green,
+                                                  textColor: Colors.white,
+                                                  fontSize: 16.0);
+                                              setState(() {
+                                                post.implemented =
+                                                    !post.implemented;
+                                              });
+                                            } else {
+                                              Fluttertoast.showToast(
+                                                  msg: languages
+                                                      .globalServerErrorMessage,
+                                                  toastLength:
+                                                      Toast.LENGTH_LONG,
+                                                  gravity: ToastGravity.CENTER,
+                                                  timeInSecForIosWeb: 4,
+                                                  backgroundColor: Colors.red,
+                                                  textColor: Colors.white,
+                                                  fontSize: 16.0);
+                                            }
+                                          });
+                                        }
+                                      },
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                            ListTile(
+                              title: Text(
+                                post.title,
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20),
+                              ),
+                            ),
+                            Container(
+                              height: 60,
+                              padding: EdgeInsets.all(5),
+                              alignment: Alignment.topLeft,
+                              child: Text(
+                                post.postType == 'SIMPLE_POST'
+                                    ? post.description
+                                    : languages.clickHereToOpenThePollLabel,
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+                            Container(
+                              height: 40,
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  LikeButton(
+                                    size: 20.0,
+                                    circleColor: CircleColor(
+                                        start: Colors.yellow.shade200,
+                                        end: Colors.yellow),
+                                    bubblesColor: BubblesColor(
+                                      dotPrimaryColor: Colors.yellow.shade200,
+                                      dotSecondaryColor: Colors.yellow,
+                                    ),
+                                    isLiked: post.liked,
+                                    likeBuilder: (bool isLiked) {
+                                      return Icon(
+                                        Icons.lightbulb,
+                                        color: isLiked
+                                            ? Colors.yellow
+                                            : Colors.white,
+                                      );
+                                    },
+                                    onTap: (isLiked) {
+                                      return post.creatorId ==
+                                              widget.user.userId
+                                          ? _onLikeOwnButtonPressed()
+                                          : _onLikeButton(isLiked, post);
+                                    },
+                                    likeCount: post.likeNumber,
+                                  ),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        post.commentNumber.toString(),
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                      IconButton(
+                                        icon: Icon(Icons.comment),
+                                        color: Colors.white,
+                                        onPressed: () {
+                                          Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      CommentsWidget(
+                                                        session: widget.session,
+                                                        postId: post.postId,
+                                                        user: widget.user,
+                                                        languages: languages,
+                                                      )));
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ],
                               ),
                             )
                           ],
                         ),
                       ),
-                      ListTile(
-                        title: Text(
-                          post.title,
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20),
-                        ),
-                      ),
-                      Container(
-                        height: 60,
-                        padding: EdgeInsets.all(5),
-                        alignment: Alignment.topLeft,
-                        child: Text(
-                          post.postType == 'SIMPLE_POST'
-                              ? post.description
-                              : languages.clickHereToOpenThePollLabel,
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
-                      Container(
-                        height: 40,
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            LikeButton(
-                              size: 20.0,
-                              circleColor: CircleColor(
-                                  start: Colors.yellow.shade200,
-                                  end: Colors.yellow),
-                              bubblesColor: BubblesColor(
-                                dotPrimaryColor: Colors.yellow.shade200,
-                                dotSecondaryColor: Colors.yellow,
-                              ),
-                              isLiked: post.liked,
-                              likeBuilder: (bool isLiked) {
-                                return Icon(
-                                  Icons.lightbulb,
-                                  color: isLiked ? Colors.yellow : Colors.white,
-                                );
-                              },
-                              onTap: (isLiked) {
-                                return post.creatorId == widget.user.userId
-                                    ? _onLikeOwnButtonPressed()
-                                    : _onLikeButton(isLiked, postIndex, 1);
-                              },
-                              likeCount: post.likeNumber,
-                            ),
-                            Row(
-                              children: [
-                                Text(
-                                  post.commentNumber.toString(),
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                                IconButton(
-                                  icon: Icon(Icons.comment),
-                                  color: Colors.white,
-                                  onPressed: () {
-                                    Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                CommentsWidget(
-                                                  session: widget.session,
-                                                  postId: post.postId,
-                                                  user: widget.user,
-                                                  languages: languages,
-                                                )));
-                                  },
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                onTap: () {
-                  _onPostTap(postIndex, 1);
-                },
-              )),
-    );
-  }
-
-  // Widget _postsWidget(int pageNumber) {
-  //   List<Post> actualPosts = [];
-  //   ScrollController _scrollController;
-  //   RefreshController _refreshController;
-  //
-  //   if (pageNumber == 1) {
-  //     actualPosts = actualNewPosts;
-  //     _scrollController = _newScrollController;
-  //     _refreshController = _refreshNewController;
-  //   } else if (pageNumber == 2) {
-  //     actualPosts = actualBestPosts;
-  //     _scrollController = _bestScrollController;
-  //     _refreshController = _refreshBestController;
-  //   } else {
-  //     actualPosts = actualOwnPosts;
-  //     _scrollController = _ownScrollController;
-  //     _refreshController = _refreshOwnController;
-  //   }
-  //   return Container(
-  //     color: Colors.black,
-  //     child: loadedPosts
-  //         ? Stack(
-  //             children: [
-  //               SmartRefresher(
-  //                 controller: _refreshController,
-  //                 onRefresh: () {
-  //                   _loadData();
-  //                 },
-  //                 header: WaterDropHeader(
-  //                   refresh: SizedBox(
-  //                       width: 25.0,
-  //                       height: 25.0,
-  //                       child: Image(
-  //                           image: new AssetImage(
-  //                               "assets/images/loading_spin.gif"))),
-  //                 ),
-  //                 child: actualPosts.isNotEmpty
-  //                     ? ListView.separated(
-  //                         controller: _scrollController,
-  //                         padding: EdgeInsets.only(bottom: 10),
-  //                         separatorBuilder: (context, index) => Divider(
-  //                               height: 5,
-  //                               color: Colors.grey.shade700,
-  //                             ),
-  //                         itemCount: actualPosts.length,
-  //                         itemBuilder: (context, index) {
-  //                           Post post = actualPosts.elementAt(index);
-  //                           return InkWell(
-  //                             child: Container(
-  //                               color: Colors.black,
-  //                               child: Column(
-  //                                 children: [
-  //                                   ListTile(
-  //                                     leading: InkWell(
-  //                                       child: CircleAvatar(
-  //                                         radius: 20,
-  //                                         backgroundImage: NetworkImage(
-  //                                           widget.session.domainName +
-  //                                               "/api/images/" +
-  //                                               post.companyImageId.toString(),
-  //                                           headers: widget.session.headers,
-  //                                         ),
-  //                                       ),
-  //                                       onTap: () =>
-  //                                           _onCompanyTap(post.companyId),
-  //                                     ),
-  //                                     title: Column(
-  //                                       crossAxisAlignment:
-  //                                           CrossAxisAlignment.start,
-  //                                       children: [
-  //                                         Text(
-  //                                           post.userName,
-  //                                           style:
-  //                                               TextStyle(color: Colors.white),
-  //                                         ),
-  //                                         SizedBox(
-  //                                           height: 1,
-  //                                         ),
-  //                                         InkWell(
-  //                                           child: Container(
-  //                                             padding: EdgeInsets.all(3),
-  //                                             decoration: BoxDecoration(
-  //                                                 color: Colors.white,
-  //                                                 border: Border.all(
-  //                                                   color: Colors.black,
-  //                                                 ),
-  //                                                 borderRadius:
-  //                                                     BorderRadius.all(
-  //                                                         Radius.circular(20))),
-  //                                             child: Text(
-  //                                               post.companyName,
-  //                                               style: TextStyle(
-  //                                                   color: Colors.black,
-  //                                                   fontWeight:
-  //                                                       FontWeight.bold),
-  //                                             ),
-  //                                           ),
-  //                                           onTap: () {
-  //                                             _onCompanyTap(post.companyId);
-  //                                           },
-  //                                         ),
-  //                                       ],
-  //                                     ),
-  //                                     trailing: Row(
-  //                                       mainAxisSize: MainAxisSize.min,
-  //                                       children: [
-  //                                         post.implemented
-  //                                             ? InkWell(
-  //                                                 child: Icon(
-  //                                                   Icons
-  //                                                       .lightbulb_outline_sharp,
-  //                                                   color: Colors.yellow,
-  //                                                 ),
-  //                                                 onTap: () {
-  //                                                   Fluttertoast.showToast(
-  //                                                       msg: languages
-  //                                                           .ideaIsImplementedMessage,
-  //                                                       toastLength:
-  //                                                           Toast.LENGTH_SHORT,
-  //                                                       gravity:
-  //                                                           ToastGravity.CENTER,
-  //                                                       timeInSecForIosWeb: 4,
-  //                                                       backgroundColor:
-  //                                                           Colors.green,
-  //                                                       textColor: Colors.white,
-  //                                                       fontSize: 16.0);
-  //                                                 },
-  //                                               )
-  //                                             : Container(),
-  //                                         Text(
-  //                                           DateFormatter.formatDate(
-  //                                               post.createdDate, languages),
-  //                                           style:
-  //                                               TextStyle(color: Colors.white),
-  //                                         ),
-  //                                         Container(
-  //                                           margin: EdgeInsets.only(left: 5),
-  //                                           child: PopupMenuButton(
-  //                                             child: Icon(
-  //                                               Icons.more_horiz,
-  //                                               color: Colors.white,
-  //                                             ),
-  //                                             itemBuilder: (context) {
-  //                                               return List.generate(
-  //                                                   widget.user.companyId ==
-  //                                                           post.companyId
-  //                                                       ? 4
-  //                                                       : 2, (index) {
-  //                                                 if (index == 0) {
-  //                                                   return PopupMenuItem(
-  //                                                     child: Text(widget.user
-  //                                                                     .companyId ==
-  //                                                                 post
-  //                                                                     .companyId ||
-  //                                                             widget.user
-  //                                                                     .userId ==
-  //                                                                 post.creatorId
-  //                                                         ? languages
-  //                                                             .deleteLabel
-  //                                                         : languages
-  //                                                             .reportLabel),
-  //                                                     value: 0,
-  //                                                   );
-  //                                                 } else if (index == 1) {
-  //                                                   return PopupMenuItem(
-  //                                                     child: Text(languages
-  //                                                         .banUserLabel),
-  //                                                     value: 1,
-  //                                                   );
-  //                                                 } else if (index == 2) {
-  //                                                   return PopupMenuItem(
-  //                                                     child: Text(languages
-  //                                                         .contactCreatorLabel),
-  //                                                     value: 2,
-  //                                                   );
-  //                                                 } else {
-  //                                                   return PopupMenuItem(
-  //                                                     child: Text(post
-  //                                                             .implemented
-  //                                                         ? languages
-  //                                                             .notImplementedLabel
-  //                                                         : languages
-  //                                                             .implementedLabel),
-  //                                                     value: 3,
-  //                                                   );
-  //                                                 }
-  //                                               });
-  //                                             },
-  //                                             onSelected: (index) {
-  //                                               if (index == 0) {
-  //                                                 if (widget.user.companyId ==
-  //                                                         post.companyId ||
-  //                                                     widget.user.userId ==
-  //                                                         post.creatorId) {
-  //                                                   widget.session
-  //                                                       .delete('/api/posts/' +
-  //                                                           post.postId
-  //                                                               .toString())
-  //                                                       .then((response) {
-  //                                                     if (response.statusCode ==
-  //                                                         200) {
-  //                                                       Fluttertoast.showToast(
-  //                                                           msg: languages
-  //                                                               .successfulDeleteMessage,
-  //                                                           toastLength: Toast
-  //                                                               .LENGTH_LONG,
-  //                                                           gravity:
-  //                                                               ToastGravity
-  //                                                                   .CENTER,
-  //                                                           timeInSecForIosWeb:
-  //                                                               1,
-  //                                                           backgroundColor:
-  //                                                               Colors.green,
-  //                                                           textColor:
-  //                                                               Colors.white,
-  //                                                           fontSize: 16.0);
-  //                                                       setState(() {
-  //                                                         actualNewPosts
-  //                                                             .remove(post);
-  //                                                         actualBestPosts
-  //                                                             .remove(post);
-  //                                                         actualOwnPosts
-  //                                                             .remove(post);
-  //                                                       });
-  //                                                     } else {
-  //                                                       Fluttertoast.showToast(
-  //                                                           msg: languages
-  //                                                               .globalServerErrorMessage,
-  //                                                           toastLength: Toast
-  //                                                               .LENGTH_LONG,
-  //                                                           gravity:
-  //                                                               ToastGravity
-  //                                                                   .CENTER,
-  //                                                           timeInSecForIosWeb:
-  //                                                               1,
-  //                                                           backgroundColor:
-  //                                                               Colors.red,
-  //                                                           textColor:
-  //                                                               Colors.white,
-  //                                                           fontSize: 16.0);
-  //                                                     }
-  //                                                   });
-  //                                                 } else {
-  //                                                   onReportTap(post);
-  //                                                 }
-  //                                               } else if (index == 1) {
-  //                                                 _onBanUserTap(post.creatorId);
-  //                                               } else if (index == 2) {
-  //                                                 _onContactCreatorTap(post);
-  //                                               } else {
-  //                                                 widget.session
-  //                                                     .post(
-  //                                                         '/api/posts/' +
-  //                                                             post.postId
-  //                                                                 .toString() +
-  //                                                             '/implemented',
-  //                                                         Map<String,
-  //                                                             dynamic>())
-  //                                                     .then((response) {
-  //                                                   if (response.statusCode ==
-  //                                                       200) {
-  //                                                     Fluttertoast.showToast(
-  //                                                         msg:
-  //                                                             "${languages.successLabel}!",
-  //                                                         toastLength:
-  //                                                             Toast.LENGTH_LONG,
-  //                                                         gravity: ToastGravity
-  //                                                             .CENTER,
-  //                                                         timeInSecForIosWeb: 4,
-  //                                                         backgroundColor:
-  //                                                             Colors.green,
-  //                                                         textColor:
-  //                                                             Colors.white,
-  //                                                         fontSize: 16.0);
-  //                                                     setState(() {
-  //                                                       bool imp =
-  //                                                           !post.implemented;
-  //                                                       if (actualNewPosts
-  //                                                           .where((p) {
-  //                                                         return p.postId ==
-  //                                                             post.postId;
-  //                                                       }).isNotEmpty) {
-  //                                                         actualNewPosts
-  //                                                                 .where((p) {
-  //                                                                   return p.postId ==
-  //                                                                       post.postId;
-  //                                                                 })
-  //                                                                 .first
-  //                                                                 .implemented =
-  //                                                             imp;
-  //                                                       }
-  //                                                       if (actualBestPosts
-  //                                                           .where((p) {
-  //                                                         return p.postId ==
-  //                                                             post.postId;
-  //                                                       }).isNotEmpty) {
-  //                                                         actualBestPosts
-  //                                                                 .where((p) {
-  //                                                                   return p.postId ==
-  //                                                                       post.postId;
-  //                                                                 })
-  //                                                                 .first
-  //                                                                 .implemented =
-  //                                                             imp;
-  //                                                       }
-  //                                                       if (actualOwnPosts
-  //                                                           .where((p) {
-  //                                                         return p.postId ==
-  //                                                             post.postId;
-  //                                                       }).isNotEmpty) {
-  //                                                         actualOwnPosts
-  //                                                                 .where((p) {
-  //                                                                   return p.postId ==
-  //                                                                       post.postId;
-  //                                                                 })
-  //                                                                 .first
-  //                                                                 .implemented =
-  //                                                             imp;
-  //                                                       }
-  //                                                     });
-  //                                                   } else {
-  //                                                     Fluttertoast.showToast(
-  //                                                         msg: languages
-  //                                                             .globalServerErrorMessage,
-  //                                                         toastLength:
-  //                                                             Toast.LENGTH_LONG,
-  //                                                         gravity: ToastGravity
-  //                                                             .CENTER,
-  //                                                         timeInSecForIosWeb: 4,
-  //                                                         backgroundColor:
-  //                                                             Colors.red,
-  //                                                         textColor:
-  //                                                             Colors.white,
-  //                                                         fontSize: 16.0);
-  //                                                   }
-  //                                                 });
-  //                                               }
-  //                                             },
-  //                                           ),
-  //                                         )
-  //                                       ],
-  //                                     ),
-  //                                   ),
-  //                                   ListTile(
-  //                                     title: Text(
-  //                                       post.title,
-  //                                       style: TextStyle(
-  //                                           color: Colors.white,
-  //                                           fontWeight: FontWeight.bold,
-  //                                           fontSize: 20),
-  //                                     ),
-  //                                   ),
-  //                                   Container(
-  //                                     height: 60,
-  //                                     padding: EdgeInsets.all(5),
-  //                                     alignment: Alignment.topLeft,
-  //                                     child: Text(
-  //                                       post.postType == 'SIMPLE_POST'
-  //                                           ? post.description
-  //                                           : languages
-  //                                               .clickHereToOpenThePollLabel,
-  //                                       style: TextStyle(color: Colors.white),
-  //                                     ),
-  //                                   ),
-  //                                   Container(
-  //                                     height: 40,
-  //                                     child: Row(
-  //                                       crossAxisAlignment:
-  //                                           CrossAxisAlignment.center,
-  //                                       mainAxisAlignment:
-  //                                           MainAxisAlignment.spaceBetween,
-  //                                       children: [
-  //                                         LikeButton(
-  //                                           size: 20.0,
-  //                                           circleColor: CircleColor(
-  //                                               start: Colors.yellow.shade200,
-  //                                               end: Colors.yellow),
-  //                                           bubblesColor: BubblesColor(
-  //                                             dotPrimaryColor:
-  //                                                 Colors.yellow.shade200,
-  //                                             dotSecondaryColor: Colors.yellow,
-  //                                           ),
-  //                                           isLiked: post.liked,
-  //                                           likeBuilder: (bool isLiked) {
-  //                                             return Icon(
-  //                                               Icons.lightbulb,
-  //                                               color: isLiked
-  //                                                   ? Colors.yellow
-  //                                                   : Colors.white,
-  //                                             );
-  //                                           },
-  //                                           onTap: (isLiked) {
-  //                                             return post.creatorId ==
-  //                                                     widget.user.userId
-  //                                                 ? _onLikeOwnButtonPressed()
-  //                                                 : _onLikeButton(isLiked,
-  //                                                     index, pageNumber);
-  //                                           },
-  //                                           likeCount: post.likeNumber,
-  //                                         ),
-  //                                         Row(
-  //                                           children: [
-  //                                             Text(
-  //                                               post.commentNumber.toString(),
-  //                                               style: TextStyle(
-  //                                                   color: Colors.white),
-  //                                             ),
-  //                                             IconButton(
-  //                                               icon: Icon(Icons.comment),
-  //                                               color: Colors.white,
-  //                                               onPressed: () {
-  //                                                 Navigator.of(context).push(
-  //                                                     MaterialPageRoute(
-  //                                                         builder: (context) =>
-  //                                                             CommentsWidget(
-  //                                                               session: widget
-  //                                                                   .session,
-  //                                                               postId:
-  //                                                                   post.postId,
-  //                                                               user:
-  //                                                                   widget.user,
-  //                                                               languages:
-  //                                                                   languages,
-  //                                                             )));
-  //                                               },
-  //                                             ),
-  //                                           ],
-  //                                         ),
-  //                                       ],
-  //                                     ),
-  //                                   )
-  //                                 ],
-  //                               ),
-  //                             ),
-  //                             onTap: () {
-  //                               _onPostTap(index, pageNumber);
-  //                             },
-  //                           );
-  //                         })
-  //                     : Container(
-  //                         child: Center(
-  //                           child: Text(
-  //                             languages.noPostInYourAreaLabel,
-  //                             textAlign: TextAlign.center,
-  //                             style: TextStyle(
-  //                                 fontSize: 20,
-  //                                 color: Colors.yellow,
-  //                                 fontWeight: FontWeight.bold),
-  //                           ),
-  //                         ),
-  //                       ),
-  //               ),
-  //               loading
-  //                   ? Align(
-  //                       alignment: Alignment.bottomCenter,
-  //                       child: Container(
-  //                         margin: EdgeInsets.only(bottom: 20),
-  //                         width: 80,
-  //                         height: 80,
-  //                         child: Center(
-  //                           child: Image(
-  //                               image: new AssetImage(
-  //                                   "assets/images/loading_spin.gif")),
-  //                         ),
-  //                       ),
-  //                     )
-  //                   : Container(),
-  //             ],
-  //           )
-  //         : Container(
-  //             child: Center(
-  //               child: Image(
-  //                   image: new AssetImage("assets/images/loading_breath.gif")),
-  //             ),
-  //           ),
-  //   );
-  // }
-
-  void _loadNew(int i) async {
-    late List<Post> actualPosts = [];
-    late List<Post> posts = [];
-    if (i == 1) {
-      actualPosts = actualNewPosts;
-      posts = newPosts;
-    } else if (i == 2) {
-      actualPosts = actualBestPosts;
-      posts = bestPosts;
-    } else if (i == 3) {
-      actualPosts = actualOwnPosts;
-      posts = ownPosts;
-    }
-    if (posts.length == actualPosts.length) {
-      return;
-    }
-    setState(() {
-      loading = true;
-    });
-    await Future.delayed(Duration(milliseconds: 500));
-    actualPosts.addAll(posts.getRange(
-        actualPosts.length,
-        actualPosts.length + 10 >= posts.length
-            ? posts.length
-            : actualPosts.length + 10));
-    setState(() {
-      loading = false;
-    });
+                      onTap: () {
+                        _onPostTap(post);
+                      },
+                    )),
+          ),
+        ));
   }
 
   void _onCompanyTap(int companyId) {
@@ -1245,26 +769,16 @@ class _PostsWidgetState extends State<PostsWidget> {
     });
   }
 
-  Future<bool> _onLikeButton(bool isLiked, int index, int i) async {
-    late List<Post> actualPosts = [];
-    if (i == 1) {
-      actualPosts = actualNewPosts;
-    } else if (i == 2) {
-      actualPosts = actualBestPosts;
-    } else if (i == 3) {
-      actualPosts = actualOwnPosts;
-    }
+  Future<bool> _onLikeButton(bool isLiked, Post post) async {
     dynamic response = await widget.session.post(
-        "/api/posts/" +
-            actualPosts.elementAt(index).postId.toString() +
-            "/like",
+        "/api/posts/" + post.postId.toString() + "/like",
         new Map<String, dynamic>());
     if (response.statusCode == 200) {
-      actualPosts[index].liked = !actualPosts[index].liked;
-      if (actualPosts[index].liked) {
-        actualPosts[index].likeNumber++;
+      post.liked = !post.liked;
+      if (post.liked) {
+        post.likeNumber++;
       } else {
-        actualPosts[index].likeNumber--;
+        post.likeNumber--;
       }
       return !isLiked;
     } else {
@@ -1272,144 +786,28 @@ class _PostsWidgetState extends State<PostsWidget> {
     }
   }
 
-  void _onPostTap(int index, int i) {
-    late List<Post> actualPosts = [];
-    if (i == 1) {
-      actualPosts = actualNewPosts;
-    } else if (i == 2) {
-      actualPosts = actualBestPosts;
-    } else if (i == 3) {
-      actualPosts = actualOwnPosts;
-    }
+  void _onPostTap(Post post) {
     Navigator.push(
       context,
       MaterialPageRoute(
           builder: (context) => SinglePostWidget(
-                post: actualPosts.elementAt(index),
+                post: post,
                 session: widget.session,
                 user: widget.user,
                 languages: languages,
               )),
     ).whenComplete(() => {
           widget.session
-              .get('/api/posts/' + actualPosts[index].postId.toString())
+              .get('/api/posts/' + post.postId.toString())
               .then((response) {
             if (response.statusCode == 200) {
               setState(() {
-                actualPosts[index] =
+                post =
                     Post.fromJson(json.decode(utf8.decode(response.bodyBytes)));
               });
             }
           })
         });
-  }
-
-  void _loadData() {
-    _newScrollController.addListener(() {
-      if (_newScrollController.position.pixels >=
-              _newScrollController.position.maxScrollExtent &&
-          !loading) {
-        _loadNew(1);
-      }
-    });
-    _bestScrollController.addListener(() {
-      if (_bestScrollController.position.pixels >=
-              _bestScrollController.position.maxScrollExtent &&
-          !loading) {
-        _loadNew(2);
-      }
-    });
-    _ownScrollController.addListener(() {
-      if (_ownScrollController.position.pixels >=
-              _ownScrollController.position.maxScrollExtent &&
-          !loading) {
-        _loadNew(3);
-      }
-    });
-    if (widget.user.setByLocale) {
-      loc.Location location = new loc.Location();
-      location.serviceEnabled().then((_serviceEnabled) {
-        if (_serviceEnabled) {
-          location.requestService().then((_serviceEnabled) {
-            if (_serviceEnabled) {
-              location.hasPermission().then((_permissionGranted) {
-                if (_permissionGranted == PermissionStatus.denied) {
-                  location.requestPermission().then((_permissionGranted) {
-                    if (_permissionGranted != PermissionStatus.granted) {
-                      locationErrorToast();
-                      setState(() {
-                        loading = false;
-                        loadedPosts = true;
-                        _refreshNewController.refreshCompleted();
-                        _refreshBestController.refreshCompleted();
-                        _refreshOwnController.refreshCompleted();
-                      });
-                    } else {
-                      location.getLocation().then((_locationData) {
-                        _getPostsDataWithLocation(_locationData);
-                      });
-                    }
-                  });
-                } else if (_permissionGranted == PermissionStatus.granted) {
-                  location.getLocation().then((_locationData) {
-                    _getPostsDataWithLocation(_locationData);
-                  });
-                }
-              });
-            } else {
-              locationErrorToast();
-              setState(() {
-                loading = false;
-                loadedPosts = true;
-                _refreshNewController.refreshCompleted();
-                _refreshBestController.refreshCompleted();
-                _refreshOwnController.refreshCompleted();
-              });
-            }
-          });
-        } else {
-          locationErrorToast();
-          setState(() {
-            loading = false;
-            loadedPosts = true;
-            _refreshNewController.refreshCompleted();
-            _refreshBestController.refreshCompleted();
-            _refreshOwnController.refreshCompleted();
-          });
-        }
-      });
-    } else {
-      Map<String, dynamic> body = {
-        'countryCode':
-            (widget.user.locale == null ? 'Global' : widget.user.locale),
-      };
-      widget.session.post('/api/posts/getPosts', body).then((response) {
-        if (response.statusCode == 200) {
-          setState(() {
-            Map<String, dynamic> body =
-                json.decode(utf8.decode(response.bodyBytes));
-
-            bestPosts = List<Post>.from(
-                body['bestPosts'].map((model) => Post.fromJson(model)));
-            newPosts = List<Post>.from(
-                body['newPosts'].map((model) => Post.fromJson(model)));
-            ownPosts = List<Post>.from(
-                body['ownPosts'].map((model) => Post.fromJson(model)));
-
-            actualNewPosts = newPosts.sublist(
-                0, newPosts.length < 10 ? newPosts.length : 10);
-            actualBestPosts = bestPosts.sublist(
-                0, bestPosts.length < 10 ? bestPosts.length : 10);
-            actualOwnPosts = ownPosts.sublist(
-                0, ownPosts.length < 10 ? ownPosts.length : 10);
-          });
-          loadedPosts = true;
-          _refreshNewController.refreshCompleted();
-          _refreshBestController.refreshCompleted();
-          _refreshOwnController.refreshCompleted();
-        }
-      });
-    }
   }
 
   void _onSearchButtonPressed() {
@@ -1837,63 +1235,6 @@ class _PostsWidgetState extends State<PostsWidget> {
     }
   }
 
-  void _getPostsDataWithLocation(LocationData locationData) {
-    try {
-      placemarkFromCoordinates(locationData.latitude!, locationData.longitude!)
-          .then((address) {
-        if (address.isEmpty || address.first.isoCountryCode == null) {
-          locationErrorToast();
-          setState(() {
-            loading = false;
-            loadedPosts = true;
-            _refreshNewController.refreshCompleted();
-            _refreshBestController.refreshCompleted();
-            _refreshOwnController.refreshCompleted();
-          });
-        } else {
-          Map<String, dynamic> body = {
-            'countryCode': address.first.isoCountryCode
-          };
-          widget.session.post('/api/posts/getPosts', body).then((response) {
-            if (response.statusCode == 200) {
-              setState(() {
-                Map<String, dynamic> body =
-                    json.decode(utf8.decode(response.bodyBytes));
-
-                bestPosts = List<Post>.from(
-                    body['bestPosts'].map((model) => Post.fromJson(model)));
-                newPosts = List<Post>.from(
-                    body['newPosts'].map((model) => Post.fromJson(model)));
-                ownPosts = List<Post>.from(
-                    body['ownPosts'].map((model) => Post.fromJson(model)));
-
-                actualNewPosts = newPosts.sublist(
-                    0, newPosts.length < 10 ? newPosts.length : 10);
-                actualBestPosts = bestPosts.sublist(
-                    0, bestPosts.length < 10 ? bestPosts.length : 10);
-                actualOwnPosts = ownPosts.sublist(
-                    0, ownPosts.length < 10 ? ownPosts.length : 10);
-              });
-              loadedPosts = true;
-              _refreshNewController.refreshCompleted();
-              _refreshBestController.refreshCompleted();
-              _refreshOwnController.refreshCompleted();
-            }
-          });
-        }
-      });
-    } catch (e) {
-      locationErrorToast();
-      setState(() {
-        loading = false;
-        loadedPosts = true;
-        _refreshNewController.refreshCompleted();
-        _refreshBestController.refreshCompleted();
-        _refreshOwnController.refreshCompleted();
-      });
-    }
-  }
-
   void locationErrorToast() {
     Fluttertoast.showToast(
         msg: languages.locationErrorMessage,
@@ -1903,5 +1244,17 @@ class _PostsWidgetState extends State<PostsWidget> {
         backgroundColor: Colors.red,
         textColor: Colors.white,
         fontSize: 16.0);
+  }
+
+  void _initPageControllers() {
+    _pagingNewController.addPageRequestListener((pageKey) {
+      _fetchPage(pageKey, FeedType.NEW);
+    });
+    _pagingBestController.addPageRequestListener((pageKey) {
+      _fetchPage(pageKey, FeedType.BEST);
+    });
+    _pagingOwnController.addPageRequestListener((pageKey) {
+      _fetchPage(pageKey, FeedType.OWN);
+    });
   }
 }

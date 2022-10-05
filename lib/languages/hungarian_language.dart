@@ -353,6 +353,9 @@ class LanguageHu extends Languages {
   @override
   String get fillTheSearchFieldWarningMessage => 'Írj be legalább 1 karaktert a kereséshez!';
 
+  @override
+  String get noMoreItemsLabel => 'Nincs több megjeleníthető poszt!';
+
   //SETTINGS WIDGET
 
   @override
