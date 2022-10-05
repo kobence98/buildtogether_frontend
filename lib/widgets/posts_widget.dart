@@ -11,8 +11,10 @@ import 'package:flutter_frontend/static/date_formatter.dart';
 import 'package:flutter_frontend/widgets/single_post_widget.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:geocoding/geocoding.dart' as geocoding;
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:like_button/like_button.dart';
+import 'package:location/location.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import '../entities/feed_type.dart';
@@ -89,9 +91,50 @@ class _PostsWidgetState extends State<PostsWidget> {
         break;
     }
     try {
+      LocationData? locationData;
+      bool useLocation = false;
+      if (widget.user.setByLocale) {
+        Location location = new Location();
+        bool _serviceEnabled = await location.serviceEnabled();
+        if (_serviceEnabled) {
+          bool _requestedServiceEnabled = await location.requestService();
+          if (_requestedServiceEnabled) {
+            PermissionStatus _permissionGranted =
+                await location.hasPermission();
+            if (_permissionGranted == PermissionStatus.denied) {
+              PermissionStatus _permissionGranted =
+                  await location.requestPermission();
+              if (_permissionGranted != PermissionStatus.granted) {
+                locationErrorToast();
+              } else {
+                locationData = await location.getLocation();
+                useLocation = true;
+              }
+            } else if (_permissionGranted == PermissionStatus.granted) {
+              locationData = await location.getLocation();
+              useLocation = true;
+            }
+          } else {
+            locationErrorToast();
+          }
+        } else {
+          locationErrorToast();
+        }
+      }
+      String countryCode =
+          widget.user.locale == null ? 'Global' : widget.user.locale!;
+      if (useLocation && locationData != null) {
+        List<geocoding.Placemark> address = await geocoding.placemarkFromCoordinates(
+            locationData.latitude!, locationData.longitude!);
+        if (address.isEmpty || address.first.isoCountryCode == null) {
+          locationErrorToast();
+        } else {
+          countryCode = address.first.isoCountryCode!;
+        }
+      }
+
       dynamic data = <String, dynamic>{
-        'countryCode':
-            (widget.user.locale == null ? 'Global' : widget.user.locale),
+        'countryCode': countryCode,
         'pageNumber': pageKey / _pageSize,
         'pageSize': _pageSize
       };
@@ -357,7 +400,7 @@ class _PostsWidgetState extends State<PostsWidget> {
         child: SmartRefresher(
           controller: _refreshController,
           onRefresh: () {
-              pagingController.refresh();
+            pagingController.refresh();
           },
           header: WaterDropHeader(
             refresh: SizedBox(
@@ -369,26 +412,40 @@ class _PostsWidgetState extends State<PostsWidget> {
           child: PagedListView<int, Post>(
             pagingController: pagingController,
             builderDelegate: PagedChildBuilderDelegate<Post>(
-              noMoreItemsIndicatorBuilder: (context) => Container(color: Colors.black, height: 80, alignment: Alignment.topCenter,child: Text(languages.noMoreItemsLabel, style: TextStyle(color: Colors.yellow, fontStyle: FontStyle.italic, fontSize: 15),),),
+                noMoreItemsIndicatorBuilder: (context) => Container(
+                      color: Colors.black,
+                      height: 80,
+                      alignment: Alignment.topCenter,
+                      child: Text(
+                        languages.noMoreItemsLabel,
+                        style: TextStyle(
+                            color: Colors.yellow,
+                            fontStyle: FontStyle.italic,
+                            fontSize: 15),
+                      ),
+                    ),
                 newPageProgressIndicatorBuilder: (context) => Container(
                       margin: EdgeInsets.only(bottom: 20),
                       width: 80,
                       height: 80,
                       child: Center(
                         child: Image(
-                          height: 30,
+                            height: 30,
                             width: 30,
                             image: new AssetImage(
                                 "assets/images/loading_spin.gif")),
                       ),
                     ),
-                firstPageProgressIndicatorBuilder: (context) => _refreshController.isRefresh ? Container() : Container(
-                  child: Center(
-                    child: Image(
-                        image: new AssetImage(
-                            "assets/images/loading_breath.gif")),
-                  ),
-                ),
+                firstPageProgressIndicatorBuilder: (context) =>
+                    _refreshController.isRefresh
+                        ? Container()
+                        : Container(
+                            child: Center(
+                              child: Image(
+                                  image: new AssetImage(
+                                      "assets/images/loading_breath.gif")),
+                            ),
+                          ),
                 noItemsFoundIndicatorBuilder: (context) => Container(
                       child: Center(
                         child: Text(
