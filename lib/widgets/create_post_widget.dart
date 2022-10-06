@@ -43,31 +43,12 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
     languages = widget.languages;
     isButtonEnabled = true;
     company = widget.user.roles.contains('ROLE_COMPANY');
-    pollControllers.add(TextEditingController());
-    pollOptions.add(
-      Container(
-        margin: EdgeInsets.only(left: 10, right: 10, top: 10),
-        padding: EdgeInsets.only(left: 20.0),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(
-            Radius.circular(10),
-          ),
-          color: Colors.white,
-        ),
-        child: TextField(
-          style: TextStyle(color: Colors.black),
-          maxLength: 40,
-          controller: pollControllers.first,
-          cursorColor: Colors.black,
-          decoration: InputDecoration(
-            counterText: '',
-            focusedBorder: OutlineInputBorder(borderSide: BorderSide.none),
-            hintText: languages.newPollOptionLabel,
-            hintStyle: TextStyle(color: Colors.black.withOpacity(0.5)),
-          ),
-        ),
-      ),
-    );
+    TextEditingController first = TextEditingController();
+    TextEditingController second = TextEditingController();
+    pollControllers.add(first);
+    pollControllers.add(second);
+    _addInitPollOption(first);
+    _addInitPollOption(second);
   }
 
   @override
@@ -647,5 +628,32 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
         });
       }
     }
+  }
+
+  void _addInitPollOption(TextEditingController textEditingController) {
+    pollOptions.add(
+      Container(
+        margin: EdgeInsets.only(left: 10, right: 10, top: 10),
+        padding: EdgeInsets.only(left: 20.0),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(
+            Radius.circular(10),
+          ),
+          color: Colors.white,
+        ),
+        child: TextField(
+          style: TextStyle(color: Colors.black),
+          maxLength: 40,
+          controller: textEditingController,
+          cursorColor: Colors.black,
+          decoration: InputDecoration(
+            counterText: '',
+            focusedBorder: OutlineInputBorder(borderSide: BorderSide.none),
+            hintText: languages.newPollOptionLabel,
+            hintStyle: TextStyle(color: Colors.black.withOpacity(0.5)),
+          ),
+        ),
+      ),
+    );
   }
 }

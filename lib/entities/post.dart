@@ -28,6 +28,10 @@ class Post{
     String stringNow = json['now'];
     DateTime now = DateTime(int.parse(stringNow.substring(0,4)), int.parse(stringNow.substring(5,7)), int.parse(stringNow.substring(8,10)), int.parse(stringNow.substring(11,13)), int.parse(stringNow.substring(14,16)));
     int difference = DateTime.now().difference(now).inHours;
+
+    List<PollOptionInno> pollOptions = List<PollOptionInno>.from(
+        json['pollOptions'].map((po) => PollOptionInno.fromJson(po)));
+    pollOptions.sort((a, b) => a.pollId.compareTo(b.pollId));
     return Post(
       now: now,
       postId: json['postId'],
@@ -43,8 +47,7 @@ class Post{
       createdDate: createdDate.add(Duration(hours: difference)),
       implemented: json['implemented'],
       postType: json['postType'],
-      pollOptions: List<PollOptionInno>.from(
-          json['pollOptions'].map((po) => PollOptionInno.fromJson(po))),
+      pollOptions: pollOptions,
       companyUserId: json['companyUserId'],
       companyImageId: json['companyImageId'],
       creatorId: json['creatorId'],

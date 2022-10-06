@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_frontend/entities/company.dart';
 import 'package:flutter_frontend/entities/session.dart';
 import 'package:flutter_frontend/entities/user.dart';
@@ -134,8 +135,10 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                                     child: TextField(
                                       style: TextStyle(color: Colors.black),
                                       controller: _nameController,
+                                      maxLength: 30,
                                       cursorColor: Colors.black,
                                       decoration: InputDecoration(
+                                        counterText: '',
                                         focusedBorder: OutlineInputBorder(
                                             borderSide: BorderSide.none),
                                         hintText: widget.user.name,

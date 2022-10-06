@@ -60,6 +60,8 @@ abstract class Languages {
 
   String get nameLabel;
 
+  String get maxThirtyLengthLabel;
+
   String switchBetweenCompanyAndSimpleUserLabel(company);
 
   String get companyDescriptionTipLabel;

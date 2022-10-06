@@ -98,6 +98,9 @@ class LanguageEn extends Languages {
   String get nameLabel => 'Name';
 
   @override
+  String get maxThirtyLengthLabel => ' (max 30 characters)';
+
+  @override
   String switchBetweenCompanyAndSimpleUserLabel(company) =>
       "Switch if you are a " + (company ? "simple user." : "company.");
 

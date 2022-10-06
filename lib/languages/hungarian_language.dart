@@ -93,6 +93,9 @@ class LanguageHu extends Languages {
   String get nameLabel => 'Név';
 
   @override
+  String get maxThirtyLengthLabel => ' (max 30 karakter)';
+
+  @override
   String switchBetweenCompanyAndSimpleUserLabel(company) =>
       "Nyomd meg a kapcsolót, ha te egy " + (company ? "egyszerű felhasználó" : "céges felhasználó") + " vagy.";
 
@@ -288,7 +291,7 @@ class LanguageHu extends Languages {
   //FILTERED POST WIDGET
 
   @override
-  String get ideaIsImplementedMessage => 'This idea is implemented!';
+  String get ideaIsImplementedMessage => 'Ez az ötlet meg lett valósítva!';
 
   @override
   String get clickHereToOpenThePollLabel => 'Kattints ide a szavazás megnyitásához!';

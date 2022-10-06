@@ -187,6 +187,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                                 ),
                                 child: TextField(
                                   style: TextStyle(color: Colors.black),
+                                  maxLength: company ? 100 : 30,
                                   controller: company
                                       ? _regCompanyNameController
                                       : _regNameController,
@@ -194,9 +195,10 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                                   decoration: InputDecoration(
                                     focusedBorder: OutlineInputBorder(
                                         borderSide: BorderSide.none),
+                                    counterText: '',
                                     hintText: company
                                         ? languages.companyNameLabel
-                                        : languages.nameLabel,
+                                        : languages.nameLabel + languages.maxThirtyLengthLabel,
                                     hintStyle: TextStyle(
                                         color: Colors.black.withOpacity(0.5)),
                                   ),
