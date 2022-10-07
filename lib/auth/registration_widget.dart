@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -42,10 +41,14 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
   List<String> countryCodes = [];
   String? _chosenCountryCode;
   bool isPolicyAccepted = false;
+  late bool _regPasswordVisible;
+  late bool _regPassAgainVisible;
 
   @override
   void initState() {
     super.initState();
+    _regPasswordVisible = false;
+    _regPassAgainVisible = false;
     countryCodes.add("Global");
     languages = widget.languages;
     session.get('/api/companies/countryCodes').then((response) {
@@ -53,7 +56,32 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
         Iterable l = json.decode(utf8.decode(response.bodyBytes));
         countryCodes.addAll(l.map((data) => data.toString()).toList());
         countryCodes.remove("Undefined");
-        countryCodes.sort();
+        countryCodes = countryCodes.toSet().toList();
+        countryCodes.sort((String a, String b){
+          if(a == 'Global'){
+            return -1;
+          }
+          else if(b == 'Global'){
+            return 1;
+          }
+          else{
+            if(a == 'Hungary'){
+              return -1;
+            }
+            else if(b == 'Hungary'){
+              return 1;
+            }
+            else{
+              if(a == 'United Kingdom'){
+                return -1;
+              }
+              else if(b == 'United Kingdom'){
+                return 1;
+              }
+            }
+          }
+          return a.compareTo(b);
+        });
       } else {
         Fluttertoast.showToast(
             msg: languages.globalErrorMessage,
@@ -139,8 +167,23 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                                   style: TextStyle(color: Colors.black),
                                   controller: _regPasswordController,
                                   cursorColor: Colors.black,
-                                  obscureText: true,
+                                  obscureText: !_regPasswordVisible,
                                   decoration: InputDecoration(
+                                    suffixIcon: IconButton(
+                                      icon: Icon(
+                                        // Based on passwordVisible state choose the icon
+                                        _regPasswordVisible
+                                            ? Icons.visibility
+                                            : Icons.visibility_off,
+                                        color: Colors.black,
+                                      ),
+                                      onPressed: () {
+                                        // Update the state i.e. toogle the state of passwordVisible variable
+                                        setState(() {
+                                          _regPasswordVisible = !_regPasswordVisible;
+                                        });
+                                      },
+                                    ),
                                     focusedBorder: OutlineInputBorder(
                                         borderSide: BorderSide.none),
                                     hintText: languages.passwordLabel,
@@ -164,8 +207,23 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                                   style: TextStyle(color: Colors.black),
                                   controller: _regPassAgainController,
                                   cursorColor: Colors.black,
-                                  obscureText: true,
+                                  obscureText: !_regPassAgainVisible,
                                   decoration: InputDecoration(
+                                    suffixIcon: IconButton(
+                                      icon: Icon(
+                                        // Based on passwordVisible state choose the icon
+                                        _regPassAgainVisible
+                                            ? Icons.visibility
+                                            : Icons.visibility_off,
+                                        color: Colors.black,
+                                      ),
+                                      onPressed: () {
+                                        // Update the state i.e. toogle the state of passwordVisible variable
+                                        setState(() {
+                                          _regPassAgainVisible = !_regPassAgainVisible;
+                                        });
+                                      },
+                                    ),
                                     focusedBorder: OutlineInputBorder(
                                         borderSide: BorderSide.none),
                                     hintText: languages.passAgainLabel,

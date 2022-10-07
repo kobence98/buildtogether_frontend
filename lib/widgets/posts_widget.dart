@@ -123,18 +123,20 @@ class _PostsWidgetState extends State<PostsWidget> {
       }
       String countryCode =
           widget.user.locale == null ? 'Global' : widget.user.locale!;
+      String? countryCodeByLocation;
       if (useLocation && locationData != null) {
         List<geocoding.Placemark> address = await geocoding.placemarkFromCoordinates(
             locationData.latitude!, locationData.longitude!);
         if (address.isEmpty || address.first.isoCountryCode == null) {
           locationErrorToast();
         } else {
-          countryCode = address.first.isoCountryCode!;
+          countryCodeByLocation = address.first.isoCountryCode!;
         }
       }
 
       dynamic data = <String, dynamic>{
         'countryCode': countryCode,
+        'countryCodeByLocation': countryCodeByLocation,
         'pageNumber': pageKey / _pageSize,
         'pageSize': _pageSize
       };

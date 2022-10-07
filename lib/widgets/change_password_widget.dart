@@ -26,10 +26,14 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
   TextEditingController _passAgainController = TextEditingController();
   AuthSqfLiteHandler authSqfLiteHandler = AuthSqfLiteHandler();
   late Languages languages;
+  late bool _passwordVisible;
+  late bool _passAgainVisible;
 
   @override
   void initState() {
     super.initState();
+    _passwordVisible = false;
+    _passAgainVisible = false;
     languages = widget.languages;
   }
 
@@ -66,11 +70,25 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
                         cursorColor: Colors.black,
                         enableSuggestions: false,
                         autocorrect: false,
-                        obscureText: true,
+                        obscureText: !_passwordVisible,
                         decoration: InputDecoration(
-                          focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide.none
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              // Based on passwordVisible state choose the icon
+                              _passwordVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: Colors.black,
+                            ),
+                            onPressed: () {
+                              // Update the state i.e. toogle the state of passwordVisible variable
+                              setState(() {
+                                _passwordVisible = !_passwordVisible;
+                              });
+                            },
                           ),
+                          focusedBorder:
+                              OutlineInputBorder(borderSide: BorderSide.none),
                           hintText: languages.passwordLabel,
                           hintStyle:
                               TextStyle(color: Colors.black.withOpacity(0.5)),
@@ -94,11 +112,25 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
                         cursorColor: Colors.black,
                         enableSuggestions: false,
                         autocorrect: false,
-                        obscureText: true,
+                        obscureText: !_passAgainVisible,
                         decoration: InputDecoration(
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide.none
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              // Based on passwordVisible state choose the icon
+                              _passAgainVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: Colors.black,
+                            ),
+                            onPressed: () {
+                              // Update the state i.e. toogle the state of passwordVisible variable
+                              setState(() {
+                                _passAgainVisible = !_passAgainVisible;
+                              });
+                            },
                           ),
+                          focusedBorder:
+                              OutlineInputBorder(borderSide: BorderSide.none),
                           hintText: languages.passAgainLabel,
                           hintStyle:
                               TextStyle(color: Colors.black.withOpacity(0.5)),

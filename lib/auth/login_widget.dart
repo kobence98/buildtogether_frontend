@@ -14,10 +14,8 @@ import 'package:flutter_frontend/languages/hungarian_language.dart';
 import 'package:flutter_frontend/languages/language_code.dart';
 import 'package:flutter_frontend/languages/languages.dart';
 import 'package:flutter_frontend/languages/languages_sqflite_handler.dart';
-import 'package:flutter_frontend/static/profanity_checker.dart';
 import 'package:flutter_frontend/widgets/main_widget.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:image_picker/image_picker.dart';
 
 import '../../entities/session.dart';
 import '../../entities/user.dart';
@@ -40,10 +38,12 @@ class _LoginPageState extends State<LoginPage> {
   LanguagesSqfLiteHandler languagesSqfLiteHandler = LanguagesSqfLiteHandler();
   bool loading = false;
   late Languages languages;
+  late bool _passwordVisible;
 
   @override
   void initState() {
     super.initState();
+    _passwordVisible = false;
     languages = widget.languages;
   }
 
@@ -151,11 +151,26 @@ class _LoginPageState extends State<LoginPage> {
                         child: TextField(
                           enableSuggestions: false,
                           autocorrect: false,
-                          obscureText: true,
+                          obscureText: !_passwordVisible,
                           style: TextStyle(color: Colors.black),
                           controller: _passwordController,
                           cursorColor: Colors.black,
                           decoration: InputDecoration(
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                // Based on passwordVisible state choose the icon
+                                _passwordVisible
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                                color: Colors.black,
+                              ),
+                              onPressed: () {
+                                // Update the state i.e. toogle the state of passwordVisible variable
+                                setState(() {
+                                  _passwordVisible = !_passwordVisible;
+                                });
+                              },
+                            ),
                             focusedBorder: OutlineInputBorder(
                                 borderSide: BorderSide.none),
                             hintText: languages.passwordLabel,

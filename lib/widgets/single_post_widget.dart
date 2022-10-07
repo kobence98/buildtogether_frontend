@@ -452,7 +452,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
       votedProgressColor: Colors.yellow.shade900,
       leadingVotedProgessColor: Colors.yellow.shade900,
       pollOptionsSplashColor: Colors.red,
-      hasVoted: voted,
+      hasVoted: voted || post.creatorId == widget.user.userId,
       pollId: 'POLLID',
       onVoted: (PollOption pollOption, int newTotalVotes) {
         return _onPollVoted(pollOption.id!);
