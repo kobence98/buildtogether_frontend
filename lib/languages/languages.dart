@@ -242,6 +242,8 @@ abstract class Languages {
 
   String get noMoreItemsLabel;
 
+  String get errorLoadPostsLabel;
+
   //SETTINGS WIDGET
 
   String get changeUserDataLabel;

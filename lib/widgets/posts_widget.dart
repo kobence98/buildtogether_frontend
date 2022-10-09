@@ -414,6 +414,18 @@ class _PostsWidgetState extends State<PostsWidget> {
           child: PagedListView<int, Post>(
             pagingController: pagingController,
             builderDelegate: PagedChildBuilderDelegate<Post>(
+              firstPageErrorIndicatorBuilder: (context) => Container(
+                child: Center(
+                  child: Text(
+                    languages.errorLoadPostsLabel,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.yellow,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
                 noMoreItemsIndicatorBuilder: (context) => Container(
                       color: Colors.black,
                       height: 80,
@@ -791,13 +803,15 @@ class _PostsWidgetState extends State<PostsWidget> {
                       SizedBox(
                         width: 10,
                       ),
-                      Text(
-                        company.name,
+                      Container(width: 210,
+                      child: Text(
+                        company.name + ' (${company.countryCode})',
+                        maxLines: null,
                         style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
                             fontSize: 20),
-                      ),
+                      ),),
                     ],
                   ),
                   content: Container(

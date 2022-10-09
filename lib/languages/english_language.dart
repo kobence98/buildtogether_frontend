@@ -363,6 +363,9 @@ class LanguageEn extends Languages {
   @override
   String get noMoreItemsLabel => 'No more posts available!';
 
+  @override
+  String get errorLoadPostsLabel => 'We are unable to load posts, swipe up the screen to refresh this page! If it doesn\'t help please check the network connection or contact the developer of this application.';
+
   //SETTINGS WIDGET
 
   @override

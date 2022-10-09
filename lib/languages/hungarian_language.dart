@@ -359,6 +359,9 @@ class LanguageHu extends Languages {
   @override
   String get noMoreItemsLabel => 'Nincs több megjeleníthető poszt!';
 
+  @override
+  String get errorLoadPostsLabel => 'Hiba történt a posztok betöltésekor, a képernyőt felfele húzva tudod frissíteni a posztokat! Ha ez sem segít ellenőrizd kérlek az internetkapcsolatot vagy jelezd az alkalmazás üzemeltetőjének.';
+
   //SETTINGS WIDGET
 
   @override
