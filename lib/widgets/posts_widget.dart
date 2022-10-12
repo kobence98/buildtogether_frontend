@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_frontend/entities/company.dart';
@@ -102,7 +103,9 @@ class _PostsWidgetState extends State<PostsWidget> {
             PermissionStatus _permissionGranted =
                 await location.hasPermission();
             if (_permissionGranted == PermissionStatus.denied) {
-              await explainPermissionDialog();
+              if (Platform.isAndroid) {
+                await explainPermissionDialog();
+              }
               PermissionStatus _permissionGrantedAfterAsk = await location.requestPermission();
               if (_permissionGrantedAfterAsk != PermissionStatus.granted) {
                 locationErrorToast();
