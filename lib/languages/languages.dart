@@ -244,6 +244,10 @@ abstract class Languages {
 
   String get errorLoadPostsLabel;
 
+  String get explainPermissionDialogTitle;
+
+  String get OKLabel;
+
   //SETTINGS WIDGET
 
   String get changeUserDataLabel;

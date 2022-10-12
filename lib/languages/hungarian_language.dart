@@ -362,6 +362,12 @@ class LanguageHu extends Languages {
   @override
   String get errorLoadPostsLabel => 'Hiba történt a posztok betöltésekor, a képernyőt felfele húzva tudod frissíteni a posztokat! Ha ez sem segít ellenőrizd kérlek az internetkapcsolatot vagy jelezd az alkalmazás üzemeltetőjének.';
 
+  @override
+  String get explainPermissionDialogTitle => 'A mobilappnak szüksége van a helyzetedre, hogy behatárolja a nemzetiségedet, annak érdekében, hogy csak a te országod posztjai jelenjenek meg neked. Ha nem akarod engedélyezni a helyzeted megosztását, semmi gond nincsen, a beállításoknál ezt kézzel is megteheted.';
+
+  @override
+  String get OKLabel => 'OK';
+
   //SETTINGS WIDGET
 
   @override

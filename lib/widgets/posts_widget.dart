@@ -102,9 +102,9 @@ class _PostsWidgetState extends State<PostsWidget> {
             PermissionStatus _permissionGranted =
                 await location.hasPermission();
             if (_permissionGranted == PermissionStatus.denied) {
-              PermissionStatus _permissionGranted =
-                  await location.requestPermission();
-              if (_permissionGranted != PermissionStatus.granted) {
+              await explainPermissionDialog();
+              PermissionStatus _permissionGrantedAfterAsk = await location.requestPermission();
+              if (_permissionGrantedAfterAsk != PermissionStatus.granted) {
                 locationErrorToast();
               } else {
                 locationData = await location.getLocation();
@@ -1329,5 +1329,33 @@ class _PostsWidgetState extends State<PostsWidget> {
     _pagingOwnController.addPageRequestListener((pageKey) {
       _fetchPage(pageKey, FeedType.OWN);
     });
+  }
+
+  explainPermissionDialog() async{
+    await showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            backgroundColor: Colors.grey[900],
+            content: Text(
+              languages.explainPermissionDialogTitle,
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                  color: Colors.yellow),
+            ),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text(
+                  languages.OKLabel,
+                  style: TextStyle(color: Colors.yellow),
+                ),
+              ),
+            ],
+          );
+        });
   }
 }

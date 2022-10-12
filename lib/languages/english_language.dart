@@ -366,6 +366,12 @@ class LanguageEn extends Languages {
   @override
   String get errorLoadPostsLabel => 'We are unable to load posts, swipe up the screen to refresh this page! If it doesn\'t help please check the network connection or contact the developer of this application.';
 
+  @override
+  String get explainPermissionDialogTitle => 'The mobile app needs your location to locate the country you live in, to display posts only from your country. If you don\'t want to allow, just pick a location from the settings.';
+
+  @override
+  String get OKLabel => 'OK';
+
   //SETTINGS WIDGET
 
   @override
