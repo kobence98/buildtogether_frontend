@@ -419,6 +419,9 @@ class LanguageEn extends Languages {
   @override
   String get successfulAccountDeleteMessage => 'Successful user account delete!';
 
+  @override
+  String get companiesLabel => 'Registered companies';
+
   //DATE FORMATTER
 
   @override
@@ -456,4 +459,15 @@ class LanguageEn extends Languages {
 
   @override
   String get likedPostsLabel => 'Liked posts';
+
+  //COMPANIES WIDGET
+
+  @override
+  String get companiesInfoWindowDescription => 'Companies with active subscriptions are displayed in yellow and inactive ones in red.';
+
+  @override
+  String get activeCompany => 'Active company';
+
+  @override
+  String get inactiveCompany => 'Inactive company';
 }

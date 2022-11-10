@@ -280,6 +280,8 @@ abstract class Languages {
 
   String get successfulAccountDeleteMessage;
 
+  String get companiesLabel;
+
   //DATE FORMATTER
 
   String get minuteLetter;
@@ -307,4 +309,12 @@ abstract class Languages {
   //LIKED POSTS WIDGET
 
   String get likedPostsLabel;
+
+  //COMPANIES WIDGET
+
+  String get companiesInfoWindowDescription;
+
+  String get activeCompany;
+
+  String get inactiveCompany;
 }

@@ -415,6 +415,9 @@ class LanguageHu extends Languages {
   @override
   String get successfulAccountDeleteMessage => 'Sikeres felhasználói fiók törlés!';
 
+  @override
+  String get companiesLabel => 'Regisztrált cégek';
+
   //DATE FORMATTER
 
   @override
@@ -452,4 +455,16 @@ class LanguageHu extends Languages {
 
   @override
   String get likedPostsLabel => 'Likeolt posztok';
+
+  //COMPANIES WIDGET
+
+  @override
+  String get companiesInfoWindowDescription => 'Az aktív feliratkozással rendelkező cégek sárga, az inaktívak pedig piros színnel jelennek meg.';
+
+  @override
+  String get activeCompany => 'Aktív cég';
+
+  @override
+  String get inactiveCompany => 'Inaktív cég';
+
 }

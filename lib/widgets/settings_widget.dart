@@ -13,6 +13,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'change_location_widget.dart';
 import 'change_password_widget.dart';
 import 'change_user_data_widget.dart';
+import 'companies_widget.dart';
 import 'handle_bans_widget.dart';
 
 class SettingsWidget extends StatefulWidget {
@@ -52,6 +53,26 @@ class _SettingsWidgetState extends State<SettingsWidget> {
             SizedBox(
               height: 50,
             ),
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(10),
+                ),
+                color: Colors.yellowAccent,
+              ),
+              child: ListTile(
+                leading: Icon(
+                  Icons.factory,
+                  color: Colors.black,
+                ),
+                title: Text(
+                  languages.companiesLabel,
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                ),
+                onTap: _onCompaniesTap,
+              ),
+            ),
+            SizedBox(height: 5),
             Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.all(
@@ -573,6 +594,14 @@ class _SettingsWidgetState extends State<SettingsWidget> {
     Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => LikedPostsWidget(
           user: widget.user,
+          session: widget.session,
+          languages: languages,
+        )));
+  }
+
+  void _onCompaniesTap() {
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => CompaniesWidget(
           session: widget.session,
           languages: languages,
         )));
