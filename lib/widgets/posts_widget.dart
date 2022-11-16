@@ -754,9 +754,9 @@ class _PostsWidgetState extends State<PostsWidget> {
                                           Navigator.of(context).push(
                                               MaterialPageRoute(
                                                   builder: (context) =>
-                                                      CommentsWidget(
+                                                      SinglePostWidget(
                                                         session: widget.session,
-                                                        postId: post.postId,
+                                                        post: post,
                                                         user: widget.user,
                                                         languages: languages,
                                                       )));

@@ -420,11 +420,11 @@ class _LikedPostsWidgetState extends State<LikedPostsWidget> {
                                           Navigator.of(context).push(
                                               MaterialPageRoute(
                                                   builder: (context) =>
-                                                      CommentsWidget(
+                                                      SinglePostWidget(
                                                         session: widget
                                                             .session,
-                                                        postId:
-                                                        post.postId,
+                                                        post:
+                                                        post,
                                                         user: widget.user,
                                                         languages:
                                                         languages,

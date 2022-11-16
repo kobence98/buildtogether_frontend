@@ -243,6 +243,15 @@ class LanguageEn extends Languages {
   @override
   String get banCommenterConfirmQuestionLabel => 'If you ban this commenter you wont see his/her posts and comments until you unlock the ban in the settings. Are you sure you want to ban this user?';
 
+  @override
+  String get replyLabel => 'Reply';
+
+  @override
+  String get removedLabel => '[Deleted]';
+
+  @override
+  String get tooDeepToDisplayMessage => 'The comment tree is too deep to display, ezért egyelőre nem engedélyezett a további válaszadás!';
+
   //CREATE POST WIDGET
 
   @override

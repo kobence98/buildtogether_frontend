@@ -39,6 +39,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
       TextEditingController();
   final TextEditingController _couponCodeController = TextEditingController();
   late bool voted;
+  final commentsKey = GlobalKey();
 
   @override
   void initState() {
@@ -280,7 +281,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                   ),
                   Container(
                     height: 40,
-                    margin: EdgeInsets.only(bottom: 50),
+                    margin: EdgeInsets.only(bottom: 20),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -329,20 +330,15 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                               icon: Icon(Icons.comment),
                               color: Colors.white,
                               onPressed: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => CommentsWidget(
-                                          session: widget.session,
-                                          postId: post.postId,
-                                          user: widget.user,
-                                          languages: languages,
-                                        )));
+                                Scrollable.ensureVisible(commentsKey.currentContext!, duration: Duration(milliseconds: 500));
                               },
                             ),
                           ],
                         ),
                       ],
                     ),
-                  )
+                  ),
+                  CommentsWidget(key: commentsKey, session: widget.session, postId: post.postId, user: widget.user, languages: languages),
                 ],
               ),
             ),

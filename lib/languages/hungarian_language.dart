@@ -238,6 +238,15 @@ class LanguageHu extends Languages {
   @override
   String get banCommenterConfirmQuestionLabel => 'Ha tiltod ezt a kommentelőt, akkor semmilyen posztot és kommentet nem fogsz tőle látni, ameddig ki nem veszed a tiltást a beállításokban. Biztosan akarod tiltani?';
 
+  @override
+  String get replyLabel => 'Válasz';
+
+  @override
+  String get removedLabel => '[Törölve]';
+
+  @override
+  String get tooDeepToDisplayMessage => 'The comment tree would be too deep to display, so further replies are not allowed for now!';
+
   //CREATE POST WIDGET
 
   @override

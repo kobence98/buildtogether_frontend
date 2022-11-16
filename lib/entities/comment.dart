@@ -7,8 +7,11 @@ class Comment{
   int likeNumber;
   bool liked;
   DateTime createdDate;
+  List<Comment> childComments;
+  bool deleted;
+  int depthInTree;
 
-  Comment({required this.now, required this.userName, required this.userId, required this.text, required this.commentId, required this.likeNumber, required this.liked, required this.createdDate});
+  Comment({required this.now, required this.userName, required this.userId, required this.text, required this.commentId, required this.likeNumber, required this.liked, required this.createdDate, required this.childComments, required this.deleted, required this.depthInTree});
 
   factory Comment.fromJson(Map<String, dynamic> json) {
     String stringDate = json['createdDate'];
@@ -25,6 +28,9 @@ class Comment{
       likeNumber: json['likeNumber'],
       liked: json['liked'],
       createdDate: createdDate.add(Duration(hours: difference)),
+      childComments: List<Comment>.from(json['childComments'].map((model) => Comment.fromJson(model))),
+      deleted: json['deleted'],
+      depthInTree: json['depthInTree'],
     );
   }
 }

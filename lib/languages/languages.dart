@@ -160,6 +160,12 @@ abstract class Languages {
 
   String get banCommenterConfirmQuestionLabel;
 
+  String get replyLabel;
+
+  String get removedLabel;
+
+  String get tooDeepToDisplayMessage;
+
   //CREATE POST WIDGET
 
   String get newPollOptionLabel;
