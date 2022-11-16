@@ -19,7 +19,6 @@ import 'package:location/location.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import '../entities/feed_type.dart';
-import 'comments_widget.dart';
 import 'filtered_posts_widget.dart';
 
 class PostsWidget extends StatefulWidget {
@@ -106,7 +105,8 @@ class _PostsWidgetState extends State<PostsWidget> {
               if (Platform.isAndroid) {
                 await explainPermissionDialog();
               }
-              PermissionStatus _permissionGrantedAfterAsk = await location.requestPermission();
+              PermissionStatus _permissionGrantedAfterAsk =
+                  await location.requestPermission();
               if (_permissionGrantedAfterAsk != PermissionStatus.granted) {
                 locationErrorToast();
               } else {
@@ -128,8 +128,9 @@ class _PostsWidgetState extends State<PostsWidget> {
           widget.user.locale == null ? 'Global' : widget.user.locale!;
       String? countryCodeByLocation;
       if (useLocation && locationData != null) {
-        List<geocoding.Placemark> address = await geocoding.placemarkFromCoordinates(
-            locationData.latitude!, locationData.longitude!);
+        List<geocoding.Placemark> address =
+            await geocoding.placemarkFromCoordinates(
+                locationData.latitude!, locationData.longitude!);
         if (address.isEmpty || address.first.isoCountryCode == null) {
           locationErrorToast();
         } else {
@@ -417,18 +418,18 @@ class _PostsWidgetState extends State<PostsWidget> {
           child: PagedListView<int, Post>(
             pagingController: pagingController,
             builderDelegate: PagedChildBuilderDelegate<Post>(
-              firstPageErrorIndicatorBuilder: (context) => Container(
-                child: Center(
-                  child: Text(
-                    languages.errorLoadPostsLabel,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.yellow,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
+                firstPageErrorIndicatorBuilder: (context) => Container(
+                      child: Center(
+                        child: Text(
+                          languages.errorLoadPostsLabel,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontSize: 20,
+                              color: Colors.yellow,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
                 noMoreItemsIndicatorBuilder: (context) => Container(
                       color: Colors.black,
                       height: 80,
@@ -755,6 +756,7 @@ class _PostsWidgetState extends State<PostsWidget> {
                                               MaterialPageRoute(
                                                   builder: (context) =>
                                                       SinglePostWidget(
+                                                        commentTapped: true,
                                                         session: widget.session,
                                                         post: post,
                                                         user: widget.user,
@@ -806,15 +808,17 @@ class _PostsWidgetState extends State<PostsWidget> {
                       SizedBox(
                         width: 10,
                       ),
-                      Container(width: 210,
-                      child: Text(
-                        company.name + ' (${company.countryCode})',
-                        maxLines: null,
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20),
-                      ),),
+                      Container(
+                        width: 210,
+                        child: Text(
+                          company.name + ' (${company.countryCode})',
+                          maxLines: null,
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20),
+                        ),
+                      ),
                     ],
                   ),
                   content: Container(
@@ -867,6 +871,7 @@ class _PostsWidgetState extends State<PostsWidget> {
       context,
       MaterialPageRoute(
           builder: (context) => SinglePostWidget(
+                commentTapped: false,
                 post: post,
                 session: widget.session,
                 user: widget.user,
@@ -1334,7 +1339,7 @@ class _PostsWidgetState extends State<PostsWidget> {
     });
   }
 
-  explainPermissionDialog() async{
+  explainPermissionDialog() async {
     await showDialog(
         context: context,
         builder: (context) {

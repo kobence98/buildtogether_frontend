@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:comment_tree/comment_tree.dart' as commentTree;
@@ -19,13 +20,14 @@ class CommentsWidget extends StatefulWidget {
   final User user;
   final Languages languages;
   final GlobalKey key;
+  final bool commentTapped;
 
   const CommentsWidget(
       {required this.key,
       required this.session,
       required this.postId,
       required this.user,
-      required this.languages});
+      required this.languages, required this.commentTapped});
 
   @override
   _CommentsWidgetState createState() => _CommentsWidgetState();
@@ -46,27 +48,13 @@ class _CommentsWidgetState extends State<CommentsWidget> {
     super.initState();
     languages = widget.languages;
     loading = true;
-    widget.session
-        .get('/api/posts/' + widget.postId.toString() + '/comments')
-        .then((response) {
-      if (response.statusCode == 200) {
-        setState(() {
-          Iterable l = json.decode(utf8.decode(response.bodyBytes));
-          comments =
-              List<Comment>.from(l.map((model) => Comment.fromJson(model)));
-          loading = false;
-        });
-      } else {
-        Fluttertoast.showToast(
-            msg: languages.globalErrorMessage,
-            toastLength: Toast.LENGTH_LONG,
-            gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 4,
-            backgroundColor: Colors.red,
-            textColor: Colors.white,
-            fontSize: 16.0);
-        setState(() {
-          loading = false;
+    _initCommentData().whenComplete(() {
+      if(widget.commentTapped){
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if(widget.commentTapped){
+            Scrollable.ensureVisible(widget.key.currentContext!,
+                duration: Duration(milliseconds: 500));
+          }
         });
       }
     });
@@ -646,9 +634,7 @@ class _CommentsWidgetState extends State<CommentsWidget> {
                                     backgroundColor: Colors.green,
                                     textColor: Colors.white,
                                     fontSize: 16.0);
-                                setState(() {
-                                  comments.remove(comment);
-                                });
+                                _initCommentData();
                               } else {
                                 Fluttertoast.showToast(
                                     msg: languages.globalServerErrorMessage,
@@ -749,5 +735,32 @@ class _CommentsWidgetState extends State<CommentsWidget> {
     _commentController.dispose();
     _reportReasonTextFieldController.dispose();
     super.dispose();
+  }
+
+  Future<void> _initCommentData() async{
+    await widget.session
+        .get('/api/posts/' + widget.postId.toString() + '/comments')
+        .then((response) {
+      if (response.statusCode == 200) {
+        setState(() {
+          Iterable l = json.decode(utf8.decode(response.bodyBytes));
+          comments =
+          List<Comment>.from(l.map((model) => Comment.fromJson(model)));
+          loading = false;
+        });
+      } else {
+        Fluttertoast.showToast(
+            msg: languages.globalErrorMessage,
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 4,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+        setState(() {
+          loading = false;
+        });
+      }
+    });
   }
 }

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -19,12 +20,14 @@ class SinglePostWidget extends StatefulWidget {
   final Session session;
   final User user;
   final Languages languages;
+  final bool commentTapped;
 
   const SinglePostWidget(
       {required this.post,
       required this.session,
       required this.user,
-      required this.languages});
+      required this.languages,
+      required this.commentTapped});
 
   @override
   _SinglePostWidgetState createState() => _SinglePostWidgetState();
@@ -133,8 +136,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                               )
                             : Container(),
                         Text(
-                          DateFormatter.formatDate(
-                              post.createdDate, languages),
+                          DateFormatter.formatDate(post.createdDate, languages),
                           style: TextStyle(color: Colors.white),
                         ),
                         Container(
@@ -153,8 +155,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                                   return PopupMenuItem(
                                     child: Text(widget.user.companyId ==
                                                 post.companyId ||
-                                            widget.user.userId ==
-                                                post.creatorId
+                                            widget.user.userId == post.creatorId
                                         ? languages.deleteLabel
                                         : languages.reportLabel),
                                     value: 0,
@@ -181,10 +182,8 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                             },
                             onSelected: (index) {
                               if (index == 0) {
-                                if (widget.user.companyId ==
-                                        post.companyId ||
-                                    widget.user.userId ==
-                                        post.creatorId) {
+                                if (widget.user.companyId == post.companyId ||
+                                    widget.user.userId == post.creatorId) {
                                   widget.session
                                       .delete('/api/posts/' +
                                           post.postId.toString())
@@ -239,8 +238,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                                         textColor: Colors.white,
                                         fontSize: 16.0);
                                     setState(() {
-                                      post.implemented =
-                                          !post.implemented;
+                                      post.implemented = !post.implemented;
                                     });
                                   } else {
                                     Fluttertoast.showToast(
@@ -330,7 +328,9 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                               icon: Icon(Icons.comment),
                               color: Colors.white,
                               onPressed: () {
-                                Scrollable.ensureVisible(commentsKey.currentContext!, duration: Duration(milliseconds: 500));
+                                Scrollable.ensureVisible(
+                                    commentsKey.currentContext!,
+                                    duration: Duration(milliseconds: 500));
                               },
                             ),
                           ],
@@ -338,7 +338,13 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                       ],
                     ),
                   ),
-                  CommentsWidget(key: commentsKey, session: widget.session, postId: post.postId, user: widget.user, languages: languages),
+                  CommentsWidget(
+                      key: commentsKey,
+                      session: widget.session,
+                      postId: post.postId,
+                      user: widget.user,
+                      languages: languages,
+                    commentTapped: widget.commentTapped,),
                 ],
               ),
             ),
@@ -439,7 +445,8 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
           votes: option.likeNumber));
     }
 
-    List<PollOptionInno> likedPollOptions = post.pollOptions.where((po) => po.liked).toList();
+    List<PollOptionInno> likedPollOptions =
+        post.pollOptions.where((po) => po.liked).toList();
 
     return FlutterPollsInno(
       pollOptionsFillColor: Colors.yellow,
@@ -454,11 +461,12 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
         return _onPollVoted(pollOption.id!);
       },
       pollTitle: Text(
-          '${languages.numberOfVotesLabel}: ${post.pollOptions.map((e) => e.likeNumber).reduce((a, b) => a + b)}',
-          style: TextStyle(color: Colors.white, fontStyle: FontStyle.italic),
-        ),
+        '${languages.numberOfVotesLabel}: ${post.pollOptions.map((e) => e.likeNumber).reduce((a, b) => a + b)}',
+        style: TextStyle(color: Colors.white, fontStyle: FontStyle.italic),
+      ),
       pollOptions: polls,
-      userVotedOptionId: likedPollOptions.isEmpty ? null : likedPollOptions.first.pollId,
+      userVotedOptionId:
+          likedPollOptions.isEmpty ? null : likedPollOptions.first.pollId,
     );
   }
 

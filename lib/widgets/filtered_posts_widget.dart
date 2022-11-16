@@ -455,6 +455,8 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
                                                         MaterialPageRoute(
                                                             builder: (context) =>
                                                                 SinglePostWidget(
+                                                                  commentTapped:
+                                                                      true,
                                                                   session: widget
                                                                       .session,
                                                                   post: post,
@@ -606,6 +608,7 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
       context,
       MaterialPageRoute(
           builder: (context) => SinglePostWidget(
+                commentTapped: false,
                 post: actualPosts.elementAt(index),
                 session: widget.session,
                 user: widget.user,
