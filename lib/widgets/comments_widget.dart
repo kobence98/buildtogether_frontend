@@ -227,18 +227,12 @@ class _CommentsWidgetState extends State<CommentsWidget> {
         )
             .then((response) {
           if (response.statusCode == 200) {
-            Comment comment =
-                Comment.fromJson(json.decode(utf8.decode(response.bodyBytes)));
             Navigator.of(context).pop();
             widget.setMainState(() {
               widget.post.commentNumber++;
-              if (parentComment == null) {
-                comments.insert(0, comment);
-              } else {
-                parentComment.childComments.insert(0, comment);
-              }
               loading = false;
               _commentController.clear();
+              _initCommentData();
               Fluttertoast.showToast(
                   msg: languages.commentAddedMessage,
                   toastLength: Toast.LENGTH_LONG,
