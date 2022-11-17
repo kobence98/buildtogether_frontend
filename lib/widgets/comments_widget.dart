@@ -12,22 +12,28 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:like_button/like_button.dart';
 
 import '../entities/comment.dart';
+import '../entities/post.dart';
 import '../static/date_formatter.dart';
 
 class CommentsWidget extends StatefulWidget {
   final Session session;
   final int postId;
+  final Post post;
   final User user;
   final Languages languages;
   final GlobalKey key;
   final bool commentTapped;
+  final dynamic setMainState;
 
   const CommentsWidget(
       {required this.key,
       required this.session,
       required this.postId,
       required this.user,
-      required this.languages, required this.commentTapped});
+      required this.languages,
+      required this.commentTapped,
+      required this.post,
+      this.setMainState});
 
   @override
   _CommentsWidgetState createState() => _CommentsWidgetState();
@@ -49,9 +55,9 @@ class _CommentsWidgetState extends State<CommentsWidget> {
     languages = widget.languages;
     loading = true;
     _initCommentData().whenComplete(() {
-      if(widget.commentTapped){
+      if (widget.commentTapped) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          if(widget.commentTapped){
+          if (widget.commentTapped) {
             Scrollable.ensureVisible(widget.key.currentContext!,
                 duration: Duration(milliseconds: 500));
           }
@@ -224,9 +230,10 @@ class _CommentsWidgetState extends State<CommentsWidget> {
             Comment comment =
                 Comment.fromJson(json.decode(utf8.decode(response.bodyBytes)));
             Navigator.of(context).pop();
-            setState(() {
+            widget.setMainState(() {
+              widget.post.commentNumber++;
               if (parentComment == null) {
-                comments.add(comment);
+                comments.insert(0, comment);
               } else {
                 parentComment.childComments.insert(0, comment);
               }
@@ -634,6 +641,9 @@ class _CommentsWidgetState extends State<CommentsWidget> {
                                     backgroundColor: Colors.green,
                                     textColor: Colors.white,
                                     fontSize: 16.0);
+                                widget.setMainState(() {
+                                  widget.post.commentNumber--;
+                                });
                                 _initCommentData();
                               } else {
                                 Fluttertoast.showToast(
@@ -737,7 +747,7 @@ class _CommentsWidgetState extends State<CommentsWidget> {
     super.dispose();
   }
 
-  Future<void> _initCommentData() async{
+  Future<void> _initCommentData() async {
     await widget.session
         .get('/api/posts/' + widget.postId.toString() + '/comments')
         .then((response) {
@@ -745,7 +755,7 @@ class _CommentsWidgetState extends State<CommentsWidget> {
         setState(() {
           Iterable l = json.decode(utf8.decode(response.bodyBytes));
           comments =
-          List<Comment>.from(l.map((model) => Comment.fromJson(model)));
+              List<Comment>.from(l.map((model) => Comment.fromJson(model)));
           loading = false;
         });
       } else {
