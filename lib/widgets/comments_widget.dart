@@ -232,16 +232,16 @@ class _CommentsWidgetState extends State<CommentsWidget> {
               widget.post.commentNumber++;
               loading = false;
               _commentController.clear();
-              _initCommentData();
-              Fluttertoast.showToast(
-                  msg: languages.commentAddedMessage,
-                  toastLength: Toast.LENGTH_LONG,
-                  gravity: ToastGravity.CENTER,
-                  timeInSecForIosWeb: 4,
-                  backgroundColor: Colors.green,
-                  textColor: Colors.white,
-                  fontSize: 16.0);
             });
+            _initCommentData();
+            Fluttertoast.showToast(
+                msg: languages.commentAddedMessage,
+                toastLength: Toast.LENGTH_LONG,
+                gravity: ToastGravity.CENTER,
+                timeInSecForIosWeb: 4,
+                backgroundColor: Colors.green,
+                textColor: Colors.white,
+                fontSize: 16.0);
           } else {
             setInnerState(() {
               loading = false;
