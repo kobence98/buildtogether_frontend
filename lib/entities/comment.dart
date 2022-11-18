@@ -10,6 +10,7 @@ class Comment{
   List<Comment> childComments;
   bool deleted;
   int depthInTree;
+  Comment? parentComment;
 
   Comment({required this.now, required this.userName, required this.userId, required this.text, required this.commentId, required this.likeNumber, required this.liked, required this.createdDate, required this.childComments, required this.deleted, required this.depthInTree});
 

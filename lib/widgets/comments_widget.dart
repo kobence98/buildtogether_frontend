@@ -227,13 +227,21 @@ class _CommentsWidgetState extends State<CommentsWidget> {
         )
             .then((response) {
           if (response.statusCode == 200) {
+            Comment comment =
+            Comment.fromJson(json.decode(utf8.decode(response.bodyBytes)));
             Navigator.of(context).pop();
-            widget.setMainState(() {
-              widget.post.commentNumber++;
+              if (parentComment == null) {
+                comments.insert(0, comment);
+              } else if(parentComment.depthInTree == 2){
+                parentComment.parentComment!.childComments.insert(0, comment);
+              }else {
+                parentComment.childComments.insert(0, comment);
+              }
               loading = false;
               _commentController.clear();
+            widget.setMainState(() {
+              widget.post.commentNumber++;
             });
-            _initCommentData();
             Fluttertoast.showToast(
                 msg: languages.commentAddedMessage,
                 toastLength: Toast.LENGTH_LONG,
@@ -526,6 +534,7 @@ class _CommentsWidgetState extends State<CommentsWidget> {
   }
 
   Widget _recursiveCommentTreeWidget(Comment parentComment) {
+    parentComment.childComments.forEach((cc) => cc.parentComment = parentComment);
     return commentTree.CommentTreeWidget<commentTree.Comment, dynamic>(
       commentTree.Comment(
           avatar: 'null',
