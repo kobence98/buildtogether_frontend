@@ -304,6 +304,12 @@ abstract class Languages {
 
   String get removeMyVoteLabel;
 
+  String get editTitleConfirmLabel;
+
+  String get titleNotEditedMessage;
+
+  String get titleTooLongWarningMessage;
+
   //BANNED USERS WIDGET
 
   String get noBannedUsers;

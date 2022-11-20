@@ -453,6 +453,15 @@ class LanguageEn extends Languages {
   @override
   String get removeMyVoteLabel => 'Remove my vote';
 
+  @override
+  String get editTitleConfirmLabel => 'Are you sure to make this change on the title?';
+
+  @override
+  String get titleNotEditedMessage => 'Title has not been modified.';
+
+  @override
+  String get titleTooLongWarningMessage => 'Your title is too long! Max length for title is 256 characters.';
+
   //BANNED USERS WIDGET
 
   @override

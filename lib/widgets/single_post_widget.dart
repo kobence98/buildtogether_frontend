@@ -40,15 +40,22 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
   bool innerLoading = false;
   final TextEditingController _reportReasonTextFieldController =
       TextEditingController();
+  final TextEditingController _editTitleTextController =
+      TextEditingController();
   final TextEditingController _couponCodeController = TextEditingController();
   late bool voted;
   final commentsKey = GlobalKey();
+  late bool isCreator;
+  FocusNode _editTitleTextFocusNode = FocusNode();
+  bool _editTitleIsActive = false;
 
   @override
   void initState() {
     super.initState();
     languages = widget.languages;
     post = widget.post;
+    isCreator = post.creatorId == widget.user.userId;
+    _editTitleTextController.text = post.title;
   }
 
   @override
@@ -259,13 +266,71 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                     ),
                   ),
                   ListTile(
-                    title: Text(
-                      post.title,
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20),
-                    ),
+                    title: isCreator && _editTitleIsActive
+                        ? EditableText(
+                            controller: _editTitleTextController,
+                            focusNode: _editTitleTextFocusNode,
+                            onChanged: (newText) {
+                              setState(() {});
+                            },
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20),
+                            cursorColor: Colors.white,
+                            backgroundCursorColor: Colors.black)
+                        : Text(
+                            post.title,
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20),
+                          ),
+                    trailing: isCreator
+                        ? Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              InkWell(
+                                child: Icon(
+                                  _editTitleIsActive
+                                      ? Icons.save_alt
+                                      : Icons.edit,
+                                  color: post.title ==
+                                              _editTitleTextController.text &&
+                                          _editTitleIsActive
+                                      ? Colors.grey
+                                      : Colors.white,
+                                ),
+                                onTap: _editTitleIsActive
+                                    ? _onSaveTitleEditTap
+                                    : () {
+                                        setState(() {
+                                          _editTitleTextFocusNode
+                                              .requestFocus();
+                                          _editTitleIsActive = true;
+                                        });
+                                      },
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              _editTitleIsActive
+                                  ? InkWell(
+                                      child: Icon(
+                                        Icons.cancel,
+                                        color: Colors.white,
+                                      ),
+                                      onTap: () {
+                                        setState(() {
+                                          _editTitleIsActive = false;
+                                          _editTitleTextController.text = post.title;
+                                        });
+                                      },
+                                    )
+                                  : Container(),
+                            ],
+                          )
+                        : Container(),
                   ),
                   Container(
                     padding: EdgeInsets.all(5),
@@ -339,14 +404,15 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                     ),
                   ),
                   CommentsWidget(
-                      key: commentsKey,
-                      session: widget.session,
-                      postId: post.postId,
-                      post: post,
-                      user: widget.user,
-                      languages: languages,
+                    key: commentsKey,
+                    session: widget.session,
+                    postId: post.postId,
+                    post: post,
+                    user: widget.user,
+                    languages: languages,
                     commentTapped: widget.commentTapped,
-                  setMainState: setState,),
+                    setMainState: setState,
+                  ),
                 ],
               ),
             ),
@@ -909,6 +975,152 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
           textColor: Colors.white,
           fontSize: 16.0);
       return Future.value(false);
+    }
+  }
+
+  void _onSaveTitleEditTap() {
+    _editTitleTextFocusNode.unfocus();
+    if (post.title == _editTitleTextController.text) {
+      Fluttertoast.showToast(
+          msg: languages.titleNotEditedMessage,
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 4,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    } else if (_editTitleTextController.text.length > 256) {
+      Fluttertoast.showToast(
+          msg: languages.titleTooLongWarningMessage,
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 4,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    } else {
+      showDialog(
+          context: context,
+          builder: (context) {
+            return StatefulBuilder(builder: (context, setInnerState) {
+              return innerLoading
+                  ? Container(
+                      child: Center(
+                        child: Image(
+                            image: new AssetImage(
+                                "assets/images/loading_breath.gif")),
+                      ),
+                    )
+                  : AlertDialog(
+                      backgroundColor: Colors.yellow,
+                      title: Text(
+                        languages.editTitleConfirmLabel,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                            color: Colors.black),
+                      ),
+                      content: Container(
+                        padding: EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.black),
+                        height: MediaQuery.of(context).size.height / 5,
+                        width: MediaQuery.of(context).size.width,
+                        child: ListView(
+                          children: [
+                            Center(
+                              child: Text(
+                                post.title,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20,
+                                    color: Colors.yellow),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            Center(
+                              child: Icon(
+                                Icons.keyboard_double_arrow_down,
+                                color: Colors.yellow,
+                                size: 40,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            Center(
+                              child: Text(
+                                _editTitleTextController.text,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20,
+                                    color: Colors.yellow),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      actions: <Widget>[
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Text(
+                            languages.cancelLabel,
+                            style: TextStyle(color: Colors.black),
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            innerLoading = true;
+                            dynamic body = <String, String?>{
+                              'postId': post.postId.toString(),
+                              'title': _editTitleTextController.text,
+                            };
+                            widget.session
+                                .postJson('/api/posts/editTitle', body)
+                                .then((response) {
+                              setInnerState(() {
+                                innerLoading = false;
+                              });
+                              if (response.statusCode == 200) {
+                                setState(() {
+                                  post.title = _editTitleTextController.text;
+                                  _editTitleIsActive = false;
+                                });
+                                Navigator.of(context).pop();
+                                Fluttertoast.showToast(
+                                    msg: languages.successfulDataChangeLabel,
+                                    toastLength: Toast.LENGTH_LONG,
+                                    gravity: ToastGravity.CENTER,
+                                    timeInSecForIosWeb: 4,
+                                    backgroundColor: Colors.green,
+                                    textColor: Colors.white,
+                                    fontSize: 16.0);
+                              } else {
+                                Fluttertoast.showToast(
+                                    msg: languages.globalServerErrorMessage,
+                                    toastLength: Toast.LENGTH_LONG,
+                                    gravity: ToastGravity.CENTER,
+                                    timeInSecForIosWeb: 4,
+                                    backgroundColor: Colors.red,
+                                    textColor: Colors.white,
+                                    fontSize: 16.0);
+                              }
+                            });
+                          },
+                          child: Text(
+                            languages.OKLabel,
+                            style: TextStyle(color: Colors.black),
+                          ),
+                        ),
+                      ],
+                    );
+            });
+          });
     }
   }
 }

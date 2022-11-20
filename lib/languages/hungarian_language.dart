@@ -449,6 +449,15 @@ class LanguageHu extends Languages {
   @override
   String get removeMyVoteLabel => 'Szavazat visszavonása';
 
+  @override
+  String get editTitleConfirmLabel => 'Biztosan végre akarod hajtani ezt a módosítást a címen?';
+
+  @override
+  String get titleNotEditedMessage => 'A cím nem lett módosítva.';
+
+  @override
+  String get titleTooLongWarningMessage => 'Túl hosszú a cím amit megadtál! Maximum 256 karakter lehet.';
+
   //BANNED USERS WIDGET
 
   @override
