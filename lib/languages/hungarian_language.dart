@@ -458,6 +458,15 @@ class LanguageHu extends Languages {
   @override
   String get titleTooLongWarningMessage => 'Túl hosszú a cím amit megadtál! Maximum 256 karakter lehet.';
 
+  @override
+  String get editDescriptionConfirmLabel => 'Biztosan végre akarod hajtani ezt a módosítást a leíráson?';
+
+  @override
+  String get descriptionNotEditedMessage => 'A leírás nem lett módosítva.';
+
+  @override
+  String get descriptionTooLongWarningMessage => 'Túl hosszú a leírás amit megadtál! Maximum 2048 karakter lehet.';
+
   //BANNED USERS WIDGET
 
   @override

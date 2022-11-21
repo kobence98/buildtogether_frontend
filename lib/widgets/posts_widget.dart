@@ -27,15 +27,15 @@ class PostsWidget extends StatefulWidget {
   final User user;
   final int initPage;
   final Languages languages;
-  final dynamic setMainState;
-  final bool hideNavBar;
+  final Function hideNavBar;
+  final Function navBarStatusChangeableAgain;
 
   const PostsWidget(
       {required this.session,
       required this.user,
       required this.initPage,
       required this.languages,
-      required this.setMainState,
+      required this.navBarStatusChangeableAgain,
       required this.hideNavBar});
 
   @override
@@ -748,14 +748,19 @@ class _PostsWidgetState extends State<PostsWidget> {
                                 icon: Icon(Icons.comment),
                                 color: Colors.white,
                                 onPressed: () {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) => SinglePostWidget(
-                                            commentTapped: true,
-                                            session: widget.session,
-                                            post: post,
-                                            user: widget.user,
-                                            languages: languages,
-                                          )));
+                                  widget.hideNavBar();
+                                  Navigator.of(context)
+                                      .push(MaterialPageRoute(
+                                          builder: (context) =>
+                                              SinglePostWidget(
+                                                commentTapped: true,
+                                                session: widget.session,
+                                                post: post,
+                                                user: widget.user,
+                                                languages: languages,
+                                              )))
+                                      .whenComplete(() =>
+                                          widget.navBarStatusChangeableAgain());
                                 },
                               ),
                             ],
@@ -863,6 +868,7 @@ class _PostsWidgetState extends State<PostsWidget> {
   }
 
   void _onPostTap(Post post) {
+    widget.hideNavBar();
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -873,18 +879,18 @@ class _PostsWidgetState extends State<PostsWidget> {
                 user: widget.user,
                 languages: languages,
               )),
-    ).whenComplete(() => {
-          widget.session
-              .get('/api/posts/' + post.postId.toString())
-              .then((response) {
-            if (response.statusCode == 200) {
-              setState(() {
-                post =
-                    Post.fromJson(json.decode(utf8.decode(response.bodyBytes)));
-              });
-            }
-          })
-        });
+    ).whenComplete(() {
+      widget.navBarStatusChangeableAgain();
+      widget.session
+          .get('/api/posts/' + post.postId.toString())
+          .then((response) {
+        if (response.statusCode == 200) {
+          setState(() {
+            post = Post.fromJson(json.decode(utf8.decode(response.bodyBytes)));
+          });
+        }
+      });
+    });
   }
 
   void _onSearchButtonPressed() {
@@ -898,6 +904,7 @@ class _PostsWidgetState extends State<PostsWidget> {
           textColor: Colors.white,
           fontSize: 16.0);
     } else {
+      widget.hideNavBar();
       Navigator.of(context)
           .push(MaterialPageRoute(
               builder: (context) => FilteredPostsWidget(
@@ -907,6 +914,7 @@ class _PostsWidgetState extends State<PostsWidget> {
                     languages: languages,
                   )))
           .whenComplete(() {
+        widget.navBarStatusChangeableAgain();
         _searchFieldController.clear();
         FocusManager.instance.primaryFocus?.unfocus();
       });
@@ -917,6 +925,7 @@ class _PostsWidgetState extends State<PostsWidget> {
     if (_searchFieldController.text.isEmpty) {
       FocusManager.instance.primaryFocus?.unfocus();
     } else {
+      widget.hideNavBar();
       Navigator.of(context)
           .push(MaterialPageRoute(
               builder: (context) => FilteredPostsWidget(
@@ -926,6 +935,7 @@ class _PostsWidgetState extends State<PostsWidget> {
                     languages: languages,
                   )))
           .whenComplete(() {
+        widget.navBarStatusChangeableAgain();
         _searchFieldController.clear();
         FocusManager.instance.primaryFocus?.unfocus();
       });

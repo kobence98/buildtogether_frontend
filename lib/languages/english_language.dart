@@ -462,6 +462,15 @@ class LanguageEn extends Languages {
   @override
   String get titleTooLongWarningMessage => 'Your title is too long! Max length for title is 256 characters.';
 
+  @override
+  String get editDescriptionConfirmLabel => 'Are you sure to make this change on the description?';
+
+  @override
+  String get descriptionNotEditedMessage => 'Description has not been modified.';
+
+  @override
+  String get descriptionTooLongWarningMessage => 'Your description is too long! Max length for description is 2048 characters.';
+
   //BANNED USERS WIDGET
 
   @override

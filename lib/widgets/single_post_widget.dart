@@ -12,6 +12,7 @@ import 'package:flutter_frontend/static/date_formatter.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:like_button/like_button.dart';
 
+import '../static/profanity_checker.dart';
 import 'comments_widget.dart';
 import 'flutter_polls_inno.dart';
 
@@ -40,14 +41,20 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
   bool innerLoading = false;
   final TextEditingController _reportReasonTextFieldController =
       TextEditingController();
-  final TextEditingController _editTitleTextController =
-      TextEditingController();
   final TextEditingController _couponCodeController = TextEditingController();
   late bool voted;
   final commentsKey = GlobalKey();
   late bool isCreator;
+
+  final TextEditingController _editTitleTextController =
+      TextEditingController();
   FocusNode _editTitleTextFocusNode = FocusNode();
   bool _editTitleIsActive = false;
+
+  final TextEditingController _editDescriptionTextController =
+      TextEditingController();
+  FocusNode _editDescriptionTextFocusNode = FocusNode();
+  bool _editDescriptionIsActive = false;
 
   @override
   void initState() {
@@ -56,6 +63,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
     post = widget.post;
     isCreator = post.creatorId == widget.user.userId;
     _editTitleTextController.text = post.title;
+    _editDescriptionTextController.text = post.description;
   }
 
   @override
@@ -323,7 +331,8 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                                       onTap: () {
                                         setState(() {
                                           _editTitleIsActive = false;
-                                          _editTitleTextController.text = post.title;
+                                          _editTitleTextController.text =
+                                              post.title;
                                         });
                                       },
                                     )
@@ -333,13 +342,99 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                         : Container(),
                   ),
                   Container(
-                    padding: EdgeInsets.all(5),
+                    padding:
+                        EdgeInsets.only(left: 5, right: 5, top: 5, bottom: 15),
                     alignment: Alignment.topLeft,
                     child: post.postType == 'SIMPLE_POST'
-                        ? Text(
-                            post.description,
-                            style: TextStyle(color: Colors.white),
-                          )
+                        ? (isCreator
+                            ? Row(
+                                children: [
+                                  Container(
+                                    width: MediaQuery.of(context).size.width -
+                                        (_editDescriptionIsActive ? 70 : 50),
+                                    child: (isCreator &&
+                                            _editDescriptionIsActive
+                                        ? EditableText(
+                                            textInputAction:
+                                                TextInputAction.newline,
+                                            maxLines: null,
+                                            controller:
+                                                _editDescriptionTextController,
+                                            focusNode:
+                                                _editDescriptionTextFocusNode,
+                                            onChanged: (newText) {
+                                              setState(() {});
+                                            },
+                                            style:
+                                                TextStyle(color: Colors.white),
+                                            cursorColor: Colors.white,
+                                            backgroundCursorColor: Colors.black)
+                                        : Text(
+                                            post.description,
+                                            style:
+                                                TextStyle(color: Colors.white),
+                                          )),
+                                  ),
+                                  Container(
+                                    width: _editDescriptionIsActive ? 60 : 30,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        InkWell(
+                                          child: Icon(
+                                            _editDescriptionIsActive
+                                                ? Icons.save_alt
+                                                : Icons.edit,
+                                            color: post.description ==
+                                                        _editDescriptionTextController
+                                                            .text &&
+                                                    _editDescriptionIsActive
+                                                ? Colors.grey
+                                                : Colors.white,
+                                          ),
+                                          onTap: () {
+                                            if (_editDescriptionIsActive) {
+                                              _onSaveDescriptionTap();
+                                            } else {
+                                              setState(() {
+                                                _editDescriptionTextFocusNode
+                                                    .requestFocus();
+                                                _editDescriptionIsActive = true;
+                                              });
+                                            }
+                                          },
+                                        ),
+                                        SizedBox(
+                                          width:
+                                              _editDescriptionIsActive ? 10 : 0,
+                                        ),
+                                        _editDescriptionIsActive
+                                            ? InkWell(
+                                                child: Icon(
+                                                  Icons.cancel,
+                                                  color: Colors.white,
+                                                ),
+                                                onTap: () {
+                                                  setState(() {
+                                                    _editDescriptionIsActive =
+                                                        false;
+                                                    _editDescriptionTextController
+                                                            .text =
+                                                        post.description;
+                                                  });
+                                                },
+                                              )
+                                            : Container(),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : Text(
+                                post.description,
+                                style: TextStyle(color: Colors.white),
+                              ))
                         : _pollWidget(post),
                   ),
                   Container(
@@ -980,7 +1075,25 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
 
   void _onSaveTitleEditTap() {
     _editTitleTextFocusNode.unfocus();
-    if (post.title == _editTitleTextController.text) {
+    if (ProfanityChecker.alert(_editTitleTextController.text)) {
+      Fluttertoast.showToast(
+          msg: languages.profanityWarningMessage,
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 4,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    } else if (_editTitleTextController.text.isEmpty) {
+      Fluttertoast.showToast(
+          msg: languages.fillAllFieldsWarningMessage,
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 4,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    } else if (post.title == _editTitleTextController.text) {
       Fluttertoast.showToast(
           msg: languages.titleNotEditedMessage,
           toastLength: Toast.LENGTH_LONG,
@@ -1090,6 +1203,172 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                                 setState(() {
                                   post.title = _editTitleTextController.text;
                                   _editTitleIsActive = false;
+                                });
+                                Navigator.of(context).pop();
+                                Fluttertoast.showToast(
+                                    msg: languages.successfulDataChangeLabel,
+                                    toastLength: Toast.LENGTH_LONG,
+                                    gravity: ToastGravity.CENTER,
+                                    timeInSecForIosWeb: 4,
+                                    backgroundColor: Colors.green,
+                                    textColor: Colors.white,
+                                    fontSize: 16.0);
+                              } else {
+                                Fluttertoast.showToast(
+                                    msg: languages.globalServerErrorMessage,
+                                    toastLength: Toast.LENGTH_LONG,
+                                    gravity: ToastGravity.CENTER,
+                                    timeInSecForIosWeb: 4,
+                                    backgroundColor: Colors.red,
+                                    textColor: Colors.white,
+                                    fontSize: 16.0);
+                              }
+                            });
+                          },
+                          child: Text(
+                            languages.OKLabel,
+                            style: TextStyle(color: Colors.black),
+                          ),
+                        ),
+                      ],
+                    );
+            });
+          });
+    }
+  }
+
+  void _onSaveDescriptionTap() {
+    _editDescriptionTextFocusNode.unfocus();
+    if (ProfanityChecker.alert(_editDescriptionTextController.text)) {
+      Fluttertoast.showToast(
+          msg: languages.profanityWarningMessage,
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 4,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    } else if (_editDescriptionTextController.text.isEmpty) {
+      Fluttertoast.showToast(
+          msg: languages.fillAllFieldsWarningMessage,
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 4,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    } else if (post.description == _editDescriptionTextController.text) {
+      Fluttertoast.showToast(
+          msg: languages.descriptionNotEditedMessage,
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 4,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    } else if (_editDescriptionTextController.text.length > 2048) {
+      Fluttertoast.showToast(
+          msg: languages.descriptionTooLongWarningMessage,
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 4,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    } else {
+      showDialog(
+          context: context,
+          builder: (context) {
+            return StatefulBuilder(builder: (context, setInnerState) {
+              return innerLoading
+                  ? Container(
+                      child: Center(
+                        child: Image(
+                            image: new AssetImage(
+                                "assets/images/loading_breath.gif")),
+                      ),
+                    )
+                  : AlertDialog(
+                      backgroundColor: Colors.yellow,
+                      title: Text(
+                        languages.editDescriptionConfirmLabel,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                            color: Colors.black),
+                      ),
+                      content: Container(
+                        padding: EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.black),
+                        height: MediaQuery.of(context).size.height / 5,
+                        width: MediaQuery.of(context).size.width,
+                        child: ListView(
+                          children: [
+                            Center(
+                              child: Text(
+                                post.description,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20,
+                                    color: Colors.yellow),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            Center(
+                              child: Icon(
+                                Icons.keyboard_double_arrow_down,
+                                color: Colors.yellow,
+                                size: 40,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            Center(
+                              child: Text(
+                                _editDescriptionTextController.text,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20,
+                                    color: Colors.yellow),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      actions: <Widget>[
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Text(
+                            languages.cancelLabel,
+                            style: TextStyle(color: Colors.black),
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            innerLoading = true;
+                            dynamic body = <String, String?>{
+                              'postId': post.postId.toString(),
+                              'description':
+                                  _editDescriptionTextController.text,
+                            };
+                            widget.session
+                                .postJson('/api/posts/editDescription', body)
+                                .then((response) {
+                              setInnerState(() {
+                                innerLoading = false;
+                              });
+                              if (response.statusCode == 200) {
+                                setState(() {
+                                  post.description =
+                                      _editDescriptionTextController.text;
+                                  _editDescriptionIsActive = false;
                                 });
                                 Navigator.of(context).pop();
                                 Fluttertoast.showToast(

@@ -310,6 +310,12 @@ abstract class Languages {
 
   String get titleTooLongWarningMessage;
 
+  String get editDescriptionConfirmLabel;
+
+  String get descriptionNotEditedMessage;
+
+  String get descriptionTooLongWarningMessage;
+
   //BANNED USERS WIDGET
 
   String get noBannedUsers;

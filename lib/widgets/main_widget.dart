@@ -23,10 +23,11 @@ class MainWidget extends StatefulWidget {
 }
 
 class _MainWidgetState extends State<MainWidget> {
-  PersistentTabController _controller =
+  PersistentTabController _pageController =
       PersistentTabController(initialIndex: 0);
   late Languages languages;
   bool _hideNavBar = false;
+  bool _navBarStatusChangeable = true;
 
   @override
   void initState() {
@@ -36,25 +37,32 @@ class _MainWidgetState extends State<MainWidget> {
 
   @override
   Widget build(BuildContext context) {
+    if (_pageController.index != 0 && _hideNavBar == true) {
+      _hideNavBar = false;
+    }
     return NotificationListener<UserScrollNotification>(
       onNotification: (notification) {
         final ScrollDirection direction = notification.direction;
-        if(direction == ScrollDirection.forward && _hideNavBar == true){
+        if (direction == ScrollDirection.forward &&
+            _hideNavBar == true &&
+            _pageController.index == 0 &&
+            _navBarStatusChangeable) {
           setState(() {
             _hideNavBar = false;
           });
-        }
-        else if(direction == ScrollDirection.reverse && _hideNavBar == false){
+        } else if (direction == ScrollDirection.reverse &&
+            _hideNavBar == false &&
+            _pageController.index == 0 &&
+            _navBarStatusChangeable) {
           setState(() {
             _hideNavBar = true;
           });
         }
-
         return true;
       },
       child: PersistentTabView(
         context,
-        controller: _controller,
+        controller: _pageController,
         screens: _buildScreens(),
         items: _navBarsItems(),
         confineInSafeArea: true,
@@ -86,12 +94,23 @@ class _MainWidgetState extends State<MainWidget> {
   List<Widget> _buildScreens() {
     return [
       PostsWidget(
-          session: widget.session,
-          user: widget.user,
-          initPage: 1,
-          languages: languages,
-          hideNavBar: _hideNavBar,
-          setMainState: setState),
+        session: widget.session,
+        user: widget.user,
+        initPage: 1,
+        languages: languages,
+        hideNavBar: () {
+          setState(() {
+            _navBarStatusChangeable = false;
+            _hideNavBar = true;
+          });
+        },
+        navBarStatusChangeableAgain: () {
+          setState(() {
+            _navBarStatusChangeable = true;
+            _hideNavBar = false;
+          });
+        },
+      ),
       CreatePostWidget(
         session: widget.session,
         user: widget.user,
