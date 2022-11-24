@@ -471,6 +471,9 @@ class LanguageEn extends Languages {
   @override
   String get descriptionTooLongWarningMessage => 'Your description is too long! Max length for description is 2048 characters.';
 
+  @override
+  String get votesText => 'votes';
+
   //BANNED USERS WIDGET
 
   @override

@@ -316,6 +316,8 @@ abstract class Languages {
 
   String get descriptionTooLongWarningMessage;
 
+  String get votesText;
+
   //BANNED USERS WIDGET
 
   String get noBannedUsers;

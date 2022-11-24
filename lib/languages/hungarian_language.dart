@@ -467,6 +467,9 @@ class LanguageHu extends Languages {
   @override
   String get descriptionTooLongWarningMessage => 'Túl hosszú a leírás amit megadtál! Maximum 2048 karakter lehet.';
 
+  @override
+  String get votesText => 'szavazat';
+
   //BANNED USERS WIDGET
 
   @override

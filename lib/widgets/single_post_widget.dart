@@ -339,7 +339,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                                   : Container(),
                             ],
                           )
-                        : Container(),
+                        : Container( width: 0, height: 0,),
                   ),
                   Container(
                     padding:
@@ -601,17 +601,18 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
 
   Widget _pollWidget(Post post) {
     List<PollOption> polls = [];
+    List<PollOptionInno> likedPollOptions =
+    post.pollOptions.where((po) => po.liked).toList();
+
     for (PollOptionInno option in post.pollOptions) {
       polls.add(PollOption(
           id: option.pollId,
-          title: Text(option.title == null ? '' : option.title!),
+          title: Container(padding: likedPollOptions.isEmpty ? EdgeInsets.symmetric(horizontal: 5) : EdgeInsets.zero, child: Text(option.title == null ? '' : option.title!,), width: likedPollOptions.isEmpty ? MediaQuery.of(context).size.width : MediaQuery.of(context).size.width - 150,),
           votes: option.likeNumber));
     }
 
-    List<PollOptionInno> likedPollOptions =
-        post.pollOptions.where((po) => po.liked).toList();
-
     return FlutterPollsInno(
+      votesText: languages.votesText,
       pollOptionsFillColor: Colors.yellow,
       votedBackgroundColor: Colors.yellow.shade600,
       leadingVotedByUserProgessColor: Colors.red,
@@ -627,6 +628,9 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
         '${languages.numberOfVotesLabel}: ${post.pollOptions.map((e) => e.likeNumber).reduce((a, b) => a + b)}',
         style: TextStyle(color: Colors.white, fontStyle: FontStyle.italic),
       ),
+      onPollOptionRemove: (){
+        _onRemovePollVote();
+      },
       pollOptions: polls,
       userVotedOptionId:
           likedPollOptions.isEmpty ? null : likedPollOptions.first.pollId,
@@ -934,7 +938,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
     return Future.value(false);
   }
 
-  _onRemovePollVote() {
+  void _onRemovePollVote() {
     widget.session
         .delete('/api/posts/' + post.postId.toString() + '/pollVote')
         .then((response) {
@@ -1053,11 +1057,15 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
         Map());
     if (response.statusCode == 200) {
       setState(() {
+
         post.pollOptions.forEach((option) {
+          if(option.liked){
+            option.likeNumber--;
+          }
           option.liked = false;
         });
-        post.pollOptions.where((po) => po.pollId == pollId).first.liked = true;
         post.pollOptions.where((po) => po.pollId == pollId).first.likeNumber++;
+        post.pollOptions.where((po) => po.pollId == pollId).first.liked = true;
       });
       return Future.value(true);
     } else {
