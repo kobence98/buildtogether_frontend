@@ -607,11 +607,12 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
     for (PollOptionInno option in post.pollOptions) {
       polls.add(PollOption(
           id: option.pollId,
-          title: Container(padding: likedPollOptions.isEmpty ? EdgeInsets.symmetric(horizontal: 5) : EdgeInsets.zero, child: Text(option.title == null ? '' : option.title!,), width: likedPollOptions.isEmpty ? MediaQuery.of(context).size.width : MediaQuery.of(context).size.width - 150,),
+          title: Container(padding: likedPollOptions.isEmpty ? EdgeInsets.symmetric(horizontal: 5) : EdgeInsets.zero, child: Text(option.title == null ? '' : option.title!,), width: likedPollOptions.isEmpty && widget.user.userId != post.creatorId ? MediaQuery.of(context).size.width : MediaQuery.of(context).size.width - 180,),
           votes: option.likeNumber));
     }
 
     return FlutterPollsInno(
+      isOwn: post.creatorId == widget.user.userId,
       votesText: languages.votesText,
       pollOptionsFillColor: Colors.yellow,
       votedBackgroundColor: Colors.yellow.shade600,

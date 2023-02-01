@@ -7,6 +7,7 @@ class FlutterPollsInno extends StatefulWidget {
   const FlutterPollsInno({
     required this.pollId,
     this.hasVoted = false,
+    this.isOwn = false,
     this.userVotedOptionId,
     required this.onVoted,
     this.loadingWidget,
@@ -34,7 +35,7 @@ class FlutterPollsInno extends StatefulWidget {
     this.leadingVotedByUserProgessColor = const Color(0xff0496FF),
     this.votedCheckmark,
     this.votedPercentageTextStyle,
-    this.votedAnimationDuration = 1000,
+    this.votedAnimationDuration = 2000,
     required this.onPollOptionRemove,
   });
 
@@ -200,6 +201,8 @@ class FlutterPollsInno extends StatefulWidget {
 
   final Function onPollOptionRemove;
 
+  final bool isOwn;
+
   @override
   State<FlutterPollsInno> createState() => _FlutterPollsInnoState();
 }
@@ -249,8 +252,10 @@ class _FlutterPollsInnoState extends State<FlutterPollsInno> {
                           bottom: widget.heightBetweenOptions ?? 8,
                         ),
                         child: InkWell(
-                          onTap: (){
-                            _onOptionTap(votedOption, pollOption, totalVotes);
+                          onTap: () {
+                            if(!widget.isOwn){
+                              _onOptionTap(votedOption, pollOption, totalVotes);
+                            }
                           },
                           child: LinearPercentIndicator(
                             width: MediaQuery.of(context).size.width - 10,
@@ -281,36 +286,33 @@ class _FlutterPollsInnoState extends State<FlutterPollsInno> {
                                     : widget.leadingVotedProgessColor)
                                 : widget.votedProgressColor,
                             center: Container(
+                              width: MediaQuery.of(context).size.width - 10,
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 5,
                               ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      pollOption.title,
-                                      const SizedBox(width: 10),
-                                      votedOption != null &&
-                                              votedOption.id == pollOption.id
-                                          ? const Icon(
-                                              Icons
-                                                  .check_circle_outline_rounded,
-                                              color: Colors.black,
-                                              size: 16,
-                                            )
-                                          : Container(),
-                                    ],
-                                  ),
-                                  Text(
-                                    totalVotes == 0
-                                        ? "0 ${widget.votesText}"
-                                        : '${(pollOption.votes / totalVotes * 100).toStringAsFixed(1)}% (${pollOption.votes})',
-                                    style: widget.votedPercentageTextStyle,
-                                  ),
-                                ],
+                              child: Container(
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    pollOption.title,
+                                    votedOption != null &&
+                                            votedOption.id == pollOption.id
+                                        ? const Icon(
+                                            Icons.check_circle_outline_rounded,
+                                            color: Colors.black,
+                                            size: 16,
+                                          )
+                                        : Container(),
+                                    Text(
+                                      totalVotes == 0
+                                          ? "0 ${widget.votesText}"
+                                          : '${(pollOption.votes / totalVotes * 100).toStringAsFixed(1)}% (${pollOption.votes})',
+                                      style: widget.votedPercentageTextStyle,
+                                      textAlign: TextAlign.end,
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
@@ -322,7 +324,7 @@ class _FlutterPollsInnoState extends State<FlutterPollsInno> {
                           bottom: widget.heightBetweenOptions ?? 8,
                         ),
                         child: InkWell(
-                          onTap: (){
+                          onTap: () {
                             _onOptionTap(votedOption, pollOption, totalVotes);
                           },
                           splashColor: widget.pollOptionsSplashColor,
@@ -385,14 +387,14 @@ class _FlutterPollsInnoState extends State<FlutterPollsInno> {
     );
   }
 
-  Future<void> _onOptionTap(PollOption? votedOption, PollOption pollOption, int totalVotes) async {
+  Future<void> _onOptionTap(
+      PollOption? votedOption, PollOption pollOption, int totalVotes) async {
     // Disables clicking while loading
     if (isLoading) return;
 
-    if(votedOption == pollOption){
+    if (votedOption == pollOption) {
       widget.onPollOptionRemove();
-    }
-    else{
+    } else {
       votedOption = pollOption;
 
       isLoading = true;
@@ -405,8 +407,8 @@ class _FlutterPollsInnoState extends State<FlutterPollsInno> {
       isLoading = false;
 
       if (success) {
-          _doAnimate = true;
-          pollOption.votes++;
+        _doAnimate = true;
+        pollOption.votes++;
       }
     }
   }
