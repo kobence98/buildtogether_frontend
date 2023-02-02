@@ -8,7 +8,8 @@
 
    <application
         android:label="INNO"
-        android:icon="@mipmap/launcher_icon"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/round_launcher"
         android:usesCleartextTraffic="true">
         <activity
             android:name=".MainActivity"
