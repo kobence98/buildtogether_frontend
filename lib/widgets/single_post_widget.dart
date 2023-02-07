@@ -1058,7 +1058,6 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
         Map());
     if (response.statusCode == 200) {
       setState(() {
-
         post.pollOptions.forEach((option) {
           if(option.liked){
             option.likeNumber--;

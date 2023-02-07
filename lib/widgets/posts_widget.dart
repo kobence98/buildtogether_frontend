@@ -747,8 +747,8 @@ class _PostsWidgetState extends State<PostsWidget> {
                               IconButton(
                                 icon: Icon(Icons.comment),
                                 color: Colors.white,
-                                onPressed: () {
-                                  widget.hideNavBar();
+                                onPressed: () async {
+                                  await widget.hideNavBar();
                                   Navigator.of(context)
                                       .push(MaterialPageRoute(
                                           builder: (context) =>
@@ -867,8 +867,8 @@ class _PostsWidgetState extends State<PostsWidget> {
     }
   }
 
-  void _onPostTap(Post post) {
-    widget.hideNavBar();
+  void _onPostTap(Post post) async {
+    await widget.hideNavBar();
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -893,7 +893,7 @@ class _PostsWidgetState extends State<PostsWidget> {
     });
   }
 
-  void _onSearchButtonPressed() {
+  void _onSearchButtonPressed() async {
     if (_searchFieldController.text.isEmpty) {
       Fluttertoast.showToast(
           msg: languages.fillTheSearchFieldWarningMessage,
@@ -904,7 +904,7 @@ class _PostsWidgetState extends State<PostsWidget> {
           textColor: Colors.white,
           fontSize: 16.0);
     } else {
-      widget.hideNavBar();
+      await widget.hideNavBar();
       Navigator.of(context)
           .push(MaterialPageRoute(
               builder: (context) => FilteredPostsWidget(
@@ -921,11 +921,11 @@ class _PostsWidgetState extends State<PostsWidget> {
     }
   }
 
-  void _onSearchComplete() {
+  void _onSearchComplete() async {
     if (_searchFieldController.text.isEmpty) {
       FocusManager.instance.primaryFocus?.unfocus();
     } else {
-      widget.hideNavBar();
+      await widget.hideNavBar();
       Navigator.of(context)
           .push(MaterialPageRoute(
               builder: (context) => FilteredPostsWidget(

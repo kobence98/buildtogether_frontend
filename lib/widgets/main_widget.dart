@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -98,12 +100,7 @@ class _MainWidgetState extends State<MainWidget> {
         user: widget.user,
         initPage: 1,
         languages: languages,
-        hideNavBar: () {
-          setState(() {
-            _navBarStatusChangeable = false;
-            _hideNavBar = true;
-          });
-        },
+        hideNavBar: hideNavBar,
         navBarStatusChangeableAgain: () {
           setState(() {
             _navBarStatusChangeable = true;
@@ -119,6 +116,14 @@ class _MainWidgetState extends State<MainWidget> {
       SettingsWidget(
           session: widget.session, user: widget.user, languages: languages)
     ];
+  }
+
+  Future hideNavBar() async {
+    setState(() {
+      _navBarStatusChangeable = false;
+      _hideNavBar = true;
+    });
+    await Future.delayed(Duration(milliseconds: 250));
   }
 
   List<PersistentBottomNavBarItem> _navBarsItems() {
