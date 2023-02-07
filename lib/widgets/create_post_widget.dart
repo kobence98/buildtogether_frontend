@@ -24,14 +24,20 @@ class CreatePostWidget extends StatefulWidget {
 
 class _CreatePostWidgetState extends State<CreatePostWidget> {
   final TextEditingController _companyNameController = TextEditingController();
+  final FocusNode _companyNameFocus = FocusNode();
+  final FocusNode _titleFocus = FocusNode();
+  final FocusNode _descriptionFocus = FocusNode();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _pollTitleController = TextEditingController();
+  final FocusNode _pollTitleNameFocus = FocusNode();
   List<CompanyForSearch> companies = [];
   CompanyForSearch? _selectedCompany;
   late bool company;
 
   List<TextEditingController> pollControllers = [];
   List<Widget> pollOptions = [];
+  List<FocusNode> pollFocusNodes = [];
   late bool isButtonEnabled;
   int nameLength = 0;
 
@@ -49,6 +55,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
     pollControllers.add(second);
     _addInitPollOption(first);
     _addInitPollOption(second);
+    _companyNameFocus.requestFocus();
   }
 
   @override
@@ -63,6 +70,13 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                   child: Scaffold(
                     backgroundColor: Colors.black,
                     appBar: TabBar(
+                        onTap: (int index) {
+                          if (index == 0) {
+                            _companyNameFocus.requestFocus();
+                          } else if (index == 1) {
+                            _pollTitleNameFocus.requestFocus();
+                          }
+                        },
                         labelColor: Colors.yellow,
                         indicatorColor: Colors.yellow,
                         tabs: [
@@ -222,7 +236,19 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                       decoration: new InputDecoration.collapsed(
                           hintText: languages.companyNameLabel),
                       controller: _companyNameController,
+                      onEditingComplete: (){
+                        if(_titleController.text.isEmpty){
+                          _titleFocus.requestFocus();
+                        }
+                        else if(_descriptionController.text.isEmpty){
+                          _descriptionFocus.requestFocus();
+                        }
+                        else{
+                          _companyNameFocus.unfocus();
+                        }
+                      },
                       cursorColor: Colors.black,
+                      focusNode: _companyNameFocus,
                       autofocus: true,
                       style: TextStyle(fontSize: 20),
                     ),
@@ -279,6 +305,15 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                             .first;
                         _companyNameController.text = company.name;
                         _selectedCompany = company;
+                        if(_titleController.text.isEmpty){
+                          _titleFocus.requestFocus();
+                        }
+                        else if(_descriptionController.text.isEmpty){
+                          _descriptionFocus.requestFocus();
+                        }
+                        else{
+                          _companyNameFocus.unfocus();
+                        }
                       });
                     },
                   ),
@@ -334,6 +369,15 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
             ),
             padding: EdgeInsets.all(4),
             child: TextField(
+              focusNode: _titleFocus,
+              onEditingComplete: (){
+                if(_descriptionController.text.isEmpty){
+                  _descriptionFocus.requestFocus();
+                }
+                else{
+                  _titleFocus.unfocus();
+                }
+              },
               controller: _titleController,
               style: TextStyle(fontSize: 20),
               decoration: new InputDecoration.collapsed(
@@ -357,6 +401,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                 maxLines: null,
                 maxLength: 2048,
                 controller: _descriptionController,
+                focusNode: _descriptionFocus,
                 style: TextStyle(fontSize: 20),
                 decoration: new InputDecoration.collapsed(
                     hintText: languages.writeHereYourIdeaLabel),
@@ -423,13 +468,24 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                 padding: EdgeInsets.all(10),
                 child: TextField(
                   cursorColor: Colors.black,
-                  controller: _titleController,
+                  controller: _pollTitleController,
+                  focusNode: _pollTitleNameFocus,
+                  onEditingComplete: () {
+                    int nextEmptyIndex = pollControllers
+                        .indexWhere((element) => element.text.isEmpty);
+                    if (nextEmptyIndex != -1) {
+                      pollFocusNodes.elementAt(nextEmptyIndex).requestFocus();
+                    } else {
+                      _pollTitleNameFocus.unfocus();
+                    }
+                  },
                   maxLength: 256,
                   style: TextStyle(fontSize: 20),
                   decoration: new InputDecoration(
-                    isCollapsed: true,
+                      isCollapsed: true,
                       counterText: '',
-                      focusedBorder: OutlineInputBorder(borderSide: BorderSide.none),
+                      focusedBorder:
+                          OutlineInputBorder(borderSide: BorderSide.none),
                       hintText: languages.pollShortDescriptionLabel),
                 ),
               );
@@ -496,7 +552,8 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
 
   void _onAddOptionPressed() {
     setState(() {
-      FocusNode focusNode = FocusNode();
+      FocusNode focusNode = new FocusNode();
+      pollFocusNodes.add(focusNode);
       TextEditingController textEditingController = TextEditingController();
       pollControllers.add(textEditingController);
       pollOptions.add(
@@ -514,6 +571,15 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
               Flexible(
                 child: TextField(
                   focusNode: focusNode,
+                  onEditingComplete: () {
+                    int nextEmptyIndex = pollControllers
+                        .indexWhere((element) => element.text.isEmpty && element != textEditingController);
+                    if (nextEmptyIndex != -1) {
+                      pollFocusNodes.elementAt(nextEmptyIndex).requestFocus();
+                    } else {
+                      focusNode.unfocus();
+                    }
+                  },
                   style: TextStyle(color: Colors.black),
                   controller: textEditingController,
                   cursorColor: Colors.black,
@@ -525,7 +591,8 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                   },
                   decoration: InputDecoration(
                     counterText: '',
-                    focusedBorder: OutlineInputBorder(borderSide: BorderSide.none),
+                    focusedBorder:
+                        OutlineInputBorder(borderSide: BorderSide.none),
                     hintText: languages.newPollOptionLabel,
                     hintStyle: TextStyle(color: Colors.black.withOpacity(0.5)),
                   ),
@@ -568,7 +635,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
         pollsConcat = pollsConcat + ' ' + poll.text;
       }
     });
-    if (ProfanityChecker.alert(_titleController.text + ' ' + pollsConcat)) {
+    if (ProfanityChecker.alert(_pollTitleController.text + ' ' + pollsConcat)) {
       setState(() {
         isButtonEnabled = true;
       });
@@ -581,7 +648,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
           textColor: Colors.white,
           fontSize: 16.0);
     } else {
-      if (_titleController.text.isEmpty || pollsAreEmpty) {
+      if (_pollTitleController.text.isEmpty || pollsAreEmpty) {
         setState(() {
           isButtonEnabled = true;
         });
@@ -599,7 +666,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
           options.add(poll.text);
         });
         dynamic body = <String, dynamic>{
-          'title': _titleController.text,
+          'title': _pollTitleController.text,
           'options': options
         };
         widget.session
@@ -609,7 +676,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
         )
             .then((response) {
           if (response.statusCode == 200) {
-            _titleController.clear();
+            _pollTitleController.clear();
             _companyNameController.clear();
             _descriptionController.clear();
             setState(() {
@@ -631,6 +698,8 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
   }
 
   void _addInitPollOption(TextEditingController textEditingController) {
+    FocusNode focusNode = new FocusNode();
+    pollFocusNodes.add(focusNode);
     pollOptions.add(
       Container(
         margin: EdgeInsets.only(left: 10, right: 10, top: 10),
@@ -645,6 +714,16 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
           style: TextStyle(color: Colors.black),
           maxLength: 40,
           controller: textEditingController,
+          focusNode: focusNode,
+          onEditingComplete: () {
+            int nextEmptyIndex = pollControllers
+                .indexWhere((element) => element.text.isEmpty && element != textEditingController);
+            if (nextEmptyIndex != -1) {
+              pollFocusNodes.elementAt(nextEmptyIndex).requestFocus();
+            } else {
+              focusNode.unfocus();
+            }
+          },
           cursorColor: Colors.black,
           decoration: InputDecoration(
             counterText: '',
