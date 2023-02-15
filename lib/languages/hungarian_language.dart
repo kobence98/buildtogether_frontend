@@ -192,7 +192,7 @@ class LanguageHu extends Languages {
   String get logoLabel => 'Logó';
 
   @override
-  String get likesNotificationEmailTipLabel => 'Állítsd a kapcsolót, ha a céged értesítést akar kapni egy megadott számú like után a posztjairól.';
+  String get likesNotificationEmailTipLabel => 'Állítsd a kapcsolót, ha a céged értesítést akar kapni egy megadott számú like után a posztjairól:';
 
   @override
   String get changeDataLabel => 'Adatok megváltoztatása';
@@ -208,6 +208,21 @@ class LanguageHu extends Languages {
 
   @override
   String get fillAllFieldsWithLocationWarningMessage => 'Töltsd ki az összes mezőt megfelelően, még az országot is válaszd ki!';
+
+  @override
+  String get numberOfHouseholdMembersLabel => 'Háztartásbeliek száma:';
+
+  @override
+  String get ageLabel => 'Kor:';
+
+  @override
+  String get genderLabel => 'Nem:';
+
+  @override
+  String get livingPlaceTypeLabel => 'Lakhely:';
+
+  @override
+  String get salaryTypeLabel => 'Kereset:';
 
   //COMMENTS WIDGET
 
@@ -496,5 +511,27 @@ class LanguageHu extends Languages {
 
   @override
   String get inactiveCompany => 'Inaktív cég';
+
+  //GENDER ENUM
+
+  @override
+  String get manLabel => 'FÉRFI';
+
+  @override
+  String get womanLabel => 'NŐ';
+
+  @override
+  String get otherLabel => 'EGYÉB';
+
+  //LIVING PLACE TYPE ENUM
+
+  @override
+  String get capitalCity => 'FŐVÁROS';
+
+  @override
+  String get town => 'KISVÁROS/KÖZSÉG';
+
+  @override
+  String get village => 'FALU';
 
 }

@@ -140,6 +140,16 @@ abstract class Languages {
 
   String get fillAllFieldsWithLocationWarningMessage;
 
+  String get numberOfHouseholdMembersLabel;
+
+  String get ageLabel;
+
+  String get genderLabel;
+
+  String get livingPlaceTypeLabel;
+
+  String get salaryTypeLabel;
+
   //COMMENTS WIDGET
 
   String get deleteLabel;
@@ -337,4 +347,20 @@ abstract class Languages {
   String get activeCompany;
 
   String get inactiveCompany;
+
+  //GENDER ENUM
+
+  String get manLabel;
+
+  String get womanLabel;
+
+  String get otherLabel;
+
+  //LIVING PLACE TYPE ENUM
+
+  String get capitalCity;
+
+  String get town;
+
+  String get village;
 }

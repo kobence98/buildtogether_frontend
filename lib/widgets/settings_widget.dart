@@ -20,9 +20,15 @@ class SettingsWidget extends StatefulWidget {
   final Session session;
   final User user;
   final Languages languages;
+  final Function hideNavBar;
+  final Function navBarStatusChangeableAgain;
 
   const SettingsWidget(
-      {required this.session, required this.user, required this.languages});
+      {required this.session,
+      required this.user,
+      required this.languages,
+      required this.navBarStatusChangeableAgain,
+      required this.hideNavBar});
 
   @override
   _SettingsWidgetState createState() => _SettingsWidgetState();
@@ -195,25 +201,25 @@ class _SettingsWidgetState extends State<SettingsWidget> {
             SizedBox(height: 5),
             company
                 ? Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(10),
-                ),
-                color: Colors.yellowAccent,
-              ),
-              child: ListTile(
-                leading: Icon(
-                  Icons.subscriptions,
-                  color: Colors.black,
-                ),
-                title: Text(
-                  languages.subscriptionHandlingLabel,
-                  style:
-                  TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                ),
-                onTap: _onSubscriptionHandlingTap,
-              ),
-            )
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(10),
+                      ),
+                      color: Colors.yellowAccent,
+                    ),
+                    child: ListTile(
+                      leading: Icon(
+                        Icons.subscriptions,
+                        color: Colors.black,
+                      ),
+                      title: Text(
+                        languages.subscriptionHandlingLabel,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 20),
+                      ),
+                      onTap: _onSubscriptionHandlingTap,
+                    ),
+                  )
                 : Container(),
             SizedBox(height: company ? 5 : 0),
             Container(
@@ -276,16 +282,18 @@ class _SettingsWidgetState extends State<SettingsWidget> {
     });
   }
 
-  void _onChangePasswordTap() {
+  void _onChangePasswordTap() async {
+    await widget.hideNavBar();
     Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => ChangePasswordWidget(
               user: widget.user,
               session: widget.session,
               languages: languages,
-            )));
+            ))).whenComplete(() => widget.navBarStatusChangeableAgain());
   }
 
-  void _onChangeUserDataTap() {
+  void _onChangeUserDataTap() async {
+    await widget.hideNavBar();
     Navigator.of(context)
         .push(MaterialPageRoute(
             builder: (context) => ChangeUserDataWidget(
@@ -294,19 +302,23 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                   languages: languages,
                 )))
         .then((message) {
-          if(message != null && message == 'DATA_CHANGED'){
-            Phoenix.rebirth(context);
-          }
+      if (message != null && message == 'DATA_CHANGED') {
+        Phoenix.rebirth(context);
+      }
+      else{
+        widget.navBarStatusChangeableAgain();
+      }
     });
   }
 
-  void _onChangeLocationTap() {
+  void _onChangeLocationTap() async {
+    await widget.hideNavBar();
     Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => ChangeLocationWidget(
               user: widget.user,
               session: widget.session,
               languages: languages,
-            )));
+            ))).whenComplete(() => widget.navBarStatusChangeableAgain());
   }
 
   void _onChangeLanguageTap() {
@@ -314,69 +326,73 @@ class _SettingsWidgetState extends State<SettingsWidget> {
         context: context,
         builder: (context) {
           return AlertDialog(
-                  backgroundColor: Colors.grey[900],
-                  title: Text(
-                    languages.changeLanguageLabel,
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
-                        color: Colors.yellow),
-                  ),
-                  content: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        child: Center(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              InkWell(
-                                child: CircleAvatar(
-                                  backgroundColor: Colors.white,
-                                  radius: 30,
-                                  foregroundImage: AssetImage(
-                                      'icons/flags/png/gb.png',
-                                      package: 'country_icons'),
-                                ),
-                                onTap: () {
-                                  languagesSqfLiteHandler.insertLanguageCode(
-                                      LanguageCode(code: 'en', id: 0)).whenComplete(() => Phoenix.rebirth(context));
-                                },
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              InkWell(
-                                child: CircleAvatar(
-                                  backgroundColor: Colors.white,
-                                  radius: 30,
-                                  foregroundImage: AssetImage(
-                                      'icons/flags/png/hu.png',
-                                      package: 'country_icons'),
-                                ),
-                                onTap: () {
-                                  languagesSqfLiteHandler.insertLanguageCode(
-                                      LanguageCode(code: 'hu', id: 0)).whenComplete(() => Phoenix.rebirth(context));
-                                },
-                              ),
-                            ],
+            backgroundColor: Colors.grey[900],
+            title: Text(
+              languages.changeLanguageLabel,
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                  color: Colors.yellow),
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  child: Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        InkWell(
+                          child: CircleAvatar(
+                            backgroundColor: Colors.white,
+                            radius: 30,
+                            foregroundImage: AssetImage(
+                                'icons/flags/png/gb.png',
+                                package: 'country_icons'),
                           ),
+                          onTap: () {
+                            languagesSqfLiteHandler
+                                .insertLanguageCode(
+                                    LanguageCode(code: 'en', id: 0))
+                                .whenComplete(() => Phoenix.rebirth(context));
+                          },
                         ),
-                      ),
-                    ],
-                  ),
-                  actions: <Widget>[
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: Text(
-                        languages.cancelLabel,
-                        style: TextStyle(color: Colors.yellow),
-                      ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        InkWell(
+                          child: CircleAvatar(
+                            backgroundColor: Colors.white,
+                            radius: 30,
+                            foregroundImage: AssetImage(
+                                'icons/flags/png/hu.png',
+                                package: 'country_icons'),
+                          ),
+                          onTap: () {
+                            languagesSqfLiteHandler
+                                .insertLanguageCode(
+                                    LanguageCode(code: 'hu', id: 0))
+                                .whenComplete(() => Phoenix.rebirth(context));
+                          },
+                        ),
+                      ],
                     ),
-                  ],
-                );
+                  ),
+                ),
+              ],
+            ),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text(
+                  languages.cancelLabel,
+                  style: TextStyle(color: Colors.yellow),
+                ),
+              ),
+            ],
+          );
         });
   }
 
@@ -389,11 +405,13 @@ class _SettingsWidgetState extends State<SettingsWidget> {
             return loading
                 ? Container(
                     child: Center(
-                      child: Image(image: new AssetImage("assets/images/loading_breath.gif")),
+                      child: Image(
+                          image: new AssetImage(
+                              "assets/images/loading_breath.gif")),
                     ),
                   )
                 : AlertDialog(
-              backgroundColor: Colors.grey[900],
+                    backgroundColor: Colors.grey[900],
                     title: Text(
                       '${languages.subscriptionHandlingLabel}.',
                       style: TextStyle(
@@ -454,7 +472,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
         loading = false;
         Navigator.of(context).pop();
         widget.user.isCompanyActive = !widget.user.isCompanyActive;
-        if(widget.user.isCompanyActive){
+        if (widget.user.isCompanyActive) {
           Fluttertoast.showToast(
               msg: languages.successfulSubscriptionMessage,
               toastLength: Toast.LENGTH_LONG,
@@ -463,8 +481,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
               backgroundColor: Colors.green,
               textColor: Colors.white,
               fontSize: 16.0);
-        }
-        else{
+        } else {
           Fluttertoast.showToast(
               msg: languages.successfulSubscriptionCancelMessage,
               toastLength: Toast.LENGTH_LONG,
@@ -490,13 +507,14 @@ class _SettingsWidgetState extends State<SettingsWidget> {
     });
   }
 
-  void _onHandleBansTap() {
+  void _onHandleBansTap() async {
+    await widget.hideNavBar();
     Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => HandleBansWidget(
-          user: widget.user,
-          session: widget.session,
-          languages: languages,
-        )));
+              user: widget.user,
+              session: widget.session,
+              languages: languages,
+            ))).whenComplete(() => widget.navBarStatusChangeableAgain());
   }
 
   void _onDeleteAccountTap() {
@@ -507,48 +525,51 @@ class _SettingsWidgetState extends State<SettingsWidget> {
           return StatefulBuilder(builder: (context, setState) {
             return loading
                 ? Container(
-              child: Center(
-                child: Image(image: new AssetImage("assets/images/loading_breath.gif")),
-              ),
-            )
+                    child: Center(
+                      child: Image(
+                          image: new AssetImage(
+                              "assets/images/loading_breath.gif")),
+                    ),
+                  )
                 : AlertDialog(
-              backgroundColor: Colors.red,
-              title: Text(
-                languages.deleteAccountWarningTitle,
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                    color: Colors.white),
-              ),
-              content: Container(
-                child: Text(languages.deleteAccountWarningMessage,
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                      color: Colors.white),
-                ),
-              ),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text(
-                    languages.cancelLabel,
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
-                TextButton(
-                  onPressed: () {
-                    _onDeleteAccountDeleteButtonTap(setState);
-                  },
-                  child: Text(
-                    languages.deleteLabel,
-                    style: TextStyle(color: Colors.white),
-                  ),
-                )
-              ],
-            );
+                    backgroundColor: Colors.red,
+                    title: Text(
+                      languages.deleteAccountWarningTitle,
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                          color: Colors.white),
+                    ),
+                    content: Container(
+                      child: Text(
+                        languages.deleteAccountWarningMessage,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                            color: Colors.white),
+                      ),
+                    ),
+                    actions: <Widget>[
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Text(
+                          languages.cancelLabel,
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          _onDeleteAccountDeleteButtonTap(setState);
+                        },
+                        child: Text(
+                          languages.deleteLabel,
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      )
+                    ],
+                  );
           });
         });
   }
@@ -557,10 +578,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
     setState(() {
       loading = true;
     });
-    widget.session
-        .delete(
-        '/api/users')
-        .then((response) {
+    widget.session.delete('/api/users').then((response) {
       if (response.statusCode == 200) {
         loading = false;
         widget.session.updateCookie(response);
@@ -590,20 +608,22 @@ class _SettingsWidgetState extends State<SettingsWidget> {
     });
   }
 
-  void _onLikedPostsTap() {
+  void _onLikedPostsTap() async {
+    await widget.hideNavBar();
     Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => LikedPostsWidget(
-          user: widget.user,
-          session: widget.session,
-          languages: languages,
-        )));
+              user: widget.user,
+              session: widget.session,
+              languages: languages,
+            ))).whenComplete(() => widget.navBarStatusChangeableAgain());
   }
 
-  void _onCompaniesTap() {
+  void _onCompaniesTap() async {
+    await widget.hideNavBar();
     Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => CompaniesWidget(
-          session: widget.session,
-          languages: languages,
-        )));
+              session: widget.session,
+              languages: languages,
+            ))).whenComplete(() => widget.navBarStatusChangeableAgain());
   }
 }

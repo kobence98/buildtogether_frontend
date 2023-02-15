@@ -1,9 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_frontend/entities/age_bracket.dart';
 import 'package:flutter_frontend/entities/company.dart';
+import 'package:flutter_frontend/entities/living_place_type.dart';
 import 'package:flutter_frontend/entities/session.dart';
 import 'package:flutter_frontend/entities/user.dart';
 import 'package:flutter_frontend/languages/languages.dart';
@@ -11,6 +14,9 @@ import 'package:flutter_frontend/static/profanity_checker.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:numberpicker/numberpicker.dart';
+
+import '../entities/gender.dart';
+import '../entities/salary_type.dart';
 
 class ChangeUserDataWidget extends StatefulWidget {
   final Session session;
@@ -29,6 +35,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
   final TextEditingController _descriptionController = TextEditingController();
   late bool _emailNotificationForCompany;
   late int _emailNotificationNumber;
+  late int _numberOfHouseholdMembersValue;
   late bool company;
   List<String> countryCodes = [];
   String? _chosenCountryCode;
@@ -36,6 +43,11 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
   XFile? image;
   Company? companyData;
   late Languages languages;
+  List<Widget> widgetList = [];
+  AgeBracket? _chosenAgeBracket;
+  Gender? _chosenGender;
+  LivingPlaceType? _chosenLivingPlaceType;
+  SalaryType? _chosenSalaryType;
 
   @override
   void initState() {
@@ -48,8 +60,17 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
             widget.user.emailNotificationForCompanyNumber == 0)
         ? 100
         : widget.user.emailNotificationForCompanyNumber;
+    _numberOfHouseholdMembersValue =
+        widget.user.numberOfHouseholdMembers == null
+            ? 1
+            : widget.user.numberOfHouseholdMembers!;
 
     company = widget.user.roles.contains('ROLE_COMPANY');
+    //ADATOK BETÖLTÉSE AZ ÁTADOTT USER DATA-BÓL
+    _chosenAgeBracket = widget.user.age;
+    _chosenGender = widget.user.gender;
+    _chosenLivingPlaceType = widget.user.livingPlaceType;
+    _chosenSalaryType = widget.user.salaryType;
 
     countryCodes.add("Global");
     widget.session.get('/api/companies/countryCodes').then((response) {
@@ -58,25 +79,20 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
         countryCodes.addAll(l.map((data) => data.toString()).toList());
         countryCodes.remove("Undefined");
         countryCodes = countryCodes.toSet().toList();
-        countryCodes.sort((String a, String b){
-          if(a == 'Global'){
+        countryCodes.sort((String a, String b) {
+          if (a == 'Global') {
             return -1;
-          }
-          else if(b == 'Global'){
+          } else if (b == 'Global') {
             return 1;
-          }
-          else{
-            if(a == 'Hungary'){
+          } else {
+            if (a == 'Hungary') {
               return -1;
-            }
-            else if(b == 'Hungary'){
+            } else if (b == 'Hungary') {
               return 1;
-            }
-            else{
-              if(a == 'United Kingdom'){
+            } else {
+              if (a == 'United Kingdom') {
                 return -1;
-              }
-              else if(b == 'United Kingdom'){
+              } else if (b == 'United Kingdom') {
                 return 1;
               }
             }
@@ -119,6 +135,11 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
 
   @override
   Widget build(BuildContext context) {
+    if (company && companyData != null) {
+      _addCompanyItems();
+    } else if (!company) {
+      _addNonCompanyItems();
+    }
     return SafeArea(
       child: Scaffold(
           appBar: AppBar(
@@ -133,220 +154,61 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                           MediaQuery.of(context).size.height * 0.02),
                       child: ListView(
                         children: [
-                          Center(
-                            child: Row(
-                              children: [
-                                Flexible(
-                                  child: Container(
-                                    child: Text(
-                                      "${languages.nameLabel}: ",
-                                      style: TextStyle(
-                                          color: Colors.yellow,
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                  flex: 2,
-                                ),
-                                Flexible(
-                                  child: Container(
-                                    padding: EdgeInsets.only(left: 20.0),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(10),
-                                      ),
-                                      color: Colors.yellow.withOpacity(0.7),
-                                    ),
-                                    child: TextField(
-                                      style: TextStyle(color: Colors.black),
-                                      controller: _nameController,
-                                      maxLength: 30,
-                                      cursorColor: Colors.black,
-                                      decoration: InputDecoration(
-                                        counterText: '',
-                                        focusedBorder: OutlineInputBorder(
-                                            borderSide: BorderSide.none),
-                                        hintText: widget.user.name,
-                                        hintStyle: TextStyle(
-                                            color:
-                                                Colors.black.withOpacity(0.5)),
+                          Container(
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(color: Colors.yellow)),
+                            padding: EdgeInsets.all(5),
+                            child: Center(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  Expanded(
+                                    child: Container(
+                                      child: Text(
+                                        "${languages.nameLabel}: ",
+                                        style: TextStyle(
+                                            color: Colors.yellow,
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold),
                                       ),
                                     ),
+                                    flex: 1,
                                   ),
-                                  flex: 4,
-                                ),
-                              ],
+                                  Expanded(
+                                    child: Container(
+                                      width: MediaQuery.of(context).size.width,
+                                      padding: EdgeInsets.only(left: 20.0),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.all(
+                                          Radius.circular(10),
+                                        ),
+                                        color: Colors.yellow.withOpacity(0.7),
+                                      ),
+                                      child: TextField(
+                                        style: TextStyle(color: Colors.black),
+                                        controller: _nameController,
+                                        maxLength: 30,
+                                        cursorColor: Colors.black,
+                                        decoration: InputDecoration(
+                                          counterText: '',
+                                          focusedBorder: OutlineInputBorder(
+                                              borderSide: BorderSide.none),
+                                          hintText: widget.user.name,
+                                          hintStyle: TextStyle(
+                                              color: Colors.black
+                                                  .withOpacity(0.5)),
+                                        ),
+                                      ),
+                                    ),
+                                    flex: 4,
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                          SizedBox(height: company ? 10 : 0),
-                          company
-                              ? Container(
-                                  height: 200,
-                                  margin: EdgeInsets.only(left: 10, right: 10),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(10),
-                                    ),
-                                    color: Colors.yellow,
-                                  ),
-                                  padding: EdgeInsets.all(4),
-                                  child: TextField(
-                                      maxLines: 3000,
-                                      maxLength: 2048,
-                                      cursorColor: Colors.black,
-                                      controller: _descriptionController,
-                                      style: TextStyle(fontSize: 20),
-                                      decoration: new InputDecoration.collapsed(
-                                          hintText: languages.descriptionLabel),
-                                      onChanged: (text) => setState(() {})),
-                                )
-                              : Container(),
-                          SizedBox(height: 20),
-                          company && companyData != null
-                              ? ListTile(
-                                  leading: Text(
-                                    '${languages.logoLabel}:',
-                                    style: TextStyle(
-                                        color: Colors.yellow,
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  title: image != null
-                                      ? InkWell(
-                                          child: Center(
-                                            child: CircleAvatar(
-                                              radius: 20,
-                                              backgroundImage:
-                                                  FileImage(File(image!.path)),
-                                            ),
-                                          ),
-                                          onTap: () {
-                                            _addPicture(setState);
-                                          },
-                                        )
-                                      : InkWell(
-                                          child: Center(
-                                            child: CircleAvatar(
-                                              radius: 20,
-                                              backgroundImage: NetworkImage(
-                                                widget.session.domainName +
-                                                    "/api/images/" +
-                                                    companyData!.imageId
-                                                        .toString(),
-                                                headers: widget.session.headers,
-                                              ),
-                                            ),
-                                          ),
-                                          onTap: () {
-                                            _addPicture(setState);
-                                          },
-                                        ),
-                                )
-                              : Container(),
-                          SizedBox(height: company ? 5 : 0),
-                          company
-                              ? Container(
-                                  child: Text(
-                                    languages.likesNotificationEmailTipLabel,
-                                    style: TextStyle(
-                                        color: Colors.yellow,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 20),
-                                  ),
-                                )
-                              : Container(),
-                          SizedBox(height: company ? 5 : 0),
-                          company
-                              ? Container(
-                                  child: Row(
-                                    children: [
-                                      Flexible(
-                                        child: Center(
-                                          child: Container(
-                                            child: Switch(
-                                              value:
-                                                  _emailNotificationForCompany,
-                                              onChanged: (value) {
-                                                setState(() {
-                                                  _emailNotificationForCompany =
-                                                      value;
-                                                });
-                                              },
-                                              activeTrackColor:
-                                                  Colors.yellow.shade200,
-                                              activeColor:
-                                                  Colors.yellow.shade600,
-                                              inactiveTrackColor: Colors.white,
-                                            ),
-                                          ),
-                                        ),
-                                        flex: 1,
-                                      ),
-                                      Flexible(
-                                        child: _emailNotificationForCompany
-                                            ? Center(
-                                                child: Container(
-                                                  child: NumberPicker(
-                                                    value:
-                                                        _emailNotificationNumber,
-                                                    minValue: 100,
-                                                    textStyle: TextStyle(
-                                                        color: Colors.yellow),
-                                                    selectedTextStyle:
-                                                        TextStyle(
-                                                            color:
-                                                                Colors.yellow,
-                                                            fontSize: 30),
-                                                    step: 100,
-                                                    maxValue: 10000000,
-                                                    onChanged: (value) =>
-                                                        setState(() {
-                                                      _emailNotificationNumber =
-                                                          value;
-                                                    }),
-                                                  ),
-                                                ),
-                                              )
-                                            : Container(),
-                                        flex: 1,
-                                      ),
-                                    ],
-                                  ),
-                                )
-                              : Container(),
-                          SizedBox(height: company ? 5 : 0),
-                          company
-                              ? Container(
-                                  child: DropdownButton<String>(
-                                    isExpanded: true,
-                                    focusColor: Colors.white,
-                                    value: _chosenCountryCode,
-                                    style: TextStyle(color: Colors.yellow),
-                                    iconEnabledColor: Colors.yellow,
-                                    dropdownColor: Colors.black,
-                                    items: countryCodes
-                                        .map<DropdownMenuItem<String>>(
-                                            (String value) {
-                                      return DropdownMenuItem<String>(
-                                        value: value,
-                                        child: Text(
-                                          value,
-                                          style:
-                                              TextStyle(color: Colors.yellow),
-                                        ),
-                                      );
-                                    }).toList(),
-                                    onChanged: (String? value) {
-                                      setState(() {
-                                        _chosenCountryCode = value;
-                                      });
-                                    },
-                                  ),
-                                )
-                              : Container(),
-                          SizedBox(
-                            height: company ? 20 : 0,
-                          ),
+                          ...widgetList,
                           Center(
                             child: ButtonTheme(
                               height: 50,
@@ -415,6 +277,20 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
               ? null
               : _chosenCountryCode,
           'description': company ? _descriptionController.text : null,
+          'numberOfHouseholdMembers':
+              company ? null : _numberOfHouseholdMembersValue.toString(),
+          'age': company || _chosenAgeBracket == null
+              ? null
+              : _chosenAgeBracket!.stringValue,
+          'salaryType': company || _chosenSalaryType == null
+              ? null
+              : _chosenSalaryType!.stringValue,
+          'livingPlaceType': company || _chosenLivingPlaceType == null
+              ? null
+              : _chosenLivingPlaceType!.stringValue,
+          'gender': company || _chosenGender == null
+              ? null
+              : _chosenGender!.stringValue,
         };
         widget.session
             .postJson(
@@ -506,5 +382,814 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
     _nameController.dispose();
     _descriptionController.dispose();
     super.dispose();
+  }
+
+  void _addNonCompanyItems() {
+    widgetList.clear();
+    widgetList.add(
+      SizedBox(
+        height: 10,
+      ),
+    );
+    //NUMBER OF HOUSEHOLD MEMBERS
+    widgetList.add(
+      Container(
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: Colors.yellow)),
+        padding: EdgeInsets.all(5),
+        child: Row(
+          children: [
+            Flexible(
+              child: Container(
+                child: Text(
+                  "${languages.numberOfHouseholdMembersLabel}",
+                  style: TextStyle(
+                      color: Colors.yellow,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold),
+                ),
+              ),
+              flex: 1,
+            ),
+            Flexible(
+              child: Center(
+                child: Container(
+                  margin: EdgeInsets.symmetric(vertical: 10),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: Colors.yellow),
+                      color: Colors.yellow),
+                  child: NumberPicker(
+                    axis: Axis.horizontal,
+                    itemWidth: 50,
+                    itemHeight: 40,
+                    value: _numberOfHouseholdMembersValue,
+                    minValue: 1,
+                    textStyle: TextStyle(color: Colors.black),
+                    selectedTextStyle: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20),
+                    step: 1,
+                    maxValue: 99,
+                    onChanged: (value) => setState(() {
+                      _numberOfHouseholdMembersValue = value;
+                    }),
+                  ),
+                ),
+              ),
+              flex: 1,
+            ),
+          ],
+        ),
+      ),
+    );
+    widgetList.add(
+      SizedBox(
+        height: 10,
+      ),
+    );
+    //AGE BRACKET
+    widgetList.add(Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.yellow),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      padding: EdgeInsets.all(10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Flexible(
+            child: Container(
+              child: Text(
+                "${languages.ageLabel}",
+                style: TextStyle(
+                    color: Colors.yellow,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold),
+              ),
+            ),
+            flex: 1,
+          ),
+          Flexible(
+            child: Container(
+              decoration: BoxDecoration(
+                  color: Colors.yellow,
+                  borderRadius: BorderRadius.circular(10)),
+              child: Container(
+                decoration: BoxDecoration(
+                    color: Colors.black,
+                    borderRadius: BorderRadius.circular(10)),
+                margin: EdgeInsets.all(2),
+                child: DropdownButton2<AgeBracket>(
+                  isExpanded: true,
+                  underline: Container(),
+                  focusColor: Colors.white,
+                  dropdownDecoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Colors.yellow,
+                  ),
+                  value: _chosenAgeBracket,
+                  style: TextStyle(color: Colors.yellow),
+                  iconEnabledColor: Colors.yellow,
+                  itemPadding: const EdgeInsets.all(1),
+                  dropdownPadding: EdgeInsets.all(2),
+                  scrollbarRadius: const Radius.circular(40),
+                  itemSplashColor: Colors.yellow.shade100,
+                  scrollbarThickness: 6,
+                  dropdownMaxHeight: 200,
+                  customButton: Container(
+                    height: 50,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisSize: MainAxisSize.max,
+                      children: <Widget>[
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.black,
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(10),
+                                bottomLeft: Radius.circular(10)),
+                          ),
+                          width: MediaQuery.of(context).size.width - 252,
+                          child: Center(
+                            child: Text(
+                              _chosenAgeBracket!.getName,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  color: Colors.yellow,
+                                  fontSize: 30,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                        IconTheme(
+                          data: IconThemeData(
+                            color: Colors.yellow,
+                            size: 24,
+                          ),
+                          child: Icon(Icons.arrow_drop_down_outlined),
+                        ),
+                      ],
+                    ),
+                  ),
+                  items: AgeBracket.values
+                      .map<DropdownMenuItem<AgeBracket>>((AgeBracket value) {
+                    return DropdownMenuItem<AgeBracket>(
+                      value: value,
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: Colors.black,
+                            borderRadius: value == AgeBracket.values.first
+                                ? BorderRadius.only(
+                                    topLeft: Radius.circular(10),
+                                    topRight: Radius.circular(10),
+                                  )
+                                : (value == AgeBracket.values.last
+                                    ? BorderRadius.only(
+                                        bottomLeft: Radius.circular(10),
+                                        bottomRight: Radius.circular(10),
+                                      )
+                                    : BorderRadius.zero)),
+                        child: Center(
+                          child: Text(
+                            value.getName,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                color: Colors.yellow,
+                                fontSize: 30,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: (AgeBracket? value) {
+                    setState(() {
+                      _chosenAgeBracket = value;
+                    });
+                  },
+                ),
+              ),
+            ),
+            flex: 1,
+          ),
+        ],
+      ),
+    ));
+    widgetList.add(
+      SizedBox(
+        height: 10,
+      ),
+    );
+    //GENDER
+    widgetList.add(Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.yellow),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      padding: EdgeInsets.all(10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Flexible(
+            child: Container(
+              child: Text(
+                "${languages.genderLabel}",
+                style: TextStyle(
+                    color: Colors.yellow,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold),
+              ),
+            ),
+            flex: 1,
+          ),
+          Flexible(
+            child: Container(
+              decoration: BoxDecoration(
+                  color: Colors.yellow,
+                  borderRadius: BorderRadius.circular(10)),
+              child: Container(
+                decoration: BoxDecoration(
+                    color: Colors.black,
+                    borderRadius: BorderRadius.circular(10)),
+                margin: EdgeInsets.all(2),
+                child: DropdownButton2<Gender>(
+                  isExpanded: true,
+                  underline: Container(),
+                  focusColor: Colors.white,
+                  dropdownDecoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Colors.yellow,
+                  ),
+                  value: _chosenGender,
+                  style: TextStyle(color: Colors.yellow),
+                  iconEnabledColor: Colors.yellow,
+                  itemPadding: const EdgeInsets.all(1),
+                  dropdownPadding: EdgeInsets.all(2),
+                  scrollbarRadius: const Radius.circular(40),
+                  itemSplashColor: Colors.yellow.shade100,
+                  scrollbarThickness: 6,
+                  dropdownMaxHeight: 200,
+                  customButton: Container(
+                    height: 50,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisSize: MainAxisSize.max,
+                      children: <Widget>[
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.black,
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(10),
+                                bottomLeft: Radius.circular(10)),
+                          ),
+                          width: MediaQuery.of(context).size.width - 252,
+                          child: Center(
+                            child: Text(
+                              _chosenGender!.getName(languages),
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  color: Colors.yellow,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                        IconTheme(
+                          data: IconThemeData(
+                            color: Colors.yellow,
+                            size: 24,
+                          ),
+                          child: Icon(Icons.arrow_drop_down_outlined),
+                        ),
+                      ],
+                    ),
+                  ),
+                  items: Gender.values
+                      .map<DropdownMenuItem<Gender>>((Gender value) {
+                    return DropdownMenuItem<Gender>(
+                      value: value,
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: Colors.black,
+                            borderRadius: value == Gender.values.first
+                                ? BorderRadius.only(
+                                    topLeft: Radius.circular(10),
+                                    topRight: Radius.circular(10),
+                                  )
+                                : (value == Gender.values.last
+                                    ? BorderRadius.only(
+                                        bottomLeft: Radius.circular(10),
+                                        bottomRight: Radius.circular(10),
+                                      )
+                                    : BorderRadius.zero)),
+                        child: Center(
+                          child: Text(
+                            value.getName(languages),
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                color: Colors.yellow,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: (Gender? value) {
+                    setState(() {
+                      _chosenGender = value;
+                    });
+                  },
+                ),
+              ),
+            ),
+            flex: 1,
+          ),
+        ],
+      ),
+    ));
+    widgetList.add(
+      SizedBox(
+        height: 10,
+      ),
+    );
+    //LIVING PLACE TYPE
+    widgetList.add(Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.yellow),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      padding: EdgeInsets.all(10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Flexible(
+            child: Container(
+              child: Text(
+                "${languages.livingPlaceTypeLabel}",
+                style: TextStyle(
+                    color: Colors.yellow,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold),
+              ),
+            ),
+            flex: 1,
+          ),
+          Flexible(
+            child: Container(
+              decoration: BoxDecoration(
+                  color: Colors.yellow,
+                  borderRadius: BorderRadius.circular(10)),
+              child: Container(
+                decoration: BoxDecoration(
+                    color: Colors.black,
+                    borderRadius: BorderRadius.circular(10)),
+                margin: EdgeInsets.all(2),
+                child: DropdownButton2<LivingPlaceType>(
+                  isExpanded: true,
+                  underline: Container(),
+                  focusColor: Colors.white,
+                  dropdownDecoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Colors.yellow,
+                  ),
+                  value: _chosenLivingPlaceType,
+                  style: TextStyle(color: Colors.yellow),
+                  iconEnabledColor: Colors.yellow,
+                  itemPadding: const EdgeInsets.all(1),
+                  dropdownPadding: EdgeInsets.all(2),
+                  scrollbarRadius: const Radius.circular(40),
+                  itemSplashColor: Colors.yellow.shade100,
+                  scrollbarThickness: 6,
+                  dropdownMaxHeight: 200,
+                  customButton: Container(
+                    height: 50,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisSize: MainAxisSize.max,
+                      children: <Widget>[
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.black,
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(10),
+                                bottomLeft: Radius.circular(10)),
+                          ),
+                          width: MediaQuery.of(context).size.width - 252,
+                          child: Center(
+                            child: Text(
+                              _chosenLivingPlaceType!.getName(languages),
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  color: Colors.yellow,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                        IconTheme(
+                          data: IconThemeData(
+                            color: Colors.yellow,
+                            size: 24,
+                          ),
+                          child: Icon(Icons.arrow_drop_down_outlined),
+                        ),
+                      ],
+                    ),
+                  ),
+                  items: LivingPlaceType.values
+                      .map<DropdownMenuItem<LivingPlaceType>>(
+                          (LivingPlaceType value) {
+                    return DropdownMenuItem<LivingPlaceType>(
+                      value: value,
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: Colors.black,
+                            borderRadius: value == LivingPlaceType.values.first
+                                ? BorderRadius.only(
+                                    topLeft: Radius.circular(10),
+                                    topRight: Radius.circular(10),
+                                  )
+                                : (value == LivingPlaceType.values.last
+                                    ? BorderRadius.only(
+                                        bottomLeft: Radius.circular(10),
+                                        bottomRight: Radius.circular(10),
+                                      )
+                                    : BorderRadius.zero)),
+                        child: Center(
+                          child: Text(
+                            value.getName(languages),
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                color: Colors.yellow,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: (LivingPlaceType? value) {
+                    setState(() {
+                      _chosenLivingPlaceType = value;
+                    });
+                  },
+                ),
+              ),
+            ),
+            flex: 1,
+          ),
+        ],
+      ),
+    ));
+    widgetList.add(
+      SizedBox(
+        height: 10,
+      ),
+    );
+    //SALARY TYPE
+    widgetList.add(Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.yellow),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      padding: EdgeInsets.all(10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Flexible(
+            child: Container(
+              child: Text(
+                "${languages.salaryTypeLabel}",
+                style: TextStyle(
+                    color: Colors.yellow,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold),
+              ),
+            ),
+            flex: 1,
+          ),
+          Flexible(
+            child: Container(
+              decoration: BoxDecoration(
+                  color: Colors.yellow,
+                  borderRadius: BorderRadius.circular(10)),
+              child: Container(
+                decoration: BoxDecoration(
+                    color: Colors.black,
+                    borderRadius: BorderRadius.circular(10)),
+                margin: EdgeInsets.all(2),
+                child: DropdownButton2<SalaryType>(
+                  isExpanded: true,
+                  underline: Container(),
+                  focusColor: Colors.white,
+                  dropdownDecoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Colors.yellow,
+                  ),
+                  value: _chosenSalaryType,
+                  style: TextStyle(color: Colors.yellow),
+                  iconEnabledColor: Colors.yellow,
+                  itemPadding: const EdgeInsets.all(1),
+                  dropdownPadding: EdgeInsets.all(2),
+                  scrollbarRadius: const Radius.circular(40),
+                  itemSplashColor: Colors.yellow.shade100,
+                  scrollbarThickness: 6,
+                  dropdownMaxHeight: 150,
+                  customButton: Container(
+                    height: 50,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisSize: MainAxisSize.max,
+                      children: <Widget>[
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.black,
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(10),
+                                bottomLeft: Radius.circular(10)),
+                          ),
+                          width: MediaQuery.of(context).size.width - 252,
+                          child: Center(
+                            child: Text(
+                              _chosenSalaryType!.getName,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  color: Colors.yellow,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                        IconTheme(
+                          data: IconThemeData(
+                            color: Colors.yellow,
+                            size: 24,
+                          ),
+                          child: Icon(Icons.arrow_drop_down_outlined),
+                        ),
+                      ],
+                    ),
+                  ),
+                  items: SalaryType.values
+                      .map<DropdownMenuItem<SalaryType>>((SalaryType value) {
+                    return DropdownMenuItem<SalaryType>(
+                      value: value,
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: Colors.black,
+                            borderRadius: value == SalaryType.values.first
+                                ? BorderRadius.only(
+                                    topLeft: Radius.circular(10),
+                                    topRight: Radius.circular(10),
+                                  )
+                                : (value == SalaryType.values.last
+                                    ? BorderRadius.only(
+                                        bottomLeft: Radius.circular(10),
+                                        bottomRight: Radius.circular(10),
+                                      )
+                                    : BorderRadius.zero)),
+                        child: Center(
+                          child: Text(
+                            value.getName,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                color: Colors.yellow,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: (SalaryType? value) {
+                    setState(() {
+                      _chosenSalaryType = value;
+                    });
+                  },
+                ),
+              ),
+            ),
+            flex: 1,
+          ),
+        ],
+      ),
+    ));
+    widgetList.add(
+      SizedBox(
+        height: 20,
+      ),
+    );
+  }
+
+  void _addCompanyItems() {
+    widgetList.clear();
+    widgetList.add(SizedBox(height: 10));
+    widgetList.add(
+      Container(
+        padding: EdgeInsets.all(10),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: Colors.yellow)),
+        child: Column(
+          children: [
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Container(
+                child: Text(
+                  "${languages.descriptionLabel}:",
+                  style: TextStyle(
+                      color: Colors.yellow,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+            SizedBox(height: 10,),
+            Container(
+              height: 200,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(10),
+                ),
+                color: Colors.yellow,
+              ),
+              padding: EdgeInsets.all(4),
+              child: TextField(
+                  maxLines: 3000,
+                  maxLength: 2048,
+                  cursorColor: Colors.black,
+                  controller: _descriptionController,
+                  style: TextStyle(fontSize: 20),
+                  decoration: new InputDecoration.collapsed(
+                      hintText: languages.descriptionLabel),
+                  onChanged: (text) => setState(() {})),
+            ),
+          ],
+        ),
+      ),
+    );
+    widgetList.add(SizedBox(height: 20));
+    widgetList.add(
+      Container(
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: Colors.yellow)),
+        child: ListTile(
+          leading: Text(
+            '${languages.logoLabel}:',
+            style: TextStyle(
+                color: Colors.yellow, fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          title: image != null
+              ? InkWell(
+                  child: Center(
+                    child: CircleAvatar(
+                      radius: 20,
+                      backgroundImage: FileImage(File(image!.path)),
+                    ),
+                  ),
+                  onTap: () {
+                    _addPicture(setState);
+                  },
+                )
+              : InkWell(
+                  child: Center(
+                    child: CircleAvatar(
+                      radius: 20,
+                      backgroundImage: NetworkImage(
+                        widget.session.domainName +
+                            "/api/images/" +
+                            companyData!.imageId.toString(),
+                        headers: widget.session.headers,
+                      ),
+                    ),
+                  ),
+                  onTap: () {
+                    _addPicture(setState);
+                  },
+                ),
+        ),
+      ),
+    );
+    widgetList.add(SizedBox(height: 10));
+    widgetList.add(
+      Container(
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: Colors.yellow)),
+        padding: EdgeInsets.all(10),
+        child: Column(
+          children: [
+            Container(
+              child: Text(
+                languages.likesNotificationEmailTipLabel,
+                style: TextStyle(
+                    color: Colors.yellow, fontWeight: FontWeight.bold, fontSize: 20),
+              ),
+            ),
+            SizedBox(height: 10),
+            Container(
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: Colors.yellow)),
+              child: Row(
+                children: [
+                  Flexible(
+                    child: Center(
+                      child: Container(
+                        child: Switch(
+                          value: _emailNotificationForCompany,
+                          onChanged: (value) {
+                            setState(() {
+                              _emailNotificationForCompany = value;
+                            });
+                          },
+                          activeTrackColor: Colors.yellow.shade200,
+                          activeColor: Colors.yellow.shade600,
+                          inactiveTrackColor: Colors.white,
+                        ),
+                      ),
+                    ),
+                    flex: 1,
+                  ),
+                  Flexible(
+                    child: _emailNotificationForCompany
+                        ? Center(
+                            child: Container(
+                              margin: EdgeInsets.symmetric(vertical: 10),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(color: Colors.yellow),
+                                  color: Colors.yellow),
+                              child: NumberPicker(
+                                axis: Axis.horizontal,
+                                itemWidth: 70,
+                                itemHeight: 40,
+                                value: _emailNotificationNumber,
+                                minValue: 100,
+                                textStyle: TextStyle(color: Colors.black),
+                                selectedTextStyle: TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20),
+                                step: 100,
+                                maxValue: 10000000,
+                                onChanged: (value) => setState(() {
+                                  _emailNotificationNumber = value;
+                                }),
+                              ),
+                            ),
+                          )
+                        : Container(),
+                    flex: 3,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+    widgetList.add(SizedBox(height: 10));
+    widgetList.add(
+      Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.yellow),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        padding: EdgeInsets.all(10),
+        child: DropdownButton<String>(
+          isExpanded: true,
+          focusColor: Colors.white,
+          underline: Container(
+            color: Colors.black,
+          ),
+          borderRadius: BorderRadius.circular(10),
+          value: _chosenCountryCode,
+          style: TextStyle(color: Colors.yellow),
+          iconEnabledColor: Colors.yellow,
+          dropdownColor: Colors.black,
+          items: countryCodes.map<DropdownMenuItem<String>>((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(
+                value,
+                style: TextStyle(color: Colors.yellow),
+              ),
+            );
+          }).toList(),
+          onChanged: (String? value) {
+            setState(() {
+              _chosenCountryCode = value;
+            });
+          },
+        ),
+      ),
+    );
+    widgetList.add(SizedBox(height: 20));
   }
 }

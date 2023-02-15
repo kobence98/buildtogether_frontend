@@ -39,7 +39,7 @@ class _MainWidgetState extends State<MainWidget> {
 
   @override
   Widget build(BuildContext context) {
-    if (_pageController.index != 0 && _hideNavBar == true) {
+    if (_pageController.index == 1 && _hideNavBar == true) {
       _hideNavBar = false;
     }
     return NotificationListener<UserScrollNotification>(
@@ -114,7 +114,17 @@ class _MainWidgetState extends State<MainWidget> {
         languages: languages,
       ),
       SettingsWidget(
-          session: widget.session, user: widget.user, languages: languages)
+        session: widget.session,
+        user: widget.user,
+        languages: languages,
+        hideNavBar: hideNavBar,
+        navBarStatusChangeableAgain: () {
+          setState(() {
+            _navBarStatusChangeable = true;
+            _hideNavBar = false;
+          });
+        },
+      )
     ];
   }
 

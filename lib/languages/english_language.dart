@@ -214,6 +214,21 @@ class LanguageEn extends Languages {
   @override
   String get fillAllFieldsWithLocationWarningMessage => 'Fill all fields properly, choose a location as well!';
 
+  @override
+  String get numberOfHouseholdMembersLabel => 'Number of household members:';
+
+  @override
+  String get ageLabel => 'Age:';
+
+  @override
+  String get genderLabel => 'Gender:';
+
+  @override
+  String get livingPlaceTypeLabel => 'Residence:';
+
+  @override
+  String get salaryTypeLabel => 'Salary:';
+
   //COMMENTS WIDGET
 
   @override
@@ -500,4 +515,26 @@ class LanguageEn extends Languages {
 
   @override
   String get inactiveCompany => 'Inactive company';
+
+  //GENDER ENUM
+
+  @override
+  String get manLabel => 'MAN';
+
+  @override
+  String get womanLabel => 'WOMAN';
+
+  @override
+  String get otherLabel => 'OTHER';
+
+  //LIVING PLACE TYPE ENUM
+
+  @override
+  String get capitalCity => 'CAPITAL CITY';
+
+  @override
+  String get town => 'TOWN';
+
+  @override
+  String get village => 'VILLAGE';
 }
