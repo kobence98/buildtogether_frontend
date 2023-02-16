@@ -534,4 +534,8 @@ class LanguageHu extends Languages {
   @override
   String get village => 'FALU';
 
+  //STATISTIC PAGE
+
+  @override
+  String get statisticLabel => 'Statisztika a kedvelésekről';
 }

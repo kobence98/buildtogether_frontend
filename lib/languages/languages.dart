@@ -363,4 +363,8 @@ abstract class Languages {
   String get town;
 
   String get village;
+
+  //STATISTIC PAGE
+
+  String get statisticLabel;
 }

@@ -537,4 +537,9 @@ class LanguageEn extends Languages {
 
   @override
   String get village => 'VILLAGE';
+
+  //STATISTIC PAGE
+
+  @override
+  String get statisticLabel => 'Statistics about likes';
 }

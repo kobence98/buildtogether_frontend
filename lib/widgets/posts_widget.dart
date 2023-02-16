@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_frontend/entities/company.dart';
 import 'package:flutter_frontend/entities/post.dart';
 import 'package:flutter_frontend/entities/search_field_names.dart';
@@ -11,6 +10,7 @@ import 'package:flutter_frontend/entities/user.dart';
 import 'package:flutter_frontend/languages/languages.dart';
 import 'package:flutter_frontend/static/date_formatter.dart';
 import 'package:flutter_frontend/widgets/single_post_widget.dart';
+import 'package:flutter_frontend/widgets/statistic_page.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geocoding/geocoding.dart' as geocoding;
@@ -740,6 +740,29 @@ class _PostsWidgetState extends State<PostsWidget> {
                           ),
                           Row(
                             children: [
+                              Icon(
+                                Icons.arrow_forward_ios,
+                                color: Colors.red,
+                                size: 15,
+                              ),
+                              InkWell(
+                                  child: Icon(
+                                    Icons.bar_chart,
+                                    color: Colors.red,
+                                    size: 30,
+                                  ),
+                                  onTap: () {
+                                    _openStatisticPage(post.postId);
+                                  }),
+                              Icon(
+                                Icons.arrow_back_ios,
+                                color: Colors.red,
+                                size: 15,
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: [
                               Text(
                                 post.commentNumber.toString(),
                                 style: TextStyle(color: Colors.white),
@@ -1371,5 +1394,17 @@ class _PostsWidgetState extends State<PostsWidget> {
             ],
           );
         });
+  }
+
+  void _openStatisticPage(int postId) async {
+    await widget.hideNavBar();
+    Navigator.of(context)
+        .push(MaterialPageRoute(
+            builder: (context) => StatisticPage(
+                  postId: postId,
+                  session: widget.session,
+                  languages: languages,
+                )))
+        .whenComplete(() => widget.navBarStatusChangeableAgain());
   }
 }
