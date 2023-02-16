@@ -212,6 +212,8 @@ abstract class Languages {
 
   String get yourPostIsOutMessage;
 
+  String get addPictureLabel;
+
   //FILTERED POST WIDGET
 
   String get ideaIsImplementedMessage;
@@ -265,6 +267,8 @@ abstract class Languages {
   String get explainPermissionDialogTitle;
 
   String get OKLabel;
+
+  String get thisPostHasPicture;
 
   //SETTINGS WIDGET
 

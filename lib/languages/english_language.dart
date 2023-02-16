@@ -320,6 +320,9 @@ class LanguageEn extends Languages {
   @override
   String get yourPostIsOutMessage => 'Your post is out!';
 
+  @override
+  String get addPictureLabel => 'Add picture';
+
   //FILTERED POST WIDGET
 
   @override
@@ -398,6 +401,9 @@ class LanguageEn extends Languages {
 
   @override
   String get OKLabel => 'OK';
+
+  @override
+  String get thisPostHasPicture => 'This post has an image attached';
 
   //SETTINGS WIDGET
 

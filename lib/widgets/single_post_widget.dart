@@ -16,6 +16,7 @@ import 'package:like_button/like_button.dart';
 import '../static/profanity_checker.dart';
 import 'comments_widget.dart';
 import 'flutter_polls_inno.dart';
+import 'open_image_widget.dart';
 
 class SinglePostWidget extends StatefulWidget {
   final Post post;
@@ -368,7 +369,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                             children: [
                               Container(
                                 width: MediaQuery.of(context).size.width -
-                                    (_editDescriptionIsActive ? 70 : 50),
+                                    (_editDescriptionIsActive ? 85 : 65),
                                 child: (isCreator &&
                                     _editDescriptionIsActive
                                     ? EditableText(
@@ -453,6 +454,67 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                             style: TextStyle(color: Colors.white),
                           ))
                               : _pollWidget(post),
+                        ),
+                        SizedBox(
+                          height: post.postImageId == null ? 0 : 10,
+                        ),
+                        post.postImageId == null
+                            ? Container()
+                            : Container(
+                          margin: EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                              color: Colors.black,
+                              border: Border.all(color: Colors.yellow),
+                              borderRadius: BorderRadius.circular(10)),
+                          child: Container(
+                            padding: EdgeInsets.all(10),
+                            child: Row(
+                              children: [
+                                Flexible(
+                                  child: Text(
+                                    '${languages.thisPostHasPicture}:',
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  flex: 5,
+                                ),
+                                Flexible(
+                                  child: InkWell(
+                                    child: Center(
+                                      child: Container(
+                                        height: 40,
+                                        width: 40,
+                                        decoration: BoxDecoration(
+                                            border: Border.all(
+                                                color: Colors.yellow),
+                                            image: DecorationImage(
+                                              image: NetworkImage(
+                                                widget.session.domainName +
+                                                    "/api/postImages/" +
+                                                    post.postImageId
+                                                        .toString(),
+                                                headers:
+                                                widget.session.headers,
+                                              ),
+                                              fit: BoxFit.contain,
+                                            ),
+                                            borderRadius:
+                                            BorderRadius.circular(10)),
+                                      ),
+                                    ),
+                                    onTap: () async {
+                                      Navigator.of(context).push(MaterialPageRoute(
+                                          builder: (context) =>
+                                              OpenImageWidget(imageId: post.postImageId.toString(), session: widget.session)));
+                                    },
+                                  ),
+                                  flex: 1,
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
                         Container(
                           height: 40,

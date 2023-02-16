@@ -11,6 +11,8 @@ import 'package:flutter_frontend/widgets/single_post_widget.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:like_button/like_button.dart';
 
+import 'open_image_widget.dart';
+
 class LikedPostsWidget extends StatefulWidget {
   final Session session;
   final User user;
@@ -393,6 +395,67 @@ class _LikedPostsWidgetState extends State<LikedPostsWidget> {
                                               : languages
                                                   .clickHereToOpenThePollLabel,
                                           style: TextStyle(color: Colors.white),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: post.postImageId == null ? 0 : 10,
+                                      ),
+                                      post.postImageId == null
+                                          ? Container()
+                                          : Container(
+                                        margin: EdgeInsets.all(10),
+                                        decoration: BoxDecoration(
+                                            color: Colors.black,
+                                            border: Border.all(color: Colors.yellow),
+                                            borderRadius: BorderRadius.circular(10)),
+                                        child: Container(
+                                          padding: EdgeInsets.all(10),
+                                          child: Row(
+                                            children: [
+                                              Flexible(
+                                                child: Text(
+                                                  '${languages.thisPostHasPicture}:',
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 16,
+                                                      fontWeight: FontWeight.bold),
+                                                ),
+                                                flex: 5,
+                                              ),
+                                              Flexible(
+                                                child: InkWell(
+                                                  child: Center(
+                                                    child: Container(
+                                                      height: 40,
+                                                      width: 40,
+                                                      decoration: BoxDecoration(
+                                                          border: Border.all(
+                                                              color: Colors.yellow),
+                                                          image: DecorationImage(
+                                                            image: NetworkImage(
+                                                              widget.session.domainName +
+                                                                  "/api/postImages/" +
+                                                                  post.postImageId
+                                                                      .toString(),
+                                                              headers:
+                                                              widget.session.headers,
+                                                            ),
+                                                            fit: BoxFit.contain,
+                                                          ),
+                                                          borderRadius:
+                                                          BorderRadius.circular(10)),
+                                                    ),
+                                                  ),
+                                                  onTap: () async {
+                                                    Navigator.of(context).push(MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            OpenImageWidget(imageId: post.postImageId.toString(), session: widget.session)));
+                                                  },
+                                                ),
+                                                flex: 1,
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ),
                                       Container(

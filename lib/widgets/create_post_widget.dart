@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_frontend/entities/company_for_search.dart';
@@ -6,9 +7,12 @@ import 'package:flutter_frontend/entities/session.dart';
 import 'package:flutter_frontend/entities/user.dart';
 import 'package:flutter_frontend/languages/languages.dart';
 import 'package:flutter_frontend/static/profanity_checker.dart';
+import 'package:flutter_launcher_icons/utils.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class CreatePostWidget extends StatefulWidget {
   final Session session;
@@ -31,6 +35,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _pollTitleController = TextEditingController();
   final FocusNode _pollTitleNameFocus = FocusNode();
+  XFile? image;
   List<CompanyForSearch> companies = [];
   CompanyForSearch? _selectedCompany;
   late bool company;
@@ -157,21 +162,62 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
         )
             .then((response) {
           if (response.statusCode == 200) {
-            setState(() {
-              isButtonEnabled = true;
-            });
-            _titleController.clear();
-            _companyNameController.clear();
-            _descriptionController.clear();
-            Fluttertoast.showToast(
-                msg: languages.postIsOutMessage,
-                toastLength: Toast.LENGTH_LONG,
-                gravity: ToastGravity.CENTER,
-                timeInSecForIosWeb: 4,
-                backgroundColor: Colors.green,
-                textColor: Colors.white,
-                fontSize: 16.0);
-            Phoenix.rebirth(context);
+            if (image != null) {
+              image!.readAsBytes().then((multipartImage) {
+                dynamic imageBody = <String, String>{
+                  'postId': response.body.toString()
+                };
+                widget.session
+                    .sendMultipart('/api/postImages', imageBody, multipartImage)
+                    .then((response) {
+                  if (response.statusCode == 200) {
+                    setState(() {
+                      isButtonEnabled = true;
+                    });
+                    _titleController.clear();
+                    _companyNameController.clear();
+                    _descriptionController.clear();
+                    Fluttertoast.showToast(
+                        msg: languages.postIsOutMessage,
+                        toastLength: Toast.LENGTH_LONG,
+                        gravity: ToastGravity.CENTER,
+                        timeInSecForIosWeb: 4,
+                        backgroundColor: Colors.green,
+                        textColor: Colors.white,
+                        fontSize: 16.0);
+                    Phoenix.rebirth(context);
+                  } else {
+                    setState(() {
+                      isButtonEnabled = true;
+                    });
+                    Fluttertoast.showToast(
+                        msg: languages.globalServerErrorMessage,
+                        toastLength: Toast.LENGTH_LONG,
+                        gravity: ToastGravity.CENTER,
+                        timeInSecForIosWeb: 4,
+                        backgroundColor: Colors.red,
+                        textColor: Colors.white,
+                        fontSize: 16.0);
+                  }
+                });
+              });
+            } else {
+              setState(() {
+                isButtonEnabled = true;
+              });
+              _titleController.clear();
+              _companyNameController.clear();
+              _descriptionController.clear();
+              Fluttertoast.showToast(
+                  msg: languages.postIsOutMessage,
+                  toastLength: Toast.LENGTH_LONG,
+                  gravity: ToastGravity.CENTER,
+                  timeInSecForIosWeb: 4,
+                  backgroundColor: Colors.green,
+                  textColor: Colors.white,
+                  fontSize: 16.0);
+              Phoenix.rebirth(context);
+            }
           }
         });
       }
@@ -236,14 +282,12 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                       decoration: new InputDecoration.collapsed(
                           hintText: languages.companyNameLabel),
                       controller: _companyNameController,
-                      onEditingComplete: (){
-                        if(_titleController.text.isEmpty){
+                      onEditingComplete: () {
+                        if (_titleController.text.isEmpty) {
                           _titleFocus.requestFocus();
-                        }
-                        else if(_descriptionController.text.isEmpty){
+                        } else if (_descriptionController.text.isEmpty) {
                           _descriptionFocus.requestFocus();
-                        }
-                        else{
+                        } else {
                           _companyNameFocus.unfocus();
                         }
                       },
@@ -305,13 +349,11 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                             .first;
                         _companyNameController.text = company.name;
                         _selectedCompany = company;
-                        if(_titleController.text.isEmpty){
+                        if (_titleController.text.isEmpty) {
                           _titleFocus.requestFocus();
-                        }
-                        else if(_descriptionController.text.isEmpty){
+                        } else if (_descriptionController.text.isEmpty) {
                           _descriptionFocus.requestFocus();
-                        }
-                        else{
+                        } else {
                           _companyNameFocus.unfocus();
                         }
                       });
@@ -370,11 +412,10 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
             padding: EdgeInsets.all(4),
             child: TextField(
               focusNode: _titleFocus,
-              onEditingComplete: (){
-                if(_descriptionController.text.isEmpty){
+              onEditingComplete: () {
+                if (_descriptionController.text.isEmpty) {
                   _descriptionFocus.requestFocus();
-                }
-                else{
+                } else {
                   _titleFocus.unfocus();
                 }
               },
@@ -406,6 +447,59 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                 decoration: new InputDecoration.collapsed(
                     hintText: languages.writeHereYourIdeaLabel),
                 onChanged: (text) => setState(() {})),
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Container(
+            margin: EdgeInsets.all(10),
+            decoration: BoxDecoration(
+                border: Border.all(color: Colors.yellow),
+                borderRadius: BorderRadius.circular(10)),
+            child: ListTile(
+              leading: Text(
+                '${languages.addPictureLabel}:',
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold),
+              ),
+              title: image != null
+                  ? InkWell(
+                      child: Center(
+                          child: Container(
+                        height: 40,
+                        width: 40,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.yellow),
+                            image: DecorationImage(
+                                image: FileImage(File(image!.path)),
+                                fit: BoxFit.contain ),
+                            borderRadius: BorderRadius.circular(10)),
+                      )),
+                      onTap: () {
+                        _addPicture(setState);
+                      },
+                    )
+                  : InkWell(
+                      child: Center(
+                          child: Container(
+                        height: 40,
+                        width: 40,
+                        decoration: BoxDecoration(
+                            color: Colors.yellow,
+                            image: DecorationImage(
+                                image: AssetImage(
+                                  "assets/images/add_image.png",
+                                ),
+                                fit: BoxFit.fill),
+                            borderRadius: BorderRadius.circular(10)),
+                      )),
+                      onTap: () {
+                        _addPicture(setState);
+                      },
+                    ),
+            ),
           ),
           SizedBox(
             height: 20,
@@ -572,8 +666,9 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                 child: TextField(
                   focusNode: focusNode,
                   onEditingComplete: () {
-                    int nextEmptyIndex = pollControllers
-                        .indexWhere((element) => element.text.isEmpty && element != textEditingController);
+                    int nextEmptyIndex = pollControllers.indexWhere((element) =>
+                        element.text.isEmpty &&
+                        element != textEditingController);
                     if (nextEmptyIndex != -1) {
                       pollFocusNodes.elementAt(nextEmptyIndex).requestFocus();
                     } else {
@@ -716,8 +811,8 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
           controller: textEditingController,
           focusNode: focusNode,
           onEditingComplete: () {
-            int nextEmptyIndex = pollControllers
-                .indexWhere((element) => element.text.isEmpty && element != textEditingController);
+            int nextEmptyIndex = pollControllers.indexWhere((element) =>
+                element.text.isEmpty && element != textEditingController);
             if (nextEmptyIndex != -1) {
               pollFocusNodes.elementAt(nextEmptyIndex).requestFocus();
             } else {
@@ -734,5 +829,24 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
         ),
       ),
     );
+  }
+
+  void _addPicture(setState) async {
+    await Permission.photos.request();
+    final ImagePicker _picker = ImagePicker();
+    image = await _picker.pickImage(source: ImageSource.gallery);
+    if (image != null &&
+        (await image!.readAsBytes()).lengthInBytes >= 1048576) {
+      image = null;
+      Fluttertoast.showToast(
+          msg: languages.imageFileSizeIsTooBigExceptionMessage,
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 4,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }
+    setState(() {});
   }
 }

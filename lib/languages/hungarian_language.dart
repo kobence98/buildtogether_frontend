@@ -315,6 +315,9 @@ class LanguageHu extends Languages {
   @override
   String get yourPostIsOutMessage => 'A posztod kikerült!';
 
+  @override
+  String get addPictureLabel => 'Kép hozzáadása';
+
   //FILTERED POST WIDGET
 
   @override
@@ -394,6 +397,9 @@ class LanguageHu extends Languages {
 
   @override
   String get OKLabel => 'OK';
+
+  @override
+  String get thisPostHasPicture => 'Ehhez a poszthoz kép van csatolva';
 
   //SETTINGS WIDGET
 

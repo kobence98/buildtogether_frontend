@@ -21,6 +21,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import '../entities/feed_type.dart';
 import 'filtered_posts_widget.dart';
+import 'open_image_widget.dart';
 
 class PostsWidget extends StatefulWidget {
   final Session session;
@@ -716,6 +717,68 @@ class _PostsWidgetState extends State<PostsWidget> {
                         style: TextStyle(color: Colors.white),
                       ),
                     ),
+                    SizedBox(
+                      height: post.postImageId == null ? 0 : 10,
+                    ),
+                    post.postImageId == null
+                        ? Container()
+                        : Container(
+                            margin: EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                                color: Colors.black,
+                                border: Border.all(color: Colors.yellow),
+                                borderRadius: BorderRadius.circular(10)),
+                            child: Container(
+                              padding: EdgeInsets.all(10),
+                              child: Row(
+                                children: [
+                                  Flexible(
+                                    child: Text(
+                                      '${languages.thisPostHasPicture}:',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    flex: 5,
+                                  ),
+                                  Flexible(
+                                    child: InkWell(
+                                      child: Center(
+                                        child: Container(
+                                          height: 40,
+                                          width: 40,
+                                          decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  color: Colors.yellow),
+                                              image: DecorationImage(
+                                                image: NetworkImage(
+                                                  widget.session.domainName +
+                                                      "/api/postImages/" +
+                                                      post.postImageId
+                                                          .toString(),
+                                                  headers:
+                                                      widget.session.headers,
+                                                ),
+                                                fit: BoxFit.contain,
+                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(10)),
+                                        ),
+                                      ),
+                                      onTap: () async {
+                                        await widget.hideNavBar();
+                                        Navigator.of(context).push(MaterialPageRoute(
+                                            builder: (context) =>
+                                                OpenImageWidget(imageId: post.postImageId.toString(), session: widget.session))).whenComplete(() => widget.navBarStatusChangeableAgain());
+                                      },
+                                    ),
+                                    flex: 1,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
                     Container(
                       padding: EdgeInsets.only(left: 10),
                       height: 40,

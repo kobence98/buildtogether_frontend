@@ -258,7 +258,7 @@ class _FlutterPollsInnoState extends State<FlutterPollsInno> {
                             }
                           },
                           child: LinearPercentIndicator(
-                            width: MediaQuery.of(context).size.width - 10,
+                            width: MediaQuery.of(context).size.width - 22,
                             lineHeight: widget.pollOptionsHeight!,
                             barRadius: widget.votedPollOptionsRadius ??
                                 const Radius.circular(8),
@@ -367,22 +367,6 @@ class _FlutterPollsInnoState extends State<FlutterPollsInno> {
               );
             },
           ),
-        const SizedBox(height: 4),
-        Row(
-          children: [
-            Text(
-              '$totalVotes ${widget.votesText}',
-              style: widget.votesTextStyle ??
-                  const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                  ),
-            ),
-            Expanded(
-              child: widget.metaWidget ?? Container(),
-            ),
-          ],
-        ),
       ],
     );
   }
