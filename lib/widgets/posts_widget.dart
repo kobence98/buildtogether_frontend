@@ -450,6 +450,7 @@ class _PostsWidgetState extends State<PostsWidget> {
             noMoreItemsIndicatorBuilder: (context) => Container(
               color: Colors.black,
               height: 80,
+              margin: EdgeInsets.only(top: 10),
               alignment: Alignment.topCenter,
               child: Text(
                 languages.noMoreItemsLabel,
@@ -494,7 +495,12 @@ class _PostsWidgetState extends State<PostsWidget> {
             ),
             itemBuilder: (context, post, postIndex) => InkWell(
               child: Container(
-                color: Colors.black,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Colors.yellow.withOpacity(0.1),
+                    border: Border.all(color: Colors.yellow)),
+                padding: EdgeInsets.all(5),
+                margin: EdgeInsets.only(top: 10),
                 child: Column(
                   children: [
                     ListTile(
@@ -700,7 +706,8 @@ class _PostsWidgetState extends State<PostsWidget> {
                     ),
                     Container(
                       height: 60,
-                      padding: EdgeInsets.all(5),
+                      padding: EdgeInsets.only(
+                          left: 15, right: 15, top: 5, bottom: 5),
                       alignment: Alignment.topLeft,
                       child: Text(
                         post.postType == 'SIMPLE_POST'
@@ -710,6 +717,7 @@ class _PostsWidgetState extends State<PostsWidget> {
                       ),
                     ),
                     Container(
+                      padding: EdgeInsets.only(left: 10),
                       height: 40,
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -738,29 +746,18 @@ class _PostsWidgetState extends State<PostsWidget> {
                             },
                             likeCount: post.likeNumber,
                           ),
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.arrow_forward_ios,
-                                color: Colors.red,
-                                size: 15,
-                              ),
-                              InkWell(
+                          widget.user.companyId != null &&
+                                  widget.user.companyId == post.companyId
+                              ? InkWell(
                                   child: Icon(
                                     Icons.bar_chart,
-                                    color: Colors.red,
+                                    color: Colors.white,
                                     size: 30,
                                   ),
                                   onTap: () {
                                     _openStatisticPage(post.postId);
-                                  }),
-                              Icon(
-                                Icons.arrow_back_ios,
-                                color: Colors.red,
-                                size: 15,
-                              ),
-                            ],
-                          ),
+                                  })
+                              : Container(),
                           Row(
                             children: [
                               Text(
@@ -781,6 +778,9 @@ class _PostsWidgetState extends State<PostsWidget> {
                                                 post: post,
                                                 user: widget.user,
                                                 languages: languages,
+                                                hideNavBar: widget.hideNavBar,
+                                                navBarStatusChangeableAgain: widget
+                                                    .navBarStatusChangeableAgain,
                                               )))
                                       .whenComplete(() =>
                                           widget.navBarStatusChangeableAgain());
@@ -901,6 +901,8 @@ class _PostsWidgetState extends State<PostsWidget> {
                 session: widget.session,
                 user: widget.user,
                 languages: languages,
+                hideNavBar: widget.hideNavBar,
+                navBarStatusChangeableAgain: widget.navBarStatusChangeableAgain,
               )),
     ).whenComplete(() {
       widget.navBarStatusChangeableAgain();

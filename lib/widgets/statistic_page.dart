@@ -123,6 +123,10 @@ class _StatisticPageState extends State<StatisticPage> {
                               color: Colors.white,
                               fontWeight: FontWeight.bold)),
                       primaryYAxis: NumericAxis(
+                        majorGridLines: MajorGridLines(
+                          width: 0.6,
+                            color: Colors.grey
+                        ),
                           labelStyle: TextStyle(
                               color: Colors.white, fontWeight: FontWeight.bold),
                           borderColor: Colors.white,
@@ -131,7 +135,7 @@ class _StatisticPageState extends State<StatisticPage> {
                                   .reduce(max)
                                   .toDouble() +
                               10,
-                          interval: (statisticData
+                          interval: ((statisticData
                                               .livingPlaceTypeStatistics.values
                                               .reduce(max)
                                               .toDouble() ~/
@@ -142,8 +146,8 @@ class _StatisticPageState extends State<StatisticPage> {
                                           .reduce(max)
                                           .toDouble() ~/
                                       10)
-                                  .toDouble()
-                              : 1),
+                                  .toDouble() * 3
+                              : 1) * 5),
                       series: <ColumnSeries<MapEntry<String, int>, String>>[
                         // Initialize line series.
                         ColumnSeries<MapEntry<String, int>, String>(
@@ -193,6 +197,10 @@ class _StatisticPageState extends State<StatisticPage> {
                               color: Colors.white,
                               fontWeight: FontWeight.bold)),
                       primaryYAxis: NumericAxis(
+                        majorGridLines: MajorGridLines(
+                          width: 0.6,
+                            color: Colors.grey
+                        ),
                           labelStyle: TextStyle(
                               color: Colors.white, fontWeight: FontWeight.bold),
                           borderColor: Colors.white,
@@ -200,7 +208,7 @@ class _StatisticPageState extends State<StatisticPage> {
                                   .reduce(max)
                                   .toDouble() +
                               10,
-                          interval: (statisticData.ageStatistics.values
+                          interval: ((statisticData.ageStatistics.values
                                               .reduce(max)
                                               .toDouble() ~/
                                           10)
@@ -211,7 +219,7 @@ class _StatisticPageState extends State<StatisticPage> {
                                           .toDouble() ~/
                                       10)
                                   .toDouble()
-                              : 1),
+                              : 1) * 5),
                       series: <ColumnSeries<MapEntry<String, int>, String>>[
                         // Initialize line series.
                         ColumnSeries<MapEntry<String, int>, String>(
@@ -260,6 +268,10 @@ class _StatisticPageState extends State<StatisticPage> {
                               color: Colors.white,
                               fontWeight: FontWeight.bold)),
                       primaryYAxis: NumericAxis(
+                        majorGridLines: MajorGridLines(
+                          width: 0.6,
+                            color: Colors.grey
+                        ),
                           labelStyle: TextStyle(
                               color: Colors.white, fontWeight: FontWeight.bold),
                           borderColor: Colors.white,
@@ -267,7 +279,7 @@ class _StatisticPageState extends State<StatisticPage> {
                                   .reduce(max)
                                   .toDouble() +
                               10,
-                          interval: (statisticData.genderStatistics.values
+                          interval: ((statisticData.genderStatistics.values
                                               .reduce(max)
                                               .toDouble() ~/
                                           10)
@@ -278,7 +290,7 @@ class _StatisticPageState extends State<StatisticPage> {
                                           .toDouble() ~/
                                       10)
                                   .toDouble()
-                              : 1),
+                              : 1) * 5),
                       series: <ColumnSeries<MapEntry<String, int>, String>>[
                         // Initialize line series.
                         ColumnSeries<MapEntry<String, int>, String>(
@@ -329,6 +341,10 @@ class _StatisticPageState extends State<StatisticPage> {
                               color: Colors.white,
                               fontWeight: FontWeight.bold)),
                       primaryYAxis: NumericAxis(
+                        majorGridLines: MajorGridLines(
+                          width: 0.6,
+                            color: Colors.grey
+                        ),
                           labelStyle: TextStyle(
                               color: Colors.white, fontWeight: FontWeight.bold),
                           borderColor: Colors.white,
@@ -336,7 +352,7 @@ class _StatisticPageState extends State<StatisticPage> {
                                   .reduce(max)
                                   .toDouble() +
                               10,
-                          interval: (statisticData.salaryTypeStatistics.values
+                          interval: ((statisticData.salaryTypeStatistics.values
                                               .reduce(max)
                                               .toDouble() ~/
                                           10)
@@ -347,7 +363,7 @@ class _StatisticPageState extends State<StatisticPage> {
                                           .toDouble() ~/
                                       10)
                                   .toDouble()
-                              : 1),
+                              : 1) * 5),
                       series: <ColumnSeries<MapEntry<String, int>, String>>[
                         // Initialize line series.
                         ColumnSeries<MapEntry<String, int>, String>(
@@ -396,6 +412,10 @@ class _StatisticPageState extends State<StatisticPage> {
                               color: Colors.white,
                               fontWeight: FontWeight.bold)),
                       primaryYAxis: NumericAxis(
+                        majorGridLines: MajorGridLines(
+                          width: 0.6,
+                            color: Colors.grey
+                        ),
                           labelStyle: TextStyle(
                               color: Colors.white, fontWeight: FontWeight.bold),
                           borderColor: Colors.white,
@@ -404,7 +424,7 @@ class _StatisticPageState extends State<StatisticPage> {
                                   .reduce(max)
                                   .toDouble() +
                               10,
-                          interval: (statisticData
+                          interval: ((statisticData
                                               .numberOfHouseholdMembersStatistics
                                               .values
                                               .reduce(max)
@@ -419,7 +439,7 @@ class _StatisticPageState extends State<StatisticPage> {
                                           .toDouble() ~/
                                       10)
                                   .toDouble()
-                              : 1),
+                              : 1) * 5),
                       series: <ColumnSeries<MapEntry<String, int>, String>>[
                         // Initialize line series.
                         ColumnSeries<MapEntry<String, int>, String>(

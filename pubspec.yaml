@@ -3,7 +3,7 @@ description: Build together flutter frontend
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 74.0.0+74
+version: 75.0.0+75
 
 environment:
   sdk: ">=2.12.0 <3.0.0"

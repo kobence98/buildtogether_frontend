@@ -224,6 +224,9 @@ class LanguageHu extends Languages {
   @override
   String get salaryTypeLabel => 'Kereset:';
 
+  @override
+  String get nationalityLabel => 'Nemzetiség:';
+
   //COMMENTS WIDGET
 
   @override

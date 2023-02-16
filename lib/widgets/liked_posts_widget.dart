@@ -103,19 +103,20 @@ class _LikedPostsWidgetState extends State<LikedPostsWidget> {
                     )
                   : Stack(
                       children: [
-                        ListView.separated(
+                        ListView.builder(
                             controller: _scrollController,
                             padding: EdgeInsets.only(bottom: 10),
-                            separatorBuilder: (context, index) => Divider(
-                                  height: 5,
-                                  color: Colors.grey.shade700,
-                                ),
                             itemCount: actualPosts.length,
                             itemBuilder: (context, index) {
                               Post post = actualPosts.elementAt(index);
                               return InkWell(
                                 child: Container(
-                                  color: Colors.black,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      color: Colors.yellow.withOpacity(0.1),
+                                      border: Border.all(color: Colors.yellow)),
+                                  padding: EdgeInsets.all(5),
+                                  margin: EdgeInsets.only(top: 10),
                                   child: Column(
                                     children: [
                                       ListTile(
@@ -455,6 +456,8 @@ class _LikedPostsWidgetState extends State<LikedPostsWidget> {
                                                                       .user,
                                                                   languages:
                                                                       languages,
+                                                                  hideNavBar: (){},
+                                                                  navBarStatusChangeableAgain: (){},
                                                                 )));
                                                   },
                                                 ),
@@ -604,6 +607,8 @@ class _LikedPostsWidgetState extends State<LikedPostsWidget> {
                 session: widget.session,
                 user: widget.user,
                 languages: languages,
+            hideNavBar: (){},
+            navBarStatusChangeableAgain: (){},
               )),
     ).whenComplete(() => {
           widget.session

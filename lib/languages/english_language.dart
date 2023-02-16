@@ -229,6 +229,9 @@ class LanguageEn extends Languages {
   @override
   String get salaryTypeLabel => 'Salary:';
 
+  @override
+  String get nationalityLabel => 'Nationality:';
+
   //COMMENTS WIDGET
 
   @override

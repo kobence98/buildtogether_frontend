@@ -150,6 +150,8 @@ abstract class Languages {
 
   String get salaryTypeLabel;
 
+  String get nationalityLabel;
+
   //COMMENTS WIDGET
 
   String get deleteLabel;

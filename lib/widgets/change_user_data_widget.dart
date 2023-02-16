@@ -1155,41 +1155,135 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
       ),
     );
     widgetList.add(SizedBox(height: 10));
-    widgetList.add(
-      Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.yellow),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        padding: EdgeInsets.all(10),
-        child: DropdownButton<String>(
-          isExpanded: true,
-          focusColor: Colors.white,
-          underline: Container(
-            color: Colors.black,
-          ),
-          borderRadius: BorderRadius.circular(10),
-          value: _chosenCountryCode,
-          style: TextStyle(color: Colors.yellow),
-          iconEnabledColor: Colors.yellow,
-          dropdownColor: Colors.black,
-          items: countryCodes.map<DropdownMenuItem<String>>((String value) {
-            return DropdownMenuItem<String>(
-              value: value,
-              child: Text(
-                value,
-                style: TextStyle(color: Colors.yellow),
-              ),
-            );
-          }).toList(),
-          onChanged: (String? value) {
-            setState(() {
-              _chosenCountryCode = value;
-            });
-          },
-        ),
+    widgetList.add(Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.yellow),
+        borderRadius: BorderRadius.circular(10),
       ),
-    );
+      padding: EdgeInsets.all(10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Flexible(
+            child: Container(
+              child: Text(
+                "${languages.nationalityLabel}",
+                style: TextStyle(
+                    color: Colors.yellow,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold),
+              ),
+            ),
+            flex: 1,
+          ),
+          Flexible(
+            child: Container(
+              decoration: BoxDecoration(
+                  color: Colors.yellow,
+                  borderRadius: BorderRadius.circular(10)),
+              child: Container(
+                decoration: BoxDecoration(
+                    color: Colors.black,
+                    borderRadius: BorderRadius.circular(10)),
+                margin: EdgeInsets.all(2),
+                child: DropdownButton2<String>(
+                  dropdownScrollPadding: EdgeInsets.only(bottom: 5),
+                  isExpanded: true,
+                  underline: Container(),
+                  focusColor: Colors.white,
+                  dropdownDecoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Colors.yellow,
+                  ),
+                  value: _chosenCountryCode,
+                  style: TextStyle(color: Colors.yellow),
+                  iconEnabledColor: Colors.yellow,
+                  itemPadding: const EdgeInsets.all(1),
+                  dropdownPadding: EdgeInsets.all(2),
+                  scrollbarRadius: const Radius.circular(40),
+                  itemSplashColor: Colors.yellow.shade100,
+                  scrollbarThickness: 6,
+                  dropdownOverButton: true,
+                  dropdownFullScreen: true,
+                  customButton: Container(
+                    height: 50,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisSize: MainAxisSize.max,
+                      children: <Widget>[
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.black,
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(10),
+                                bottomLeft: Radius.circular(10)),
+                          ),
+                          width: MediaQuery.of(context).size.width - 252,
+                          child: Center(
+                            child: Text(
+                              _chosenCountryCode!,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  color: Colors.yellow,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                        IconTheme(
+                          data: IconThemeData(
+                            color: Colors.yellow,
+                            size: 24,
+                          ),
+                          child: Icon(Icons.arrow_drop_down_outlined),
+                        ),
+                      ],
+                    ),
+                  ),
+                  items: countryCodes.map<DropdownMenuItem<String>>(
+                          (String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Container(
+                            decoration: BoxDecoration(
+                                color: Colors.black,
+                                borderRadius: value == countryCodes.first
+                                    ? BorderRadius.only(
+                                  topLeft: Radius.circular(10),
+                                  topRight: Radius.circular(10),
+                                )
+                                    : (value == countryCodes.last
+                                    ? BorderRadius.only(
+                                  bottomLeft: Radius.circular(10),
+                                  bottomRight: Radius.circular(10),
+                                )
+                                    : BorderRadius.zero)),
+                            child: Center(
+                              child: Text(
+                                value,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    color: Colors.yellow,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                  onChanged: (String? value) {
+                    setState(() {
+                      _chosenCountryCode = value;
+                    });
+                  },
+                ),
+              ),
+            ),
+            flex: 1,
+          ),
+        ],
+      ),
+    ));
     widgetList.add(SizedBox(height: 20));
   }
 }
