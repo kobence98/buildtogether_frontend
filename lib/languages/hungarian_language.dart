@@ -538,7 +538,7 @@ class LanguageHu extends Languages {
   String get capitalCity => 'FŐVÁROS';
 
   @override
-  String get town => 'KISVÁROS/KÖZSÉG';
+  String get town => 'KISVÁROS';
 
   @override
   String get village => 'FALU';

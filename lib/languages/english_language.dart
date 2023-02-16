@@ -528,10 +528,10 @@ class LanguageEn extends Languages {
   //GENDER ENUM
 
   @override
-  String get manLabel => 'MAN';
+  String get manLabel => 'MALE';
 
   @override
-  String get womanLabel => 'WOMAN';
+  String get womanLabel => 'FEMALE';
 
   @override
   String get otherLabel => 'OTHER';
