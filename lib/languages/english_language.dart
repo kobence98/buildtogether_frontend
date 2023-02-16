@@ -542,4 +542,27 @@ class LanguageEn extends Languages {
 
   @override
   String get statisticLabel => 'Statistics about likes';
+
+  //SALARY TYPE ENUM
+
+  @override
+  String get BELOW_300K => '< 1.000 €';
+
+  @override
+  String get FROM300K_TO_500K => '1.000 - 1.500 €';
+
+  @override
+  String get FROM500K_TO_700K => '1.500 - 2.000 €';
+
+  @override
+  String get FROM700K_TO_1M => '2.000 - 2.500 €';
+
+  @override
+  String get FROM1M_TO_1_5M => '2.500 - 4.000 €';
+
+  @override
+  String get FROM1_5M_TO_2M => '4.000 - 5.500 €';
+
+  @override
+  String get ABOVE_2M => '5.500+ €';
 }

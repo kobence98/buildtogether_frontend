@@ -114,7 +114,6 @@ class _StatisticPageState extends State<StatisticPage> {
                   ),
                 ),
                 Container(
-                  height: 200,
                   child: SfCartesianChart(
                       borderWidth: 10,
                       plotAreaBorderColor: Colors.white,
@@ -132,11 +131,19 @@ class _StatisticPageState extends State<StatisticPage> {
                                   .reduce(max)
                                   .toDouble() +
                               10,
-                          interval: statisticData
-                                  .livingPlaceTypeStatistics.values
-                                  .reduce(max)
-                                  .toDouble() %
-                              10),
+                          interval: (statisticData
+                                              .livingPlaceTypeStatistics.values
+                                              .reduce(max)
+                                              .toDouble() ~/
+                                          10)
+                                      .toDouble() !=
+                                  0
+                              ? (statisticData.livingPlaceTypeStatistics.values
+                                          .reduce(max)
+                                          .toDouble() ~/
+                                      10)
+                                  .toDouble()
+                              : 1),
                       series: <ColumnSeries<MapEntry<String, int>, String>>[
                         // Initialize line series.
                         ColumnSeries<MapEntry<String, int>, String>(
@@ -176,12 +183,12 @@ class _StatisticPageState extends State<StatisticPage> {
                   ),
                 ),
                 Container(
-                  height: 200,
                   child: SfCartesianChart(
                       borderWidth: 10,
                       plotAreaBorderColor: Colors.white,
                       plotAreaBorderWidth: 2,
                       primaryXAxis: CategoryAxis(
+                          labelRotation: 90,
                           labelStyle: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold)),
@@ -189,16 +196,22 @@ class _StatisticPageState extends State<StatisticPage> {
                           labelStyle: TextStyle(
                               color: Colors.white, fontWeight: FontWeight.bold),
                           borderColor: Colors.white,
-                          maximum: statisticData
-                                  .ageStatistics.values
+                          maximum: statisticData.ageStatistics.values
                                   .reduce(max)
                                   .toDouble() +
                               10,
-                          interval: statisticData
-                                  .ageStatistics.values
-                                  .reduce(max)
-                                  .toDouble() %
-                              10),
+                          interval: (statisticData.ageStatistics.values
+                                              .reduce(max)
+                                              .toDouble() ~/
+                                          10)
+                                      .toDouble() !=
+                                  0
+                              ? (statisticData.ageStatistics.values
+                                          .reduce(max)
+                                          .toDouble() ~/
+                                      10)
+                                  .toDouble()
+                              : 1),
                       series: <ColumnSeries<MapEntry<String, int>, String>>[
                         // Initialize line series.
                         ColumnSeries<MapEntry<String, int>, String>(
@@ -238,7 +251,6 @@ class _StatisticPageState extends State<StatisticPage> {
                   ),
                 ),
                 Container(
-                  height: 200,
                   child: SfCartesianChart(
                       borderWidth: 10,
                       plotAreaBorderColor: Colors.white,
@@ -251,16 +263,22 @@ class _StatisticPageState extends State<StatisticPage> {
                           labelStyle: TextStyle(
                               color: Colors.white, fontWeight: FontWeight.bold),
                           borderColor: Colors.white,
-                          maximum: statisticData
-                                  .genderStatistics.values
+                          maximum: statisticData.genderStatistics.values
                                   .reduce(max)
                                   .toDouble() +
                               10,
-                          interval: statisticData
-                                  .genderStatistics.values
-                                  .reduce(max)
-                                  .toDouble() %
-                              10),
+                          interval: (statisticData.genderStatistics.values
+                                              .reduce(max)
+                                              .toDouble() ~/
+                                          10)
+                                      .toDouble() !=
+                                  0
+                              ? (statisticData.genderStatistics.values
+                                          .reduce(max)
+                                          .toDouble() ~/
+                                      10)
+                                  .toDouble()
+                              : 1),
                       series: <ColumnSeries<MapEntry<String, int>, String>>[
                         // Initialize line series.
                         ColumnSeries<MapEntry<String, int>, String>(
@@ -300,12 +318,13 @@ class _StatisticPageState extends State<StatisticPage> {
                   ),
                 ),
                 Container(
-                  height: 200,
+                  // height: 400,
                   child: SfCartesianChart(
                       borderWidth: 10,
                       plotAreaBorderColor: Colors.white,
                       plotAreaBorderWidth: 2,
                       primaryXAxis: CategoryAxis(
+                          labelRotation: 90,
                           labelStyle: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold)),
@@ -313,23 +332,29 @@ class _StatisticPageState extends State<StatisticPage> {
                           labelStyle: TextStyle(
                               color: Colors.white, fontWeight: FontWeight.bold),
                           borderColor: Colors.white,
-                          maximum: statisticData
-                                  .salaryTypeStatistics.values
+                          maximum: statisticData.salaryTypeStatistics.values
                                   .reduce(max)
                                   .toDouble() +
                               10,
-                          interval: statisticData
-                                  .salaryTypeStatistics.values
-                                  .reduce(max)
-                                  .toDouble() %
-                              10),
+                          interval: (statisticData.salaryTypeStatistics.values
+                                              .reduce(max)
+                                              .toDouble() ~/
+                                          10)
+                                      .toDouble() !=
+                                  0
+                              ? (statisticData.salaryTypeStatistics.values
+                                          .reduce(max)
+                                          .toDouble() ~/
+                                      10)
+                                  .toDouble()
+                              : 1),
                       series: <ColumnSeries<MapEntry<String, int>, String>>[
                         // Initialize line series.
                         ColumnSeries<MapEntry<String, int>, String>(
                             color: Colors.lime,
                             dataSource: statisticData.salaryTypeStatistics
                                 .map((key, value) =>
-                                    MapEntry(key.getName, value))
+                                    MapEntry(key.getName(languages), value))
                                 .entries
                                 .toList(),
                             xValueMapper: (MapEntry<String, int> data, _) =>
@@ -362,7 +387,6 @@ class _StatisticPageState extends State<StatisticPage> {
                   ),
                 ),
                 Container(
-                  height: 200,
                   child: SfCartesianChart(
                       borderWidth: 10,
                       plotAreaBorderColor: Colors.white,
@@ -380,16 +404,28 @@ class _StatisticPageState extends State<StatisticPage> {
                                   .reduce(max)
                                   .toDouble() +
                               10,
-                          interval: statisticData
-                                  .numberOfHouseholdMembersStatistics.values
-                                  .reduce(max)
-                                  .toDouble() %
-                              10),
+                          interval: (statisticData
+                                              .numberOfHouseholdMembersStatistics
+                                              .values
+                                              .reduce(max)
+                                              .toDouble() ~/
+                                          10)
+                                      .toDouble() !=
+                                  0
+                              ? (statisticData
+                                          .numberOfHouseholdMembersStatistics
+                                          .values
+                                          .reduce(max)
+                                          .toDouble() ~/
+                                      10)
+                                  .toDouble()
+                              : 1),
                       series: <ColumnSeries<MapEntry<String, int>, String>>[
                         // Initialize line series.
                         ColumnSeries<MapEntry<String, int>, String>(
                             color: Colors.lime,
-                            dataSource: statisticData.numberOfHouseholdMembersStatistics
+                            dataSource: statisticData
+                                .numberOfHouseholdMembersStatistics
                                 .map((key, value) =>
                                     MapEntry(key.toString(), value))
                                 .entries

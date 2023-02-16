@@ -367,4 +367,23 @@ abstract class Languages {
   //STATISTIC PAGE
 
   String get statisticLabel;
+
+  //SALARY TYPE ENUM
+
+  String get BELOW_300K;
+
+  String get FROM300K_TO_500K;
+
+  String get FROM500K_TO_700K;
+
+  String get FROM700K_TO_1M;
+
+  String get FROM1M_TO_1_5M;
+
+  String get FROM1_5M_TO_2M;
+
+  String get ABOVE_2M;
+
+
+
 }

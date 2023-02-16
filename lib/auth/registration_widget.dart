@@ -1235,7 +1235,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                           width: MediaQuery.of(context).size.width - 256,
                           child: Center(
                             child: Text(
-                              _chosenSalaryType!.getName,
+                              _chosenSalaryType!.getName(languages),
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                   color: Colors.yellow,
@@ -1274,7 +1274,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                                     : BorderRadius.zero)),
                         child: Center(
                           child: Text(
-                            value.getName,
+                            value.getName(languages),
                             textAlign: TextAlign.center,
                             style: TextStyle(
                                 color: Colors.yellow,

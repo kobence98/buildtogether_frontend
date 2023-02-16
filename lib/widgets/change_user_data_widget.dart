@@ -915,7 +915,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                           width: MediaQuery.of(context).size.width - 252,
                           child: Center(
                             child: Text(
-                              _chosenSalaryType!.getName,
+                              _chosenSalaryType!.getName(languages),
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                   color: Colors.yellow,
@@ -954,7 +954,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                                     : BorderRadius.zero)),
                         child: Center(
                           child: Text(
-                            value.getName,
+                            value.getName(languages),
                             textAlign: TextAlign.center,
                             style: TextStyle(
                                 color: Colors.yellow,

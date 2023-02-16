@@ -538,4 +538,27 @@ class LanguageHu extends Languages {
 
   @override
   String get statisticLabel => 'Statisztika a kedvelésekről';
+
+  //SALARY TYPE ENUM
+
+  @override
+  String get BELOW_300K => '< 300.000 FT';
+
+  @override
+  String get FROM300K_TO_500K => '300.000 - 500.000 FT';
+
+  @override
+  String get FROM500K_TO_700K => '500.000 - 700.000 FT';
+
+  @override
+  String get FROM700K_TO_1M => '700.000 - 1.000.000 FT';
+
+  @override
+  String get FROM1M_TO_1_5M => '1.000.000 - 1.500.000 FT';
+
+  @override
+  String get FROM1_5M_TO_2M => '1.500.000 - 2.000.000 FT';
+
+  @override
+  String get ABOVE_2M => '2.000.000+ FT';
 }

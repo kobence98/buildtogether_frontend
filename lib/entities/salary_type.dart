@@ -1,3 +1,5 @@
+import 'package:flutter_frontend/languages/languages.dart';
+
 enum SalaryType{
   BELOW_300K,
   FROM300K_TO_500K,
@@ -10,22 +12,22 @@ enum SalaryType{
 
 //TODO ezt még eurosítani valahogyan, vagy valamit kitalálni majd ha akarjuk külföldre is vinni
 extension SalaryTypeName on SalaryType {
-  String get getName {
+  String getName(Languages languages) {
     switch (this) {
       case SalaryType.BELOW_300K:
-        return '< 300.000 FT';
+        return languages.BELOW_300K;
       case SalaryType.FROM300K_TO_500K:
-        return '300.000 - 500.000 FT';
+        return languages.FROM300K_TO_500K;
       case SalaryType.FROM500K_TO_700K:
-        return '500.000 - 700.000 FT';
+        return languages.FROM500K_TO_700K;
       case SalaryType.FROM700K_TO_1M:
-        return '700.000 - 1.000.000 FT';
+        return languages.FROM700K_TO_1M;
       case SalaryType.FROM1M_TO_1_5M:
-        return '1.000.000 - 1.500.000 FT';
+        return languages.FROM1M_TO_1_5M;
       case SalaryType.FROM1_5M_TO_2M:
-        return '1.500.000 - 2.000.000 FT';
+        return languages.FROM1_5M_TO_2M;
       default:
-        return '2.000.000+ FT';
+        return languages.ABOVE_2M;
     }
   }
 
