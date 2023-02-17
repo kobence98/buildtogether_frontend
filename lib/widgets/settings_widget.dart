@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_frontend/auth/auth_sqflite_handler.dart';
 import 'package:flutter_frontend/entities/session.dart';
@@ -7,14 +6,11 @@ import 'package:flutter_frontend/languages/language_code.dart';
 import 'package:flutter_frontend/languages/languages.dart';
 import 'package:flutter_frontend/languages/languages_sqflite_handler.dart';
 import 'package:flutter_frontend/widgets/liked_posts_widget.dart';
+import 'package:flutter_frontend/widgets/my_account_widget.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-import 'change_location_widget.dart';
-import 'change_password_widget.dart';
-import 'change_user_data_widget.dart';
 import 'companies_widget.dart';
-import 'handle_bans_widget.dart';
 
 class SettingsWidget extends StatefulWidget {
   final Session session;
@@ -59,266 +55,42 @@ class _SettingsWidgetState extends State<SettingsWidget> {
             SizedBox(
               height: 50,
             ),
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(10),
-                ),
-                color: Colors.yellowAccent,
-              ),
-              child: ListTile(
-                leading: Icon(
-                  Icons.factory,
-                  color: Colors.black,
-                ),
-                title: Text(
-                  languages.companiesLabel,
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                ),
-                onTap: _onCompaniesTap,
-              ),
+            Row(
+              children: [
+                _menuPoint(languages.myAccountLabel, Icons.perm_identity,
+                    _onMyAccountTap),
+                _menuPoint(
+                    languages.companiesLabel, Icons.factory, _onCompaniesTap),
+              ],
             ),
             SizedBox(height: 5),
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(10),
-                ),
-                color: Colors.yellowAccent,
-              ),
-              child: ListTile(
-                leading: Icon(
-                  Icons.lightbulb,
-                  color: Colors.black,
-                ),
-                title: Text(
-                  languages.likedPostsLabel,
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                ),
-                onTap: _onLikedPostsTap,
-              ),
-            ),
-            SizedBox(height: 5),
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(10),
-                ),
-                color: Colors.yellowAccent,
-              ),
-              child: ListTile(
-                leading: Icon(
-                  Icons.security,
-                  color: Colors.black,
-                ),
-                title: Text(
-                  languages.changePasswordLabel,
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                ),
-                onTap: _onChangePasswordTap,
-              ),
-            ),
-            SizedBox(height: 5),
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(10),
-                ),
-                color: Colors.yellowAccent,
-              ),
-              child: ListTile(
-                leading: Icon(
-                  Icons.perm_identity,
-                  color: Colors.black,
-                ),
-                title: Text(
-                  languages.changeUserDataLabel,
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                ),
-                onTap: _onChangeUserDataTap,
-              ),
-            ),
-            SizedBox(height: 5),
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(10),
-                ),
-                color: Colors.yellowAccent,
-              ),
-              child: ListTile(
-                leading: Icon(
-                  Icons.location_on,
-                  color: Colors.black,
-                ),
-                title: Text(
-                  languages.changeLocationLabel,
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                ),
-                onTap: _onChangeLocationTap,
-              ),
-            ),
-            SizedBox(height: 5),
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(10),
-                ),
-                color: Colors.yellowAccent,
-              ),
-              child: ListTile(
-                leading: Icon(
-                  Icons.not_interested,
-                  color: Colors.black,
-                ),
-                title: Text(
-                  languages.handleBansLabel,
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                ),
-                onTap: _onHandleBansTap,
-              ),
-            ),
-            SizedBox(height: 5),
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(10),
-                ),
-                color: Colors.yellowAccent,
-              ),
-              child: ListTile(
-                leading: Icon(
-                  Icons.language,
-                  color: Colors.black,
-                ),
-                title: Text(
-                  languages.changeLanguageLabel,
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                ),
-                onTap: _onChangeLanguageTap,
-              ),
+            Row(
+              children: [
+                _menuPoint(languages.likedPostsLabel, Icons.lightbulb,
+                    _onLikedPostsTap),
+                _menuPoint(languages.changeLanguageLabel, Icons.language,
+                    _onChangeLanguageTap),
+              ],
             ),
             SizedBox(height: 5),
             company
-                ? Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(10),
+                ? Row(children: [
+                    _menuPoint(languages.subscriptionHandlingLabel,
+                        Icons.subscriptions, _onSubscriptionHandlingTap),
+                    Flexible(
+                      flex: 1,
+                      child: Container(
+                        margin: EdgeInsets.all(5),
+                        height: (MediaQuery.of(context).size.width - 15) / 2,
+                        width: (MediaQuery.of(context).size.width - 15) / 2,
                       ),
-                      color: Colors.yellowAccent,
                     ),
-                    child: ListTile(
-                      leading: Icon(
-                        Icons.subscriptions,
-                        color: Colors.black,
-                      ),
-                      title: Text(
-                        languages.subscriptionHandlingLabel,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 20),
-                      ),
-                      onTap: _onSubscriptionHandlingTap,
-                    ),
-                  )
-                : Container(),
-            SizedBox(height: company ? 5 : 0),
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(10),
-                ),
-                color: Colors.yellowAccent,
-              ),
-              child: ListTile(
-                leading: Icon(
-                  Icons.logout,
-                  color: Colors.black,
-                ),
-                title: Text(
-                  languages.logoutLabel,
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                ),
-                onTap: _onLogoutTap,
-              ),
-            ),
-            SizedBox(height: 5),
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(10),
-                ),
-                color: Colors.yellowAccent,
-              ),
-              child: ListTile(
-                leading: Icon(
-                  Icons.delete_forever,
-                  color: Colors.black,
-                ),
-                title: Text(
-                  languages.deleteAccountLabel,
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                ),
-                onTap: _onDeleteAccountTap,
-              ),
-            ),
+                  ])
+                : Container()
           ],
         ),
       ),
     );
-  }
-
-  void _onLogoutTap() {
-    widget.session
-        .post(
-      '/api/logout',
-      new Map<String, dynamic>(),
-    )
-        .then((res) {
-      if (res.statusCode == 200) {
-        widget.session.updateCookie(res);
-        authSqfLiteHandler.deleteUsers();
-        Phoenix.rebirth(context);
-      }
-    });
-  }
-
-  void _onChangePasswordTap() async {
-    await widget.hideNavBar();
-    Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => ChangePasswordWidget(
-              user: widget.user,
-              session: widget.session,
-              languages: languages,
-            ))).whenComplete(() => widget.navBarStatusChangeableAgain());
-  }
-
-  void _onChangeUserDataTap() async {
-    await widget.hideNavBar();
-    Navigator.of(context)
-        .push(MaterialPageRoute(
-            builder: (context) => ChangeUserDataWidget(
-                  user: widget.user,
-                  session: widget.session,
-                  languages: languages,
-                )))
-        .then((message) {
-      if (message != null && message == 'DATA_CHANGED') {
-        Phoenix.rebirth(context);
-      }
-      else{
-        widget.navBarStatusChangeableAgain();
-      }
-    });
-  }
-
-  void _onChangeLocationTap() async {
-    await widget.hideNavBar();
-    Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => ChangeLocationWidget(
-              user: widget.user,
-              session: widget.session,
-              languages: languages,
-            ))).whenComplete(() => widget.navBarStatusChangeableAgain());
   }
 
   void _onChangeLanguageTap() {
@@ -507,123 +279,81 @@ class _SettingsWidgetState extends State<SettingsWidget> {
     });
   }
 
-  void _onHandleBansTap() async {
-    await widget.hideNavBar();
-    Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => HandleBansWidget(
-              user: widget.user,
-              session: widget.session,
-              languages: languages,
-            ))).whenComplete(() => widget.navBarStatusChangeableAgain());
-  }
-
-  void _onDeleteAccountTap() {
-    showDialog(
-        context: context,
-        useRootNavigator: false,
-        builder: (context) {
-          return StatefulBuilder(builder: (context, setState) {
-            return loading
-                ? Container(
-                    child: Center(
-                      child: Image(
-                          image: new AssetImage(
-                              "assets/images/loading_breath.gif")),
-                    ),
-                  )
-                : AlertDialog(
-                    backgroundColor: Colors.red,
-                    title: Text(
-                      languages.deleteAccountWarningTitle,
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                          color: Colors.white),
-                    ),
-                    content: Container(
-                      child: Text(
-                        languages.deleteAccountWarningMessage,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                            color: Colors.white),
-                      ),
-                    ),
-                    actions: <Widget>[
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: Text(
-                          languages.cancelLabel,
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          _onDeleteAccountDeleteButtonTap(setState);
-                        },
-                        child: Text(
-                          languages.deleteLabel,
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      )
-                    ],
-                  );
-          });
-        });
-  }
-
-  _onDeleteAccountDeleteButtonTap(setState) {
-    setState(() {
-      loading = true;
-    });
-    widget.session.delete('/api/users').then((response) {
-      if (response.statusCode == 200) {
-        loading = false;
-        widget.session.updateCookie(response);
-        authSqfLiteHandler.deleteUsers();
-        Phoenix.rebirth(context);
-        Fluttertoast.showToast(
-            msg: languages.successfulAccountDeleteMessage,
-            toastLength: Toast.LENGTH_LONG,
-            gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 4,
-            backgroundColor: Colors.green,
-            textColor: Colors.white,
-            fontSize: 16.0);
-      } else {
-        setState(() {
-          loading = false;
-        });
-        Fluttertoast.showToast(
-            msg: languages.globalErrorMessage,
-            toastLength: Toast.LENGTH_LONG,
-            gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 4,
-            backgroundColor: Colors.red,
-            textColor: Colors.white,
-            fontSize: 16.0);
-      }
-    });
-  }
-
   void _onLikedPostsTap() async {
     await widget.hideNavBar();
-    Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => LikedPostsWidget(
-              user: widget.user,
-              session: widget.session,
-              languages: languages,
-            ))).whenComplete(() => widget.navBarStatusChangeableAgain());
+    Navigator.of(context)
+        .push(MaterialPageRoute(
+            builder: (context) => LikedPostsWidget(
+                  user: widget.user,
+                  session: widget.session,
+                  languages: languages,
+                )))
+        .whenComplete(() => widget.navBarStatusChangeableAgain());
   }
 
   void _onCompaniesTap() async {
     await widget.hideNavBar();
-    Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => CompaniesWidget(
-              session: widget.session,
-              languages: languages,
-            ))).whenComplete(() => widget.navBarStatusChangeableAgain());
+    Navigator.of(context)
+        .push(MaterialPageRoute(
+            builder: (context) => CompaniesWidget(
+                  session: widget.session,
+                  languages: languages,
+                )))
+        .whenComplete(() => widget.navBarStatusChangeableAgain());
+  }
+
+  void _onMyAccountTap() async {
+    await widget.hideNavBar();
+    Navigator.of(context)
+        .push(MaterialPageRoute(
+            builder: (context) => MyAccountWidget(
+                  session: widget.session,
+                  user: widget.user,
+                  languages: languages,
+                  hideNavBar: widget.hideNavBar,
+                  navBarStatusChangeableAgain:
+                      widget.navBarStatusChangeableAgain,
+                )))
+        .whenComplete(() => widget.navBarStatusChangeableAgain());
+  }
+
+  Widget _menuPoint(String label, IconData icon, Function onTap) {
+    return Flexible(
+      flex: 1,
+      child: InkWell(
+        child: Container(
+          margin: EdgeInsets.all(5),
+          height: (MediaQuery.of(context).size.width - 15) / 2,
+          width: (MediaQuery.of(context).size.width - 15) / 2,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.all(
+              Radius.circular(10),
+            ),
+            color: Colors.yellowAccent,
+          ),
+          child: Stack(children: [
+            Center(
+              child: Text(
+                label,
+                textAlign: TextAlign.center,
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
+              ),
+            ),
+            Positioned(
+              top: (MediaQuery.of(context).size.width - 15) / 16,
+              left: (MediaQuery.of(context).size.width - 15) / 16,
+              child: Center(
+                child: Icon(
+                  icon,
+                  color: Colors.black.withOpacity(0.05),
+                  size: 150,
+                ),
+              ),
+            )
+          ]),
+        ),
+        onTap: () => onTap(),
+      ),
+    );
   }
 }

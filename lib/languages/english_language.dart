@@ -455,6 +455,9 @@ class LanguageEn extends Languages {
   @override
   String get companiesLabel => 'Registered companies';
 
+  @override
+  String get myAccountLabel => 'My account';
+
   //DATE FORMATTER
 
   @override

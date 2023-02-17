@@ -451,6 +451,9 @@ class LanguageHu extends Languages {
   @override
   String get companiesLabel => 'Regisztrált cégek';
 
+  @override
+  String get myAccountLabel => 'Fiókom';
+
   //DATE FORMATTER
 
   @override

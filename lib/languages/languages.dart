@@ -304,6 +304,8 @@ abstract class Languages {
 
   String get companiesLabel;
 
+  String get myAccountLabel;
+
   //DATE FORMATTER
 
   String get minuteLetter;
