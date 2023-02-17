@@ -34,8 +34,8 @@ class _LoginPageState extends State<LoginPage> {
   final _passwordController = TextEditingController();
   final _forgottenPasswordEmailController = TextEditingController();
   Session session = Session();
-  AuthSqfLiteHandler authSqfLiteHandler = AuthSqfLiteHandler();
-  LanguagesSqfLiteHandler languagesSqfLiteHandler = LanguagesSqfLiteHandler();
+  // AuthSqfLiteHandler authSqfLiteHandler = AuthSqfLiteHandler();
+  // LanguagesSqfLiteHandler languagesSqfLiteHandler = LanguagesSqfLiteHandler();
   bool loading = false;
   late Languages languages;
   late bool _passwordVisible;
@@ -84,8 +84,8 @@ class _LoginPageState extends State<LoginPage> {
                             onTap: () {
                               setState(() {
                                 languages = LanguageEn();
-                                languagesSqfLiteHandler.insertLanguageCode(
-                                    LanguageCode(code: 'en', id: 0));
+                                // languagesSqfLiteHandler.insertLanguageCode(
+                                //     LanguageCode(code: 'en', id: 0));
                               });
                             },
                           ),
@@ -103,8 +103,8 @@ class _LoginPageState extends State<LoginPage> {
                             onTap: () {
                               setState(() {
                                 languages = LanguageHu();
-                                languagesSqfLiteHandler.insertLanguageCode(
-                                    LanguageCode(code: 'hu', id: 0));
+                                // languagesSqfLiteHandler.insertLanguageCode(
+                                //     LanguageCode(code: 'hu', id: 0));
                               });
                             },
                           ),
@@ -281,10 +281,10 @@ class _LoginPageState extends State<LoginPage> {
               setState(() {
                 loading = false;
               });
-              authSqfLiteHandler.insertUser(AuthUser(
-                  id: 0,
-                  email: _emailController.text.split(' ').first,
-                  password: _passwordController.text));
+              // authSqfLiteHandler.insertUser(AuthUser(
+              //     id: 0,
+              //     email: _emailController.text.split(' ').first,
+              //     password: _passwordController.text));
               if (user.roles.contains('ROLE_COMPANY') &&
                   !user.isCompanyActive) {
                 Fluttertoast.showToast(
