@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_frontend/auth/auth_sqflite_handler.dart';
 import 'package:flutter_frontend/entities/session.dart';
@@ -329,7 +330,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
             borderRadius: BorderRadius.all(
               Radius.circular(10),
             ),
-            color: Colors.yellowAccent,
+            color: CupertinoColors.systemYellow,
           ),
           child: Stack(children: [
             Center(

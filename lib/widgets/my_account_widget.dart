@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -262,7 +263,7 @@ class _MyAccountWidgetState extends State<MyAccountWidget> {
             borderRadius: BorderRadius.all(
               Radius.circular(10),
             ),
-            color: Colors.yellowAccent,
+            color: CupertinoColors.systemYellow,
           ),
           child: Stack(children: [
             Center(
