@@ -300,13 +300,13 @@ class LanguageEn extends Languages {
   String get titleOfIdeaLabel => 'Title of your idea';
 
   @override
-  String get writeHereYourIdeaLabel => 'This is where you should write your idea. Maximum of 2048 characters.';
+  String get writeHereYourIdeaLabel => 'Description (Max 2048 characters)';
 
   @override
   String get POSTLabel => 'POST';
 
   @override
-  String get pollShortDescriptionLabel => 'Short description for the poll (max 256 characters)';
+  String get pollShortDescriptionLabel => 'Short description (max 256 characters)';
 
   @override
   String get pollOptionsLabel => 'Poll options';
