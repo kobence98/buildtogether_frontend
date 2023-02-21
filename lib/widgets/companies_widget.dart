@@ -36,6 +36,7 @@ class _CompaniesWidgetState extends State<CompaniesWidget> {
           Iterable l = json.decode(utf8.decode(response.bodyBytes));
           companies = List<CompanyForListing>.from(
               l.map((model) => CompanyForListing.fromJson(model)));
+          companies.sort((a, b) => a.name.compareTo(b.name));
           dataLoading = false;
         });
       }
@@ -230,7 +231,8 @@ class _CompaniesWidgetState extends State<CompaniesWidget> {
                     child: ListTile(
                       leading: CircleAvatar(
                         radius: 20,
-                        backgroundImage: AssetImage("assets/images/launcher_icon.png"),
+                        backgroundImage:
+                            AssetImage("assets/images/launcher_icon.png"),
                       ),
                       title: Container(
                         child: Text(

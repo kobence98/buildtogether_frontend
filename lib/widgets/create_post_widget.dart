@@ -1,13 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_frontend/entities/company_for_search.dart';
 import 'package:flutter_frontend/entities/session.dart';
 import 'package:flutter_frontend/entities/user.dart';
 import 'package:flutter_frontend/languages/languages.dart';
 import 'package:flutter_frontend/static/profanity_checker.dart';
-import 'package:flutter_launcher_icons/utils.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -82,19 +82,21 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                             _pollTitleNameFocus.requestFocus();
                           }
                         },
-                        labelColor: Colors.yellow,
-                        indicatorColor: Colors.yellow,
+                        labelColor: CupertinoColors.systemYellow,
+                        indicatorColor: CupertinoColors.systemYellow,
                         tabs: [
                           Tab(
                             child: Text(
                               languages.simplePostLabel,
-                              style: TextStyle(color: Colors.yellow),
+                              style: TextStyle(
+                                  color: CupertinoColors.systemYellow),
                             ),
                           ),
                           Tab(
                             child: Text(
                               languages.pollPostLabel,
-                              style: TextStyle(color: Colors.yellow),
+                              style: TextStyle(
+                                  color: CupertinoColors.systemYellow),
                             ),
                           ),
                         ]),
@@ -109,7 +111,9 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
   }
 
   void _onPostSimplePressed() {
-    isButtonEnabled = false;
+    setState(() {
+      isButtonEnabled = false;
+    });
     if (ProfanityChecker.alert(
         _descriptionController.text + ' ' + _titleController.text)) {
       setState(() {
@@ -244,7 +248,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
           ),
           _selectedCompany == null
               ? Container(
-                  height: 35,
+                  height: 45,
                   margin: EdgeInsets.only(left: 10, right: 10),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.all(
@@ -253,117 +257,142 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                     color: Colors.white,
                   ),
                   padding: EdgeInsets.all(4),
-                  child: TypeAheadField(
-                    noItemsFoundBuilder: (context) {
-                      return Container(
-                        padding: EdgeInsets.all(1),
-                        color: Colors.yellow,
-                        child: Container(
-                          color: Colors.black,
-                          child: ListTile(
-                            leading: Icon(
-                              Icons.not_interested_rounded,
-                              color: Colors.yellow,
-                            ),
-                            title: Text(
-                              languages.noItemsFoundLabel,
-                              style: TextStyle(
-                                  color: Colors.yellow,
-                                  fontStyle: FontStyle.italic,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20),
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                    minCharsForSuggestions: 1,
-                    textFieldConfiguration: TextFieldConfiguration(
-                      decoration: new InputDecoration.collapsed(
-                          hintText: languages.companyNameLabel),
-                      controller: _companyNameController,
-                      onEditingComplete: () {
-                        if (_titleController.text.isEmpty) {
-                          _titleFocus.requestFocus();
-                        } else if (_descriptionController.text.isEmpty) {
-                          _descriptionFocus.requestFocus();
-                        } else {
-                          _companyNameFocus.unfocus();
-                        }
-                      },
-                      cursorColor: Colors.black,
-                      focusNode: _companyNameFocus,
-                      autofocus: true,
-                      style: TextStyle(fontSize: 20),
-                    ),
-                    suggestionsCallback: (pattern) async {
-                      dynamic response = await widget.session
-                          .get("/api/companies/getByName/" + pattern);
-                      if (response.statusCode == 200) {
-                        widget.session.updateCookie(response);
-                        Iterable l =
-                            json.decode(utf8.decode(response.bodyBytes));
-                        companies = List<CompanyForSearch>.from(l.map(
-                            (company) => CompanyForSearch.fromJson(company)));
-                        List<String> resultList = [];
-                        companies.forEach((company) {
-                          resultList.add(company.id.toString());
-                        });
-                        return resultList;
-                      }
-                      return [];
-                    },
-                    itemBuilder: (context, c) {
-                      CompanyForSearch company =
-                          companies.where((cp) => cp.id.toString() == c).first;
-                      return Container(
-                        padding: EdgeInsets.all(1),
-                        color: Colors.yellow,
-                        child: Container(
-                          color: Colors.black,
-                          child: ListTile(
-                            leading: CircleAvatar(
-                              radius: 20,
-                              backgroundImage: NetworkImage(
-                                widget.session.domainName +
-                                    "/api/images/" +
-                                    company.imageId.toString(),
-                                headers: widget.session.headers,
+                  child: Row(
+                    children: [
+                      Container(
+                        width: MediaQuery.of(context).size.width - 70,
+                        child: TypeAheadField(
+                          noItemsFoundBuilder: (context) {
+                            return Container(
+                              padding: EdgeInsets.all(1),
+                              color: CupertinoColors.systemYellow,
+                              child: Container(
+                                color: Colors.black,
+                                child: ListTile(
+                                  leading: Icon(
+                                    Icons.not_interested_rounded,
+                                    color: CupertinoColors.systemYellow,
+                                  ),
+                                  title: Text(
+                                    languages.noItemsFoundLabel,
+                                    style: TextStyle(
+                                        color: CupertinoColors.systemYellow,
+                                        fontStyle: FontStyle.italic,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20),
+                                  ),
+                                ),
                               ),
-                            ),
-                            title: Text(
-                              company.name,
-                              style: TextStyle(
-                                  color: Colors.yellow,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20),
-                            ),
+                            );
+                          },
+                          minCharsForSuggestions: 1,
+                          textFieldConfiguration: TextFieldConfiguration(
+                            decoration: new InputDecoration.collapsed(
+                                hintText: languages.companyNameLabel),
+                            controller: _companyNameController,
+                            onEditingComplete: () {
+                              if (_titleController.text.isEmpty) {
+                                _titleFocus.requestFocus();
+                              } else if (_descriptionController.text.isEmpty) {
+                                _descriptionFocus.requestFocus();
+                              } else {
+                                _companyNameFocus.unfocus();
+                              }
+                            },
+                            cursorColor: Colors.black,
+                            focusNode: _companyNameFocus,
+                            autofocus: true,
+                            style: TextStyle(fontSize: 20),
                           ),
+                          suggestionsCallback: (pattern) async {
+                            dynamic response = await widget.session
+                                .get("/api/companies/getByName/" + pattern);
+                            if (response.statusCode == 200) {
+                              widget.session.updateCookie(response);
+                              Iterable l =
+                                  json.decode(utf8.decode(response.bodyBytes));
+                              companies = List<CompanyForSearch>.from(l.map(
+                                  (company) => CompanyForSearch.fromJson(company)));
+                              List<String> resultList = [];
+                              companies.forEach((company) {
+                                resultList.add(company.id.toString());
+                              });
+                              return resultList;
+                            }
+                            return [];
+                          },
+                          itemBuilder: (context, c) {
+                            CompanyForSearch company =
+                                companies.where((cp) => cp.id.toString() == c).first;
+                            return Container(
+                              padding: EdgeInsets.all(1),
+                              color: CupertinoColors.systemYellow,
+                              child: Container(
+                                color: Colors.black,
+                                child: ListTile(
+                                  leading: CircleAvatar(
+                                    radius: 20,
+                                    backgroundImage: NetworkImage(
+                                      widget.session.domainName +
+                                          "/api/images/" +
+                                          company.imageId.toString(),
+                                      headers: widget.session.headers,
+                                    ),
+                                  ),
+                                  title: Text(
+                                    company.name,
+                                    style: TextStyle(
+                                        color: CupertinoColors.systemYellow,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20),
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                          onSuggestionSelected: (suggestion) {
+                            setState(() {
+                              CompanyForSearch company = companies
+                                  .where((cp) => cp.id.toString() == suggestion)
+                                  .first;
+                              _companyNameController.text = company.name;
+                              _selectedCompany = company;
+                              if (_titleController.text.isEmpty) {
+                                _titleFocus.requestFocus();
+                              } else if (_descriptionController.text.isEmpty) {
+                                _descriptionFocus.requestFocus();
+                              } else {
+                                _companyNameFocus.unfocus();
+                              }
+                            });
+                          },
                         ),
-                      );
-                    },
-                    onSuggestionSelected: (suggestion) {
-                      setState(() {
-                        CompanyForSearch company = companies
-                            .where((cp) => cp.id.toString() == suggestion)
-                            .first;
-                        _companyNameController.text = company.name;
-                        _selectedCompany = company;
-                        if (_titleController.text.isEmpty) {
-                          _titleFocus.requestFocus();
-                        } else if (_descriptionController.text.isEmpty) {
-                          _descriptionFocus.requestFocus();
-                        } else {
+                      ),
+                      SizedBox(width: 7,),
+                      InkWell(
+                        child: Container(
+                          height: 35,
+                          width: 35,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(10),
+                            ),
+                            color: Colors.black,
+                          ),
+                          child: Icon(Icons.close, color: CupertinoColors.systemYellow),
+                        ),
+                        onTap: () {
                           _companyNameFocus.unfocus();
-                        }
-                      });
-                    },
+                          _companyNameController.clear();
+                        },
+                      )
+                    ],
                   ),
                 )
               : Container(
                   margin: EdgeInsets.only(left: 10, right: 10),
                   padding: EdgeInsets.all(1),
-                  color: Colors.yellow,
+                  color: CupertinoColors.systemYellow,
                   child: Container(
                     color: Colors.black,
                     child: ListTile(
@@ -379,14 +408,14 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                       title: Text(
                         _selectedCompany!.name,
                         style: TextStyle(
-                            color: Colors.yellow,
+                            color: CupertinoColors.systemYellow,
                             fontWeight: FontWeight.bold,
                             fontSize: 20),
                       ),
                       trailing: InkWell(
                         child: Icon(
                           Icons.clear,
-                          color: Colors.yellow,
+                          color: CupertinoColors.systemYellow,
                         ),
                         onTap: () {
                           setState(() {
@@ -410,19 +439,45 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
               color: Colors.white,
             ),
             padding: EdgeInsets.all(4),
-            child: TextField(
-              focusNode: _titleFocus,
-              onEditingComplete: () {
-                if (_descriptionController.text.isEmpty) {
-                  _descriptionFocus.requestFocus();
-                } else {
-                  _titleFocus.unfocus();
-                }
-              },
-              controller: _titleController,
-              style: TextStyle(fontSize: 20),
-              decoration: new InputDecoration.collapsed(
-                  hintText: languages.titleOfIdeaLabel),
+            child: Row(
+              children: [
+                Container(
+                  width: MediaQuery.of(context).size.width - 70,
+                  height: 35,
+                  child: Center(
+                    child: TextField(
+                      cursorColor: Colors.black,
+                      focusNode: _titleFocus,
+                      onEditingComplete: () {
+                        if (_descriptionController.text.isEmpty) {
+                          _descriptionFocus.requestFocus();
+                        } else {
+                          _titleFocus.unfocus();
+                        }
+                      },
+                      controller: _titleController,
+                      style: TextStyle(fontSize: 20,),
+                      decoration: new InputDecoration.collapsed(
+                          hintText: languages.titleOfIdeaLabel),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 7,),
+                InkWell(
+                  child: Container(
+                    height: 35,
+                  width: 35,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(10),
+                    ),
+                    color: Colors.black,
+                  ),
+                    child: Icon(Icons.check, color: CupertinoColors.systemYellow),
+                  ),
+                  onTap: () => _titleFocus.unfocus(),
+                )
+              ],
             ),
           ),
           SizedBox(
@@ -438,15 +493,38 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
               color: Colors.white,
             ),
             padding: EdgeInsets.all(4),
-            child: TextField(
-                maxLines: null,
-                maxLength: 2048,
-                controller: _descriptionController,
-                focusNode: _descriptionFocus,
-                style: TextStyle(fontSize: 20),
-                decoration: new InputDecoration.collapsed(
-                    hintText: languages.writeHereYourIdeaLabel),
-                onChanged: (text) => setState(() {})),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Container(
+                  width: MediaQuery.of(context).size.width - 70,
+                  child: TextField(
+                      maxLines: null,
+                      maxLength: 2048,
+                      controller: _descriptionController,
+                      focusNode: _descriptionFocus,
+                      style: TextStyle(fontSize: 20),
+                      decoration: InputDecoration.collapsed(
+                          hintText: languages.writeHereYourIdeaLabel,),
+                      onChanged: (text) => setState(() {})),
+                ),
+                SizedBox(width: 7,),
+                InkWell(
+                  child: Container(
+                    height: 35,
+                    width: 35,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(10),
+                      ),
+                      color: Colors.black,
+                    ),
+                    child: Icon(Icons.check, color: CupertinoColors.systemYellow),
+                  ),
+                  onTap: () => _descriptionFocus.unfocus(),
+                )
+              ],
+            ),
           ),
           SizedBox(
             height: 10,
@@ -454,7 +532,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
           Container(
             margin: EdgeInsets.all(10),
             decoration: BoxDecoration(
-                border: Border.all(color: Colors.yellow),
+                border: Border.all(color: CupertinoColors.systemYellow),
                 borderRadius: BorderRadius.circular(10)),
             child: ListTile(
               leading: Text(
@@ -471,10 +549,11 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                         height: 40,
                         width: 40,
                         decoration: BoxDecoration(
-                          border: Border.all(color: Colors.yellow),
+                            border:
+                                Border.all(color: CupertinoColors.systemYellow),
                             image: DecorationImage(
                                 image: FileImage(File(image!.path)),
-                                fit: BoxFit.contain ),
+                                fit: BoxFit.contain),
                             borderRadius: BorderRadius.circular(10)),
                       )),
                       onTap: () {
@@ -487,7 +566,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                         height: 40,
                         width: 40,
                         decoration: BoxDecoration(
-                            color: Colors.yellow,
+                            color: CupertinoColors.systemYellow,
                             image: DecorationImage(
                                 image: AssetImage(
                                   "assets/images/add_image.png",
@@ -510,7 +589,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all<Color>(
                     isButtonEnabled
-                        ? Colors.yellowAccent
+                        ? CupertinoColors.systemYellow
                         : Colors.yellow.shade200),
               ),
               onPressed: isButtonEnabled ? _onPostSimplePressed : null,
@@ -559,28 +638,51 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                   ),
                   color: Colors.white,
                 ),
-                padding: EdgeInsets.all(10),
-                child: TextField(
-                  cursorColor: Colors.black,
-                  controller: _pollTitleController,
-                  focusNode: _pollTitleNameFocus,
-                  onEditingComplete: () {
-                    int nextEmptyIndex = pollControllers
-                        .indexWhere((element) => element.text.isEmpty);
-                    if (nextEmptyIndex != -1) {
-                      pollFocusNodes.elementAt(nextEmptyIndex).requestFocus();
-                    } else {
-                      _pollTitleNameFocus.unfocus();
-                    }
-                  },
-                  maxLength: 256,
-                  style: TextStyle(fontSize: 20),
-                  decoration: new InputDecoration(
-                      isCollapsed: true,
-                      counterText: '',
-                      focusedBorder:
-                          OutlineInputBorder(borderSide: BorderSide.none),
-                      hintText: languages.pollShortDescriptionLabel),
+                padding: EdgeInsets.all(5),
+                child: Row(
+                  children: [
+                    Container(
+                      width: MediaQuery.of(context).size.width - 72,
+                      child: TextField(
+                        cursorColor: Colors.black,
+                        controller: _pollTitleController,
+                        focusNode: _pollTitleNameFocus,
+                        onEditingComplete: () {
+                          int nextEmptyIndex = pollControllers
+                              .indexWhere((element) => element.text.isEmpty);
+                          if (nextEmptyIndex != -1) {
+                            pollFocusNodes.elementAt(nextEmptyIndex).requestFocus();
+                          } else {
+                            _pollTitleNameFocus.unfocus();
+                          }
+                        },
+                        maxLength: 256,
+                        style: TextStyle(fontSize: 20),
+                        decoration: new InputDecoration(
+                            isCollapsed: true,
+                            counterText: '',
+                            border: InputBorder.none,
+                            focusedBorder:
+                                OutlineInputBorder(borderSide: BorderSide.none),
+                            ),
+                      ),
+                    ),
+                    SizedBox(width: 7,),
+                    InkWell(
+                      child: Container(
+                        height: 35,
+                        width: 35,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(10),
+                          ),
+                          color: Colors.black,
+                        ),
+                        child: Icon(Icons.check, color: CupertinoColors.systemYellow),
+                      ),
+                      onTap: () => _pollTitleNameFocus.unfocus(),
+                    ),
+                  ],
                 ),
               );
             } else if (index == 4) {
@@ -606,7 +708,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                     child: ElevatedButton(
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all<Color>(
-                            Colors.yellowAccent),
+                            CupertinoColors.systemYellow),
                       ),
                       onPressed: _onAddOptionPressed,
                       child: Text(
@@ -628,7 +730,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all<Color>(
                         isButtonEnabled
-                            ? Colors.yellowAccent
+                            ? CupertinoColors.systemYellow
                             : Colors.yellow.shade200),
                   ),
                   onPressed: isButtonEnabled ? _onPostPollPressed : null,
@@ -667,7 +769,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                   focusNode: focusNode,
                   onEditingComplete: () {
                     int nextEmptyIndex = pollControllers.indexWhere((element) =>
-                        element.text.isEmpty &&
+                        element.text.isEmpty && pollControllers.indexOf(element) > pollFocusNodes.indexOf(focusNode) &&
                         element != textEditingController);
                     if (nextEmptyIndex != -1) {
                       pollFocusNodes.elementAt(nextEmptyIndex).requestFocus();
@@ -720,7 +822,9 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
   }
 
   void _onPostPollPressed() {
-    isButtonEnabled = false;
+    setState(() {
+      isButtonEnabled = false;
+    });
     bool pollsAreEmpty = false;
     String pollsConcat = '';
     pollControllers.forEach((poll) {
@@ -812,7 +916,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
           focusNode: focusNode,
           onEditingComplete: () {
             int nextEmptyIndex = pollControllers.indexWhere((element) =>
-                element.text.isEmpty && element != textEditingController);
+                element.text.isEmpty && pollControllers.indexOf(element) > pollFocusNodes.indexOf(focusNode) && element != textEditingController);
             if (nextEmptyIndex != -1) {
               pollFocusNodes.elementAt(nextEmptyIndex).requestFocus();
             } else {

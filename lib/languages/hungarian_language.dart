@@ -295,13 +295,13 @@ class LanguageHu extends Languages {
   String get titleOfIdeaLabel => 'Az ötleted címe';
 
   @override
-  String get writeHereYourIdeaLabel => 'Ide írjad le az ötletedet. Maximum 2048 keraktert használhatsz.';
+  String get writeHereYourIdeaLabel => 'Leírás (Max 2048 kerakter)';
 
   @override
   String get POSTLabel => 'POSZTOLÁS';
 
   @override
-  String get pollShortDescriptionLabel => 'Szavazás rövid leírása (max 256 karakter)';
+  String get pollShortDescriptionLabel => 'Rövid leírás (max 256 karakter)';
 
   @override
   String get pollOptionsLabel => 'Szavazási lehetőségek';
@@ -450,6 +450,9 @@ class LanguageHu extends Languages {
 
   @override
   String get companiesLabel => 'Regisztrált cégek';
+
+  @override
+  String get myAccountLabel => 'Fiókom';
 
   //DATE FORMATTER
 
