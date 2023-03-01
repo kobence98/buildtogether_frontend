@@ -13,9 +13,10 @@ class ChangePasswordWidget extends StatefulWidget {
   final Session session;
   final User user;
   final Languages languages;
+  final Function closeActualWidget;
 
   const ChangePasswordWidget(
-      {required this.session, required this.user, required this.languages});
+      {required this.session, required this.user, required this.languages, required this.closeActualWidget});
 
   @override
   _ChangePasswordWidgetState createState() => _ChangePasswordWidgetState();
@@ -39,19 +40,24 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
+    return Column(
+      children: [
+        AppBar(
           backgroundColor: Colors.black,
+          leading: InkWell(
+            child: Icon(Icons.arrow_back_outlined, color: Colors.grey,),
+            onTap: () => widget.closeActualWidget(),
+          ),
         ),
-        body: Container(
+        Container(
+          height: MediaQuery.of(context).size.height - 56,
           color: Colors.black,
           child: Center(
             child: Container(
               padding:
-                  EdgeInsets.all(MediaQuery.of(context).size.height * 0.02),
+              EdgeInsets.all(MediaQuery.of(context).size.height * 0.02),
               width: 600,
-              height: 1000,
+              height: 1500,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -88,10 +94,10 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
                             },
                           ),
                           focusedBorder:
-                              OutlineInputBorder(borderSide: BorderSide.none),
+                          OutlineInputBorder(borderSide: BorderSide.none),
                           hintText: languages.passwordLabel,
                           hintStyle:
-                              TextStyle(color: Colors.black.withOpacity(0.5)),
+                          TextStyle(color: Colors.black.withOpacity(0.5)),
                         ),
                       ),
                     ),
@@ -130,10 +136,10 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
                             },
                           ),
                           focusedBorder:
-                              OutlineInputBorder(borderSide: BorderSide.none),
+                          OutlineInputBorder(borderSide: BorderSide.none),
                           hintText: languages.passAgainLabel,
                           hintStyle:
-                              TextStyle(color: Colors.black.withOpacity(0.5)),
+                          TextStyle(color: Colors.black.withOpacity(0.5)),
                         ),
                       ),
                     ),
@@ -146,7 +152,7 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
                       child: ElevatedButton(
                         style: ButtonStyle(
                           backgroundColor:
-                              MaterialStateProperty.all<Color>(Colors.yellow),
+                          MaterialStateProperty.all<Color>(Colors.yellow),
                         ),
                         onPressed: _onChangePressed,
                         child: Text(
@@ -164,7 +170,7 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
             ),
           ),
         ),
-      ),
+      ],
     );
   }
 

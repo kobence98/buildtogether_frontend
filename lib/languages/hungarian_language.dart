@@ -401,6 +401,9 @@ class LanguageHu extends Languages {
   @override
   String get thisPostHasPicture => 'Ehhez a poszthoz kép van csatolva';
 
+  @override
+  String get mainPageLabel => 'Főoldal';
+
   //SETTINGS WIDGET
 
   @override

@@ -270,6 +270,8 @@ abstract class Languages {
 
   String get thisPostHasPicture;
 
+  String get mainPageLabel;
+
   //SETTINGS WIDGET
 
   String get changeUserDataLabel;

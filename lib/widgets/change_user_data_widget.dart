@@ -1,9 +1,7 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_frontend/entities/age_bracket.dart';
 import 'package:flutter_frontend/entities/company.dart';
 import 'package:flutter_frontend/entities/living_place_type.dart';
@@ -22,9 +20,15 @@ class ChangeUserDataWidget extends StatefulWidget {
   final Session session;
   final User user;
   final Languages languages;
+  final Function refreshApp;
+  final Function closeActualWidget;
 
   const ChangeUserDataWidget(
-      {required this.session, required this.user, required this.languages});
+      {required this.session,
+      required this.user,
+      required this.languages,
+      required this.refreshApp,
+      required this.closeActualWidget});
 
   @override
   _ChangeUserDataWidgetState createState() => _ChangeUserDataWidgetState();
@@ -48,6 +52,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
   Gender? _chosenGender;
   LivingPlaceType? _chosenLivingPlaceType;
   SalaryType? _chosenSalaryType;
+  List<int> houseHoldMembersHelperList = [];
 
   @override
   void initState() {
@@ -66,71 +71,83 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
             : widget.user.numberOfHouseholdMembers!;
 
     company = widget.user.roles.contains('ROLE_COMPANY');
+    // company = false;
     //ADATOK BETÖLTÉSE AZ ÁTADOTT USER DATA-BÓL
     _chosenAgeBracket = widget.user.age;
     _chosenGender = widget.user.gender;
     _chosenLivingPlaceType = widget.user.livingPlaceType;
     _chosenSalaryType = widget.user.salaryType;
 
+    for(int i = 1; i < 100; i++){
+      houseHoldMembersHelperList.add(i);
+    }
     countryCodes.add("Global");
-    widget.session.get('/api/companies/countryCodes').then((response) {
-      if (response.statusCode == 200) {
-        Iterable l = json.decode(utf8.decode(response.bodyBytes));
-        countryCodes.addAll(l.map((data) => data.toString()).toList());
-        countryCodes.remove("Undefined");
-        countryCodes = countryCodes.toSet().toList();
-        countryCodes.sort((String a, String b) {
-          if (a == 'Global') {
-            return -1;
-          } else if (b == 'Global') {
-            return 1;
-          } else {
-            if (a == 'Hungary') {
-              return -1;
-            } else if (b == 'Hungary') {
-              return 1;
-            } else {
-              if (a == 'United Kingdom') {
-                return -1;
-              } else if (b == 'United Kingdom') {
-                return 1;
-              }
-            }
-          }
-          return a.compareTo(b);
-        });
-        _chosenCountryCode = widget.user.companyCountryCode == null
-            ? 'Global'
-            : widget.user.companyCountryCode;
-        if (company) {
-          widget.session
-              .get('/api/companies/' + widget.user.companyId.toString())
-              .then((response) {
-            if (response.statusCode == 200) {
-              setState(() {
-                companyData = Company.fromJson(
-                    json.decode(utf8.decode(response.bodyBytes)));
-                _descriptionController.text = companyData!.description;
-                _countryCodesLoaded = true;
-              });
-            }
-          });
-        } else {
-          setState(() {
-            _countryCodesLoaded = true;
-          });
-        }
-      } else {
-        Fluttertoast.showToast(
-            msg: languages.countryCodesErrorMessage,
-            toastLength: Toast.LENGTH_LONG,
-            gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 4,
-            backgroundColor: Colors.red,
-            textColor: Colors.white,
-            fontSize: 16.0);
-      }
-    });
+
+    companyData = Company(
+        name: 'name',
+        description: 'description',
+        imageId: 4,
+        countryCode: 'HU');
+    _countryCodesLoaded = true;
+    _chosenCountryCode = countryCodes.first;
+    // widget.session.get('/api/companies/countryCodes').then((response) {
+    //   if (response.statusCode == 200) {
+    //     Iterable l = json.decode(utf8.decode(response.bodyBytes));
+    //     countryCodes.addAll(l.map((data) => data.toString()).toList());
+    //     countryCodes.remove("Undefined");
+    //     countryCodes = countryCodes.toSet().toList();
+    //     countryCodes.sort((String a, String b) {
+    //       if (a == 'Global') {
+    //         return -1;
+    //       } else if (b == 'Global') {
+    //         return 1;
+    //       } else {
+    //         if (a == 'Hungary') {
+    //           return -1;
+    //         } else if (b == 'Hungary') {
+    //           return 1;
+    //         } else {
+    //           if (a == 'United Kingdom') {
+    //             return -1;
+    //           } else if (b == 'United Kingdom') {
+    //             return 1;
+    //           }
+    //         }
+    //       }
+    //       return a.compareTo(b);
+    //     });
+    //     _chosenCountryCode = widget.user.companyCountryCode == null
+    //         ? 'Global'
+    //         : widget.user.companyCountryCode;
+    //     if (company) {
+    //       widget.session
+    //           .get('/api/companies/' + widget.user.companyId.toString())
+    //           .then((response) {
+    //         if (response.statusCode == 200) {
+    //           setState(() {
+    //             companyData = Company.fromJson(
+    //                 json.decode(utf8.decode(response.bodyBytes)));
+    //             _descriptionController.text = companyData!.description;
+    //             _countryCodesLoaded = true;
+    //           });
+    //         }
+    //       });
+    //     } else {
+    //       setState(() {
+    //         _countryCodesLoaded = true;
+    //       });
+    //     }
+    //   } else {
+    //     Fluttertoast.showToast(
+    //         msg: languages.countryCodesErrorMessage,
+    //         toastLength: Toast.LENGTH_LONG,
+    //         gravity: ToastGravity.CENTER,
+    //         timeInSecForIosWeb: 4,
+    //         backgroundColor: Colors.red,
+    //         textColor: Colors.white,
+    //         fontSize: 16.0);
+    //   }
+    // });
   }
 
   @override
@@ -140,113 +157,118 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
     } else if (!company) {
       _addNonCompanyItems();
     }
-    return SafeArea(
-      child: Scaffold(
-          appBar: AppBar(
-            backgroundColor: Colors.black,
+    return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.black,
+          leading: InkWell(
+            onTap: () => widget.closeActualWidget(),
+            child: Icon(
+              Icons.arrow_back_outlined,
+              color: Colors.white,
+            ),
           ),
-          body: _countryCodesLoaded
-              ? Container(
-                  color: Colors.black,
-                  child: Center(
-                    child: Container(
-                      padding: EdgeInsets.all(
-                          MediaQuery.of(context).size.height * 0.02),
-                      child: ListView(
-                        children: [
-                          Container(
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(color: Colors.yellow)),
-                            padding: EdgeInsets.all(5),
-                            child: Center(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.max,
-                                children: [
-                                  Expanded(
-                                    child: Container(
-                                      child: Text(
-                                        "${languages.nameLabel}: ",
-                                        style: TextStyle(
-                                            color: Colors.yellow,
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold),
+        ),
+        body: _countryCodesLoaded
+            ? Container(
+                color: Colors.black,
+                child: Center(
+                  child: Container(
+                    padding: EdgeInsets.all(
+                        MediaQuery.of(context).size.height * 0.02),
+                    child: ListView(
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(color: Colors.yellow)),
+                          padding: EdgeInsets.all(5),
+                          child: Center(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                Expanded(
+                                  child: Container(
+                                    child: Text(
+                                      "${languages.nameLabel}: ",
+                                      style: TextStyle(
+                                          color: Colors.yellow,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                  flex: 1,
+                                ),
+                                Expanded(
+                                  child: Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    padding: EdgeInsets.only(left: 20.0),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(10),
+                                      ),
+                                      color: Colors.yellow.withOpacity(0.7),
+                                    ),
+                                    child: TextField(
+                                      style: TextStyle(color: Colors.black),
+                                      controller: _nameController,
+                                      maxLength: 30,
+                                      cursorColor: Colors.black,
+                                      decoration: InputDecoration(
+                                        counterText: '',
+                                        focusedBorder: OutlineInputBorder(
+                                            borderSide: BorderSide.none),
+                                        hintText: widget.user.name,
+                                        hintStyle: TextStyle(
+                                            color:
+                                                Colors.black.withOpacity(0.5)),
                                       ),
                                     ),
-                                    flex: 1,
                                   ),
-                                  Expanded(
-                                    child: Container(
-                                      width: MediaQuery.of(context).size.width,
-                                      padding: EdgeInsets.only(left: 20.0),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.all(
-                                          Radius.circular(10),
-                                        ),
-                                        color: Colors.yellow.withOpacity(0.7),
-                                      ),
-                                      child: TextField(
-                                        style: TextStyle(color: Colors.black),
-                                        controller: _nameController,
-                                        maxLength: 30,
-                                        cursorColor: Colors.black,
-                                        decoration: InputDecoration(
-                                          counterText: '',
-                                          focusedBorder: OutlineInputBorder(
-                                              borderSide: BorderSide.none),
-                                          hintText: widget.user.name,
-                                          hintStyle: TextStyle(
-                                              color: Colors.black
-                                                  .withOpacity(0.5)),
-                                        ),
-                                      ),
-                                    ),
-                                    flex: 4,
-                                  ),
-                                ],
+                                  flex: 4,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        ...widgetList,
+                        Center(
+                          child: ButtonTheme(
+                            height: 50,
+                            minWidth: 300,
+                            child: ElevatedButton(
+                              style: ButtonStyle(
+                                backgroundColor:
+                                    MaterialStateProperty.all<Color>(
+                                        Colors.yellow),
+                              ),
+                              onPressed: _onChangePressed,
+                              child: Text(
+                                languages.changeDataLabel,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20,
+                                    color: Colors.black),
                               ),
                             ),
                           ),
-                          ...widgetList,
-                          Center(
-                            child: ButtonTheme(
-                              height: 50,
-                              minWidth: 300,
-                              child: ElevatedButton(
-                                style: ButtonStyle(
-                                  backgroundColor:
-                                      MaterialStateProperty.all<Color>(
-                                          Colors.yellow),
-                                ),
-                                onPressed: _onChangePressed,
-                                child: Text(
-                                  languages.changeDataLabel,
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20,
-                                      color: Colors.black),
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            height: 30,
-                          ),
-                        ],
-                      ),
+                        ),
+                        SizedBox(
+                          height: 30,
+                        ),
+                      ],
                     ),
                   ),
-                )
-              : Container(
-                  color: Colors.black,
-                  child: Center(
-                    child: Image(
-                        image:
-                            new AssetImage("assets/images/loading_breath.gif")),
-                  ),
-                )),
-    );
+                ),
+              )
+            : Container(
+                color: Colors.black,
+                child: Center(
+                  child: Image(
+                      image:
+                          new AssetImage("assets/images/loading_breath.gif")),
+                ),
+              ));
   }
 
   void _onChangePressed() {
@@ -321,7 +343,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                         backgroundColor: Colors.green,
                         textColor: Colors.white,
                         fontSize: 16.0);
-                    Navigator.of(context).pop('DATA_CHANGED');
+                    widget.refreshApp();
                   } else {
                     Fluttertoast.showToast(
                         msg: languages.pictureUpdateErrorMessage,
@@ -343,7 +365,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                   backgroundColor: Colors.green,
                   textColor: Colors.white,
                   fontSize: 16.0);
-              Navigator.of(context).pop('DATA_CHANGED');
+              widget.refreshApp();
             }
           } else {
             Fluttertoast.showToast(
@@ -399,6 +421,8 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
             border: Border.all(color: Colors.yellow)),
         padding: EdgeInsets.all(5),
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisSize: MainAxisSize.max,
           children: [
             Flexible(
               child: Container(
@@ -413,29 +437,105 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
               flex: 1,
             ),
             Flexible(
-              child: Center(
+              child: Container(
+                decoration: BoxDecoration(
+                    color: Colors.yellow,
+                    borderRadius: BorderRadius.circular(10)),
                 child: Container(
-                  margin: EdgeInsets.symmetric(vertical: 10),
                   decoration: BoxDecoration(
+                      color: Colors.black,
+                      borderRadius: BorderRadius.circular(10)),
+                  margin: EdgeInsets.all(2),
+                  child: DropdownButton2<int>(
+                    isExpanded: true,
+                    underline: Container(),
+                    focusColor: Colors.white,
+                    dropdownDecoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: Colors.yellow),
-                      color: Colors.yellow),
-                  child: NumberPicker(
-                    axis: Axis.horizontal,
-                    itemWidth: 50,
-                    itemHeight: 40,
+                      color: Colors.yellow,
+                    ),
                     value: _numberOfHouseholdMembersValue,
-                    minValue: 1,
-                    textStyle: TextStyle(color: Colors.black),
-                    selectedTextStyle: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20),
-                    step: 1,
-                    maxValue: 99,
-                    onChanged: (value) => setState(() {
-                      _numberOfHouseholdMembersValue = value;
-                    }),
+                    style: TextStyle(color: Colors.yellow),
+                    iconEnabledColor: Colors.yellow,
+                    itemPadding: const EdgeInsets.all(1),
+                    dropdownPadding: EdgeInsets.all(2),
+                    scrollbarRadius: const Radius.circular(40),
+                    itemSplashColor: Colors.yellow.shade100,
+                    scrollbarThickness: 6,
+                    dropdownMaxHeight: 200,
+                    customButton: Container(
+                      height: 50,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisSize: MainAxisSize.max,
+                        children: <Widget>[
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.black,
+                              borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(10),
+                                  bottomLeft: Radius.circular(10)),
+                            ),
+                            width: MediaQuery.of(context).size.width - 953 < 100
+                                ? 100
+                                : MediaQuery.of(context).size.width - 953,
+                            child: Center(
+                              child: Text(
+                                _numberOfHouseholdMembersValue.toString(),
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    color: Colors.yellow,
+                                    fontSize: 30,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ),
+                          IconTheme(
+                            data: IconThemeData(
+                              color: Colors.yellow,
+                              size: 24,
+                            ),
+                            child: Icon(Icons.arrow_drop_down_outlined),
+                          ),
+                        ],
+                      ),
+                    ),
+                    items: houseHoldMembersHelperList
+                        .map<DropdownMenuItem<int>>((int value) {
+                      return DropdownMenuItem<int>(
+                        value: value,
+                        child: Container(
+                          decoration: BoxDecoration(
+                              color: Colors.black,
+                              borderRadius: value == houseHoldMembersHelperList.first
+                                  ? BorderRadius.only(
+                                topLeft: Radius.circular(10),
+                                topRight: Radius.circular(10),
+                              )
+                                  : (value == houseHoldMembersHelperList.last
+                                  ? BorderRadius.only(
+                                bottomLeft: Radius.circular(10),
+                                bottomRight: Radius.circular(10),
+                              )
+                                  : BorderRadius.zero)),
+                          child: Center(
+                            child: Text(
+                              value.toString(),
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  color: Colors.yellow,
+                                  fontSize: 30,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                    onChanged: (int? value) {
+                      setState(() {
+                        _numberOfHouseholdMembersValue = value!;
+                      });
+                    },
                   ),
                 ),
               ),
@@ -512,7 +612,9 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                                 topLeft: Radius.circular(10),
                                 bottomLeft: Radius.circular(10)),
                           ),
-                          width: MediaQuery.of(context).size.width - 252,
+                          width: MediaQuery.of(context).size.width - 953 < 100
+                              ? 100
+                              : MediaQuery.of(context).size.width - 953,
                           child: Center(
                             child: Text(
                               _chosenAgeBracket!.getName,
@@ -645,7 +747,9 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                                 topLeft: Radius.circular(10),
                                 bottomLeft: Radius.circular(10)),
                           ),
-                          width: MediaQuery.of(context).size.width - 252,
+                          width: MediaQuery.of(context).size.width - 953 < 100
+                              ? 100
+                              : MediaQuery.of(context).size.width - 953,
                           child: Center(
                             child: Text(
                               _chosenGender!.getName(languages),
@@ -778,7 +882,9 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                                 topLeft: Radius.circular(10),
                                 bottomLeft: Radius.circular(10)),
                           ),
-                          width: MediaQuery.of(context).size.width - 252,
+                          width: MediaQuery.of(context).size.width - 953 < 100
+                              ? 100
+                              : MediaQuery.of(context).size.width - 953,
                           child: Center(
                             child: Text(
                               _chosenLivingPlaceType!.getName(languages),
@@ -912,7 +1018,9 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                                 topLeft: Radius.circular(10),
                                 bottomLeft: Radius.circular(10)),
                           ),
-                          width: MediaQuery.of(context).size.width - 252,
+                          width: MediaQuery.of(context).size.width - 953 < 100
+                              ? 100
+                              : MediaQuery.of(context).size.width - 953,
                           child: Center(
                             child: Text(
                               _chosenSalaryType!.getName(languages),
@@ -1008,7 +1116,9 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                 ),
               ),
             ),
-            SizedBox(height: 10,),
+            SizedBox(
+              height: 10,
+            ),
             Container(
               height: 200,
               decoration: BoxDecoration(
@@ -1042,7 +1152,9 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
           leading: Text(
             '${languages.logoLabel}:',
             style: TextStyle(
-                color: Colors.yellow, fontSize: 20, fontWeight: FontWeight.bold),
+                color: Colors.yellow,
+                fontSize: 20,
+                fontWeight: FontWeight.bold),
           ),
           title: image != null
               ? InkWell(
@@ -1088,7 +1200,9 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
               child: Text(
                 languages.likesNotificationEmailTipLabel,
                 style: TextStyle(
-                    color: Colors.yellow, fontWeight: FontWeight.bold, fontSize: 20),
+                    color: Colors.yellow,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20),
               ),
             ),
             SizedBox(height: 10),
@@ -1218,7 +1332,9 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                                 topLeft: Radius.circular(10),
                                 bottomLeft: Radius.circular(10)),
                           ),
-                          width: MediaQuery.of(context).size.width - 252,
+                          width: MediaQuery.of(context).size.width - 953 < 100
+                              ? 100
+                              : MediaQuery.of(context).size.width - 953,
                           child: Center(
                             child: Text(
                               _chosenCountryCode!,
@@ -1240,37 +1356,37 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                       ],
                     ),
                   ),
-                  items: countryCodes.map<DropdownMenuItem<String>>(
-                          (String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Container(
-                            decoration: BoxDecoration(
-                                color: Colors.black,
-                                borderRadius: value == countryCodes.first
+                  items: countryCodes
+                      .map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: Colors.black,
+                            borderRadius: value == countryCodes.first
+                                ? BorderRadius.only(
+                                    topLeft: Radius.circular(10),
+                                    topRight: Radius.circular(10),
+                                  )
+                                : (value == countryCodes.last
                                     ? BorderRadius.only(
-                                  topLeft: Radius.circular(10),
-                                  topRight: Radius.circular(10),
-                                )
-                                    : (value == countryCodes.last
-                                    ? BorderRadius.only(
-                                  bottomLeft: Radius.circular(10),
-                                  bottomRight: Radius.circular(10),
-                                )
+                                        bottomLeft: Radius.circular(10),
+                                        bottomRight: Radius.circular(10),
+                                      )
                                     : BorderRadius.zero)),
-                            child: Center(
-                              child: Text(
-                                value,
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    color: Colors.yellow,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ),
+                        child: Center(
+                          child: Text(
+                            value,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                color: Colors.yellow,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold),
                           ),
-                        );
-                      }).toList(),
+                        ),
+                      ),
+                    );
+                  }).toList(),
                   onChanged: (String? value) {
                     setState(() {
                       _chosenCountryCode = value;

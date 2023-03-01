@@ -405,6 +405,9 @@ class LanguageEn extends Languages {
   @override
   String get thisPostHasPicture => 'This post has an image attached';
 
+  @override
+  String get mainPageLabel => 'Main page';
+
   //SETTINGS WIDGET
 
   @override

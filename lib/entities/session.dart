@@ -5,26 +5,31 @@ import 'package:http/http.dart' as http;
 
 class Session {
   Map<String, String> headers = {};
-  String domainName = 'http://164.90.230.81:8080';
-  // String domainName = 'http://10.0.2.2:8087';
+  String domainName = 'https://164.90.230.81:8080';
+  // String domainName = 'https://10.0.2.2:8087';
   Future<dynamic> get(String url) async {
-    http.Response response = await http.get(Uri.parse(domainName + url), headers: headers);
+    http.Response response =
+        await http.get(Uri.parse(domainName + url), headers: headers);
     updateCookie(response);
     return response;
   }
 
   Future<dynamic> postLogin(String url, dynamic data) async {
     headers.clear();
-    http.Response response =
-        await http.post(Uri.parse(domainName + url), body: data, headers: headers);
+    headers.addAll({
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    });
+    http.Response response = await http.post(Uri.parse(domainName + url),
+        body: jsonEncode(data), headers: headers);
     updateCookie(response);
     return response;
   }
 
   Future<dynamic> post(String url, dynamic data) async {
     headers.remove('Content-type');
-    http.Response response =
-    await http.post(Uri.parse(domainName + url), body: data, headers: headers);
+    http.Response response = await http.post(Uri.parse(domainName + url),
+        body: data, headers: headers);
     updateCookie(response);
     return response;
   }
@@ -32,8 +37,8 @@ class Session {
   Future<dynamic> postJson(String url, dynamic data) async {
     Map<String, String> newHeaders = headers;
     newHeaders.addAll({'Content-type': 'application/json'});
-    http.Response response =
-        await http.post(Uri.parse(domainName + url), body: jsonEncode(data), headers: headers);
+    http.Response response = await http.post(Uri.parse(domainName + url),
+        body: jsonEncode(data), headers: headers);
     updateCookie(response);
     return response;
   }
@@ -42,8 +47,8 @@ class Session {
     data.addAll({'domain': domainName});
     Map<String, String> newHeaders = headers;
     newHeaders.addAll({'Content-type': 'application/json'});
-    http.Response response =
-    await http.post(Uri.parse(domainName + url), body: jsonEncode(data), headers: headers);
+    http.Response response = await http.post(Uri.parse(domainName + url),
+        body: jsonEncode(data), headers: headers);
     updateCookie(response);
     return response;
   }
@@ -59,7 +64,8 @@ class Session {
 
   Future<dynamic> sendMultipart(
       String url, Map<String, String> params, Uint8List bytes) async {
-    var request = new http.MultipartRequest("POST", Uri.parse(domainName + url));
+    var request =
+        new http.MultipartRequest("POST", Uri.parse(domainName + url));
     params.forEach((key, value) {
       request.fields[key] = value;
     });
@@ -78,8 +84,8 @@ class Session {
 
   Future<dynamic> delete(String url) async {
     headers.remove('Content-type');
-    http.Response response =
-    await http.delete(Uri.parse(domainName + url), body: Map<String, dynamic>(), headers: headers);
+    http.Response response = await http.delete(Uri.parse(domainName + url),
+        body: Map<String, dynamic>(), headers: headers);
     updateCookie(response);
     return response;
   }

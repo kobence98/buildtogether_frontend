@@ -1,16 +1,12 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_frontend/auth/auth_sqflite_handler.dart';
-import 'package:flutter_frontend/languages/english_language.dart';
-import 'package:flutter_frontend/languages/languages.dart';
-import 'package:flutter_frontend/languages/languages_sqflite_handler.dart';
-import 'package:flutter_frontend/widgets/main_widget.dart';
+import 'package:flutter_frontend/entities/age_bracket.dart';
+import 'package:flutter_frontend/entities/gender.dart';
+import 'package:flutter_frontend/entities/salary_type.dart';
+import 'package:flutter_frontend/widgets/posts_widget.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 import 'auth/login_widget.dart';
+import 'entities/living_place_type.dart';
 import 'entities/session.dart';
 import 'entities/user.dart';
 import 'languages/hungarian_language.dart';
@@ -46,7 +42,6 @@ class _MyHomePageState extends State<MyHomePage> {
   //     child: Image(image: new AssetImage("assets/images/loading_breath.gif")),
   //   ),
   // );
-
 
   // @override
   // void initState() {
@@ -133,5 +128,27 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return LoginPage(languages: LanguageHu());
+    return PostsWidget(
+        session: Session(),
+        user: User(
+          userId: 1,
+          email: 'kobence98@gmail.com',
+          name: 'Kovács Bence',
+          roles: ['ROLE_ONLINE_USER', 'ROLE_COMPANY'],
+          active: true,
+          emailNotificationForCompanyNumber: 0,
+          locale: 'HU',
+          setByLocale: false,
+          companyCountryCode: 'HU',
+          isCompanyActive: true,
+          companyId: null,
+          gender: Gender.OTHER,
+          livingPlaceType: LivingPlaceType.TOWN,
+          salaryType: SalaryType.FROM1M_TO_1_5M, numberOfHouseholdMembers: 10, age: AgeBracket.FROM_25_TO_34,
+        ),
+        initPage: 1,
+        languages: LanguageHu(),
+        navBarStatusChangeableAgain: () {},
+        hideNavBar: () {});
   }
 }

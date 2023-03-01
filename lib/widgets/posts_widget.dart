@@ -1,16 +1,21 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:easy_sidemenu/easy_sidemenu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_frontend/entities/company.dart';
 import 'package:flutter_frontend/entities/post.dart';
 import 'package:flutter_frontend/entities/search_field_names.dart';
 import 'package:flutter_frontend/entities/session.dart';
 import 'package:flutter_frontend/entities/user.dart';
+import 'package:flutter_frontend/languages/english_language.dart';
+import 'package:flutter_frontend/languages/hungarian_language.dart';
 import 'package:flutter_frontend/languages/languages.dart';
 import 'package:flutter_frontend/static/date_formatter.dart';
+import 'package:flutter_frontend/widgets/my_account_widget.dart';
 import 'package:flutter_frontend/widgets/single_post_widget.dart';
 import 'package:flutter_frontend/widgets/statistic_page.dart';
+import 'package:flutter_frontend/widgets/subscription_handling_widget.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geocoding/geocoding.dart' as geocoding;
@@ -20,7 +25,9 @@ import 'package:location/location.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import '../entities/feed_type.dart';
+import 'companies_widget.dart';
 import 'filtered_posts_widget.dart';
+import 'liked_posts_widget.dart';
 import 'open_image_widget.dart';
 
 class PostsWidget extends StatefulWidget {
@@ -72,6 +79,12 @@ class _PostsWidgetState extends State<PostsWidget> {
   final PagingController<int, Post> _pagingOwnController =
       PagingController(firstPageKey: 0);
 
+  PageController page = PageController();
+  SideMenuController _sideMenuController = SideMenuController();
+
+  List<SideMenuItem> items = [];
+
+  //TODO language change
   @override
   void initState() {
     super.initState();
@@ -144,16 +157,102 @@ class _PostsWidgetState extends State<PostsWidget> {
         }
       }
 
-      dynamic data = <String, dynamic>{
-        'countryCode': countryCode,
-        'countryCodeByLocation': countryCodeByLocation,
-        'pageNumber': pageKey / _pageSize,
-        'pageSize': _pageSize
-      };
-      dynamic body = json.decode(
-          utf8.decode((await widget.session.postJson(url, data)).bodyBytes));
-      List<Post> newItems =
-          List<Post>.from(body.map((model) => Post.fromJson(model)));
+      // dynamic data = <String, dynamic>{
+      //   'countryCode': countryCode,
+      //   'countryCodeByLocation': countryCodeByLocation,
+      //   'pageNumber': pageKey / _pageSize,
+      //   'pageSize': _pageSize
+      // };
+      // dynamic body = json.decode(
+      //     utf8.decode((await widget.session.postJson(url, data)).bodyBytes));
+      // List<Post> newItems =
+      //     List<Post>.from(body.map((model) => Post.fromJson(model)));
+      List<Post> newItems = [
+        Post(
+            now: DateTime.now(),
+            postId: 1,
+            title: 'Első poszt',
+            description:
+                'Ez a ho\nss\nza\nbb le\nír\nása a posz\nnak. NI\nUDSa o\nbsd8f\no bewoi D\nEU\nOQW\nZ  BR\nDQ\nWUOE RB\nduis\nao\nna\ns fa\nuo\nsd\ne f\nua\nsdo bfd\nasu',
+            companyName: 'Ubul Studio',
+            userName: 'Kovács Bence',
+            creatorEmail: 'kobence98@gmail.com',
+            likeNumber: 10,
+            liked: true,
+            companyId: 4,
+            createdDate: DateTime.now(),
+            commentNumber: 0,
+            implemented: true,
+            postType: 'SIMPLE_POST',
+            pollOptions: [],
+            companyUserId: 2,
+            companyImageId: 1,
+            creatorId: 1,
+            postImageId: null),
+        Post(
+            now: DateTime.now(),
+            postId: 2,
+            title: 'Második poszt',
+            description:
+                'Ez a hosszabb leírása a posztnak. NIUDSa obsd8fo bewoi DEUOQWZ  BRDQWUOE RB\nduisaonas fauosde fuasdo bfdasu',
+            companyName: 'Ubul Studio',
+            userName: 'Kovács Bence',
+            creatorEmail: 'kobence98@gmail.com',
+            likeNumber: 10,
+            liked: true,
+            companyId: 4,
+            createdDate: DateTime.now(),
+            commentNumber: 0,
+            implemented: true,
+            postType: 'SIMPLE_POST',
+            pollOptions: [],
+            companyUserId: 2,
+            companyImageId: 1,
+            creatorId: 1,
+            postImageId: null),
+        Post(
+            now: DateTime.now(),
+            postId: 3,
+            title: 'Harmadik poszt',
+            description:
+                'Ez a hosszabb leírása a posztnak. NIUDSa obsd8fo bewoi DEUOQWZ  BRDQWUOE RB\nduisaonas fauosde fuasdo bfdasu',
+            companyName: 'Ubul Studio',
+            userName: 'Kovács Bence',
+            creatorEmail: 'kobence98@gmail.com',
+            likeNumber: 10,
+            liked: true,
+            companyId: 4,
+            createdDate: DateTime.now(),
+            commentNumber: 0,
+            implemented: true,
+            postType: 'SIMPLE_POST',
+            pollOptions: [],
+            companyUserId: 2,
+            companyImageId: 1,
+            creatorId: 1,
+            postImageId: null),
+        Post(
+            now: DateTime.now(),
+            postId: 4,
+            title: 'Negyedik poszt',
+            description:
+                'Ez a hosszabb leírása a posztnak. NIUDSa obsd8fo bewoi DEUOQWZ  BRDQWUOE RB\nduisaonas fauosde fuasdo bfdasu',
+            companyName: 'Ubul Studio',
+            userName: 'Kovács Bence',
+            creatorEmail: 'kobence98@gmail.com',
+            likeNumber: 10,
+            liked: true,
+            companyId: 4,
+            createdDate: DateTime.now(),
+            commentNumber: 0,
+            implemented: true,
+            postType: 'SIMPLE_POST',
+            pollOptions: [],
+            companyUserId: 2,
+            companyImageId: 1,
+            creatorId: 1,
+            postImageId: null),
+      ];
       final isLastPage = newItems.length < _pageSize;
       if (isLastPage) {
         pagingController.appendLastPage(newItems);
@@ -193,213 +292,59 @@ class _PostsWidgetState extends State<PostsWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.black,
-      child: DefaultTabController(
-        initialIndex: widget.initPage,
-        length: 3,
-        child: SafeArea(
-          child: Scaffold(
-            body: NestedScrollView(
-              headerSliverBuilder:
-                  (BuildContext context, bool innerBoxIsScrolled) {
-                return <Widget>[
-                  SliverAppBar(
+    _addMenuItems();
+    return SafeArea(
+      child: Scaffold(
+        body: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Container(
+              padding: EdgeInsets.all(4),
+              color: Colors.grey.shade900,
+              child: SideMenu(
+                collapseWidth: 1000,
+                style: SideMenuStyle(
                     backgroundColor: Colors.black,
-                    automaticallyImplyLeading: false,
-                    title: Container(
-                      height: 40,
-                      padding: EdgeInsets.only(left: 5, right: 5),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border.all(
-                          color: Colors.white,
-                        ),
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(20),
-                        ),
-                      ),
-                      child: Row(
-                        children: [
-                          Flexible(
-                            child: TypeAheadField(
-                              loadingBuilder: (context) {
-                                return Container(
-                                  height: 50,
-                                  padding: EdgeInsets.all(1),
-                                  color: Colors.yellow,
-                                  child: Container(
-                                      color: Colors.black,
-                                      child: Center(
-                                        child: Image(
-                                            image: new AssetImage(
-                                                "assets/images/loading_breath.gif")),
-                                      )),
-                                );
-                              },
-                              noItemsFoundBuilder: (context) {
-                                return Container(
-                                  padding: EdgeInsets.all(1),
-                                  color: Colors.yellow,
-                                  child: Container(
-                                    color: Colors.black,
-                                    child: ListTile(
-                                      leading: Icon(
-                                        Icons.not_interested_rounded,
-                                        color: Colors.yellow,
-                                      ),
-                                      title: Text(
-                                        languages.noItemsFoundLabel,
-                                        style: TextStyle(
-                                            color: Colors.yellow,
-                                            fontStyle: FontStyle.italic,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 20),
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              },
-                              minCharsForSuggestions: 1,
-                              textFieldConfiguration: TextFieldConfiguration(
-                                decoration: new InputDecoration.collapsed(
-                                    hintText: languages.searchLabel),
-                                controller: _searchFieldController,
-                                cursorColor: Colors.black,
-                                autofocus: false,
-                                style: TextStyle(fontSize: 20),
-                                onEditingComplete: _onSearchComplete,
-                              ),
-                              suggestionsCallback: (pattern) async {
-                                dynamic response = await widget.session
-                                    .get("/api/searchField/" + pattern);
-                                if (response.statusCode == 200) {
-                                  widget.session.updateCookie(response);
-                                  Iterable l = json
-                                      .decode(utf8.decode(response.bodyBytes));
-                                  names = List<SearchFieldNames>.from(l.map(
-                                      (name) =>
-                                          SearchFieldNames.fromJson(name)));
-                                  List<String> resultList = [];
-                                  names.forEach((name) {
-                                    if (name.id != null) {
-                                      resultList.add(name.id.toString());
-                                    } else {
-                                      resultList.add(name.name);
-                                    }
-                                  });
-                                  return resultList;
-                                }
-                                return [];
-                              },
-                              itemBuilder: (context, n) {
-                                SearchFieldNames? name;
-                                if (names
-                                    .where((nm) => nm.id.toString() == n)
-                                    .isNotEmpty) {
-                                  name = names
-                                      .where((nm) => nm.id.toString() == n)
-                                      .first;
-                                }
-                                return Container(
-                                  padding: EdgeInsets.all(1),
-                                  color: Colors.yellow,
-                                  child: Container(
-                                    color: Colors.black,
-                                    child: ListTile(
-                                      leading: name != null
-                                          ? CircleAvatar(
-                                              radius: 20,
-                                              backgroundImage: NetworkImage(
-                                                widget.session.domainName +
-                                                    "/api/images/" +
-                                                    name.imageId.toString(),
-                                                headers: widget.session.headers,
-                                              ),
-                                            )
-                                          : Icon(
-                                              Icons.lightbulb_outline_sharp,
-                                              color: Colors.yellow,
-                                            ),
-                                      title: Text(
-                                        name == null ? n.toString() : name.name,
-                                        style: TextStyle(
-                                            color: Colors.yellow,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 20),
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              },
-                              onSuggestionSelected: (n) {
-                                String name;
-                                if (names
-                                    .where((nm) => nm.id.toString() == n)
-                                    .isNotEmpty) {
-                                  name = names
-                                      .where((nm) => nm.id.toString() == n)
-                                      .first
-                                      .name;
-                                } else {
-                                  name = n.toString();
-                                }
-                                _searchFieldController.text = name.toString();
-                                _onSearchButtonPressed();
-                              },
-                            ),
-                            flex: 8,
-                          ),
-                          Flexible(
-                            child: IconButton(
-                              icon: Icon(
-                                Icons.search,
-                                color: Colors.black,
-                              ),
-                              onPressed: _onSearchButtonPressed,
-                            ),
-                            flex: 1,
-                          ),
-                        ],
-                      ),
-                    ),
-                    pinned: true,
-                    floating: true,
-                    snap: true,
-                    forceElevated: innerBoxIsScrolled,
-                    bottom: TabBar(
-                        labelColor: Colors.yellow,
-                        indicatorColor: Colors.yellow,
-                        tabs: [
-                          Tab(
-                            child: Text(
-                              languages.bestLabel,
-                              style: TextStyle(color: Colors.yellow),
-                            ),
-                          ),
-                          Tab(
-                            child: Text(
-                              languages.newLabel,
-                              style: TextStyle(color: Colors.yellow),
-                            ),
-                          ),
-                          Tab(
-                            child: Text(
-                              languages.ownLabel,
-                              style: TextStyle(color: Colors.yellow),
-                            ),
-                          ),
-                        ]),
-                  ),
-                ];
-              },
-              body: TabBarView(children: [
-                _postsWidget(_pagingBestController, FeedType.BEST),
-                _postsWidget(_pagingNewController, FeedType.NEW),
-                _postsWidget(_pagingOwnController, FeedType.OWN),
-              ]),
+                    selectedTitleTextStyle:
+                        TextStyle(color: Colors.grey.shade500),
+                    unselectedTitleTextStyle:
+                        TextStyle(color: Colors.grey.shade500),
+                    selectedIconColor: Colors.grey.shade500,
+                    unselectedIconColor: Colors.grey.shade500,
+                    selectedColor: Colors.grey.shade900),
+                title: Container(
+                  margin: EdgeInsets.only(bottom: 4),
+                  padding: EdgeInsets.only(bottom: 4),
+                  color: Colors.grey.shade900,
+                  child: Image.asset('images/launcher_icon.png'),
+                ),
+                items: items,
+                controller: _sideMenuController,
+              ),
             ),
-          ),
+            Expanded(
+              child: PageView(
+                controller: page,
+                children: [
+                  _scrollableInnerWidget(),
+                  MyAccountWidget(
+                      languages: languages,
+                      session: widget.session,
+                      user: widget.user,),
+                  CompaniesWidget(
+                    session: widget.session,
+                    languages: languages,
+                  ),
+                  LikedPostsWidget(
+                    user: widget.user,
+                    session: widget.session,
+                    languages: languages,
+                  ),
+                  SubscriptionHandlingWidget(languages: languages, user: widget.user, session: widget.session,)
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -421,87 +366,77 @@ class _PostsWidgetState extends State<PostsWidget> {
     }
     return Container(
       color: Colors.black,
-      child: SmartRefresher(
-        controller: _refreshController,
-        onRefresh: () {
-          pagingController.refresh();
-        },
-        header: WaterDropHeader(
-          refresh: SizedBox(
-              width: 25.0,
-              height: 25.0,
-              child: Image(
-                  image: new AssetImage("assets/images/loading_spin.gif"))),
-        ),
-        child: PagedListView<int, Post>(
-          pagingController: pagingController,
-          builderDelegate: PagedChildBuilderDelegate<Post>(
-            firstPageErrorIndicatorBuilder: (context) => Container(
-              child: Center(
-                child: Text(
-                  languages.errorLoadPostsLabel,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      fontSize: 20,
-                      color: Colors.yellow,
-                      fontWeight: FontWeight.bold),
-                ),
-              ),
-            ),
-            noMoreItemsIndicatorBuilder: (context) => Container(
-              color: Colors.black,
-              height: 80,
-              margin: EdgeInsets.only(top: 10),
-              alignment: Alignment.topCenter,
+      child: PagedListView<int, Post>(
+        pagingController: pagingController,
+        builderDelegate: PagedChildBuilderDelegate<Post>(
+          firstPageErrorIndicatorBuilder: (context) => Container(
+            child: Center(
               child: Text(
-                languages.noMoreItemsLabel,
+                languages.errorLoadPostsLabel,
+                textAlign: TextAlign.center,
                 style: TextStyle(
+                    fontSize: 20,
                     color: Colors.yellow,
-                    fontStyle: FontStyle.italic,
-                    fontSize: 15),
+                    fontWeight: FontWeight.bold),
               ),
             ),
-            newPageProgressIndicatorBuilder: (context) => Container(
-              margin: EdgeInsets.only(bottom: 20),
-              width: 80,
-              height: 80,
-              child: Center(
-                child: Image(
-                    height: 30,
-                    width: 30,
-                    image: new AssetImage("assets/images/loading_spin.gif")),
-              ),
+          ),
+          noMoreItemsIndicatorBuilder: (context) => Container(
+            color: Colors.black,
+            height: 80,
+            margin: EdgeInsets.only(top: 10),
+            alignment: Alignment.topCenter,
+            child: Text(
+              languages.noMoreItemsLabel,
+              style: TextStyle(
+                  color: Colors.yellow,
+                  fontStyle: FontStyle.italic,
+                  fontSize: 15),
             ),
-            firstPageProgressIndicatorBuilder: (context) =>
-                _refreshController.isRefresh
-                    ? Container()
-                    : Container(
-                        child: Center(
-                          child: Image(
-                              image: new AssetImage(
-                                  "assets/images/loading_breath.gif")),
-                        ),
-                      ),
-            noItemsFoundIndicatorBuilder: (context) => Container(
-              child: Center(
-                child: Text(
-                  languages.noPostInYourAreaLabel,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      fontSize: 20,
-                      color: Colors.yellow,
-                      fontWeight: FontWeight.bold),
+          ),
+          newPageProgressIndicatorBuilder: (context) => Container(
+            margin: EdgeInsets.only(bottom: 20),
+            width: 80,
+            height: 80,
+            child: Center(
+              child: Image(
+                  height: 30,
+                  width: 30,
+                  image: new AssetImage("assets/images/loading_spin.gif")),
+            ),
+          ),
+          firstPageProgressIndicatorBuilder: (context) => _refreshController
+                  .isRefresh
+              ? Container()
+              : Container(
+                  child: Center(
+                    child: Image(
+                        image:
+                            new AssetImage("assets/images/loading_breath.gif")),
+                  ),
                 ),
+          noItemsFoundIndicatorBuilder: (context) => Container(
+            child: Center(
+              child: Text(
+                languages.noPostInYourAreaLabel,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.yellow,
+                    fontWeight: FontWeight.bold),
               ),
             ),
-            itemBuilder: (context, post, postIndex) => InkWell(
+          ),
+          itemBuilder: (context, post, postIndex) => InkWell(
+            child: Center(
               child: Container(
+                height: 500,
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                     color: Colors.yellow.withOpacity(0.1),
                     border: Border.all(color: Colors.yellow)),
                 padding: EdgeInsets.all(5),
-                margin: EdgeInsets.only(top: 10),
+                margin: EdgeInsets.only(top: 10, left: 2, right: 2),
                 child: Column(
                   children: [
                     ListTile(
@@ -706,7 +641,7 @@ class _PostsWidgetState extends State<PostsWidget> {
                       ),
                     ),
                     Container(
-                      height: 60,
+                      height: 345,
                       padding: EdgeInsets.only(
                           left: 15, right: 15, top: 5, bottom: 5),
                       alignment: Alignment.topLeft,
@@ -768,9 +703,17 @@ class _PostsWidgetState extends State<PostsWidget> {
                                       ),
                                       onTap: () async {
                                         await widget.hideNavBar();
-                                        Navigator.of(context).push(MaterialPageRoute(
-                                            builder: (context) =>
-                                                OpenImageWidget(imageId: post.postImageId.toString(), session: widget.session))).whenComplete(() => widget.navBarStatusChangeableAgain());
+                                        Navigator.of(context)
+                                            .push(MaterialPageRoute(
+                                                builder: (context) =>
+                                                    OpenImageWidget(
+                                                        imageId: post
+                                                            .postImageId
+                                                            .toString(),
+                                                        session:
+                                                            widget.session)))
+                                            .whenComplete(() => widget
+                                                .navBarStatusChangeableAgain());
                                       },
                                     ),
                                     flex: 1,
@@ -780,87 +723,95 @@ class _PostsWidgetState extends State<PostsWidget> {
                             ),
                           ),
                     Container(
-                      padding: EdgeInsets.only(left: 10),
-                      height: 40,
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          LikeButton(
-                            size: 20.0,
-                            circleColor: CircleColor(
-                                start: Colors.yellow.shade200,
-                                end: Colors.yellow),
-                            bubblesColor: BubblesColor(
-                              dotPrimaryColor: Colors.yellow.shade200,
-                              dotSecondaryColor: Colors.yellow,
-                            ),
-                            isLiked: post.liked,
-                            likeBuilder: (bool isLiked) {
-                              return Icon(
-                                Icons.lightbulb,
-                                color: isLiked ? Colors.yellow : Colors.white,
-                              );
-                            },
-                            onTap: (isLiked) {
-                              return post.creatorId == widget.user.userId
-                                  ? _onLikeOwnButtonPressed()
-                                  : _onLikeButton(isLiked, post);
-                            },
-                            likeCount: post.likeNumber,
-                          ),
-                          widget.user.companyId != null &&
-                                  widget.user.companyId == post.companyId
-                              ? InkWell(
-                                  child: Icon(
-                                    Icons.bar_chart,
-                                    color: Colors.white,
-                                    size: 30,
-                                  ),
-                                  onTap: () {
-                                    _openStatisticPage(post.postId);
-                                  })
-                              : Container(),
-                          Row(
+                      child: Align(
+                        alignment: Alignment.bottomCenter,
+                        child: Container(
+                          padding: EdgeInsets.only(left: 10),
+                          height: 40,
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                post.commentNumber.toString(),
-                                style: TextStyle(color: Colors.white),
-                              ),
-                              IconButton(
-                                icon: Icon(Icons.comment),
-                                color: Colors.white,
-                                onPressed: () async {
-                                  await widget.hideNavBar();
-                                  Navigator.of(context)
-                                      .push(MaterialPageRoute(
-                                          builder: (context) =>
-                                              SinglePostWidget(
-                                                commentTapped: true,
-                                                session: widget.session,
-                                                post: post,
-                                                user: widget.user,
-                                                languages: languages,
-                                                hideNavBar: widget.hideNavBar,
-                                                navBarStatusChangeableAgain: widget
-                                                    .navBarStatusChangeableAgain,
-                                              )))
-                                      .whenComplete(() =>
-                                          widget.navBarStatusChangeableAgain());
+                              LikeButton(
+                                size: 20.0,
+                                circleColor: CircleColor(
+                                    start: Colors.yellow.shade200,
+                                    end: Colors.yellow),
+                                bubblesColor: BubblesColor(
+                                  dotPrimaryColor: Colors.yellow.shade200,
+                                  dotSecondaryColor: Colors.yellow,
+                                ),
+                                isLiked: post.liked,
+                                likeBuilder: (bool isLiked) {
+                                  return Icon(
+                                    Icons.lightbulb,
+                                    color:
+                                        isLiked ? Colors.yellow : Colors.white,
+                                  );
                                 },
+                                onTap: (isLiked) {
+                                  return post.creatorId == widget.user.userId
+                                      ? _onLikeOwnButtonPressed()
+                                      : _onLikeButton(isLiked, post);
+                                },
+                                likeCount: post.likeNumber,
+                              ),
+                              widget.user.companyId != null &&
+                                      widget.user.companyId == post.companyId
+                                  ? InkWell(
+                                      child: Icon(
+                                        Icons.bar_chart,
+                                        color: Colors.white,
+                                        size: 30,
+                                      ),
+                                      onTap: () {
+                                        _openStatisticPage(post.postId);
+                                      })
+                                  : Container(),
+                              Row(
+                                children: [
+                                  Text(
+                                    post.commentNumber.toString(),
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                  IconButton(
+                                    icon: Icon(Icons.comment),
+                                    color: Colors.white,
+                                    onPressed: () async {
+                                      await widget.hideNavBar();
+                                      Navigator.of(context)
+                                          .push(MaterialPageRoute(
+                                              builder: (context) =>
+                                                  SinglePostWidget(
+                                                    commentTapped: true,
+                                                    session: widget.session,
+                                                    post: post,
+                                                    user: widget.user,
+                                                    languages: languages,
+                                                    hideNavBar:
+                                                        widget.hideNavBar,
+                                                    navBarStatusChangeableAgain:
+                                                        widget
+                                                            .navBarStatusChangeableAgain,
+                                                  )))
+                                          .whenComplete(() => widget
+                                              .navBarStatusChangeableAgain());
+                                    },
+                                  ),
+                                ],
                               ),
                             ],
                           ),
-                        ],
+                        ),
                       ),
                     )
                   ],
                 ),
               ),
-              onTap: () {
-                _onPostTap(post);
-              },
             ),
+            onTap: () {
+              _onPostTap(post);
+            },
           ),
         ),
       ),
@@ -1471,5 +1422,337 @@ class _PostsWidgetState extends State<PostsWidget> {
                   languages: languages,
                 )))
         .whenComplete(() => widget.navBarStatusChangeableAgain());
+  }
+
+  //TODO a nyelvesítést szebben megoldani valami memóriával ha más nem, de ez így nem jó
+  _scrollableInnerWidget() {
+    return Container(
+      color: Colors.black,
+      width: MediaQuery.of(context).size.width,
+      child: Stack(
+        children: [
+          Positioned(
+            top: 5,
+            right: 5,
+            child: MediaQuery.of(context).size.width < 1000
+                ? Container()
+                : Container(
+                    child: Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          InkWell(
+                            child: CircleAvatar(
+                              backgroundColor: Colors.white,
+                              radius: 20,
+                              foregroundImage: AssetImage(
+                                  'icons/flags/png/gb.png',
+                                  package: 'country_icons'),
+                            ),
+                            onTap: () {
+                              /*languagesSqfLiteHandler
+                          .insertLanguageCode(
+                          LanguageCode(code: 'en', id: 0))
+                          .whenComplete(() => Phoenix.rebirth(context));*/
+                              setState(() {
+                                languages = LanguageEn();
+                              });
+                            },
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          InkWell(
+                            child: CircleAvatar(
+                              backgroundColor: Colors.white,
+                              radius: 20,
+                              foregroundImage: AssetImage(
+                                  'icons/flags/png/hu.png',
+                                  package: 'country_icons'),
+                            ),
+                            onTap: () {
+                              /*languagesSqfLiteHandler
+                          .insertLanguageCode(
+                          LanguageCode(code: 'hu', id: 0))
+                          .whenComplete(() => Phoenix.rebirth(context));*/
+                              setState(() {
+                                languages = LanguageHu();
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+          ),
+          DefaultTabController(
+            initialIndex: widget.initPage,
+            length: 3,
+            child: Center(
+              child: Container(
+                width: 700,
+                child: NestedScrollView(
+                  headerSliverBuilder:
+                      (BuildContext context, bool innerBoxIsScrolled) {
+                    return <Widget>[
+                      SliverAppBar(
+                        backgroundColor: Colors.black,
+                        automaticallyImplyLeading: false,
+                        title: Container(
+                          height: 40,
+                          padding: EdgeInsets.only(left: 5, right: 5),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(
+                              color: Colors.white,
+                            ),
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(20),
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              Flexible(
+                                child: TypeAheadField(
+                                  loadingBuilder: (context) {
+                                    return Container(
+                                      height: 50,
+                                      padding: EdgeInsets.all(1),
+                                      color: Colors.yellow,
+                                      child: Container(
+                                          color: Colors.black,
+                                          child: Center(
+                                            child: Image(
+                                                image: new AssetImage(
+                                                    "assets/images/loading_breath.gif")),
+                                          )),
+                                    );
+                                  },
+                                  noItemsFoundBuilder: (context) {
+                                    return Container(
+                                      padding: EdgeInsets.all(1),
+                                      color: Colors.yellow,
+                                      child: Container(
+                                        color: Colors.black,
+                                        child: ListTile(
+                                          leading: Icon(
+                                            Icons.not_interested_rounded,
+                                            color: Colors.yellow,
+                                          ),
+                                          title: Text(
+                                            languages.noItemsFoundLabel,
+                                            style: TextStyle(
+                                                color: Colors.yellow,
+                                                fontStyle: FontStyle.italic,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 20),
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  minCharsForSuggestions: 1,
+                                  textFieldConfiguration:
+                                      TextFieldConfiguration(
+                                    decoration: new InputDecoration.collapsed(
+                                        hintText: languages.searchLabel),
+                                    controller: _searchFieldController,
+                                    cursorColor: Colors.black,
+                                    autofocus: false,
+                                    style: TextStyle(fontSize: 20),
+                                    onEditingComplete: _onSearchComplete,
+                                  ),
+                                  suggestionsCallback: (pattern) async {
+                                    dynamic response = await widget.session
+                                        .get("/api/searchField/" + pattern);
+                                    if (response.statusCode == 200) {
+                                      widget.session.updateCookie(response);
+                                      Iterable l = json.decode(
+                                          utf8.decode(response.bodyBytes));
+                                      names = List<SearchFieldNames>.from(l.map(
+                                          (name) =>
+                                              SearchFieldNames.fromJson(name)));
+                                      List<String> resultList = [];
+                                      names.forEach((name) {
+                                        if (name.id != null) {
+                                          resultList.add(name.id.toString());
+                                        } else {
+                                          resultList.add(name.name);
+                                        }
+                                      });
+                                      return resultList;
+                                    }
+                                    return [];
+                                  },
+                                  itemBuilder: (context, n) {
+                                    SearchFieldNames? name;
+                                    if (names
+                                        .where((nm) => nm.id.toString() == n)
+                                        .isNotEmpty) {
+                                      name = names
+                                          .where((nm) => nm.id.toString() == n)
+                                          .first;
+                                    }
+                                    return Container(
+                                      padding: EdgeInsets.all(1),
+                                      color: Colors.yellow,
+                                      child: Container(
+                                        color: Colors.black,
+                                        child: ListTile(
+                                          leading: name != null
+                                              ? CircleAvatar(
+                                                  radius: 20,
+                                                  backgroundImage: NetworkImage(
+                                                    widget.session.domainName +
+                                                        "/api/images/" +
+                                                        name.imageId.toString(),
+                                                    headers:
+                                                        widget.session.headers,
+                                                  ),
+                                                )
+                                              : Icon(
+                                                  Icons.lightbulb_outline_sharp,
+                                                  color: Colors.yellow,
+                                                ),
+                                          title: Text(
+                                            name == null
+                                                ? n.toString()
+                                                : name.name,
+                                            style: TextStyle(
+                                                color: Colors.yellow,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 20),
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  onSuggestionSelected: (n) {
+                                    String name;
+                                    if (names
+                                        .where((nm) => nm.id.toString() == n)
+                                        .isNotEmpty) {
+                                      name = names
+                                          .where((nm) => nm.id.toString() == n)
+                                          .first
+                                          .name;
+                                    } else {
+                                      name = n.toString();
+                                    }
+                                    _searchFieldController.text =
+                                        name.toString();
+                                    _onSearchButtonPressed();
+                                  },
+                                ),
+                                flex: 8,
+                              ),
+                              Flexible(
+                                child: IconButton(
+                                  icon: Icon(
+                                    Icons.search,
+                                    color: Colors.black,
+                                  ),
+                                  onPressed: _onSearchButtonPressed,
+                                ),
+                                flex: 1,
+                              ),
+                            ],
+                          ),
+                        ),
+                        pinned: true,
+                        floating: true,
+                        snap: true,
+                        forceElevated: innerBoxIsScrolled,
+                        bottom: TabBar(
+                            labelColor: Colors.yellow,
+                            indicatorColor: Colors.yellow,
+                            tabs: [
+                              Tab(
+                                child: Text(
+                                  languages.bestLabel,
+                                  style: TextStyle(color: Colors.yellow),
+                                ),
+                              ),
+                              Tab(
+                                child: Text(
+                                  languages.newLabel,
+                                  style: TextStyle(color: Colors.yellow),
+                                ),
+                              ),
+                              Tab(
+                                child: Text(
+                                  languages.ownLabel,
+                                  style: TextStyle(color: Colors.yellow),
+                                ),
+                              ),
+                            ]),
+                      ),
+                    ];
+                  },
+                  body: TabBarView(children: [
+                    _postsWidget(_pagingBestController, FeedType.BEST),
+                    _postsWidget(_pagingNewController, FeedType.NEW),
+                    _postsWidget(_pagingOwnController, FeedType.OWN),
+                  ]),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _addMenuItems() {
+    items = [
+      SideMenuItem(
+        // Priority of item to show on SideMenu, lower value is displayed at the top
+        priority: 0,
+        title: languages.mainPageLabel,
+        onTap: (int, controller) {
+          _sideMenuController.changePage(0);
+          page.jumpToPage(0);
+        },
+        icon: Icon(Icons.home),
+      ),
+      SideMenuItem(
+        priority: 1,
+        title: languages.myAccountLabel,
+        onTap: (int, controller) {
+          _sideMenuController.changePage(1);
+          page.jumpToPage(1);
+        },
+        icon: Icon(Icons.perm_identity),
+      ),
+      SideMenuItem(
+        priority: 2,
+        title: languages.companiesLabel,
+        onTap: (int, controller) {
+          _sideMenuController.changePage(2);
+          page.jumpToPage(2);
+        },
+        icon: Icon(Icons.factory),
+      ),
+      SideMenuItem(
+        priority: 3,
+        title: languages.likedPostsLabel,
+        onTap: (int, controller) {
+          _sideMenuController.changePage(3);
+          page.jumpToPage(3);
+        },
+        icon: Icon(Icons.lightbulb),
+      ),
+    ];
+    if (widget.user.roles.contains('ROLE_COMPANY')) {
+      items.add(SideMenuItem(
+        priority: 4,
+        title: languages.subscriptionHandlingLabel,
+        onTap: (int, controller) {
+          _sideMenuController.changePage(4);
+          page.jumpToPage(4);
+        },
+        icon: Icon(Icons.subscriptions),
+      ));
+    }
   }
 }

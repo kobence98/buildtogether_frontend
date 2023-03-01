@@ -17,16 +17,12 @@ class MyAccountWidget extends StatefulWidget {
   final Session session;
   final User user;
   final Languages languages;
-  final Function hideNavBar;
-  final Function navBarStatusChangeableAgain;
 
   const MyAccountWidget(
       {Key? key,
       required this.languages,
       required this.session,
-      required this.user,
-      required this.hideNavBar,
-      required this.navBarStatusChangeableAgain})
+      required this.user})
       : super(key: key);
 
   @override
@@ -38,6 +34,8 @@ class _MyAccountWidgetState extends State<MyAccountWidget> {
   AuthSqfLiteHandler authSqfLiteHandler = AuthSqfLiteHandler();
   late bool loading;
   LanguagesSqfLiteHandler languagesSqfLiteHandler = LanguagesSqfLiteHandler();
+  Widget? _actualWidget;
+  late List<bool> hovers = [false, false, false, false, false, false];
 
   @override
   void initState() {
@@ -48,47 +46,50 @@ class _MyAccountWidgetState extends State<MyAccountWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        child: Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-      ),
-      body: Container(
-        color: Colors.black,
-        child: ListView(
-          children: [
-            SizedBox(
-              height: 10,
+    return _actualWidget != null
+        ? _actualWidget!
+        : SafeArea(
+            child: Scaffold(
+            appBar: AppBar(
+              backgroundColor: Colors.black,
             ),
-            Row(
-              children: [
-                _menuPoint(languages.changePasswordLabel, Icons.password,
-                    _onChangePasswordTap),
-                _menuPoint(languages.changeUserDataLabel, Icons.security,
-                    _onChangeUserDataTap),
-              ],
+            body: Container(
+              color: Colors.black,
+              child: ListView(
+                children: [
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Row(
+                    children: [
+                      _menuPoint(languages.changePasswordLabel, Icons.password,
+                          _onChangePasswordTap, 0),
+                      _menuPoint(languages.changeUserDataLabel, Icons.security,
+                          _onChangeUserDataTap, 1),
+                    ],
+                  ),
+                  SizedBox(height: 5),
+                  Row(
+                    children: [
+                      _menuPoint(languages.changeLocationLabel,
+                          Icons.location_on, _onChangeLocationTap, 2),
+                      _menuPoint(languages.handleBansLabel,
+                          Icons.not_interested, _onHandleBansTap, 3),
+                    ],
+                  ),
+                  SizedBox(height: 5),
+                  Row(
+                    children: [
+                      _menuPoint(
+                          languages.logoutLabel, Icons.logout, _onLogoutTap, 4),
+                      _menuPoint(languages.deleteAccountLabel,
+                          Icons.delete_forever, _onDeleteAccountTap, 5),
+                    ],
+                  ),
+                ],
+              ),
             ),
-            SizedBox(height: 5),
-            Row(
-              children: [
-                _menuPoint(languages.changeLocationLabel, Icons.location_on,
-                    _onChangeLocationTap),
-                _menuPoint(languages.handleBansLabel, Icons.not_interested,
-                    _onHandleBansTap),
-              ],
-            ),
-            SizedBox(height: 5),
-            Row(
-              children: [
-                _menuPoint(languages.logoutLabel, Icons.logout, _onLogoutTap),
-                _menuPoint(languages.deleteAccountLabel, Icons.delete_forever,
-                    _onDeleteAccountTap),
-              ],
-            ),
-          ],
-        ),
-      ),
-    ));
+          ));
   }
 
   void _onLogoutTap() {
@@ -107,57 +108,49 @@ class _MyAccountWidgetState extends State<MyAccountWidget> {
   }
 
   void _onChangePasswordTap() async {
-    await widget.hideNavBar();
-    Navigator.of(context)
-        .push(MaterialPageRoute(
-            builder: (context) => ChangePasswordWidget(
-                  user: widget.user,
-                  session: widget.session,
-                  languages: languages,
-                )))
-        .whenComplete(() => widget.navBarStatusChangeableAgain());
+    setState(() {
+      _actualWidget = ChangePasswordWidget(
+          user: widget.user,
+          session: widget.session,
+          languages: languages,
+          closeActualWidget: () => _closeActualWidget());
+    });
   }
 
   void _onChangeUserDataTap() async {
-    await widget.hideNavBar();
-    Navigator.of(context)
-        .push(MaterialPageRoute(
-            builder: (context) => ChangeUserDataWidget(
-                  user: widget.user,
-                  session: widget.session,
-                  languages: languages,
-                )))
-        .then((message) {
-      if (message != null && message == 'DATA_CHANGED') {
-        Phoenix.rebirth(context);
-      } else {
-        widget.navBarStatusChangeableAgain();
-      }
+    setState(() {
+      _actualWidget = ChangeUserDataWidget(
+        user: widget.user,
+        session: widget.session,
+        languages: languages,
+        refreshApp: () {
+          Phoenix.rebirth(context);
+        },
+          closeActualWidget: () => _closeActualWidget(),
+      );
     });
   }
 
   void _onChangeLocationTap() async {
-    await widget.hideNavBar();
-    Navigator.of(context)
-        .push(MaterialPageRoute(
-            builder: (context) => ChangeLocationWidget(
-                  user: widget.user,
-                  session: widget.session,
-                  languages: languages,
-                )))
-        .whenComplete(() => widget.navBarStatusChangeableAgain());
+    setState(() {
+      _actualWidget = ChangeLocationWidget(
+        user: widget.user,
+        session: widget.session,
+        languages: languages,
+        closeActualWidget: () => _closeActualWidget(),
+      );
+    });
   }
 
   void _onHandleBansTap() async {
-    await widget.hideNavBar();
-    Navigator.of(context)
-        .push(MaterialPageRoute(
-            builder: (context) => HandleBansWidget(
-                  user: widget.user,
-                  session: widget.session,
-                  languages: languages,
-                )))
-        .whenComplete(() => widget.navBarStatusChangeableAgain());
+    setState(() {
+      _actualWidget = HandleBansWidget(
+        user: widget.user,
+        session: widget.session,
+        languages: languages,
+        closeActualWidget: () => _closeActualWidget(),
+      );
+    });
   }
 
   void _onDeleteAccountTap() {
@@ -251,13 +244,20 @@ class _MyAccountWidgetState extends State<MyAccountWidget> {
     });
   }
 
-  Widget _menuPoint(String label, IconData icon, Function onTap) {
+  Widget _menuPoint(String label, IconData icon, Function onTap, int hoverIndex) {
     return Flexible(
       flex: 1,
       child: InkWell(
-        child: Container(
+        onHover: (val) {
+          setState(() {
+            hovers[hoverIndex] = val;
+          });
+        },
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: EdgeInsets.only(top: (hovers.elementAt(hoverIndex)) ? 0 : 5, bottom:!(hovers.elementAt(hoverIndex))? 0:5),
           margin: EdgeInsets.all(5),
-          height: (MediaQuery.of(context).size.width - 15) / 2,
+          height: 200,
           width: (MediaQuery.of(context).size.width - 15) / 2,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.all(
@@ -273,15 +273,11 @@ class _MyAccountWidgetState extends State<MyAccountWidget> {
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
               ),
             ),
-            Positioned(
-              top: (MediaQuery.of(context).size.width - 15) / 16,
-              left: (MediaQuery.of(context).size.width - 15) / 16,
-              child: Center(
-                child: Icon(
-                  icon,
-                  color: Colors.black.withOpacity(0.05),
-                  size: 150,
-                ),
+            Center(
+              child: Icon(
+                icon,
+                color: Colors.black.withOpacity(0.05),
+                size: 150,
               ),
             )
           ]),
@@ -289,5 +285,11 @@ class _MyAccountWidgetState extends State<MyAccountWidget> {
         onTap: () => onTap(),
       ),
     );
+  }
+
+  _closeActualWidget() {
+    setState(() {
+      _actualWidget = null;
+    });
   }
 }
