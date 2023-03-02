@@ -984,16 +984,6 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
           textColor: Colors.white,
           fontSize: 16.0);
       return null;
-    }).timeout(Duration(seconds: 2), onTimeout: () {
-      Fluttertoast.showToast(
-          msg: languages.goToSettingsForPermission,
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 4,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          fontSize: 16.0);
-      return null;
     });
     if (image != null &&
         (await image!.readAsBytes()).lengthInBytes >= 1048576) {

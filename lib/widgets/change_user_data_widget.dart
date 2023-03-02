@@ -385,16 +385,6 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
           textColor: Colors.white,
           fontSize: 16.0);
       return null;
-    }).timeout(Duration(seconds: 2), onTimeout: (){
-      Fluttertoast.showToast(
-          msg: languages.goToSettingsForPermission,
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 4,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          fontSize: 16.0);
-      return null;
     });
     setState(() {});
   }

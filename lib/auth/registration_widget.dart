@@ -644,22 +644,11 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
   }
 
   void _addPicture(setState) async {
-    if (await Permission.photos.isPermanentlyDenied) {}
     await Permission.photos.request();
     final ImagePicker _picker = ImagePicker();
     image = await _picker
         .pickImage(source: ImageSource.gallery)
         .onError((error, stackTrace) {
-      Fluttertoast.showToast(
-          msg: languages.goToSettingsForPermission,
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 4,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          fontSize: 16.0);
-      return null;
-    }).timeout(Duration(seconds: 2), onTimeout: (){
       Fluttertoast.showToast(
           msg: languages.goToSettingsForPermission,
           toastLength: Toast.LENGTH_LONG,
