@@ -644,20 +644,12 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
   }
 
   void _addPicture(setState) async {
-    Fluttertoast.showToast(
-        msg: 'isPermanentlyDenied : ${(await Permission.photos.isPermanentlyDenied).toString()}'
-            '\nisRestricted : ${(await Permission.photos.isRestricted).toString()}'
-            '\nisDenied : ${(await Permission.photos.isDenied).toString()}'
-            '\nisGranted : ${(await Permission.photos.isGranted).toString()}'
-            '\nisLimited : ${(await Permission.photos.isLimited).toString()}'
-            '\nvalue : ${(Permission.photos.value).toString()}',
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 6,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-        fontSize: 16.0);
-    if (await Permission.photos.isPermanentlyDenied) {
+    if (await Permission.photos.isPermanentlyDenied) {}
+    await Permission.photos.request();
+    final ImagePicker _picker = ImagePicker();
+    image = await _picker
+        .pickImage(source: ImageSource.gallery)
+        .onError((error, stackTrace) {
       Fluttertoast.showToast(
           msg: languages.goToSettingsForPermission,
           toastLength: Toast.LENGTH_LONG,
@@ -666,10 +658,18 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
           backgroundColor: Colors.red,
           textColor: Colors.white,
           fontSize: 16.0);
-    }
-    await Permission.photos.request();
-    final ImagePicker _picker = ImagePicker();
-    image = await _picker.pickImage(source: ImageSource.gallery);
+      return null;
+    }).timeout(Duration(seconds: 2), onTimeout: (){
+      Fluttertoast.showToast(
+          msg: languages.goToSettingsForPermission,
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 4,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+      return null;
+    });
     if (image != null &&
         (await image!.readAsBytes()).lengthInBytes >= 1048576) {
       image = null;

@@ -312,7 +312,8 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                               Iterable l =
                                   json.decode(utf8.decode(response.bodyBytes));
                               companies = List<CompanyForSearch>.from(l.map(
-                                  (company) => CompanyForSearch.fromJson(company)));
+                                  (company) =>
+                                      CompanyForSearch.fromJson(company)));
                               List<String> resultList = [];
                               companies.forEach((company) {
                                 resultList.add(company.id.toString());
@@ -322,8 +323,9 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                             return [];
                           },
                           itemBuilder: (context, c) {
-                            CompanyForSearch company =
-                                companies.where((cp) => cp.id.toString() == c).first;
+                            CompanyForSearch company = companies
+                                .where((cp) => cp.id.toString() == c)
+                                .first;
                             return Container(
                               padding: EdgeInsets.all(1),
                               color: CupertinoColors.systemYellow,
@@ -368,7 +370,9 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                           },
                         ),
                       ),
-                      SizedBox(width: 7,),
+                      SizedBox(
+                        width: 7,
+                      ),
                       InkWell(
                         child: Container(
                           height: 35,
@@ -379,7 +383,8 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                             ),
                             color: Colors.black,
                           ),
-                          child: Icon(Icons.close, color: CupertinoColors.systemYellow),
+                          child: Icon(Icons.close,
+                              color: CupertinoColors.systemYellow),
                         ),
                         onTap: () {
                           _companyNameFocus.unfocus();
@@ -456,24 +461,29 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                         }
                       },
                       controller: _titleController,
-                      style: TextStyle(fontSize: 20,),
+                      style: TextStyle(
+                        fontSize: 20,
+                      ),
                       decoration: new InputDecoration.collapsed(
                           hintText: languages.titleOfIdeaLabel),
                     ),
                   ),
                 ),
-                SizedBox(width: 7,),
+                SizedBox(
+                  width: 7,
+                ),
                 InkWell(
                   child: Container(
                     height: 35,
-                  width: 35,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(10),
+                    width: 35,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(10),
+                      ),
+                      color: Colors.black,
                     ),
-                    color: Colors.black,
-                  ),
-                    child: Icon(Icons.check, color: CupertinoColors.systemYellow),
+                    child:
+                        Icon(Icons.check, color: CupertinoColors.systemYellow),
                   ),
                   onTap: () => _titleFocus.unfocus(),
                 )
@@ -505,10 +515,13 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                       focusNode: _descriptionFocus,
                       style: TextStyle(fontSize: 20),
                       decoration: InputDecoration.collapsed(
-                          hintText: languages.writeHereYourIdeaLabel,),
+                        hintText: languages.writeHereYourIdeaLabel,
+                      ),
                       onChanged: (text) => setState(() {})),
                 ),
-                SizedBox(width: 7,),
+                SizedBox(
+                  width: 7,
+                ),
                 InkWell(
                   child: Container(
                     height: 35,
@@ -519,7 +532,8 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                       ),
                       color: Colors.black,
                     ),
-                    child: Icon(Icons.check, color: CupertinoColors.systemYellow),
+                    child:
+                        Icon(Icons.check, color: CupertinoColors.systemYellow),
                   ),
                   onTap: () => _descriptionFocus.unfocus(),
                 )
@@ -651,7 +665,9 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                           int nextEmptyIndex = pollControllers
                               .indexWhere((element) => element.text.isEmpty);
                           if (nextEmptyIndex != -1) {
-                            pollFocusNodes.elementAt(nextEmptyIndex).requestFocus();
+                            pollFocusNodes
+                                .elementAt(nextEmptyIndex)
+                                .requestFocus();
                           } else {
                             _pollTitleNameFocus.unfocus();
                           }
@@ -659,15 +675,17 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                         maxLength: 256,
                         style: TextStyle(fontSize: 20),
                         decoration: new InputDecoration(
-                            isCollapsed: true,
-                            counterText: '',
-                            border: InputBorder.none,
-                            focusedBorder:
-                                OutlineInputBorder(borderSide: BorderSide.none),
-                            ),
+                          isCollapsed: true,
+                          counterText: '',
+                          border: InputBorder.none,
+                          focusedBorder:
+                              OutlineInputBorder(borderSide: BorderSide.none),
+                        ),
                       ),
                     ),
-                    SizedBox(width: 7,),
+                    SizedBox(
+                      width: 7,
+                    ),
                     InkWell(
                       child: Container(
                         height: 35,
@@ -678,7 +696,8 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                           ),
                           color: Colors.black,
                         ),
-                        child: Icon(Icons.check, color: CupertinoColors.systemYellow),
+                        child: Icon(Icons.check,
+                            color: CupertinoColors.systemYellow),
                       ),
                       onTap: () => _pollTitleNameFocus.unfocus(),
                     ),
@@ -769,7 +788,9 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                   focusNode: focusNode,
                   onEditingComplete: () {
                     int nextEmptyIndex = pollControllers.indexWhere((element) =>
-                        element.text.isEmpty && pollControllers.indexOf(element) > pollFocusNodes.indexOf(focusNode) &&
+                        element.text.isEmpty &&
+                        pollControllers.indexOf(element) >
+                            pollFocusNodes.indexOf(focusNode) &&
                         element != textEditingController);
                     if (nextEmptyIndex != -1) {
                       pollFocusNodes.elementAt(nextEmptyIndex).requestFocus();
@@ -916,7 +937,10 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
           focusNode: focusNode,
           onEditingComplete: () {
             int nextEmptyIndex = pollControllers.indexWhere((element) =>
-                element.text.isEmpty && pollControllers.indexOf(element) > pollFocusNodes.indexOf(focusNode) && element != textEditingController);
+                element.text.isEmpty &&
+                pollControllers.indexOf(element) >
+                    pollFocusNodes.indexOf(focusNode) &&
+                element != textEditingController);
             if (nextEmptyIndex != -1) {
               pollFocusNodes.elementAt(nextEmptyIndex).requestFocus();
             } else {
@@ -948,7 +972,29 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
     }
     await Permission.photos.request();
     final ImagePicker _picker = ImagePicker();
-    image = await _picker.pickImage(source: ImageSource.gallery);
+    image = await _picker
+        .pickImage(source: ImageSource.gallery)
+        .onError((error, stackTrace) {
+      Fluttertoast.showToast(
+          msg: languages.goToSettingsForPermission,
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 4,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+      return null;
+    }).timeout(Duration(seconds: 2), onTimeout: () {
+      Fluttertoast.showToast(
+          msg: languages.goToSettingsForPermission,
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 4,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+      return null;
+    });
     if (image != null &&
         (await image!.readAsBytes()).lengthInBytes >= 1048576) {
       image = null;

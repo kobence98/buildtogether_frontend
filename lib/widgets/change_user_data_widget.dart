@@ -14,6 +14,7 @@ import 'package:flutter_frontend/static/profanity_checker.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:numberpicker/numberpicker.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../entities/gender.dart';
 import '../entities/salary_type.dart';
@@ -372,8 +373,29 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
   }
 
   void _addPicture(setState) async {
+    Permission.photos.request();
     final ImagePicker _picker = ImagePicker();
-    image = await _picker.pickImage(source: ImageSource.gallery);
+    image = await _picker.pickImage(source: ImageSource.gallery).onError((error, stackTrace) {
+      Fluttertoast.showToast(
+          msg: languages.goToSettingsForPermission,
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 4,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+      return null;
+    }).timeout(Duration(seconds: 2), onTimeout: (){
+      Fluttertoast.showToast(
+          msg: languages.goToSettingsForPermission,
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 4,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+      return null;
+    });
     setState(() {});
   }
 
