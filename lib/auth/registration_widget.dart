@@ -644,7 +644,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
   }
 
   void _addPicture(setState) async {
-    if(await Permission.photos.isDenied || await Permission.photos.isPermanentlyDenied){
+    if((Platform.isAndroid && (await Permission.photos.isDenied || await Permission.photos.isPermanentlyDenied)) || (Platform.isIOS && await Permission.photos.isRestricted)){
       Fluttertoast.showToast(
           msg: languages.goToSettingsForPermission,
           toastLength: Toast.LENGTH_LONG,
