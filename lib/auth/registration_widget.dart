@@ -644,6 +644,19 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
   }
 
   void _addPicture(setState) async {
+    Fluttertoast.showToast(
+        msg: 'isPermanentlyDenied : ${(await Permission.photos.isPermanentlyDenied).toString()}'
+            '\nisRestricted : ${(await Permission.photos.isRestricted).toString()}'
+            '\nisDenied : ${(await Permission.photos.isDenied).toString()}'
+            '\nisGranted : ${(await Permission.photos.isGranted).toString()}'
+            '\nisLimited : ${(await Permission.photos.isLimited).toString()}'
+            '\nvalue : ${(Permission.photos.value).toString()}',
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 6,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0);
     if (await Permission.photos.isPermanentlyDenied) {
       Fluttertoast.showToast(
           msg: languages.goToSettingsForPermission,
