@@ -15,15 +15,8 @@ import 'entities/session.dart';
 import 'entities/user.dart';
 import 'languages/hungarian_language.dart';
 
-Future<bool> addSelfSignedCertificate() async{
-  ByteData data = await rootBundle.load('myCertificate.crt');
-  SecurityContext context = SecurityContext.defaultContext;
-  context.setTrustedCertificatesBytes(data.buffer.asUint8List());
-  return true;
-}
-
 void main() async{
-  // HttpOverrides.global = MyHttpOverrides();
+  HttpOverrides.global = MyHttpOverrides();
   runApp(Phoenix(child: MyApp()));
 }
 
@@ -47,7 +40,6 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    addSelfSignedCertificate();
   }
   //TODO WEB MIATT EGYBŐL LOGIN PAGE MEHET, MAJD LEHET OKOSKODNI KÉSŐBB A LEMENTETT ADATOKKAL STB, DE EGYELŐRE JÓ ÍGY
   // Session session = Session();
@@ -171,15 +163,15 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-// class MyHttpOverrides extends HttpOverrides {
-//   @override
-//   HttpClient createHttpClient(SecurityContext? context) {
-//     HttpClient httpClient = super.createHttpClient(context);
-//     File file = File('myCertificate.crt');
-//     String myCert = file.readAsStringSync();
-//     httpClient.badCertificateCallback =
-//     ((X509Certificate cert, String host, int port) => cert.pem == myCert);
-//     return httpClient;
-//   }
-// }
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    HttpClient httpClient = super.createHttpClient(context);
+    File file = File('myCertificate.crt');
+    String myCert = file.readAsStringSync();
+    httpClient.badCertificateCallback =
+    ((X509Certificate cert, String host, int port) => cert.pem == myCert);
+    return httpClient;
+  }
+}
 
