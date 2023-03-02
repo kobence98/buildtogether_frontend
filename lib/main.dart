@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_frontend/entities/age_bracket.dart';
 import 'package:flutter_frontend/entities/gender.dart';
@@ -12,6 +14,7 @@ import 'entities/user.dart';
 import 'languages/hungarian_language.dart';
 
 void main() {
+  HttpOverrides.global = MyHttpOverrides();
   runApp(Phoenix(child: MyApp()));
 }
 
@@ -150,5 +153,17 @@ class _MyHomePageState extends State<MyHomePage> {
         languages: LanguageHu(),
         navBarStatusChangeableAgain: () {},
         hideNavBar: () {});
+  }
+}
+
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    HttpClient httpClient = super.createHttpClient(context);
+    File file = File('myCertificate.crt');
+    String myCert = file.readAsStringSync();
+    httpClient.badCertificateCallback =
+    ((X509Certificate cert, String host, int port) => cert.pem == myCert);
+    return httpClient;
   }
 }
