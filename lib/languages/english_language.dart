@@ -161,6 +161,9 @@ class LanguageEn extends Languages {
   @override
   String get imageFileSizeIsTooBigExceptionMessage => 'Image file size is too big, please upload an image less than 1 MB!';
 
+  @override
+  String get goToSettingsForPermission => 'To upload the image, enable access to the gallery in the settings.';
+
   //CHANGE LOCATION WIDGET
 
   @override
