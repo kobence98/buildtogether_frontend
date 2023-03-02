@@ -936,7 +936,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
   }
 
   void _addPicture(setState) async {
-    if(await Permission.photos.isDenied || await Permission.photos.isPermanentlyDenied){
+    if (await Permission.photos.isPermanentlyDenied) {
       Fluttertoast.showToast(
           msg: languages.goToSettingsForPermission,
           toastLength: Toast.LENGTH_LONG,
@@ -945,9 +945,6 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
           backgroundColor: Colors.red,
           textColor: Colors.white,
           fontSize: 16.0);
-    }
-    else if(!(await Permission.photos.isGranted)){
-      await Permission.photos.request();
     }
     await Permission.photos.request();
     final ImagePicker _picker = ImagePicker();

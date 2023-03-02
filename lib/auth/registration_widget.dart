@@ -475,7 +475,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                 : _chosenCountryCode,
             'language': languages.countryCode,
             'numberOfHouseholdMembers':
-            company ? null : _numberOfHouseholdMembersValue.toString(),
+                company ? null : _numberOfHouseholdMembersValue.toString(),
             'age': company || _chosenAgeBracket == null
                 ? null
                 : _chosenAgeBracket!.stringValue,
@@ -644,7 +644,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
   }
 
   void _addPicture(setState) async {
-    if((Platform.isAndroid && (await Permission.photos.isDenied || await Permission.photos.isPermanentlyDenied)) || (Platform.isIOS && await Permission.photos.isRestricted)){
+    if (await Permission.photos.isPermanentlyDenied) {
       Fluttertoast.showToast(
           msg: languages.goToSettingsForPermission,
           toastLength: Toast.LENGTH_LONG,
@@ -654,9 +654,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
           textColor: Colors.white,
           fontSize: 16.0);
     }
-    else if(!(await Permission.photos.isGranted)){
-      await Permission.photos.request();
-    }
+    await Permission.photos.request();
     final ImagePicker _picker = ImagePicker();
     image = await _picker.pickImage(source: ImageSource.gallery);
     if (image != null &&
@@ -1497,37 +1495,37 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                           ],
                         ),
                       ),
-                      items: countryCodes.map<DropdownMenuItem<String>>(
-                              (String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    color: Colors.black,
-                                    borderRadius: value == countryCodes.first
+                      items: countryCodes
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Container(
+                            decoration: BoxDecoration(
+                                color: Colors.black,
+                                borderRadius: value == countryCodes.first
+                                    ? BorderRadius.only(
+                                        topLeft: Radius.circular(10),
+                                        topRight: Radius.circular(10),
+                                      )
+                                    : (value == countryCodes.last
                                         ? BorderRadius.only(
-                                      topLeft: Radius.circular(10),
-                                      topRight: Radius.circular(10),
-                                    )
-                                        : (value == countryCodes.last
-                                        ? BorderRadius.only(
-                                      bottomLeft: Radius.circular(10),
-                                      bottomRight: Radius.circular(10),
-                                    )
+                                            bottomLeft: Radius.circular(10),
+                                            bottomRight: Radius.circular(10),
+                                          )
                                         : BorderRadius.zero)),
-                                child: Center(
-                                  child: Text(
-                                    value,
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                        color: Colors.yellow,
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ),
+                            child: Center(
+                              child: Text(
+                                value,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    color: Colors.yellow,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold),
                               ),
-                            );
-                          }).toList(),
+                            ),
+                          ),
+                        );
+                      }).toList(),
                       onChanged: (String? value) {
                         setState(() {
                           _chosenCountryCode = value!;
