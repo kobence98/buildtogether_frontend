@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -8,6 +9,7 @@ import 'package:flutter_frontend/entities/gender.dart';
 import 'package:flutter_frontend/entities/salary_type.dart';
 import 'package:flutter_frontend/widgets/posts_widget.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
+import 'package:url_strategy/url_strategy.dart';
 
 import 'auth/login_widget.dart';
 import 'entities/living_place_type.dart';
@@ -16,7 +18,8 @@ import 'entities/user.dart';
 import 'languages/hungarian_language.dart';
 
 void main() async{
-  HttpOverrides.global = MyHttpOverrides();
+  // HttpOverrides.global = MyHttpOverrides();
+  setPathUrlStrategy();
   runApp(Phoenix(child: MyApp()));
 }
 
@@ -37,9 +40,18 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
+  // String valami = '';
+
   @override
   void initState() {
     super.initState();
+  //   //TODO kivenni csak teszt
+  //   Session session = Session();
+  //   session.get('/api/verificationToken/fdsafs').then((response) {
+  //     setState(() {
+  //       valami = utf8.decode(response.bodyBytes);
+  //     });
+  //   });
   }
   //TODO WEB MIATT EGYBŐL LOGIN PAGE MEHET, MAJD LEHET OKOSKODNI KÉSŐBB A LEMENTETT ADATOKKAL STB, DE EGYELŐRE JÓ ÍGY
   // Session session = Session();
@@ -137,6 +149,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    // return Scaffold(
+    //   body: Text(valami),
+    // );
     return LoginPage(languages: LanguageHu());
     return PostsWidget(
         session: Session(),
@@ -162,16 +177,16 @@ class _MyHomePageState extends State<MyHomePage> {
         hideNavBar: () {});
   }
 }
-
-class MyHttpOverrides extends HttpOverrides {
-  @override
-  HttpClient createHttpClient(SecurityContext? context) {
-    HttpClient httpClient = super.createHttpClient(context);
-    File file = File('myCertificate.crt');
-    String myCert = file.readAsStringSync();
-    httpClient.badCertificateCallback =
-    ((X509Certificate cert, String host, int port) => cert.pem == myCert);
-    return httpClient;
-  }
-}
+//
+// class MyHttpOverrides extends HttpOverrides {
+//   @override
+//   HttpClient createHttpClient(SecurityContext? context) {
+//     HttpClient httpClient = super.createHttpClient(context);
+//     File file = File('myCertificate.crt');
+//     String myCert = file.readAsStringSync();
+//     httpClient.badCertificateCallback =
+//     ((X509Certificate cert, String host, int port) => cert.pem == myCert);
+//     return httpClient;
+//   }
+// }
 
