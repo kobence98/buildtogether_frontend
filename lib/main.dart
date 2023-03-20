@@ -1,21 +1,10 @@
-import 'dart:convert';
-import 'dart:html';
-
-import 'package:autologin_plugin/autologin_plugin_web.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_frontend/router.dart';
-import 'package:flutter_frontend/widgets/home_widget.dart';
+import 'package:flutter_frontend/auth/login_widget.dart';
+import 'package:flutter_frontend/auth/registration_widget.dart';
+import 'package:flutter_frontend/languages/hungarian_language.dart';
+import 'package:flutter_frontend/router_loading_widget.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:url_strategy/url_strategy.dart';
-
-import 'auth/automatic_login_page.dart';
-import 'auth/login_widget.dart';
-import 'auth/registration_widget.dart';
-import 'entities/session.dart';
-import 'entities/user.dart';
-import 'languages/hungarian_language.dart';
 
 void main() async {
   setPathUrlStrategy();
@@ -27,8 +16,52 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      onGenerateRoute: generateRoute,
-      home: AutomaticLoginPage(),
+      initialRoute: '/home',
+      routes: {
+        '/login': (context) => LoginPage(languages: LanguageHu()),
+        '/registration': (context) =>
+            RegistrationWidget(languages: LanguageHu()),
+        '/home': (context) => RouterLoadingWidget(
+              path: '/home',
+            ),
+        '/createPost': (context) => RouterLoadingWidget(
+              path: '/createPost',
+            ),
+        '/myAccount': (context) => RouterLoadingWidget(
+              path: '/myAccount',
+            ),
+        '/registeredCompanies': (context) => RouterLoadingWidget(
+              path: '/registeredCompanies',
+            ),
+        '/likedPosts': (context) => RouterLoadingWidget(
+              path: '/likedPosts',
+            ),
+        '/subscription': (context) => RouterLoadingWidget(
+              path: '/subscription',
+            ),
+        '/filteredPosts': (context) => RouterLoadingWidget(
+              path: '/home',
+            ),
+        '/singlePost': (context) => RouterLoadingWidget(
+              path: '/home',
+            ),
+        '/statistics': (context) => RouterLoadingWidget(
+              path: '/home',
+            ),
+        '/changePassword': (context) => RouterLoadingWidget(
+              path: '/myAccount',
+            ),
+        '/changeUserData': (context) => RouterLoadingWidget(
+              path: '/myAccount',
+            ),
+        '/changeLocation': (context) => RouterLoadingWidget(
+              path: '/myAccount',
+            ),
+        '/userBans': (context) => RouterLoadingWidget(
+              path: '/myAccount',
+            ),
+      },
+      // home: AutomaticLoginPage(),
     );
   }
 }

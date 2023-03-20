@@ -292,6 +292,7 @@ class _MyAccountWidgetState extends State<MyAccountWidget> {
 
   _closeActualWidget() {
     setState(() {
+      window.history.pushState(null, 'myAccount', '/myAccount');
       _actualWidget = null;
     });
   }

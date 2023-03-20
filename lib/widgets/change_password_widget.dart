@@ -1,3 +1,5 @@
+import 'dart:html';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_frontend/auth/auth_sqflite_handler.dart';
 import 'package:flutter_frontend/auth/auth_user.dart';
@@ -32,6 +34,7 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
 
   @override
   void initState() {
+    window.history.pushState(null, 'changePassword', '/changePassword');
     super.initState();
     _passwordVisible = false;
     _passAgainVisible = false;

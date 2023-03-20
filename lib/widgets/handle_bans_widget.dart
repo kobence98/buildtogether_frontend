@@ -1,6 +1,6 @@
 import 'dart:convert';
+import 'dart:html';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -16,7 +16,10 @@ class HandleBansWidget extends StatefulWidget {
   final Function closeActualWidget;
 
   const HandleBansWidget(
-      {required this.session, required this.user, required this.languages, required this.closeActualWidget});
+      {required this.session,
+      required this.user,
+      required this.languages,
+      required this.closeActualWidget});
 
   @override
   _HandleBansWidgetState createState() => _HandleBansWidgetState();
@@ -30,6 +33,7 @@ class _HandleBansWidgetState extends State<HandleBansWidget> {
 
   @override
   void initState() {
+    window.history.pushState(null, 'userBans', '/userBans');
     bannedUsers = [];
     languages = widget.languages;
     super.initState();
@@ -86,7 +90,8 @@ class _HandleBansWidgetState extends State<HandleBansWidget> {
         body: _dataLoaded
             ? _bannedListWidget()
             : Center(
-                child: Image(image: new AssetImage("assets/images/loading_breath.gif")),
+                child: Image(
+                    image: new AssetImage("assets/images/loading_breath.gif")),
               ),
       ),
     );
@@ -107,111 +112,137 @@ class _HandleBansWidgetState extends State<HandleBansWidget> {
             ),
           )
         : Container(
-      padding: EdgeInsets.all(20),
-          child: RawScrollbar(
-            controller: _scrollController,
-            thumbVisibility: true,
-            thumbColor: Colors.grey,
-            child: SingleChildScrollView(
+            padding: EdgeInsets.all(20),
+            child: RawScrollbar(
               controller: _scrollController,
-              child: Container(
-                color: Colors.black,
-                width: MediaQuery.of(context).size.width,
-                child: Center(
-                  child: Container(
-                    width: 700,
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                        itemCount: bannedUsers.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          BannedUser bannedUser = bannedUsers.elementAt(index);
-                          return Column(
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              Container(
-                                width: MediaQuery.of(context).size.width,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(10),
-                                  ),
-                                  color: Colors.yellow,
-                                ),
-                                padding: EdgeInsets.all(1),
-                                child: Container(
+              thumbVisibility: true,
+              thumbColor: Colors.grey,
+              child: SingleChildScrollView(
+                controller: _scrollController,
+                child: Container(
+                  color: Colors.black,
+                  width: MediaQuery.of(context).size.width,
+                  child: Center(
+                    child: Container(
+                      width: 700,
+                      child: ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: bannedUsers.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            BannedUser bannedUser =
+                                bannedUsers.elementAt(index);
+                            return Column(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                Container(
+                                  width: MediaQuery.of(context).size.width,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.all(
                                       Radius.circular(10),
                                     ),
-                                    color: Colors.black,
+                                    color: Colors.yellow,
                                   ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Container(
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Container(
-                                                padding: EdgeInsets.only(left: 5, top: 3, bottom: 3),
-                                                child: Text(
-                                                  '${languages.idLabel}: ${bannedUser.id}',
-                                                  style: TextStyle(color: Colors.yellow),
-                                                  textAlign: TextAlign.left,
-                                                ),
-                                              ),
-                                              Container(
-                                                padding: EdgeInsets.only(left: 5, top: 3, bottom: 3),
-                                                alignment: Alignment.centerLeft,
-                                                child: Text(
-                                                  '${languages.nameLabel}: ${bannedUser.name}',
-                                                  style: TextStyle(color: Colors.yellow),
-                                                  textAlign: TextAlign.left,
-                                                ),
-                                              ),
-                                              Container(
-                                                padding: EdgeInsets.only(left: 5, top: 3, bottom: 3),
-                                                alignment: Alignment.centerLeft,
-                                                child: Text(
-                                                  '${languages.emailLabel}: ${bannedUser.email}',
-                                                  style: TextStyle(color: Colors.yellow),
-                                                  textAlign: TextAlign.left,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
+                                  padding: EdgeInsets.all(1),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(10),
                                       ),
-                                      Container(
-                                        padding: EdgeInsets.only(right: 15),
-                                        child: InkWell(
-                                          child: Icon(
-                                            Icons.delete,
-                                            color: Colors.yellow,
+                                      color: Colors.black,
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: Container(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Container(
+                                                  padding: EdgeInsets.only(
+                                                      left: 5,
+                                                      top: 3,
+                                                      bottom: 3),
+                                                  child: Text(
+                                                    '${languages.idLabel}: ${bannedUser.id}',
+                                                    style: TextStyle(
+                                                        color: Colors.yellow),
+                                                    textAlign: TextAlign.left,
+                                                  ),
+                                                ),
+                                                Container(
+                                                  padding: EdgeInsets.only(
+                                                      left: 5,
+                                                      top: 3,
+                                                      bottom: 3),
+                                                  alignment:
+                                                      Alignment.centerLeft,
+                                                  child: Text(
+                                                    '${languages.nameLabel}: ${bannedUser.name}',
+                                                    style: TextStyle(
+                                                        color: Colors.yellow),
+                                                    textAlign: TextAlign.left,
+                                                  ),
+                                                ),
+                                                Container(
+                                                  padding: EdgeInsets.only(
+                                                      left: 5,
+                                                      top: 3,
+                                                      bottom: 3),
+                                                  alignment:
+                                                      Alignment.centerLeft,
+                                                  child: Text(
+                                                    '${languages.emailLabel}: ${bannedUser.email}',
+                                                    style: TextStyle(
+                                                        color: Colors.yellow),
+                                                    textAlign: TextAlign.left,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
                                           ),
-                                          onTap: (){_deleteBanTap(bannedUsers.elementAt(index).id);},
                                         ),
-                                      )
-                                    ],
+                                        Container(
+                                          padding: EdgeInsets.only(right: 15),
+                                          child: InkWell(
+                                            child: Icon(
+                                              Icons.delete,
+                                              color: Colors.yellow,
+                                            ),
+                                            onTap: () {
+                                              _deleteBanTap(bannedUsers
+                                                  .elementAt(index)
+                                                  .id);
+                                            },
+                                          ),
+                                        )
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ),
-                              SizedBox(height: bannedUsers.length - 1 <= index ? 0 : 10,)
-                            ],
-                          );
-                        }),
+                                SizedBox(
+                                  height:
+                                      bannedUsers.length - 1 <= index ? 0 : 10,
+                                )
+                              ],
+                            );
+                          }),
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-        );
+          );
   }
 
   void _deleteBanTap(userId) {
-    widget.session.postJson('/api/users/removeBanFromUser/$userId', Map()).then((response) {
+    widget.session
+        .postJson('/api/users/removeBanFromUser/$userId', Map())
+        .then((response) {
       if (response.statusCode == 200) {
         setState(() {
           bannedUsers.removeWhere((user) => user.id == userId);

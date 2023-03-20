@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:html';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +7,6 @@ import 'package:flutter_frontend/entities/session.dart';
 import 'package:flutter_frontend/entities/user.dart';
 import 'package:flutter_frontend/languages/languages.dart';
 import 'package:flutter_frontend/static/profanity_checker.dart';
-import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
@@ -17,9 +15,13 @@ class CreatePostWidget extends StatefulWidget {
   final Session session;
   final User user;
   final Languages languages;
+  final Function callHomePage;
 
   const CreatePostWidget(
-      {required this.session, required this.user, required this.languages});
+      {required this.session,
+      required this.user,
+      required this.languages,
+      required this.callHomePage});
 
   @override
   _CreatePostWidgetState createState() => _CreatePostWidgetState();
@@ -191,7 +193,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                         backgroundColor: Colors.green,
                         textColor: Colors.white,
                         fontSize: 16.0);
-                    Phoenix.rebirth(context);
+                    widget.callHomePage();
                   } else {
                     setState(() {
                       isButtonEnabled = true;
@@ -222,7 +224,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                   backgroundColor: Colors.green,
                   textColor: Colors.white,
                   fontSize: 16.0);
-              Phoenix.rebirth(context);
+              widget.callHomePage();
             }
           }
         });
@@ -335,7 +337,8 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                               },
                               itemBuilder: (context, suggestion) {
                                 CompanyForSearch company = companies
-                                    .where((cp) => cp.id.toString() == suggestion)
+                                    .where(
+                                        (cp) => cp.id.toString() == suggestion)
                                     .first;
                                 return MouseRegion(
                                   cursor: SystemMouseCursors.click,
@@ -343,13 +346,16 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                                     onPanDown: (_) {
                                       setState(() {
                                         CompanyForSearch company = companies
-                                            .where((cp) => cp.id.toString() == suggestion)
+                                            .where((cp) =>
+                                                cp.id.toString() == suggestion)
                                             .first;
-                                        _companyNameController.text = company.name;
+                                        _companyNameController.text =
+                                            company.name;
                                         _selectedCompany = company;
                                         if (_titleController.text.isEmpty) {
                                           _titleFocus.requestFocus();
-                                        } else if (_descriptionController.text.isEmpty) {
+                                        } else if (_descriptionController
+                                            .text.isEmpty) {
                                           _descriptionFocus.requestFocus();
                                         } else {
                                           _companyNameFocus.unfocus();
@@ -363,7 +369,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                                       child: Container(
                                         color: Colors.black,
                                         child: ListTile(
-                                          onTap: (){},
+                                          onTap: () {},
                                           leading: CircleAvatar(
                                             radius: 20,
                                             backgroundImage: NetworkImage(
@@ -376,7 +382,8 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                                           title: Text(
                                             company.name,
                                             style: TextStyle(
-                                                color: CupertinoColors.systemYellow,
+                                                color: CupertinoColors
+                                                    .systemYellow,
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 20),
                                           ),
@@ -558,8 +565,13 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                               ? CupertinoColors.systemYellow
                               : Colors.yellow.shade200),
                     ),
-                    onPressed: isButtonEnabled ? _onPostSimplePressed : null,
+                    onPressed: null,
                     child: ListTile(
+                      onTap: () {
+                        if (isButtonEnabled) {
+                          _onPostSimplePressed();
+                        }
+                      },
                       title: Center(
                         child: Text("POST"),
                       ),
@@ -697,8 +709,13 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                                   ? CupertinoColors.systemYellow
                                   : Colors.yellow.shade200),
                         ),
-                        onPressed: isButtonEnabled ? _onPostPollPressed : null,
+                        onPressed: null,
                         child: ListTile(
+                          onTap: () {
+                            if (isButtonEnabled) {
+                              _onPostPollPressed();
+                            }
+                          },
                           title: Center(
                             child: Text(languages.POSTLabel),
                           ),
@@ -858,7 +875,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                 backgroundColor: Colors.green,
                 textColor: Colors.white,
                 fontSize: 16.0);
-            Phoenix.rebirth(context);
+            widget.callHomePage();
           }
         });
       }

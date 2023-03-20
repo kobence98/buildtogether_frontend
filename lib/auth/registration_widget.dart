@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:html';
 
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/gestures.dart';
@@ -416,7 +415,11 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                                 children: [
                                   TextButton(
                                     onPressed: () {
-                                      Navigator.of(context).pop();
+                                      if (Navigator.of(context).canPop()) {
+                                        Navigator.of(context).pop();
+                                      } else {
+                                        Navigator.of(context).popAndPushNamed('/login');
+                                      }
                                     },
                                     child: Text(
                                       languages.closeLabel,

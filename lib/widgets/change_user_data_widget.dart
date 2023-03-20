@@ -1,9 +1,8 @@
 import 'dart:convert';
-import 'dart:io';
+import 'dart:html';
 
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_frontend/entities/age_bracket.dart';
 import 'package:flutter_frontend/entities/company.dart';
 import 'package:flutter_frontend/entities/living_place_type.dart';
@@ -59,6 +58,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
   @override
   void initState() {
     super.initState();
+    window.history.pushState(null, 'changeUserData', '/changeUserData');
     languages = widget.languages;
     _nameController.text = widget.user.name;
     _emailNotificationForCompany =

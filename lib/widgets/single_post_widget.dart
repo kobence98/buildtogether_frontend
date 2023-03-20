@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:html' as html;
+import 'dart:html';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_frontend/entities/company.dart';
@@ -71,6 +72,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
 
   @override
   void initState() {
+    window.history.pushState(null, 'singlePost', '/singlePost');
     super.initState();
     languages = widget.languages;
     post = widget.post;

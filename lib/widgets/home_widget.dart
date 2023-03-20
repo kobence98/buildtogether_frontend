@@ -94,8 +94,11 @@ class _HomeWidgetState extends State<HomeWidget> {
   @override
   void initState() {
     super.initState();
+    if(widget.initPage == 0){
+      window.history.pushState(null, 'home', '/home');
+    }
     page = PageController(initialPage: widget.initPage);
-    _sideMenuController = SideMenuController(initialPage: 0);
+    _sideMenuController = SideMenuController(initialPage: widget.initPage);
     languages = widget.languages;
     _initPageControllers().whenComplete(() {
       setState(() {
@@ -122,52 +125,9 @@ class _HomeWidgetState extends State<HomeWidget> {
         break;
     }
     try {
-      LocationData? locationData;
-      bool useLocation = false;
-      // if (widget.user.setByLocale) {
-      //   Location location = new Location();
-      //   bool _serviceEnabled = await location.serviceEnabled();
-      //   if (_serviceEnabled) {
-      //     bool _requestedServiceEnabled = await location.requestService();
-      //     if (_requestedServiceEnabled) {
-      //       PermissionStatus _permissionGranted =
-      //           await location.hasPermission();
-      //       if (_permissionGranted == PermissionStatus.denied) {
-      //         if (Platform.isAndroid) {
-      //           await explainPermissionDialog();
-      //         }
-      //         PermissionStatus _permissionGrantedAfterAsk =
-      //             await location.requestPermission();
-      //         if (_permissionGrantedAfterAsk != PermissionStatus.granted) {
-      //           locationErrorToast();
-      //         } else {
-      //           locationData = await location.getLocation();
-      //           useLocation = true;
-      //         }
-      //       } else if (_permissionGranted == PermissionStatus.granted) {
-      //         locationData = await location.getLocation();
-      //         useLocation = true;
-      //       }
-      //     } else {
-      //       locationErrorToast();
-      //     }
-      //   } else {
-      //     locationErrorToast();
-      //   }
-      // }
       String countryCode =
           widget.user.locale == null ? 'Global' : widget.user.locale!;
       String? countryCodeByLocation;
-      // if (useLocation && locationData != null) {
-      //   List<geocoding.Placemark> address =
-      //       await geocoding.placemarkFromCoordinates(
-      //           locationData.latitude!, locationData.longitude!);
-      //   if (address.isEmpty || address.first.isoCountryCode == null) {
-      //     locationErrorToast();
-      //   } else {
-      //     countryCodeByLocation = address.first.isoCountryCode!;
-      //   }
-      // }
 
       dynamic data = <String, dynamic>{
         'countryCode': countryCode,
@@ -255,6 +215,7 @@ class _HomeWidgetState extends State<HomeWidget> {
                         onTap: (int, controller) {
                           _sideMenuController.changePage(0);
                           page.jumpToPage(0);
+                          window.history.pushState(null, 'home', '/home');
                         },
                         icon: Icon(Icons.home),
                       ),
@@ -264,6 +225,7 @@ class _HomeWidgetState extends State<HomeWidget> {
                         onTap: (int, controller) {
                           _sideMenuController.changePage(1);
                           page.jumpToPage(1);
+                          window.history.pushState(null, 'createPost', '/createPost');
                         },
                         icon: Icon(Icons.create),
                       ),
@@ -273,6 +235,7 @@ class _HomeWidgetState extends State<HomeWidget> {
                         onTap: (int, controller) {
                           _sideMenuController.changePage(2);
                           page.jumpToPage(2);
+                          window.history.pushState(null, 'myAccount', '/myAccount');
                         },
                         icon: Icon(Icons.perm_identity),
                       ),
@@ -282,6 +245,7 @@ class _HomeWidgetState extends State<HomeWidget> {
                         onTap: (int, controller) {
                           _sideMenuController.changePage(3);
                           page.jumpToPage(3);
+                          window.history.pushState(null, 'registeredCompanies', '/registeredCompanies');
                         },
                         icon: Icon(Icons.factory),
                       ),
@@ -291,6 +255,7 @@ class _HomeWidgetState extends State<HomeWidget> {
                         onTap: (int, controller) {
                           _sideMenuController.changePage(4);
                           page.jumpToPage(4);
+                          window.history.pushState(null, 'likedPosts', '/likedPosts');
                         },
                         icon: Icon(Icons.lightbulb),
                       ),
@@ -302,6 +267,7 @@ class _HomeWidgetState extends State<HomeWidget> {
                                 onTap: (int, controller) {
                                   _sideMenuController.changePage(5);
                                   page.jumpToPage(5);
+                                  window.history.pushState(null, 'subscription', '/subscription');
                                 },
                                 icon: Icon(Icons.subscriptions),
                               )
@@ -320,6 +286,13 @@ class _HomeWidgetState extends State<HomeWidget> {
                         session: widget.session,
                         user: widget.user,
                         languages: languages,
+                        callHomePage: () {
+                          setState(() {
+                            page.jumpToPage(0);
+                            _mainPage = _scrollableInnerWidget();
+                            window.history.pushState(null, 'home', '/home');
+                          });
+                        },
                       ),
                       MyAccountWidget(
                         languages: languages,
@@ -1767,6 +1740,7 @@ class _HomeWidgetState extends State<HomeWidget> {
   void _backToPostsPage() {
     setState(() {
       _mainPage = _scrollableInnerWidget();
+      window.history.pushState(null, 'home', '/home');
     });
   }
 

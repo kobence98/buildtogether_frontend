@@ -39,6 +39,7 @@ class _StatisticPageState extends State<StatisticPage> {
 
   @override
   void initState() {
+    window.history.pushState(null, 'statistics', '/statistics');
     super.initState();
     languages = widget.languages;
     document.cookie!.isEmpty;

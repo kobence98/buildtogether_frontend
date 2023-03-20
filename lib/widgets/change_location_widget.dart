@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:html';
 
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +15,10 @@ class ChangeLocationWidget extends StatefulWidget {
   final Function closeActualWidget;
 
   const ChangeLocationWidget(
-      {required this.session, required this.user, required this.languages, required this.closeActualWidget});
+      {required this.session,
+      required this.user,
+      required this.languages,
+      required this.closeActualWidget});
 
   @override
   _ChangeLocationWidgetState createState() => _ChangeLocationWidgetState();
@@ -30,43 +34,29 @@ class _ChangeLocationWidgetState extends State<ChangeLocationWidget> {
   @override
   void initState() {
     super.initState();
+    window.history.pushState(null, 'changeLocation', '/changeLocation');
     _useLocation = widget.user.setByLocale;
     languages = widget.languages;
-    //
-    // countryCodes.add("Global");
-    // countryCodes.add("HU");
-    // countryCodes.add("EN");
-    // countryCodes.add("RU");
-    // countryCodes.add("UK");
-    // countryCodes.add("ES");
-    // _chosenCountryCode =
-    //     widget.user.locale == null ? 'Global' : widget.user.locale;
-    // _countryCodesLoaded = true;
     widget.session.get('/api/companies/countryCodes').then((response) {
       if (response.statusCode == 200) {
         Iterable l = json.decode(utf8.decode(response.bodyBytes));
         countryCodes.addAll(l.map((data) => data.toString()).toList());
         countryCodes.remove("Undefined");
         countryCodes = countryCodes.toSet().toList();
-        countryCodes.sort((String a, String b){
-          if(a == 'Global'){
+        countryCodes.sort((String a, String b) {
+          if (a == 'Global') {
             return -1;
-          }
-          else if(b == 'Global'){
+          } else if (b == 'Global') {
             return 1;
-          }
-          else{
-            if(a == 'Hungary'){
+          } else {
+            if (a == 'Hungary') {
               return -1;
-            }
-            else if(b == 'Hungary'){
+            } else if (b == 'Hungary') {
               return 1;
-            }
-            else{
-              if(a == 'United Kingdom'){
+            } else {
+              if (a == 'United Kingdom') {
                 return -1;
-              }
-              else if(b == 'United Kingdom'){
+              } else if (b == 'United Kingdom') {
                 return 1;
               }
             }
@@ -107,9 +97,7 @@ class _ChangeLocationWidgetState extends State<ChangeLocationWidget> {
           child: Text(
             languages.changeLocationLabel,
             style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 20),
+                color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
           ),
         ),
       ),
@@ -118,8 +106,8 @@ class _ChangeLocationWidgetState extends State<ChangeLocationWidget> {
               color: Colors.black,
               child: Center(
                 child: Container(
-                  padding: EdgeInsets.all(
-                      MediaQuery.of(context).size.height * 0.02),
+                  padding:
+                      EdgeInsets.all(MediaQuery.of(context).size.height * 0.02),
                   width: 600,
                   height: 1000,
                   child: Column(
@@ -207,8 +195,7 @@ class _ChangeLocationWidgetState extends State<ChangeLocationWidget> {
                                               style: TextStyle(
                                                   color: Colors.yellow,
                                                   fontSize: 20,
-                                                  fontWeight:
-                                                      FontWeight.bold),
+                                                  fontWeight: FontWeight.bold),
                                             ),
                                           ),
                                         ),
@@ -242,11 +229,9 @@ class _ChangeLocationWidgetState extends State<ChangeLocationWidget> {
                                                 : (value == countryCodes.last
                                                     ? BorderRadius.only(
                                                         bottomLeft:
-                                                            Radius.circular(
-                                                                10),
+                                                            Radius.circular(10),
                                                         bottomRight:
-                                                            Radius.circular(
-                                                                10),
+                                                            Radius.circular(10),
                                                       )
                                                     : BorderRadius.zero)),
                                         child: Center(
@@ -279,9 +264,8 @@ class _ChangeLocationWidgetState extends State<ChangeLocationWidget> {
                           minWidth: 300,
                           child: ElevatedButton(
                             style: ButtonStyle(
-                              backgroundColor:
-                                  MaterialStateProperty.all<Color>(
-                                      Colors.yellow),
+                              backgroundColor: MaterialStateProperty.all<Color>(
+                                  Colors.yellow),
                             ),
                             onPressed: _onChangePressed,
                             child: Text(

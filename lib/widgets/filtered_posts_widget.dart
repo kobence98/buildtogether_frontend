@@ -52,6 +52,7 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
   @override
   void initState() {
     super.initState();
+    window.history.pushState(widget.pattern, 'filteredPosts', '/filteredPosts');
     languages = widget.languages;
     _scrollController.addListener(() {
       if (_scrollController.position.pixels >=

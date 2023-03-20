@@ -36,6 +36,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
+    window.history.pushState(null, 'login', '/login');
     _passwordVisible = false;
     languages = widget.languages;
   }

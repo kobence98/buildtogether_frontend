@@ -1,39 +1,16 @@
 import 'dart:convert';
+import 'dart:html';
 
 import 'package:autologin_plugin/autologin_plugin_web.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_frontend/auth/login_widget.dart';
-import 'package:flutter_frontend/auth/registration_widget.dart';
 import 'package:flutter_frontend/languages/hungarian_language.dart';
 import 'package:flutter_frontend/widgets/home_widget.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart';
 
-import 'auth/automatic_login_page.dart';
 import 'entities/session.dart';
 import 'entities/user.dart';
-import 'main.dart';
-
-Route<dynamic> generateRoute(RouteSettings settings) {
-  if (settings.name == null || settings.name == '/automaticLogin') {
-    return MaterialPageRoute(builder: (context) => AutomaticLoginPage());
-  } else if (settings.name == '/login') {
-    return MaterialPageRoute(
-        builder: (context) => LoginPage(
-              languages: LanguageHu(),
-            ));
-  } else if (settings.name == '/registration') {
-    return MaterialPageRoute(
-        builder: (context) => RegistrationWidget(
-              languages: LanguageHu(),
-            ));
-  } else {
-    return MaterialPageRoute(
-        builder: (context) => RouterLoadingWidget(
-              path: settings.name!,
-            ));
-  }
-}
 
 class RouterLoadingWidget extends StatefulWidget {
   final String path;
@@ -90,36 +67,36 @@ class _RouterLoadingWidgetState extends State<RouterLoadingWidget> {
             body,
           );
           if (res.statusCode == 200) {
-            session.get('/api/users/getAuthenticatedUser').then((innerRes) {
-              if (innerRes.statusCode == 200) {
-                User user =
-                    User.fromJson(jsonDecode(utf8.decode(innerRes.bodyBytes)));
-                if (user.active) {
-                  if (user.roles.contains('ROLE_COMPANY') &&
-                      !user.isCompanyActive) {
-                    Fluttertoast.showToast(
-                        msg: LanguageHu().subscribeWarningMessage,
-                        toastLength: Toast.LENGTH_LONG,
-                        gravity: ToastGravity.CENTER,
-                        timeInSecForIosWeb: 4,
-                        backgroundColor: Colors.yellow,
-                        textColor: Colors.black,
-                        fontSize: 16.0);
-                  }
-                  return _selectWidgetByPath(user);
-                } else {
+            Response innerRes =
+                await session.get('/api/users/getAuthenticatedUser');
+            if (innerRes.statusCode == 200) {
+              User user =
+                  User.fromJson(jsonDecode(utf8.decode(innerRes.bodyBytes)));
+              if (user.active) {
+                if (user.roles.contains('ROLE_COMPANY') &&
+                    !user.isCompanyActive) {
                   Fluttertoast.showToast(
-                      msg: LanguageHu().errorInAutomaticLogin,
+                      msg: LanguageHu().subscribeWarningMessage,
                       toastLength: Toast.LENGTH_LONG,
                       gravity: ToastGravity.CENTER,
                       timeInSecForIosWeb: 4,
-                      backgroundColor: Colors.red,
-                      textColor: Colors.white,
+                      backgroundColor: Colors.yellow,
+                      textColor: Colors.black,
                       fontSize: 16.0);
-                  return LoginPage(languages: LanguageHu());
                 }
+                return _selectWidgetByPath(user);
+              } else {
+                Fluttertoast.showToast(
+                    msg: LanguageHu().errorInAutomaticLogin,
+                    toastLength: Toast.LENGTH_LONG,
+                    gravity: ToastGravity.CENTER,
+                    timeInSecForIosWeb: 4,
+                    backgroundColor: Colors.red,
+                    textColor: Colors.white,
+                    fontSize: 16.0);
+                return LoginPage(languages: LanguageHu());
               }
-            });
+            }
           } else if (res.statusCode == 401) {
             Fluttertoast.showToast(
                 msg: LanguageHu().errorInAutomaticLogin,
