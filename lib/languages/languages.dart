@@ -62,6 +62,10 @@ abstract class Languages {
 
   String get maxThirtyLengthLabel;
 
+  String get errorInAutomaticLogin;
+
+  String get loggedOutLastTime;
+
   String switchBetweenCompanyAndSimpleUserLabel(company);
 
   String get companyDescriptionTipLabel;
@@ -271,6 +275,8 @@ abstract class Languages {
   String get thisPostHasPicture;
 
   String get mainPageLabel;
+
+  String get createPostLabel;
 
   //SETTINGS WIDGET
 

@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'dart:io';
+import 'dart:html';
 
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/gestures.dart';
@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:numberpicker/numberpicker.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 import '../entities/age_bracket.dart';
 import '../entities/gender.dart';
@@ -56,6 +55,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
   LivingPlaceType? _chosenLivingPlaceType;
   SalaryType? _chosenSalaryType;
   late int _numberOfHouseholdMembersValue;
+  ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -128,302 +128,322 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                           new AssetImage("assets/images/loading_breath.gif")),
                 ),
               )
-            : Container(
-                padding: EdgeInsets.all(10),
-                color: Colors.black,
-                child: ListView(
-                  children: [
-                    Center(
-                      child: Text(
-                        languages.registrationLabel,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.yellow,
-                            fontSize: 25),
-                      ),
-                    ),
-                    Container(
-                      padding: EdgeInsets.all(10),
-                      color: Colors.black,
-                      child: SingleChildScrollView(
-                        child: Column(
+            : RawScrollbar(
+          controller: _scrollController,
+          thumbVisibility: true,
+          thumbColor: Colors.grey,
+              child: SingleChildScrollView(
+                controller: _scrollController,
+                child: Container(
+          width: MediaQuery.of(context).size.width,
+                  child: Center(
+                    child: Container(
+          width: 700,
+                        padding: EdgeInsets.all(10),
+                        color: Colors.black,
+                        child: ListView(
+                          shrinkWrap: true,
                           children: [
-                            SizedBox(height: 10),
                             Center(
-                              child: Container(
-                                padding: EdgeInsets.only(left: 20.0),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(10),
-                                  ),
-                                  color: Colors.yellow.withOpacity(0.7),
-                                ),
-                                child: TextField(
-                                  style: TextStyle(color: Colors.black),
-                                  controller: _regEmailController,
-                                  cursorColor: Colors.black,
-                                  keyboardType: TextInputType.emailAddress,
-                                  decoration: InputDecoration(
-                                    focusedBorder: OutlineInputBorder(
-                                        borderSide: BorderSide.none),
-                                    hintText: languages.emailLabel,
-                                    hintStyle: TextStyle(
-                                        color: Colors.black.withOpacity(0.5)),
-                                  ),
-                                ),
+                              child: Text(
+                                languages.registrationLabel,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.yellow,
+                                    fontSize: 25),
                               ),
                             ),
-                            SizedBox(height: 10),
-                            Center(
-                              child: Container(
-                                padding: EdgeInsets.only(left: 20.0),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(10),
-                                  ),
-                                  color: Colors.yellow.withOpacity(0.7),
-                                ),
-                                child: TextField(
-                                  style: TextStyle(color: Colors.black),
-                                  controller: _regPasswordController,
-                                  cursorColor: Colors.black,
-                                  obscureText: !_regPasswordVisible,
-                                  decoration: InputDecoration(
-                                    suffixIcon: IconButton(
-                                      icon: Icon(
-                                        // Based on passwordVisible state choose the icon
-                                        _regPasswordVisible
-                                            ? Icons.visibility
-                                            : Icons.visibility_off,
-                                        color: Colors.black,
-                                      ),
-                                      onPressed: () {
-                                        // Update the state i.e. toogle the state of passwordVisible variable
-                                        setState(() {
-                                          _regPasswordVisible =
-                                              !_regPasswordVisible;
-                                        });
-                                      },
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                        borderSide: BorderSide.none),
-                                    hintText: languages.passwordLabel,
-                                    hintStyle: TextStyle(
-                                        color: Colors.black.withOpacity(0.5)),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            SizedBox(height: 10),
-                            Center(
-                              child: Container(
-                                padding: EdgeInsets.only(left: 20.0),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(10),
-                                  ),
-                                  color: Colors.yellow.withOpacity(0.7),
-                                ),
-                                child: TextField(
-                                  style: TextStyle(color: Colors.black),
-                                  controller: _regPassAgainController,
-                                  cursorColor: Colors.black,
-                                  obscureText: !_regPassAgainVisible,
-                                  decoration: InputDecoration(
-                                    suffixIcon: IconButton(
-                                      icon: Icon(
-                                        // Based on passwordVisible state choose the icon
-                                        _regPassAgainVisible
-                                            ? Icons.visibility
-                                            : Icons.visibility_off,
-                                        color: Colors.black,
-                                      ),
-                                      onPressed: () {
-                                        // Update the state i.e. toogle the state of passwordVisible variable
-                                        setState(() {
-                                          _regPassAgainVisible =
-                                              !_regPassAgainVisible;
-                                        });
-                                      },
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                        borderSide: BorderSide.none),
-                                    hintText: languages.passAgainLabel,
-                                    hintStyle: TextStyle(
-                                        color: Colors.black.withOpacity(0.5)),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            SizedBox(height: 10),
-                            Center(
-                              child: Container(
-                                padding: EdgeInsets.only(left: 20.0),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(10),
-                                  ),
-                                  color: Colors.yellow.withOpacity(0.7),
-                                ),
-                                child: TextField(
-                                  style: TextStyle(color: Colors.black),
-                                  maxLength: company ? 100 : 30,
-                                  controller: company
-                                      ? _regCompanyNameController
-                                      : _regNameController,
-                                  cursorColor: Colors.black,
-                                  decoration: InputDecoration(
-                                    focusedBorder: OutlineInputBorder(
-                                        borderSide: BorderSide.none),
-                                    counterText: '',
-                                    hintText: company
-                                        ? languages.companyNameLabel
-                                        : languages.nameLabel +
-                                            languages.maxThirtyLengthLabel,
-                                    hintStyle: TextStyle(
-                                        color: Colors.black.withOpacity(0.5)),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            ...widgetList,
-                            SizedBox(height: 10),
                             Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(10),
-                                ),
-                                color: Colors.yellow,
-                              ),
-                              padding: EdgeInsets.all(1),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(10),
-                                  ),
-                                  color: Colors.black,
-                                ),
-                                child: ListTile(
-                                  leading: Switch(
-                                    value: company,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        company = value;
-                                        if (company == true) {
-                                          _regCompanyNameController.text =
-                                              _regNameController.text;
-                                        } else {
-                                          _regNameController.text =
-                                              _regCompanyNameController.text;
-                                        }
-                                      });
-                                    },
-                                    activeTrackColor: Colors.yellow.shade200,
-                                    activeColor: Colors.yellow.shade600,
-                                    inactiveTrackColor: Colors.white,
-                                  ),
-                                  title: Container(
-                                    child: Center(
-                                      child: Text(
-                                        languages
-                                            .switchBetweenCompanyAndSimpleUserLabel(
-                                                company),
-                                        style: TextStyle(color: Colors.white),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            SizedBox(height: 10),
-                            Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(10),
-                                ),
-                                color: Colors.yellow,
-                              ),
-                              padding: EdgeInsets.all(1),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(10),
-                                  ),
-                                  color: Colors.black,
-                                ),
-                                child: ListTile(
-                                  leading: Switch(
-                                    value: isPolicyAccepted,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        isPolicyAccepted = value;
-                                      });
-                                    },
-                                    activeTrackColor: Colors.yellow.shade200,
-                                    activeColor: Colors.yellow.shade600,
-                                    inactiveTrackColor: Colors.white,
-                                  ),
-                                  title: Container(
-                                    child: Center(
-                                      child: RichText(
-                                        text: new TextSpan(
-                                          children: <TextSpan>[
-                                            new TextSpan(
-                                                text:
-                                                    languages.acceptPolicyLabel,
-                                                style: new TextStyle(
-                                                    color: Colors.white)),
-                                            new TextSpan(
-                                                text: languages.userPolicyLabel,
-                                                style: new TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.yellow),
-                                                recognizer:
-                                                    new TapGestureRecognizer()
-                                                      ..onTap = () =>
-                                                          _onPrivacyPolicyTap()),
-                                            new TextSpan(
-                                                text: '!',
-                                                style: new TextStyle(
-                                                    color: Colors.white)),
-                                          ],
+                              padding: EdgeInsets.all(10),
+                              color: Colors.black,
+                              child: SingleChildScrollView(
+                                child: Column(
+                                  children: [
+                                    SizedBox(height: 10),
+                                    Center(
+                                      child: Container(
+                                        padding: EdgeInsets.only(left: 20.0),
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.all(
+                                            Radius.circular(10),
+                                          ),
+                                          color: Colors.yellow.withOpacity(0.7),
+                                        ),
+                                        child: TextField(
+                                          style: TextStyle(color: Colors.black),
+                                          controller: _regEmailController,
+                                          cursorColor: Colors.black,
+                                          keyboardType: TextInputType.emailAddress,
+                                          decoration: InputDecoration(
+                                            focusedBorder: OutlineInputBorder(
+                                                borderSide: BorderSide.none),
+                                            hintText: languages.emailLabel,
+                                            hintStyle: TextStyle(
+                                                color: Colors.black.withOpacity(0.5)),
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  ),
+                                    SizedBox(height: 10),
+                                    Center(
+                                      child: Container(
+                                        padding: EdgeInsets.only(left: 20.0),
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.all(
+                                            Radius.circular(10),
+                                          ),
+                                          color: Colors.yellow.withOpacity(0.7),
+                                        ),
+                                        child: TextField(
+                                          style: TextStyle(color: Colors.black),
+                                          controller: _regPasswordController,
+                                          cursorColor: Colors.black,
+                                          obscureText: !_regPasswordVisible,
+                                          decoration: InputDecoration(
+                                            suffixIcon: IconButton(
+                                              icon: Icon(
+                                                // Based on passwordVisible state choose the icon
+                                                _regPasswordVisible
+                                                    ? Icons.visibility
+                                                    : Icons.visibility_off,
+                                                color: Colors.black,
+                                              ),
+                                              onPressed: () {
+                                                // Update the state i.e. toogle the state of passwordVisible variable
+                                                setState(() {
+                                                  _regPasswordVisible =
+                                                      !_regPasswordVisible;
+                                                });
+                                              },
+                                            ),
+                                            focusedBorder: OutlineInputBorder(
+                                                borderSide: BorderSide.none),
+                                            hintText: languages.passwordLabel,
+                                            hintStyle: TextStyle(
+                                                color: Colors.black.withOpacity(0.5)),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(height: 10),
+                                    Center(
+                                      child: Container(
+                                        padding: EdgeInsets.only(left: 20.0),
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.all(
+                                            Radius.circular(10),
+                                          ),
+                                          color: Colors.yellow.withOpacity(0.7),
+                                        ),
+                                        child: TextField(
+                                          style: TextStyle(color: Colors.black),
+                                          controller: _regPassAgainController,
+                                          cursorColor: Colors.black,
+                                          obscureText: !_regPassAgainVisible,
+                                          decoration: InputDecoration(
+                                            suffixIcon: IconButton(
+                                              icon: Icon(
+                                                // Based on passwordVisible state choose the icon
+                                                _regPassAgainVisible
+                                                    ? Icons.visibility
+                                                    : Icons.visibility_off,
+                                                color: Colors.black,
+                                              ),
+                                              onPressed: () {
+                                                // Update the state i.e. toogle the state of passwordVisible variable
+                                                setState(() {
+                                                  _regPassAgainVisible =
+                                                      !_regPassAgainVisible;
+                                                });
+                                              },
+                                            ),
+                                            focusedBorder: OutlineInputBorder(
+                                                borderSide: BorderSide.none),
+                                            hintText: languages.passAgainLabel,
+                                            hintStyle: TextStyle(
+                                                color: Colors.black.withOpacity(0.5)),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(height: 10),
+                                    Center(
+                                      child: Container(
+                                        padding: EdgeInsets.only(left: 20.0),
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.all(
+                                            Radius.circular(10),
+                                          ),
+                                          color: Colors.yellow.withOpacity(0.7),
+                                        ),
+                                        child: TextField(
+                                          style: TextStyle(color: Colors.black),
+                                          maxLength: company ? 100 : 30,
+                                          controller: company
+                                              ? _regCompanyNameController
+                                              : _regNameController,
+                                          cursorColor: Colors.black,
+                                          decoration: InputDecoration(
+                                            focusedBorder: OutlineInputBorder(
+                                                borderSide: BorderSide.none),
+                                            counterText: '',
+                                            hintText: company
+                                                ? languages.companyNameLabel
+                                                : languages.nameLabel +
+                                                    languages.maxThirtyLengthLabel,
+                                            hintStyle: TextStyle(
+                                                color: Colors.black.withOpacity(0.5)),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    ...widgetList,
+                                    SizedBox(height: 10),
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.all(
+                                          Radius.circular(10),
+                                        ),
+                                        color: Colors.yellow,
+                                      ),
+                                      padding: EdgeInsets.all(1),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.all(
+                                            Radius.circular(10),
+                                          ),
+                                          color: Colors.black,
+                                        ),
+                                        child: ListTile(
+                                          leading: Switch(
+                                            value: company,
+                                            onChanged: (value) {
+                                              setState(() {
+                                                company = value;
+                                                if (company == true) {
+                                                  _regCompanyNameController.text =
+                                                      _regNameController.text;
+                                                } else {
+                                                  _regNameController.text =
+                                                      _regCompanyNameController.text;
+                                                }
+                                              });
+                                            },
+                                            activeTrackColor: Colors.yellow.shade200,
+                                            activeColor: Colors.yellow.shade600,
+                                            inactiveTrackColor: Colors.white,
+                                          ),
+                                          title: Container(
+                                            child: Center(
+                                              child: Text(
+                                                languages
+                                                    .switchBetweenCompanyAndSimpleUserLabel(
+                                                        company),
+                                                style: TextStyle(color: Colors.white),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(height: 10),
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.all(
+                                          Radius.circular(10),
+                                        ),
+                                        color: Colors.yellow,
+                                      ),
+                                      padding: EdgeInsets.all(1),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.all(
+                                            Radius.circular(10),
+                                          ),
+                                          color: Colors.black,
+                                        ),
+                                        child: ListTile(
+                                          leading: Switch(
+                                            value: isPolicyAccepted,
+                                            onChanged: (value) {
+                                              setState(() {
+                                                isPolicyAccepted = value;
+                                              });
+                                            },
+                                            activeTrackColor: Colors.yellow.shade200,
+                                            activeColor: Colors.yellow.shade600,
+                                            inactiveTrackColor: Colors.white,
+                                          ),
+                                          title: Container(
+                                            child: Center(
+                                              child: RichText(
+                                                text: new TextSpan(
+                                                  children: <TextSpan>[
+                                                    new TextSpan(
+                                                        text:
+                                                            languages.acceptPolicyLabel,
+                                                        style: new TextStyle(
+                                                            color: Colors.white)),
+                                                    new TextSpan(
+                                                        text: languages.userPolicyLabel,
+                                                        style: new TextStyle(
+                                                            fontWeight: FontWeight.bold,
+                                                            color: Colors.yellow),
+                                                        recognizer:
+                                                            new TapGestureRecognizer()
+                                                              ..onTap = () =>
+                                                                  _onPrivacyPolicyTap()),
+                                                    new TextSpan(
+                                                        text: '!',
+                                                        style: new TextStyle(
+                                                            color: Colors.white)),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
+                            Container(
+                              padding: EdgeInsets.all(30),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Text(
+                                      languages.closeLabel,
+                                      style:
+                                          TextStyle(color: Colors.yellow, fontSize: 25),
+                                    ),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      onRegistrationActivatePressed(setState);
+                                    },
+                                    child: Text(
+                                      languages.registrationLabel,
+                                      style:
+                                          TextStyle(color: Colors.yellow, fontSize: 25),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
                           ],
                         ),
                       ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          child: Text(
-                            languages.closeLabel,
-                            style: TextStyle(color: Colors.yellow),
-                          ),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            onRegistrationActivatePressed(setState);
-                          },
-                          child: Text(
-                            languages.registrationLabel,
-                            style: TextStyle(color: Colors.yellow),
-                          ),
-                        ),
-                      ],
-                    )
-                  ],
+                  ),
                 ),
               ),
+            ),
       ),
     );
   }
@@ -475,7 +495,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                 : _chosenCountryCode,
             'language': languages.countryCode,
             'numberOfHouseholdMembers':
-            company ? null : _numberOfHouseholdMembersValue.toString(),
+                company ? null : _numberOfHouseholdMembersValue.toString(),
             'age': company || _chosenAgeBracket == null
                 ? null
                 : _chosenAgeBracket!.stringValue,
@@ -508,7 +528,11 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                       .sendMultipart('/api/images', imageBody, multipartImage)
                       .then((response) {
                     if (response.statusCode == 200) {
-                      Navigator.of(context).pop();
+                      if (Navigator.of(context).canPop()) {
+                        Navigator.of(context).pop();
+                      } else {
+                        Navigator.of(context).popAndPushNamed('/login');
+                      }
                       setState(() {
                         _emailController.clear();
                         _passwordController.clear();
@@ -555,7 +579,11 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                 _regNameController.clear();
                 _regCompanyNameController.clear();
                 _regCompanyDescriptionController.clear();
-                Navigator.of(context).pop();
+                if (Navigator.of(context).canPop()) {
+                  Navigator.of(context).pop();
+                } else {
+                  Navigator.of(context).popAndPushNamed('/login');
+                }
                 Fluttertoast.showToast(
                     msg: languages.successfulRegistrationMessage,
                     toastLength: Toast.LENGTH_LONG,
@@ -644,7 +672,6 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
   }
 
   void _addPicture(setState) async {
-    await Permission.photos.request();
     final ImagePicker _picker = ImagePicker();
     image = await _picker.pickImage(source: ImageSource.gallery);
     if (image != null &&
@@ -693,7 +720,11 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
             actions: <Widget>[
               TextButton(
                 onPressed: () {
-                  Navigator.of(context).pop();
+                  if (Navigator.of(context).canPop()) {
+                    Navigator.of(context).pop();
+                  } else {
+                    Navigator.of(context).popAndPushNamed('/login');
+                  }
                 },
                 child: Text(
                   languages.backLabel,
@@ -734,29 +765,32 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
               flex: 1,
             ),
             Flexible(
-              child: Center(
-                child: Container(
-                  margin: EdgeInsets.symmetric(vertical: 10),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: Colors.yellow),
-                      color: Colors.yellow),
-                  child: NumberPicker(
-                    axis: Axis.horizontal,
-                    itemWidth: 50,
-                    itemHeight: 40,
-                    value: _numberOfHouseholdMembersValue,
-                    minValue: 1,
-                    textStyle: TextStyle(color: Colors.black),
-                    selectedTextStyle: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20),
-                    step: 1,
-                    maxValue: 99,
-                    onChanged: (value) => setState(() {
-                      _numberOfHouseholdMembersValue = value;
-                    }),
+              child: Container(
+                width: 400,
+                child: Center(
+                  child: Container(
+                    margin: EdgeInsets.symmetric(vertical: 10),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: Colors.yellow),
+                        color: Colors.yellow),
+                    child: NumberPicker(
+                      axis: Axis.horizontal,
+                      itemWidth: 50,
+                      itemHeight: 40,
+                      value: _numberOfHouseholdMembersValue,
+                      minValue: 1,
+                      textStyle: TextStyle(color: Colors.black),
+                      selectedTextStyle: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20),
+                      step: 1,
+                      maxValue: 99,
+                      onChanged: (value) => setState(() {
+                        _numberOfHouseholdMembersValue = value;
+                      }),
+                    ),
                   ),
                 ),
               ),
@@ -773,6 +807,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
     );
     //AGE BRACKET
     widgetList.add(Container(
+      width: 700,
       decoration: BoxDecoration(
         border: Border.all(color: Colors.yellow),
         borderRadius: BorderRadius.circular(10),
@@ -821,6 +856,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                   scrollbarThickness: 6,
                   dropdownMaxHeight: 200,
                   customButton: Container(
+                    width: double.infinity,
                     height: 50,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -833,7 +869,6 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                                 topLeft: Radius.circular(10),
                                 bottomLeft: Radius.circular(10)),
                           ),
-                          width: MediaQuery.of(context).size.width - 256,
                           child: Center(
                             child: Text(
                               _chosenAgeBracket!.getName,
@@ -954,6 +989,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                   scrollbarThickness: 6,
                   dropdownMaxHeight: 200,
                   customButton: Container(
+                    width: double.infinity,
                     height: 50,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -966,7 +1002,6 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                                 topLeft: Radius.circular(10),
                                 bottomLeft: Radius.circular(10)),
                           ),
-                          width: MediaQuery.of(context).size.width - 256,
                           child: Center(
                             child: Text(
                               _chosenGender!.getName(languages),
@@ -1087,6 +1122,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                   scrollbarThickness: 6,
                   dropdownMaxHeight: 200,
                   customButton: Container(
+                    width: double.infinity,
                     height: 50,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1099,7 +1135,6 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                                 topLeft: Radius.circular(10),
                                 bottomLeft: Radius.circular(10)),
                           ),
-                          width: MediaQuery.of(context).size.width - 256,
                           child: Center(
                             child: Text(
                               _chosenLivingPlaceType!.getName(languages),
@@ -1233,10 +1268,10 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                                 topLeft: Radius.circular(10),
                                 bottomLeft: Radius.circular(10)),
                           ),
-                          width: MediaQuery.of(context).size.width - 256,
                           child: Center(
                             child: Text(
                               _chosenSalaryType!.getName(languages),
+                              overflow: TextOverflow.visible,
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                   color: Colors.yellow,
@@ -1365,7 +1400,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                   child: Center(
                     child: CircleAvatar(
                       radius: 20,
-                      backgroundImage: FileImage(File(image!.path)),
+                      backgroundImage: NetworkImage(image!.path),
                     ),
                   ),
                   onTap: () {
@@ -1423,6 +1458,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
               ),
               Flexible(
                 child: Container(
+                  width: 400,
                   decoration: BoxDecoration(
                       color: Colors.yellow,
                       borderRadius: BorderRadius.circular(10)),
@@ -1451,6 +1487,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                       dropdownOverButton: true,
                       dropdownFullScreen: true,
                       customButton: Container(
+                        width: double.infinity,
                         height: 50,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1463,7 +1500,6 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                                     topLeft: Radius.circular(10),
                                     bottomLeft: Radius.circular(10)),
                               ),
-                              width: MediaQuery.of(context).size.width - 252,
                               child: Center(
                                 child: Text(
                                   _chosenCountryCode!,
@@ -1485,37 +1521,37 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                           ],
                         ),
                       ),
-                      items: countryCodes.map<DropdownMenuItem<String>>(
-                              (String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    color: Colors.black,
-                                    borderRadius: value == countryCodes.first
+                      items: countryCodes
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Container(
+                            decoration: BoxDecoration(
+                                color: Colors.black,
+                                borderRadius: value == countryCodes.first
+                                    ? BorderRadius.only(
+                                        topLeft: Radius.circular(10),
+                                        topRight: Radius.circular(10),
+                                      )
+                                    : (value == countryCodes.last
                                         ? BorderRadius.only(
-                                      topLeft: Radius.circular(10),
-                                      topRight: Radius.circular(10),
-                                    )
-                                        : (value == countryCodes.last
-                                        ? BorderRadius.only(
-                                      bottomLeft: Radius.circular(10),
-                                      bottomRight: Radius.circular(10),
-                                    )
+                                            bottomLeft: Radius.circular(10),
+                                            bottomRight: Radius.circular(10),
+                                          )
                                         : BorderRadius.zero)),
-                                child: Center(
-                                  child: Text(
-                                    value,
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                        color: Colors.yellow,
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ),
+                            child: Center(
+                              child: Text(
+                                value,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    color: Colors.yellow,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold),
                               ),
-                            );
-                          }).toList(),
+                            ),
+                          ),
+                        );
+                      }).toList(),
                       onChanged: (String? value) {
                         setState(() {
                           _chosenCountryCode = value!;

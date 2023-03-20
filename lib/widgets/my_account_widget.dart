@@ -1,7 +1,11 @@
+import 'dart:html';
+
+import 'package:autologin_plugin/autologin_plugin_web.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:http/http.dart';
 
 import '../auth/auth_sqflite_handler.dart';
 import '../entities/session.dart';
@@ -18,11 +22,10 @@ class MyAccountWidget extends StatefulWidget {
   final User user;
   final Languages languages;
 
-  const MyAccountWidget(
-      {Key? key,
-      required this.languages,
-      required this.session,
-      required this.user})
+  const MyAccountWidget({Key? key,
+    required this.languages,
+    required this.session,
+    required this.user})
       : super(key: key);
 
   @override
@@ -49,62 +52,58 @@ class _MyAccountWidgetState extends State<MyAccountWidget> {
     return _actualWidget != null
         ? _actualWidget!
         : SafeArea(
-            child: Scaffold(
-            appBar: AppBar(
-              backgroundColor: Colors.black,
+        child: Scaffold(
+          appBar: AppBar(
+            backgroundColor: Colors.black,
+          ),
+          body: Container(
+            color: Colors.black,
+            child: ListView(
+              children: [
+                SizedBox(
+                  height: 10,
+                ),
+                Row(
+                  children: [
+                    _menuPoint(languages.changePasswordLabel, Icons.password,
+                        _onChangePasswordTap, 0),
+                    _menuPoint(languages.changeUserDataLabel, Icons.security,
+                        _onChangeUserDataTap, 1),
+                  ],
+                ),
+                SizedBox(height: 5),
+                Row(
+                  children: [
+                    _menuPoint(languages.changeLocationLabel,
+                        Icons.location_on, _onChangeLocationTap, 2),
+                    _menuPoint(languages.handleBansLabel,
+                        Icons.not_interested, _onHandleBansTap, 3),
+                  ],
+                ),
+                SizedBox(height: 5),
+                Row(
+                  children: [
+                    _menuPoint(
+                        languages.logoutLabel, Icons.logout, _onLogoutTap, 4),
+                    _menuPoint(languages.deleteAccountLabel,
+                        Icons.delete_forever, _onDeleteAccountTap, 5),
+                  ],
+                ),
+              ],
             ),
-            body: Container(
-              color: Colors.black,
-              child: ListView(
-                children: [
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Row(
-                    children: [
-                      _menuPoint(languages.changePasswordLabel, Icons.password,
-                          _onChangePasswordTap, 0),
-                      _menuPoint(languages.changeUserDataLabel, Icons.security,
-                          _onChangeUserDataTap, 1),
-                    ],
-                  ),
-                  SizedBox(height: 5),
-                  Row(
-                    children: [
-                      _menuPoint(languages.changeLocationLabel,
-                          Icons.location_on, _onChangeLocationTap, 2),
-                      _menuPoint(languages.handleBansLabel,
-                          Icons.not_interested, _onHandleBansTap, 3),
-                    ],
-                  ),
-                  SizedBox(height: 5),
-                  Row(
-                    children: [
-                      _menuPoint(
-                          languages.logoutLabel, Icons.logout, _onLogoutTap, 4),
-                      _menuPoint(languages.deleteAccountLabel,
-                          Icons.delete_forever, _onDeleteAccountTap, 5),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ));
+          ),
+        ));
   }
 
-  void _onLogoutTap() {
-    widget.session
-        .post(
+  void _onLogoutTap() async {
+    Response res = await widget.session.post(
       '/api/logout',
       new Map<String, dynamic>(),
-    )
-        .then((res) {
-      if (res.statusCode == 200) {
-        widget.session.updateCookie(res);
-        authSqfLiteHandler.deleteUsers();
-        Phoenix.rebirth(context);
-      }
-    });
+    );
+    if (res.statusCode == 200) {
+      await AutologinPlugin.saveLoginData(username: widget.user.email, password: null);
+      Phoenix.rebirth(context);
+    }
   }
 
   void _onChangePasswordTap() async {
@@ -126,7 +125,7 @@ class _MyAccountWidgetState extends State<MyAccountWidget> {
         refreshApp: () {
           Phoenix.rebirth(context);
         },
-          closeActualWidget: () => _closeActualWidget(),
+        closeActualWidget: () => _closeActualWidget(),
       );
     });
   }
@@ -161,51 +160,51 @@ class _MyAccountWidgetState extends State<MyAccountWidget> {
           return StatefulBuilder(builder: (context, setInnerState) {
             return loading
                 ? Container(
-                    child: Center(
-                      child: Image(
-                          image: new AssetImage(
-                              "assets/images/loading_breath.gif")),
-                    ),
-                  )
+              child: Center(
+                child: Image(
+                    image: new AssetImage(
+                        "assets/images/loading_breath.gif")),
+              ),
+            )
                 : AlertDialog(
-                    backgroundColor: Colors.red,
-                    title: Text(
-                      languages.deleteAccountWarningTitle,
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                          color: Colors.white),
-                    ),
-                    content: Container(
-                      child: Text(
-                        languages.deleteAccountWarningMessage,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                            color: Colors.white),
-                      ),
-                    ),
-                    actions: <Widget>[
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: Text(
-                          languages.cancelLabel,
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          _onDeleteAccountDeleteButtonTap(setInnerState);
-                        },
-                        child: Text(
-                          languages.deleteLabel,
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      )
-                    ],
-                  );
+              backgroundColor: Colors.red,
+              title: Text(
+                languages.deleteAccountWarningTitle,
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                    color: Colors.white),
+              ),
+              content: Container(
+                child: Text(
+                  languages.deleteAccountWarningMessage,
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                      color: Colors.white),
+                ),
+              ),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text(
+                    languages.cancelLabel,
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {
+                    _onDeleteAccountDeleteButtonTap(setInnerState);
+                  },
+                  child: Text(
+                    languages.deleteLabel,
+                    style: TextStyle(color: Colors.white),
+                  ),
+                )
+              ],
+            );
           });
         });
   }
@@ -217,7 +216,6 @@ class _MyAccountWidgetState extends State<MyAccountWidget> {
     widget.session.delete('/api/users').then((response) {
       if (response.statusCode == 200) {
         loading = false;
-        widget.session.updateCookie(response);
         authSqfLiteHandler.deleteUsers();
         Phoenix.rebirth(context);
         Fluttertoast.showToast(
@@ -244,7 +242,8 @@ class _MyAccountWidgetState extends State<MyAccountWidget> {
     });
   }
 
-  Widget _menuPoint(String label, IconData icon, Function onTap, int hoverIndex) {
+  Widget _menuPoint(String label, IconData icon, Function onTap,
+      int hoverIndex) {
     return Flexible(
       flex: 1,
       child: InkWell(
@@ -255,10 +254,14 @@ class _MyAccountWidgetState extends State<MyAccountWidget> {
         },
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
-          padding: EdgeInsets.only(top: (hovers.elementAt(hoverIndex)) ? 0 : 5, bottom:!(hovers.elementAt(hoverIndex))? 0:5),
+          padding: EdgeInsets.only(top: (hovers.elementAt(hoverIndex)) ? 0 : 5,
+              bottom: !(hovers.elementAt(hoverIndex)) ? 0 : 5),
           margin: EdgeInsets.all(5),
           height: 200,
-          width: (MediaQuery.of(context).size.width - 15) / 2,
+          width: (MediaQuery
+              .of(context)
+              .size
+              .width - 15) / 2,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.all(
               Radius.circular(10),

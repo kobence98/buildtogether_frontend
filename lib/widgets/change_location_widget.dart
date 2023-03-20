@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_frontend/entities/session.dart';
@@ -30,63 +32,63 @@ class _ChangeLocationWidgetState extends State<ChangeLocationWidget> {
     super.initState();
     _useLocation = widget.user.setByLocale;
     languages = widget.languages;
-
-    countryCodes.add("Global");
-    countryCodes.add("HU");
-    countryCodes.add("EN");
-    countryCodes.add("RU");
-    countryCodes.add("UK");
-    countryCodes.add("ES");
-    _chosenCountryCode =
-        widget.user.locale == null ? 'Global' : widget.user.locale;
-    _countryCodesLoaded = true;
-    // widget.session.get('/api/companies/countryCodes').then((response) {
-    //   if (response.statusCode == 200) {
-    //     Iterable l = json.decode(utf8.decode(response.bodyBytes));
-    //     countryCodes.addAll(l.map((data) => data.toString()).toList());
-    //     countryCodes.remove("Undefined");
-    //     countryCodes = countryCodes.toSet().toList();
-    //     countryCodes.sort((String a, String b){
-    //       if(a == 'Global'){
-    //         return -1;
-    //       }
-    //       else if(b == 'Global'){
-    //         return 1;
-    //       }
-    //       else{
-    //         if(a == 'Hungary'){
-    //           return -1;
-    //         }
-    //         else if(b == 'Hungary'){
-    //           return 1;
-    //         }
-    //         else{
-    //           if(a == 'United Kingdom'){
-    //             return -1;
-    //           }
-    //           else if(b == 'United Kingdom'){
-    //             return 1;
-    //           }
-    //         }
-    //       }
-    //       return a.compareTo(b);
-    //     });
-    //     _chosenCountryCode =
-    //         widget.user.locale == null ? 'Global' : widget.user.locale;
-    //     setState(() {
-    //       _countryCodesLoaded = true;
-    //     });
-    //   } else {
-    //     Fluttertoast.showToast(
-    //         msg: languages.countryCodesErrorMessage,
-    //         toastLength: Toast.LENGTH_LONG,
-    //         gravity: ToastGravity.CENTER,
-    //         timeInSecForIosWeb: 4,
-    //         backgroundColor: Colors.red,
-    //         textColor: Colors.white,
-    //         fontSize: 16.0);
-    //   }
-    // });
+    //
+    // countryCodes.add("Global");
+    // countryCodes.add("HU");
+    // countryCodes.add("EN");
+    // countryCodes.add("RU");
+    // countryCodes.add("UK");
+    // countryCodes.add("ES");
+    // _chosenCountryCode =
+    //     widget.user.locale == null ? 'Global' : widget.user.locale;
+    // _countryCodesLoaded = true;
+    widget.session.get('/api/companies/countryCodes').then((response) {
+      if (response.statusCode == 200) {
+        Iterable l = json.decode(utf8.decode(response.bodyBytes));
+        countryCodes.addAll(l.map((data) => data.toString()).toList());
+        countryCodes.remove("Undefined");
+        countryCodes = countryCodes.toSet().toList();
+        countryCodes.sort((String a, String b){
+          if(a == 'Global'){
+            return -1;
+          }
+          else if(b == 'Global'){
+            return 1;
+          }
+          else{
+            if(a == 'Hungary'){
+              return -1;
+            }
+            else if(b == 'Hungary'){
+              return 1;
+            }
+            else{
+              if(a == 'United Kingdom'){
+                return -1;
+              }
+              else if(b == 'United Kingdom'){
+                return 1;
+              }
+            }
+          }
+          return a.compareTo(b);
+        });
+        _chosenCountryCode =
+            widget.user.locale == null ? 'Global' : widget.user.locale;
+        setState(() {
+          _countryCodesLoaded = true;
+        });
+      } else {
+        Fluttertoast.showToast(
+            msg: languages.countryCodesErrorMessage,
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 4,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      }
+    });
   }
 
   @override
@@ -99,6 +101,15 @@ class _ChangeLocationWidgetState extends State<ChangeLocationWidget> {
           child: Icon(
             Icons.arrow_back_outlined,
             color: Colors.white,
+          ),
+        ),
+        title: Center(
+          child: Text(
+            languages.changeLocationLabel,
+            style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 20),
           ),
         ),
       ),
@@ -188,9 +199,7 @@ class _ChangeLocationWidgetState extends State<ChangeLocationWidget> {
                                                 bottomLeft:
                                                     Radius.circular(10)),
                                           ),
-                                          width: MediaQuery.of(context).size.width - 953 < 100
-                                              ? 100
-                                              : MediaQuery.of(context).size.width - 953,
+                                          width: 220,
                                           child: Center(
                                             child: Text(
                                               _chosenCountryCode!,

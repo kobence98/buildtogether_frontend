@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:html';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_frontend/entities/company.dart';
@@ -8,6 +9,7 @@ import 'package:flutter_frontend/entities/user.dart';
 import 'package:flutter_frontend/languages/languages.dart';
 import 'package:flutter_frontend/static/date_formatter.dart';
 import 'package:flutter_frontend/widgets/single_post_widget.dart';
+import 'package:flutter_frontend/widgets/statistic_page.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:like_button/like_button.dart';
 
@@ -18,12 +20,17 @@ class FilteredPostsWidget extends StatefulWidget {
   final String pattern;
   final User user;
   final Languages languages;
+  final Function backToPostsPage;
+  final Function jumpToPage;
 
-  const FilteredPostsWidget(
-      {required this.session,
-      required this.pattern,
-      required this.user,
-      required this.languages});
+  const FilteredPostsWidget({
+    required this.session,
+    required this.pattern,
+    required this.user,
+    required this.languages,
+    required this.backToPostsPage,
+    required this.jumpToPage,
+  });
 
   @override
   _FilteredPostsWidgetState createState() => _FilteredPostsWidgetState();
@@ -59,7 +66,6 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
         .then((response) {
       if (response.statusCode == 200) {
         setState(() {
-          widget.session.updateCookie(response);
           Iterable l = json.decode(utf8.decode(response.bodyBytes));
           posts = List<Post>.from(l.map((model) => Post.fromJson(model)))
               .reversed
@@ -77,7 +83,14 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.black,
-          automaticallyImplyLeading: true,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            iconSize: 24,
+            onPressed: () {
+              widget.backToPostsPage();
+            },
+            tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+          ),
           title: Center(
             child: Text(
               widget.pattern,
@@ -113,440 +126,555 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
                     )
                   : Stack(
                       children: [
-                        ListView.builder(
-                            controller: _scrollController,
-                            padding: EdgeInsets.only(bottom: 10),
-                            itemCount: actualPosts.length,
-                            itemBuilder: (context, index) {
-                              Post post = actualPosts.elementAt(index);
-                              return InkWell(
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      color: Colors.yellow.withOpacity(0.1),
-                                      border: Border.all(color: Colors.yellow)),
-                                  padding: EdgeInsets.all(5),
-                                  margin: EdgeInsets.only(top: 10),
-                                  child: Column(
-                                    children: [
-                                      ListTile(
-                                        leading: InkWell(
-                                          child: CircleAvatar(
-                                            radius: 20,
-                                            backgroundImage: NetworkImage(
-                                              widget.session.domainName +
-                                                  "/api/images/" +
-                                                  post.companyImageId
-                                                      .toString(),
-                                              headers: widget.session.headers,
-                                            ),
-                                          ),
-                                          onTap: () =>
-                                              _onCompanyTap(post.companyId),
-                                        ),
-                                        title: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              post.userName,
-                                              style: TextStyle(
-                                                  color: Colors.white),
-                                            ),
-                                            SizedBox(
-                                              height: 1,
-                                            ),
-                                            InkWell(
-                                              child: Container(
-                                                padding: EdgeInsets.all(3),
-                                                decoration: BoxDecoration(
-                                                    color: Colors.white,
-                                                    border: Border.all(
-                                                      color: Colors.black,
+                        RawScrollbar(
+                          controller: _scrollController,
+                          thumbVisibility: true,
+                          thumbColor: Colors.grey,
+                          child: Container(
+                            width: MediaQuery.of(context).size.width,
+                            child: Center(
+                              child: Container(
+                                width: 700,
+                                child: ListView.builder(
+                                    controller: _scrollController,
+                                    padding: EdgeInsets.only(bottom: 10),
+                                    itemCount: actualPosts.length,
+                                    itemBuilder: (context, index) {
+                                      Post post = actualPosts.elementAt(index);
+                                      return InkWell(
+                                        child: Container(
+                                          height: 510,
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              color:
+                                                  Colors.yellow.withOpacity(0.1),
+                                              border: Border.all(
+                                                  color: Colors.yellow)),
+                                          padding: EdgeInsets.all(5),
+                                          margin: EdgeInsets.only(top: 10),
+                                          child: Column(
+                                            children: [
+                                              ListTile(
+                                                leading: InkWell(
+                                                  child: CircleAvatar(
+                                                    radius: 20,
+                                                    backgroundImage: NetworkImage(
+                                                      widget.session.domainName +
+                                                          "/api/images/" +
+                                                          post.companyImageId
+                                                              .toString(),
+                                                      headers:
+                                                          widget.session.headers,
                                                     ),
-                                                    borderRadius:
-                                                        BorderRadius.all(
-                                                            Radius.circular(
-                                                                20))),
-                                                child: Text(
-                                                  post.companyName,
-                                                  style: TextStyle(
-                                                      color: Colors.black,
-                                                      fontWeight:
-                                                          FontWeight.bold),
+                                                  ),
+                                                  onTap: () => _onCompanyTap(
+                                                      post.companyId),
                                                 ),
-                                              ),
-                                              onTap: () {
-                                                _onCompanyTap(post.companyId);
-                                              },
-                                            ),
-                                          ],
-                                        ),
-                                        trailing: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            post.implemented
-                                                ? InkWell(
-                                                    child: Icon(
-                                                      Icons
-                                                          .lightbulb_outline_sharp,
-                                                      color: Colors.yellow,
+                                                title: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      post.userName,
+                                                      style: TextStyle(
+                                                          color: Colors.white),
                                                     ),
-                                                    onTap: () {
-                                                      Fluttertoast.showToast(
-                                                          msg: languages
-                                                              .ideaIsImplementedMessage,
-                                                          toastLength: Toast
-                                                              .LENGTH_SHORT,
-                                                          gravity: ToastGravity
-                                                              .CENTER,
-                                                          timeInSecForIosWeb: 4,
-                                                          backgroundColor:
-                                                              Colors.green,
-                                                          textColor:
-                                                              Colors.white,
-                                                          fontSize: 16.0);
-                                                    },
-                                                  )
-                                                : Container(),
-                                            Text(
-                                              DateFormatter.formatDate(
-                                                  post.createdDate, languages),
-                                              style: TextStyle(
-                                                  color: Colors.white),
-                                            ),
-                                            Container(
-                                              margin: EdgeInsets.only(left: 5),
-                                              child: PopupMenuButton(
-                                                child: Icon(
-                                                  Icons.more_horiz,
-                                                  color: Colors.white,
+                                                    SizedBox(
+                                                      height: 1,
+                                                    ),
+                                                    InkWell(
+                                                      child: Container(
+                                                        padding:
+                                                            EdgeInsets.all(3),
+                                                        decoration: BoxDecoration(
+                                                            color: Colors.white,
+                                                            border: Border.all(
+                                                              color: Colors.black,
+                                                            ),
+                                                            borderRadius:
+                                                                BorderRadius.all(
+                                                                    Radius
+                                                                        .circular(
+                                                                            20))),
+                                                        child: Text(
+                                                          post.companyName,
+                                                          style: TextStyle(
+                                                              color: Colors.black,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                        ),
+                                                      ),
+                                                      onTap: () {
+                                                        _onCompanyTap(
+                                                            post.companyId);
+                                                      },
+                                                    ),
+                                                  ],
                                                 ),
-                                                itemBuilder: (context) {
-                                                  return List.generate(
-                                                      widget.user.companyId ==
-                                                              post.companyId
-                                                          ? 4
-                                                          : 2, (index) {
-                                                    if (index == 0) {
-                                                      return PopupMenuItem(
-                                                        child: Text(widget.user
+                                                trailing: Row(
+                                                  mainAxisSize: MainAxisSize.min,
+                                                  children: [
+                                                    post.implemented
+                                                        ? InkWell(
+                                                            child: Icon(
+                                                              Icons
+                                                                  .lightbulb_outline_sharp,
+                                                              color:
+                                                                  Colors.yellow,
+                                                            ),
+                                                            onTap: () {
+                                                              Fluttertoast.showToast(
+                                                                  msg: languages
+                                                                      .ideaIsImplementedMessage,
+                                                                  toastLength: Toast
+                                                                      .LENGTH_SHORT,
+                                                                  gravity:
+                                                                      ToastGravity
+                                                                          .CENTER,
+                                                                  timeInSecForIosWeb:
+                                                                      4,
+                                                                  backgroundColor:
+                                                                      Colors
+                                                                          .green,
+                                                                  textColor:
+                                                                      Colors
+                                                                          .white,
+                                                                  fontSize: 16.0);
+                                                            },
+                                                          )
+                                                        : Container(),
+                                                    Text(
+                                                      DateFormatter.formatDate(
+                                                          post.createdDate,
+                                                          languages),
+                                                      style: TextStyle(
+                                                          color: Colors.white),
+                                                    ),
+                                                    Container(
+                                                      margin: EdgeInsets.only(
+                                                          left: 5),
+                                                      child: PopupMenuButton(
+                                                        child: Icon(
+                                                          Icons.more_horiz,
+                                                          color: Colors.white,
+                                                        ),
+                                                        itemBuilder: (context) {
+                                                          return List.generate(
+                                                              widget.user.companyId ==
+                                                                      post.companyId
+                                                                  ? 4
+                                                                  : 2, (index) {
+                                                            if (index == 0) {
+                                                              return PopupMenuItem(
+                                                                child: Text(widget
+                                                                                .user
+                                                                                .companyId ==
+                                                                            post
+                                                                                .companyId ||
+                                                                        widget.user
+                                                                                .userId ==
+                                                                            post
+                                                                                .creatorId
+                                                                    ? languages
+                                                                        .deleteLabel
+                                                                    : languages
+                                                                        .reportLabel),
+                                                                value: 0,
+                                                              );
+                                                            } else if (index ==
+                                                                1) {
+                                                              return PopupMenuItem(
+                                                                child: Text(languages
+                                                                    .banUserLabel),
+                                                                value: 1,
+                                                              );
+                                                            } else if (index ==
+                                                                2) {
+                                                              return PopupMenuItem(
+                                                                child: Text(languages
+                                                                    .contactCreatorLabel),
+                                                                value: 2,
+                                                              );
+                                                            } else {
+                                                              return PopupMenuItem(
+                                                                child: Text(post
+                                                                        .implemented
+                                                                    ? languages
+                                                                        .notImplementedLabel
+                                                                    : languages
+                                                                        .implementedLabel),
+                                                                value: 3,
+                                                              );
+                                                            }
+                                                          });
+                                                        },
+                                                        onSelected: (index) {
+                                                          if (index == 0) {
+                                                            if (widget.user
                                                                         .companyId ==
                                                                     post
                                                                         .companyId ||
-                                                                widget.user.userId ==
-                                                                    post
-                                                                        .creatorId
-                                                            ? languages
-                                                                .deleteLabel
-                                                            : languages
-                                                                .reportLabel),
-                                                        value: 0,
-                                                      );
-                                                    } else if (index == 1) {
-                                                      return PopupMenuItem(
-                                                        child: Text(languages
-                                                            .banUserLabel),
-                                                        value: 1,
-                                                      );
-                                                    } else if (index == 2) {
-                                                      return PopupMenuItem(
-                                                        child: Text(languages
-                                                            .contactCreatorLabel),
-                                                        value: 2,
-                                                      );
-                                                    } else {
-                                                      return PopupMenuItem(
-                                                        child: Text(post
-                                                                .implemented
-                                                            ? languages
-                                                                .notImplementedLabel
-                                                            : languages
-                                                                .implementedLabel),
-                                                        value: 3,
-                                                      );
-                                                    }
-                                                  });
-                                                },
-                                                onSelected: (index) {
-                                                  if (index == 0) {
-                                                    if (widget.user.companyId ==
-                                                            post.companyId ||
-                                                        widget.user.userId ==
-                                                            post.creatorId) {
-                                                      widget.session
-                                                          .delete('/api/posts/' +
-                                                              post.postId
-                                                                  .toString())
-                                                          .then((response) {
-                                                        if (response
-                                                                .statusCode ==
-                                                            200) {
-                                                          Fluttertoast.showToast(
-                                                              msg: languages
-                                                                  .successfulDeleteMessage,
-                                                              toastLength: Toast
-                                                                  .LENGTH_LONG,
-                                                              gravity:
-                                                                  ToastGravity
-                                                                      .CENTER,
-                                                              timeInSecForIosWeb:
-                                                                  4,
-                                                              backgroundColor:
-                                                                  Colors.green,
-                                                              textColor:
-                                                                  Colors.white,
-                                                              fontSize: 16.0);
-                                                          setState(() {
-                                                            Navigator.of(
-                                                                    context)
-                                                                .pop();
-                                                          });
-                                                        } else {
-                                                          Fluttertoast.showToast(
-                                                              msg: languages
-                                                                  .globalServerErrorMessage,
-                                                              toastLength: Toast
-                                                                  .LENGTH_LONG,
-                                                              gravity:
-                                                                  ToastGravity
-                                                                      .CENTER,
-                                                              timeInSecForIosWeb:
-                                                                  4,
-                                                              backgroundColor:
-                                                                  Colors.red,
-                                                              textColor:
-                                                                  Colors.white,
-                                                              fontSize: 16.0);
-                                                        }
-                                                      });
-                                                    } else {
-                                                      onReportTap(post);
-                                                    }
-                                                  } else if (index == 1) {
-                                                    _onBanUserTap(
-                                                        post.creatorId);
-                                                  } else if (index == 2) {
-                                                    _onContactCreatorTap(post);
-                                                  } else {
-                                                    widget.session
-                                                        .post(
-                                                            '/api/posts/' +
-                                                                post.postId
-                                                                    .toString() +
-                                                                '/implemented',
-                                                            Map<String,
-                                                                dynamic>())
-                                                        .then((response) {
-                                                      if (response.statusCode ==
-                                                          200) {
-                                                        Fluttertoast.showToast(
-                                                            msg:
-                                                                "${languages.successLabel}!",
-                                                            toastLength: Toast
-                                                                .LENGTH_LONG,
-                                                            gravity:
-                                                                ToastGravity
-                                                                    .CENTER,
-                                                            timeInSecForIosWeb:
-                                                                4,
-                                                            backgroundColor:
-                                                                Colors.green,
-                                                            textColor:
-                                                                Colors.white,
-                                                            fontSize: 16.0);
-                                                        setState(() {
-                                                          post.implemented =
-                                                              !post.implemented;
-                                                        });
-                                                      } else {
-                                                        Fluttertoast.showToast(
-                                                            msg: languages
-                                                                .globalServerErrorMessage,
-                                                            toastLength: Toast
-                                                                .LENGTH_LONG,
-                                                            gravity:
-                                                                ToastGravity
-                                                                    .CENTER,
-                                                            timeInSecForIosWeb:
-                                                                4,
-                                                            backgroundColor:
-                                                                Colors.red,
-                                                            textColor:
-                                                                Colors.white,
-                                                            fontSize: 16.0);
-                                                      }
-                                                    });
-                                                  }
-                                                },
+                                                                widget.user
+                                                                        .userId ==
+                                                                    post.creatorId) {
+                                                              widget.session
+                                                                  .delete('/api/posts/' +
+                                                                      post.postId
+                                                                          .toString())
+                                                                  .then(
+                                                                      (response) {
+                                                                if (response
+                                                                        .statusCode ==
+                                                                    200) {
+                                                                  Fluttertoast.showToast(
+                                                                      msg: languages
+                                                                          .successfulDeleteMessage,
+                                                                      toastLength:
+                                                                          Toast
+                                                                              .LENGTH_LONG,
+                                                                      gravity: ToastGravity
+                                                                          .CENTER,
+                                                                      timeInSecForIosWeb:
+                                                                          4,
+                                                                      backgroundColor:
+                                                                          Colors
+                                                                              .green,
+                                                                      textColor:
+                                                                          Colors
+                                                                              .white,
+                                                                      fontSize:
+                                                                          16.0);
+                                                                  setState(() {
+                                                                    Navigator.of(
+                                                                            context)
+                                                                        .pop();
+                                                                  });
+                                                                } else {
+                                                                  Fluttertoast.showToast(
+                                                                      msg: languages
+                                                                          .globalServerErrorMessage,
+                                                                      toastLength:
+                                                                          Toast
+                                                                              .LENGTH_LONG,
+                                                                      gravity: ToastGravity
+                                                                          .CENTER,
+                                                                      timeInSecForIosWeb:
+                                                                          4,
+                                                                      backgroundColor:
+                                                                          Colors
+                                                                              .red,
+                                                                      textColor:
+                                                                          Colors
+                                                                              .white,
+                                                                      fontSize:
+                                                                          16.0);
+                                                                }
+                                                              });
+                                                            } else {
+                                                              onReportTap(post);
+                                                            }
+                                                          } else if (index == 1) {
+                                                            _onBanUserTap(
+                                                                post.creatorId);
+                                                          } else if (index == 2) {
+                                                            _onContactCreatorTap(
+                                                                post);
+                                                          } else {
+                                                            widget.session
+                                                                .post(
+                                                                    '/api/posts/' +
+                                                                        post.postId
+                                                                            .toString() +
+                                                                        '/implemented',
+                                                                    Map<String,
+                                                                        dynamic>())
+                                                                .then((response) {
+                                                              if (response
+                                                                      .statusCode ==
+                                                                  200) {
+                                                                Fluttertoast.showToast(
+                                                                    msg:
+                                                                        "${languages.successLabel}!",
+                                                                    toastLength: Toast
+                                                                        .LENGTH_LONG,
+                                                                    gravity:
+                                                                        ToastGravity
+                                                                            .CENTER,
+                                                                    timeInSecForIosWeb:
+                                                                        4,
+                                                                    backgroundColor:
+                                                                        Colors
+                                                                            .green,
+                                                                    textColor:
+                                                                        Colors
+                                                                            .white,
+                                                                    fontSize:
+                                                                        16.0);
+                                                                setState(() {
+                                                                  post.implemented =
+                                                                      !post
+                                                                          .implemented;
+                                                                });
+                                                              } else {
+                                                                Fluttertoast.showToast(
+                                                                    msg: languages
+                                                                        .globalServerErrorMessage,
+                                                                    toastLength: Toast
+                                                                        .LENGTH_LONG,
+                                                                    gravity:
+                                                                        ToastGravity
+                                                                            .CENTER,
+                                                                    timeInSecForIosWeb:
+                                                                        4,
+                                                                    backgroundColor:
+                                                                        Colors
+                                                                            .red,
+                                                                    textColor:
+                                                                        Colors
+                                                                            .white,
+                                                                    fontSize:
+                                                                        16.0);
+                                                              }
+                                                            });
+                                                          }
+                                                        },
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      ListTile(
-                                        title: Text(
-                                          post.title,
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 20),
-                                        ),
-                                      ),
-                                      Container(
-                                        height: 60,
-                                        padding: EdgeInsets.all(5),
-                                        alignment: Alignment.topLeft,
-                                        child: Text(
-                                          post.postType == 'SIMPLE_POST'
-                                              ? post.description
-                                              : languages
-                                                  .clickHereToOpenThePollLabel,
-                                          style: TextStyle(color: Colors.white),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: post.postImageId == null ? 0 : 10,
-                                      ),
-                                      post.postImageId == null
-                                          ? Container()
-                                          : Container(
-                                        margin: EdgeInsets.all(10),
-                                        decoration: BoxDecoration(
-                                            color: Colors.black,
-                                            border: Border.all(color: Colors.yellow),
-                                            borderRadius: BorderRadius.circular(10)),
-                                        child: Container(
-                                          padding: EdgeInsets.all(10),
-                                          child: Row(
-                                            children: [
-                                              Flexible(
-                                                child: Text(
-                                                  '${languages.thisPostHasPicture}:',
+                                              ListTile(
+                                                title: Text(
+                                                  post.title,
                                                   style: TextStyle(
                                                       color: Colors.white,
-                                                      fontSize: 16,
-                                                      fontWeight: FontWeight.bold),
+                                                      fontWeight: FontWeight.bold,
+                                                      fontSize: 20),
                                                 ),
-                                                flex: 5,
                                               ),
-                                              Flexible(
-                                                child: InkWell(
-                                                  child: Center(
-                                                    child: Container(
-                                                      height: 40,
-                                                      width: 40,
-                                                      decoration: BoxDecoration(
-                                                          border: Border.all(
-                                                              color: Colors.yellow),
-                                                          image: DecorationImage(
-                                                            image: NetworkImage(
-                                                              widget.session.domainName +
-                                                                  "/api/postImages/" +
-                                                                  post.postImageId
-                                                                      .toString(),
-                                                              headers:
-                                                              widget.session.headers,
-                                                            ),
-                                                            fit: BoxFit.contain,
-                                                          ),
-                                                          borderRadius:
-                                                          BorderRadius.circular(10)),
-                                                    ),
-                                                  ),
-                                                  onTap: () async {
-                                                    Navigator.of(context).push(MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            OpenImageWidget(imageId: post.postImageId.toString(), session: widget.session)));
-                                                  },
-                                                ),
-                                                flex: 1,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                      Container(
-                                        height: 40,
-                                        child: Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            LikeButton(
-                                              size: 20.0,
-                                              circleColor: CircleColor(
-                                                  start: Colors.yellow.shade200,
-                                                  end: Colors.yellow),
-                                              bubblesColor: BubblesColor(
-                                                dotPrimaryColor:
-                                                    Colors.yellow.shade200,
-                                                dotSecondaryColor:
-                                                    Colors.yellow,
-                                              ),
-                                              isLiked: post.liked,
-                                              likeBuilder: (bool isLiked) {
-                                                return Icon(
-                                                  Icons.lightbulb,
-                                                  color: isLiked
-                                                      ? Colors.yellow
-                                                      : Colors.white,
-                                                );
-                                              },
-                                              onTap: (isLiked) {
-                                                return post.creatorId ==
-                                                        widget.user.userId
-                                                    ? _onLikeOwnButtonPressed()
-                                                    : _onLikeButton(
-                                                        isLiked, index);
-                                              },
-                                              likeCount: post.likeNumber,
-                                            ),
-                                            Row(
-                                              children: [
-                                                Text(
-                                                  post.commentNumber.toString(),
+                                              Container(
+                                                height: post.postImageId != null ? 263 : 345,
+                                                padding: EdgeInsets.all(5),
+                                                alignment: Alignment.topLeft,
+                                                child: Text(
+                                                  post.postType == 'SIMPLE_POST'
+                                                      ? post.description
+                                                      : languages
+                                                          .clickHereToOpenThePollLabel,
                                                   style: TextStyle(
                                                       color: Colors.white),
                                                 ),
-                                                IconButton(
-                                                  icon: Icon(Icons.comment),
-                                                  color: Colors.white,
-                                                  onPressed: () {
-                                                    Navigator.of(context).push(
-                                                        MaterialPageRoute(
-                                                            builder: (context) =>
-                                                                SinglePostWidget(
-                                                                  commentTapped:
-                                                                      true,
-                                                                  session: widget
-                                                                      .session,
-                                                                  post: post,
-                                                                  user: widget
-                                                                      .user,
-                                                                  languages:
-                                                                      languages,
-                                                                  hideNavBar:
-                                                                      () {},
-                                                                  navBarStatusChangeableAgain:
-                                                                      () {},
-                                                                )));
-                                                  },
+                                              ),
+                                              SizedBox(
+                                                height: post.postImageId == null
+                                                    ? 0
+                                                    : 10,
+                                              ),
+                                              post.postImageId == null
+                                                  ? Container()
+                                                  : Container(
+                                                      margin: EdgeInsets.all(10),
+                                                      decoration: BoxDecoration(
+                                                          color: Colors.black,
+                                                          border: Border.all(
+                                                              color:
+                                                                  Colors.yellow),
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(10)),
+                                                      child: Container(
+                                                        padding:
+                                                            EdgeInsets.all(10),
+                                                        child: Row(
+                                                          children: [
+                                                            Flexible(
+                                                              child: Text(
+                                                                '${languages.thisPostHasPicture}:',
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .white,
+                                                                    fontSize: 16,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold),
+                                                              ),
+                                                              flex: 5,
+                                                            ),
+                                                            Flexible(
+                                                              child: InkWell(
+                                                                child: Center(
+                                                                  child:
+                                                                      Container(
+                                                                    height: 40,
+                                                                    width: 40,
+                                                                    decoration:
+                                                                        BoxDecoration(
+                                                                            border: Border.all(
+                                                                                color: Colors
+                                                                                    .yellow),
+                                                                            image:
+                                                                                DecorationImage(
+                                                                              image:
+                                                                                  NetworkImage(
+                                                                                widget.session.domainName + "/api/postImages/" + post.postImageId.toString(),
+                                                                                headers: widget.session.headers,
+                                                                              ),
+                                                                              fit:
+                                                                                  BoxFit.contain,
+                                                                            ),
+                                                                            borderRadius:
+                                                                                BorderRadius.circular(10)),
+                                                                  ),
+                                                                ),
+                                                                onTap: () async {
+                                                                  Navigator.of(context).push(MaterialPageRoute(
+                                                                      builder: (context) => OpenImageWidget(
+                                                                          imageId: post
+                                                                              .postImageId
+                                                                              .toString(),
+                                                                          session:
+                                                                              widget.session)));
+                                                                },
+                                                              ),
+                                                              flex: 1,
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                              Container(
+                                                child: Align(
+                                                  alignment:
+                                                      Alignment.bottomCenter,
+                                                  child: Container(
+                                                    padding:
+                                                        EdgeInsets.only(left: 10),
+                                                    height: 40,
+                                                    child: Row(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .center,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        LikeButton(
+                                                          size: 20.0,
+                                                          circleColor:
+                                                              CircleColor(
+                                                                  start: Colors
+                                                                      .yellow
+                                                                      .shade200,
+                                                                  end: Colors
+                                                                      .yellow),
+                                                          bubblesColor:
+                                                              BubblesColor(
+                                                            dotPrimaryColor:
+                                                                Colors.yellow
+                                                                    .shade200,
+                                                            dotSecondaryColor:
+                                                                Colors.yellow,
+                                                          ),
+                                                          isLiked: post.liked,
+                                                          likeBuilder:
+                                                              (bool isLiked) {
+                                                            return Icon(
+                                                              Icons.lightbulb,
+                                                              color: isLiked
+                                                                  ? Colors.yellow
+                                                                  : Colors.white,
+                                                            );
+                                                          },
+                                                          onTap: (isLiked) {
+                                                            return post.creatorId ==
+                                                                    widget.user
+                                                                        .userId
+                                                                ? _onLikeOwnButtonPressed()
+                                                                : _onLikeButton(
+                                                                    isLiked,
+                                                                    index);
+                                                          },
+                                                          likeCount:
+                                                              post.likeNumber,
+                                                        ),
+                                                        widget.user.companyId !=
+                                                                    null &&
+                                                                widget.user
+                                                                        .companyId ==
+                                                                    post.companyId
+                                                            ? InkWell(
+                                                                child: Icon(
+                                                                  Icons.bar_chart,
+                                                                  color: Colors
+                                                                      .white,
+                                                                  size: 30,
+                                                                ),
+                                                                onTap: () {
+                                                                  _openStatisticPage(
+                                                                      post.postId);
+                                                                })
+                                                            : Container(),
+                                                        Row(
+                                                          children: [
+                                                            Text(
+                                                              post.commentNumber
+                                                                  .toString(),
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .white),
+                                                            ),
+                                                            IconButton(
+                                                              icon: Icon(
+                                                                  Icons.comment),
+                                                              color: Colors.white,
+                                                              onPressed: () {
+                                                                widget.jumpToPage(
+                                                                  SinglePostWidget(
+                                                                    jumpToPage: widget
+                                                                        .jumpToPage,
+                                                                    backToPostsPage:
+                                                                        () {
+                                                                      widget
+                                                                          .backToPostsPage();
+                                                                    },
+                                                                    commentTapped:
+                                                                        true,
+                                                                    session: widget
+                                                                        .session,
+                                                                    post: post,
+                                                                    user: widget
+                                                                        .user,
+                                                                    languages:
+                                                                        languages,
+                                                                    hideNavBar:
+                                                                        () {},
+                                                                    navBarStatusChangeableAgain:
+                                                                        () {},
+                                                                  ),
+                                                                );
+                                                              },
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
                                                 ),
-                                              ],
-                                            ),
-                                          ],
+                                              )
+                                            ],
+                                          ),
                                         ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                                onTap: () {
-                                  _onPostTap(index);
-                                },
-                              );
-                            }),
+                                        onTap: () {
+                                          _onPostTap(index);
+                                        },
+                                      );
+                                    }),
+                              ),
+                            ),
+                          ),
+                        ),
                         loading
                             ? Align(
                                 alignment: Alignment.bottomCenter,
@@ -671,19 +799,17 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
   }
 
   void _onPostTap(int index) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => SinglePostWidget(
-                commentTapped: false,
-                post: actualPosts.elementAt(index),
-                session: widget.session,
-                user: widget.user,
-                languages: languages,
-                hideNavBar: () {},
-                navBarStatusChangeableAgain: () {},
-              )),
-    ).whenComplete(() => {
+    widget.jumpToPage(
+      SinglePostWidget(
+        jumpToPage: widget.jumpToPage,
+        backToPostsPage: () {
+          widget.jumpToPage(FilteredPostsWidget(
+              session: widget.session,
+              pattern: widget.pattern,
+              user: widget.user,
+              languages: widget.languages,
+              backToPostsPage: widget.backToPostsPage,
+              jumpToPage: widget.jumpToPage));
           widget.session
               .get('/api/posts/' + actualPosts[index].postId.toString())
               .then((response) {
@@ -693,8 +819,17 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
                     Post.fromJson(json.decode(utf8.decode(response.bodyBytes)));
               });
             }
-          })
-        });
+          });
+        },
+        commentTapped: false,
+        post: actualPosts.elementAt(index),
+        session: widget.session,
+        user: widget.user,
+        languages: languages,
+        hideNavBar: () {},
+        navBarStatusChangeableAgain: () {},
+      ),
+    );
   }
 
   void onReportTap(Post post) {
@@ -1082,5 +1217,26 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
             });
           });
     }
+  }
+
+  void _openStatisticPage(int postId) async {
+    widget.jumpToPage(
+      StatisticPage(
+        backToPostsPage: () {
+          widget.jumpToPage(
+            FilteredPostsWidget(
+                session: widget.session,
+                pattern: widget.pattern,
+                user: widget.user,
+                languages: widget.languages,
+                backToPostsPage: widget.backToPostsPage,
+                jumpToPage: widget.jumpToPage),
+          );
+        },
+        postId: postId,
+        session: widget.session,
+        languages: languages,
+      ),
+    );
   }
 }

@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_frontend/entities/age_bracket.dart';
 import 'package:flutter_frontend/entities/company.dart';
 import 'package:flutter_frontend/entities/living_place_type.dart';
@@ -78,76 +80,64 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
     _chosenLivingPlaceType = widget.user.livingPlaceType;
     _chosenSalaryType = widget.user.salaryType;
 
-    for(int i = 1; i < 100; i++){
-      houseHoldMembersHelperList.add(i);
-    }
-    countryCodes.add("Global");
-
-    companyData = Company(
-        name: 'name',
-        description: 'description',
-        imageId: 4,
-        countryCode: 'HU');
-    _countryCodesLoaded = true;
-    _chosenCountryCode = countryCodes.first;
-    // widget.session.get('/api/companies/countryCodes').then((response) {
-    //   if (response.statusCode == 200) {
-    //     Iterable l = json.decode(utf8.decode(response.bodyBytes));
-    //     countryCodes.addAll(l.map((data) => data.toString()).toList());
-    //     countryCodes.remove("Undefined");
-    //     countryCodes = countryCodes.toSet().toList();
-    //     countryCodes.sort((String a, String b) {
-    //       if (a == 'Global') {
-    //         return -1;
-    //       } else if (b == 'Global') {
-    //         return 1;
-    //       } else {
-    //         if (a == 'Hungary') {
-    //           return -1;
-    //         } else if (b == 'Hungary') {
-    //           return 1;
-    //         } else {
-    //           if (a == 'United Kingdom') {
-    //             return -1;
-    //           } else if (b == 'United Kingdom') {
-    //             return 1;
-    //           }
-    //         }
-    //       }
-    //       return a.compareTo(b);
-    //     });
-    //     _chosenCountryCode = widget.user.companyCountryCode == null
-    //         ? 'Global'
-    //         : widget.user.companyCountryCode;
-    //     if (company) {
-    //       widget.session
-    //           .get('/api/companies/' + widget.user.companyId.toString())
-    //           .then((response) {
-    //         if (response.statusCode == 200) {
-    //           setState(() {
-    //             companyData = Company.fromJson(
-    //                 json.decode(utf8.decode(response.bodyBytes)));
-    //             _descriptionController.text = companyData!.description;
-    //             _countryCodesLoaded = true;
-    //           });
-    //         }
-    //       });
-    //     } else {
-    //       setState(() {
-    //         _countryCodesLoaded = true;
-    //       });
-    //     }
-    //   } else {
-    //     Fluttertoast.showToast(
-    //         msg: languages.countryCodesErrorMessage,
-    //         toastLength: Toast.LENGTH_LONG,
-    //         gravity: ToastGravity.CENTER,
-    //         timeInSecForIosWeb: 4,
-    //         backgroundColor: Colors.red,
-    //         textColor: Colors.white,
-    //         fontSize: 16.0);
-    //   }
-    // });
+    widget.session.get('/api/companies/countryCodes').then((response) {
+      if (response.statusCode == 200) {
+        Iterable l = json.decode(utf8.decode(response.bodyBytes));
+        countryCodes.addAll(l.map((data) => data.toString()).toList());
+        countryCodes.remove("Undefined");
+        countryCodes = countryCodes.toSet().toList();
+        countryCodes.sort((String a, String b) {
+          if (a == 'Global') {
+            return -1;
+          } else if (b == 'Global') {
+            return 1;
+          } else {
+            if (a == 'Hungary') {
+              return -1;
+            } else if (b == 'Hungary') {
+              return 1;
+            } else {
+              if (a == 'United Kingdom') {
+                return -1;
+              } else if (b == 'United Kingdom') {
+                return 1;
+              }
+            }
+          }
+          return a.compareTo(b);
+        });
+        _chosenCountryCode = widget.user.companyCountryCode == null
+            ? 'Global'
+            : widget.user.companyCountryCode;
+        if (company) {
+          widget.session
+              .get('/api/companies/' + widget.user.companyId.toString())
+              .then((response) {
+            if (response.statusCode == 200) {
+              setState(() {
+                companyData = Company.fromJson(
+                    json.decode(utf8.decode(response.bodyBytes)));
+                _descriptionController.text = companyData!.description;
+                _countryCodesLoaded = true;
+              });
+            }
+          });
+        } else {
+          setState(() {
+            _countryCodesLoaded = true;
+          });
+        }
+      } else {
+        Fluttertoast.showToast(
+            msg: languages.countryCodesErrorMessage,
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 4,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      }
+    });
   }
 
   @override
@@ -165,6 +155,15 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
             child: Icon(
               Icons.arrow_back_outlined,
               color: Colors.white,
+            ),
+          ),
+          title: Center(
+            child: Text(
+              languages.changeUserDataLabel,
+              style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20),
             ),
           ),
         ),
@@ -476,9 +475,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                                   topLeft: Radius.circular(10),
                                   bottomLeft: Radius.circular(10)),
                             ),
-                            width: MediaQuery.of(context).size.width - 953 < 100
-                                ? 100
-                                : MediaQuery.of(context).size.width - 953,
+                            width: 220,
                             child: Center(
                               child: Text(
                                 _numberOfHouseholdMembersValue.toString(),
@@ -507,17 +504,18 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                         child: Container(
                           decoration: BoxDecoration(
                               color: Colors.black,
-                              borderRadius: value == houseHoldMembersHelperList.first
+                              borderRadius: value ==
+                                      houseHoldMembersHelperList.first
                                   ? BorderRadius.only(
-                                topLeft: Radius.circular(10),
-                                topRight: Radius.circular(10),
-                              )
+                                      topLeft: Radius.circular(10),
+                                      topRight: Radius.circular(10),
+                                    )
                                   : (value == houseHoldMembersHelperList.last
-                                  ? BorderRadius.only(
-                                bottomLeft: Radius.circular(10),
-                                bottomRight: Radius.circular(10),
-                              )
-                                  : BorderRadius.zero)),
+                                      ? BorderRadius.only(
+                                          bottomLeft: Radius.circular(10),
+                                          bottomRight: Radius.circular(10),
+                                        )
+                                      : BorderRadius.zero)),
                           child: Center(
                             child: Text(
                               value.toString(),
@@ -612,9 +610,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                                 topLeft: Radius.circular(10),
                                 bottomLeft: Radius.circular(10)),
                           ),
-                          width: MediaQuery.of(context).size.width - 953 < 100
-                              ? 100
-                              : MediaQuery.of(context).size.width - 953,
+                          width: 220,
                           child: Center(
                             child: Text(
                               _chosenAgeBracket!.getName,
@@ -747,9 +743,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                                 topLeft: Radius.circular(10),
                                 bottomLeft: Radius.circular(10)),
                           ),
-                          width: MediaQuery.of(context).size.width - 953 < 100
-                              ? 100
-                              : MediaQuery.of(context).size.width - 953,
+                          width: 220,
                           child: Center(
                             child: Text(
                               _chosenGender!.getName(languages),
@@ -882,9 +876,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                                 topLeft: Radius.circular(10),
                                 bottomLeft: Radius.circular(10)),
                           ),
-                          width: MediaQuery.of(context).size.width - 953 < 100
-                              ? 100
-                              : MediaQuery.of(context).size.width - 953,
+                          width: 220,
                           child: Center(
                             child: Text(
                               _chosenLivingPlaceType!.getName(languages),
@@ -1018,9 +1010,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                                 topLeft: Radius.circular(10),
                                 bottomLeft: Radius.circular(10)),
                           ),
-                          width: MediaQuery.of(context).size.width - 953 < 100
-                              ? 100
-                              : MediaQuery.of(context).size.width - 953,
+                          width: 220,
                           child: Center(
                             child: Text(
                               _chosenSalaryType!.getName(languages),
@@ -1161,7 +1151,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                   child: Center(
                     child: CircleAvatar(
                       radius: 20,
-                      backgroundImage: FileImage(File(image!.path)),
+                      backgroundImage: NetworkImage(image!.path),
                     ),
                   ),
                   onTap: () {
@@ -1332,9 +1322,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                                 topLeft: Radius.circular(10),
                                 bottomLeft: Radius.circular(10)),
                           ),
-                          width: MediaQuery.of(context).size.width - 953 < 100
-                              ? 100
-                              : MediaQuery.of(context).size.width - 953,
+                          width: 220,
                           child: Center(
                             child: Text(
                               _chosenCountryCode!,

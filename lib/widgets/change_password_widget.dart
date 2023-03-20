@@ -1,6 +1,3 @@
-import 'dart:convert';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_frontend/auth/auth_sqflite_handler.dart';
 import 'package:flutter_frontend/auth/auth_user.dart';
@@ -16,7 +13,10 @@ class ChangePasswordWidget extends StatefulWidget {
   final Function closeActualWidget;
 
   const ChangePasswordWidget(
-      {required this.session, required this.user, required this.languages, required this.closeActualWidget});
+      {required this.session,
+      required this.user,
+      required this.languages,
+      required this.closeActualWidget});
 
   @override
   _ChangePasswordWidgetState createState() => _ChangePasswordWidgetState();
@@ -45,8 +45,20 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
         AppBar(
           backgroundColor: Colors.black,
           leading: InkWell(
-            child: Icon(Icons.arrow_back_outlined, color: Colors.grey,),
+            child: Icon(
+              Icons.arrow_back_outlined,
+              color: Colors.grey,
+            ),
             onTap: () => widget.closeActualWidget(),
+          ),
+          title: Center(
+            child: Text(
+              languages.changePasswordLabel,
+              style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20),
+            ),
           ),
         ),
         Container(
@@ -55,7 +67,7 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
           child: Center(
             child: Container(
               padding:
-              EdgeInsets.all(MediaQuery.of(context).size.height * 0.02),
+                  EdgeInsets.all(MediaQuery.of(context).size.height * 0.02),
               width: 600,
               height: 1500,
               child: Column(
@@ -94,10 +106,10 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
                             },
                           ),
                           focusedBorder:
-                          OutlineInputBorder(borderSide: BorderSide.none),
+                              OutlineInputBorder(borderSide: BorderSide.none),
                           hintText: languages.passwordLabel,
                           hintStyle:
-                          TextStyle(color: Colors.black.withOpacity(0.5)),
+                              TextStyle(color: Colors.black.withOpacity(0.5)),
                         ),
                       ),
                     ),
@@ -136,10 +148,10 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
                             },
                           ),
                           focusedBorder:
-                          OutlineInputBorder(borderSide: BorderSide.none),
+                              OutlineInputBorder(borderSide: BorderSide.none),
                           hintText: languages.passAgainLabel,
                           hintStyle:
-                          TextStyle(color: Colors.black.withOpacity(0.5)),
+                              TextStyle(color: Colors.black.withOpacity(0.5)),
                         ),
                       ),
                     ),
@@ -152,7 +164,7 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
                       child: ElevatedButton(
                         style: ButtonStyle(
                           backgroundColor:
-                          MaterialStateProperty.all<Color>(Colors.yellow),
+                              MaterialStateProperty.all<Color>(Colors.yellow),
                         ),
                         onPressed: _onChangePressed,
                         child: Text(

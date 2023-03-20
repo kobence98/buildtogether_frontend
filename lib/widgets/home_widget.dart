@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'dart:io';
+import 'dart:html';
 
 import 'package:easy_sidemenu/easy_sidemenu.dart';
 import 'package:flutter/material.dart';
@@ -12,45 +12,47 @@ import 'package:flutter_frontend/languages/english_language.dart';
 import 'package:flutter_frontend/languages/hungarian_language.dart';
 import 'package:flutter_frontend/languages/languages.dart';
 import 'package:flutter_frontend/static/date_formatter.dart';
+import 'package:flutter_frontend/widgets/create_post_widget.dart';
 import 'package:flutter_frontend/widgets/my_account_widget.dart';
 import 'package:flutter_frontend/widgets/single_post_widget.dart';
 import 'package:flutter_frontend/widgets/statistic_page.dart';
 import 'package:flutter_frontend/widgets/subscription_handling_widget.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:geocoding/geocoding.dart' as geocoding;
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:like_button/like_button.dart';
 import 'package:location/location.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import '../entities/feed_type.dart';
+import '../static/inno_loading.dart';
 import 'companies_widget.dart';
 import 'filtered_posts_widget.dart';
 import 'liked_posts_widget.dart';
 import 'open_image_widget.dart';
 
-class PostsWidget extends StatefulWidget {
+class HomeWidget extends StatefulWidget {
   final Session session;
   final User user;
   final int initPage;
+  final int initTab;
   final Languages languages;
   final Function hideNavBar;
   final Function navBarStatusChangeableAgain;
 
-  const PostsWidget(
+  const HomeWidget(
       {required this.session,
       required this.user,
-      required this.initPage,
+      required this.initTab,
       required this.languages,
       required this.navBarStatusChangeableAgain,
-      required this.hideNavBar});
+      required this.hideNavBar, required this.initPage});
 
   @override
-  _PostsWidgetState createState() => _PostsWidgetState();
+  _HomeWidgetState createState() => _HomeWidgetState();
 }
 
-class _PostsWidgetState extends State<PostsWidget> {
+class _HomeWidgetState extends State<HomeWidget> {
   final TextEditingController _searchFieldController = TextEditingController();
   bool loading = false;
   RefreshController _refreshNewController =
@@ -59,6 +61,7 @@ class _PostsWidgetState extends State<PostsWidget> {
       RefreshController(initialRefresh: false);
   RefreshController _refreshOwnController =
       RefreshController(initialRefresh: false);
+  ScrollController _scrollController = ScrollController();
   List<SearchFieldNames> names = [];
   String? country;
   bool loadedNewPosts = false;
@@ -78,18 +81,27 @@ class _PostsWidgetState extends State<PostsWidget> {
       PagingController(firstPageKey: 0);
   final PagingController<int, Post> _pagingOwnController =
       PagingController(firstPageKey: 0);
+  late Widget _mainPage = _scrollableInnerWidget();
 
-  PageController page = PageController();
-  SideMenuController _sideMenuController = SideMenuController();
+  late PageController page;
+  late SideMenuController _sideMenuController;
 
-  List<SideMenuItem> items = [];
+  late List<SideMenuItem> items;
+  int _currentTab = 1;
+  bool _mainLoading = true;
 
   //TODO language change
   @override
   void initState() {
     super.initState();
+    page = PageController(initialPage: widget.initPage);
+    _sideMenuController = SideMenuController(initialPage: 0);
     languages = widget.languages;
-    _initPageControllers();
+    _initPageControllers().whenComplete(() {
+      setState(() {
+        _mainLoading = false;
+      });
+    });
   }
 
   Future<void> _fetchPage(int pageKey, FeedType feedType) async {
@@ -112,147 +124,61 @@ class _PostsWidgetState extends State<PostsWidget> {
     try {
       LocationData? locationData;
       bool useLocation = false;
-      if (widget.user.setByLocale) {
-        Location location = new Location();
-        bool _serviceEnabled = await location.serviceEnabled();
-        if (_serviceEnabled) {
-          bool _requestedServiceEnabled = await location.requestService();
-          if (_requestedServiceEnabled) {
-            PermissionStatus _permissionGranted =
-                await location.hasPermission();
-            if (_permissionGranted == PermissionStatus.denied) {
-              if (Platform.isAndroid) {
-                await explainPermissionDialog();
-              }
-              PermissionStatus _permissionGrantedAfterAsk =
-                  await location.requestPermission();
-              if (_permissionGrantedAfterAsk != PermissionStatus.granted) {
-                locationErrorToast();
-              } else {
-                locationData = await location.getLocation();
-                useLocation = true;
-              }
-            } else if (_permissionGranted == PermissionStatus.granted) {
-              locationData = await location.getLocation();
-              useLocation = true;
-            }
-          } else {
-            locationErrorToast();
-          }
-        } else {
-          locationErrorToast();
-        }
-      }
+      // if (widget.user.setByLocale) {
+      //   Location location = new Location();
+      //   bool _serviceEnabled = await location.serviceEnabled();
+      //   if (_serviceEnabled) {
+      //     bool _requestedServiceEnabled = await location.requestService();
+      //     if (_requestedServiceEnabled) {
+      //       PermissionStatus _permissionGranted =
+      //           await location.hasPermission();
+      //       if (_permissionGranted == PermissionStatus.denied) {
+      //         if (Platform.isAndroid) {
+      //           await explainPermissionDialog();
+      //         }
+      //         PermissionStatus _permissionGrantedAfterAsk =
+      //             await location.requestPermission();
+      //         if (_permissionGrantedAfterAsk != PermissionStatus.granted) {
+      //           locationErrorToast();
+      //         } else {
+      //           locationData = await location.getLocation();
+      //           useLocation = true;
+      //         }
+      //       } else if (_permissionGranted == PermissionStatus.granted) {
+      //         locationData = await location.getLocation();
+      //         useLocation = true;
+      //       }
+      //     } else {
+      //       locationErrorToast();
+      //     }
+      //   } else {
+      //     locationErrorToast();
+      //   }
+      // }
       String countryCode =
           widget.user.locale == null ? 'Global' : widget.user.locale!;
       String? countryCodeByLocation;
-      if (useLocation && locationData != null) {
-        List<geocoding.Placemark> address =
-            await geocoding.placemarkFromCoordinates(
-                locationData.latitude!, locationData.longitude!);
-        if (address.isEmpty || address.first.isoCountryCode == null) {
-          locationErrorToast();
-        } else {
-          countryCodeByLocation = address.first.isoCountryCode!;
-        }
-      }
+      // if (useLocation && locationData != null) {
+      //   List<geocoding.Placemark> address =
+      //       await geocoding.placemarkFromCoordinates(
+      //           locationData.latitude!, locationData.longitude!);
+      //   if (address.isEmpty || address.first.isoCountryCode == null) {
+      //     locationErrorToast();
+      //   } else {
+      //     countryCodeByLocation = address.first.isoCountryCode!;
+      //   }
+      // }
 
-      // dynamic data = <String, dynamic>{
-      //   'countryCode': countryCode,
-      //   'countryCodeByLocation': countryCodeByLocation,
-      //   'pageNumber': pageKey / _pageSize,
-      //   'pageSize': _pageSize
-      // };
-      // dynamic body = json.decode(
-      //     utf8.decode((await widget.session.postJson(url, data)).bodyBytes));
-      // List<Post> newItems =
-      //     List<Post>.from(body.map((model) => Post.fromJson(model)));
-      List<Post> newItems = [
-        Post(
-            now: DateTime.now(),
-            postId: 1,
-            title: 'Első poszt',
-            description:
-                'Ez a ho\nss\nza\nbb le\nír\nása a posz\nnak. NI\nUDSa o\nbsd8f\no bewoi D\nEU\nOQW\nZ  BR\nDQ\nWUOE RB\nduis\nao\nna\ns fa\nuo\nsd\ne f\nua\nsdo bfd\nasu',
-            companyName: 'Ubul Studio',
-            userName: 'Kovács Bence',
-            creatorEmail: 'kobence98@gmail.com',
-            likeNumber: 10,
-            liked: true,
-            companyId: 4,
-            createdDate: DateTime.now(),
-            commentNumber: 0,
-            implemented: true,
-            postType: 'SIMPLE_POST',
-            pollOptions: [],
-            companyUserId: 2,
-            companyImageId: 1,
-            creatorId: 1,
-            postImageId: null),
-        Post(
-            now: DateTime.now(),
-            postId: 2,
-            title: 'Második poszt',
-            description:
-                'Ez a hosszabb leírása a posztnak. NIUDSa obsd8fo bewoi DEUOQWZ  BRDQWUOE RB\nduisaonas fauosde fuasdo bfdasu',
-            companyName: 'Ubul Studio',
-            userName: 'Kovács Bence',
-            creatorEmail: 'kobence98@gmail.com',
-            likeNumber: 10,
-            liked: true,
-            companyId: 4,
-            createdDate: DateTime.now(),
-            commentNumber: 0,
-            implemented: true,
-            postType: 'SIMPLE_POST',
-            pollOptions: [],
-            companyUserId: 2,
-            companyImageId: 1,
-            creatorId: 1,
-            postImageId: null),
-        Post(
-            now: DateTime.now(),
-            postId: 3,
-            title: 'Harmadik poszt',
-            description:
-                'Ez a hosszabb leírása a posztnak. NIUDSa obsd8fo bewoi DEUOQWZ  BRDQWUOE RB\nduisaonas fauosde fuasdo bfdasu',
-            companyName: 'Ubul Studio',
-            userName: 'Kovács Bence',
-            creatorEmail: 'kobence98@gmail.com',
-            likeNumber: 10,
-            liked: true,
-            companyId: 4,
-            createdDate: DateTime.now(),
-            commentNumber: 0,
-            implemented: true,
-            postType: 'SIMPLE_POST',
-            pollOptions: [],
-            companyUserId: 2,
-            companyImageId: 1,
-            creatorId: 1,
-            postImageId: null),
-        Post(
-            now: DateTime.now(),
-            postId: 4,
-            title: 'Negyedik poszt',
-            description:
-                'Ez a hosszabb leírása a posztnak. NIUDSa obsd8fo bewoi DEUOQWZ  BRDQWUOE RB\nduisaonas fauosde fuasdo bfdasu',
-            companyName: 'Ubul Studio',
-            userName: 'Kovács Bence',
-            creatorEmail: 'kobence98@gmail.com',
-            likeNumber: 10,
-            liked: true,
-            companyId: 4,
-            createdDate: DateTime.now(),
-            commentNumber: 0,
-            implemented: true,
-            postType: 'SIMPLE_POST',
-            pollOptions: [],
-            companyUserId: 2,
-            companyImageId: 1,
-            creatorId: 1,
-            postImageId: null),
-      ];
+      dynamic data = <String, dynamic>{
+        'countryCode': countryCode,
+        'countryCodeByLocation': countryCodeByLocation,
+        'pageNumber': pageKey / _pageSize,
+        'pageSize': _pageSize
+      };
+      dynamic body = json.decode(
+          utf8.decode((await widget.session.postJson(url, data)).bodyBytes));
+      List<Post> newItems =
+          List<Post>.from(body.map((model) => Post.fromJson(model)));
       final isLastPage = newItems.length < _pageSize;
       if (isLastPage) {
         pagingController.appendLastPage(newItems);
@@ -287,66 +213,141 @@ class _PostsWidgetState extends State<PostsWidget> {
     _refreshOwnController.dispose();
     _couponCodeController.dispose();
     _reportReasonTextFieldController.dispose();
+    _sideMenuController.dispose();
+    _scrollController.dispose();
+    page.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    _addMenuItems();
-    return SafeArea(
-      child: Scaffold(
-        body: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Container(
-              padding: EdgeInsets.all(4),
-              color: Colors.grey.shade900,
-              child: SideMenu(
-                collapseWidth: 1000,
-                style: SideMenuStyle(
-                    backgroundColor: Colors.black,
-                    selectedTitleTextStyle:
-                        TextStyle(color: Colors.grey.shade500),
-                    unselectedTitleTextStyle:
-                        TextStyle(color: Colors.grey.shade500),
-                    selectedIconColor: Colors.grey.shade500,
-                    unselectedIconColor: Colors.grey.shade500,
-                    selectedColor: Colors.grey.shade900),
-                title: Container(
-                  margin: EdgeInsets.only(bottom: 4),
-                  padding: EdgeInsets.only(bottom: 4),
+    return Scaffold(
+      body: _mainLoading
+          ? InnoLoading()
+          : Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Container(
+                  padding: EdgeInsets.all(4),
                   color: Colors.grey.shade900,
-                  child: Image.asset('images/launcher_icon.png'),
+                  child: SideMenu(
+                    collapseWidth: 1000,
+                    style: SideMenuStyle(
+                        backgroundColor: Colors.black,
+                        selectedTitleTextStyle:
+                            TextStyle(color: Colors.grey.shade500),
+                        unselectedTitleTextStyle:
+                            TextStyle(color: Colors.grey.shade500),
+                        selectedIconColor: Colors.grey.shade500,
+                        unselectedIconColor: Colors.grey.shade500,
+                        selectedColor: Colors.grey.shade900),
+                    title: Container(
+                      margin: EdgeInsets.only(bottom: 4),
+                      padding: EdgeInsets.only(bottom: 4),
+                      color: Colors.grey.shade900,
+                      child: Image.asset('assets/images/launcher_icon.png'),
+                    ),
+                    items: [
+                      SideMenuItem(
+                        // Priority of item to show on SideMenu, lower value is displayed at the top
+                        priority: 0,
+                        title: languages.mainPageLabel,
+                        onTap: (int, controller) {
+                          _sideMenuController.changePage(0);
+                          page.jumpToPage(0);
+                        },
+                        icon: Icon(Icons.home),
+                      ),
+                      SideMenuItem(
+                        priority: 1,
+                        title: languages.createPostLabel,
+                        onTap: (int, controller) {
+                          _sideMenuController.changePage(1);
+                          page.jumpToPage(1);
+                        },
+                        icon: Icon(Icons.create),
+                      ),
+                      SideMenuItem(
+                        priority: 2,
+                        title: languages.myAccountLabel,
+                        onTap: (int, controller) {
+                          _sideMenuController.changePage(2);
+                          page.jumpToPage(2);
+                        },
+                        icon: Icon(Icons.perm_identity),
+                      ),
+                      SideMenuItem(
+                        priority: 3,
+                        title: languages.companiesLabel,
+                        onTap: (int, controller) {
+                          _sideMenuController.changePage(3);
+                          page.jumpToPage(3);
+                        },
+                        icon: Icon(Icons.factory),
+                      ),
+                      SideMenuItem(
+                        priority: 4,
+                        title: languages.likedPostsLabel,
+                        onTap: (int, controller) {
+                          _sideMenuController.changePage(4);
+                          page.jumpToPage(4);
+                        },
+                        icon: Icon(Icons.lightbulb),
+                      ),
+                      ...widget.user.roles.contains('ROLE_COMPANY')
+                          ? [
+                              SideMenuItem(
+                                priority: 5,
+                                title: languages.subscriptionHandlingLabel,
+                                onTap: (int, controller) {
+                                  _sideMenuController.changePage(5);
+                                  page.jumpToPage(5);
+                                },
+                                icon: Icon(Icons.subscriptions),
+                              )
+                            ]
+                          : [],
+                    ],
+                    controller: _sideMenuController,
+                  ),
                 ),
-                items: items,
-                controller: _sideMenuController,
-              ),
-            ),
-            Expanded(
-              child: PageView(
-                controller: page,
-                children: [
-                  _scrollableInnerWidget(),
-                  MyAccountWidget(
-                      languages: languages,
-                      session: widget.session,
-                      user: widget.user,),
-                  CompaniesWidget(
-                    session: widget.session,
-                    languages: languages,
+                Expanded(
+                  child: PageView(
+                    controller: page,
+                    children: [
+                      _mainPage,
+                      CreatePostWidget(
+                        session: widget.session,
+                        user: widget.user,
+                        languages: languages,
+                      ),
+                      MyAccountWidget(
+                        languages: languages,
+                        session: widget.session,
+                        user: widget.user,
+                      ),
+                      CompaniesWidget(
+                        session: widget.session,
+                        languages: languages,
+                      ),
+                      LikedPostsWidget(
+                        backToPostsPage: () {
+                          _backToPostsPage();
+                        },
+                        user: widget.user,
+                        session: widget.session,
+                        languages: languages,
+                      ),
+                      SubscriptionHandlingWidget(
+                        languages: languages,
+                        user: widget.user,
+                        session: widget.session,
+                      )
+                    ],
                   ),
-                  LikedPostsWidget(
-                    user: widget.user,
-                    session: widget.session,
-                    languages: languages,
-                  ),
-                  SubscriptionHandlingWidget(languages: languages, user: widget.user, session: widget.session,)
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
     );
   }
 
@@ -430,7 +431,7 @@ class _PostsWidgetState extends State<PostsWidget> {
           itemBuilder: (context, post, postIndex) => InkWell(
             child: Center(
               child: Container(
-                height: 500,
+                height: 510,
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                     color: Colors.yellow.withOpacity(0.1),
@@ -641,7 +642,7 @@ class _PostsWidgetState extends State<PostsWidget> {
                       ),
                     ),
                     Container(
-                      height: 345,
+                      height: post.postImageId != null ? 263 : 345,
                       padding: EdgeInsets.only(
                           left: 15, right: 15, top: 5, bottom: 5),
                       alignment: Alignment.topLeft,
@@ -779,23 +780,22 @@ class _PostsWidgetState extends State<PostsWidget> {
                                     color: Colors.white,
                                     onPressed: () async {
                                       await widget.hideNavBar();
-                                      Navigator.of(context)
-                                          .push(MaterialPageRoute(
-                                              builder: (context) =>
-                                                  SinglePostWidget(
-                                                    commentTapped: true,
-                                                    session: widget.session,
-                                                    post: post,
-                                                    user: widget.user,
-                                                    languages: languages,
-                                                    hideNavBar:
-                                                        widget.hideNavBar,
-                                                    navBarStatusChangeableAgain:
-                                                        widget
-                                                            .navBarStatusChangeableAgain,
-                                                  )))
-                                          .whenComplete(() => widget
-                                              .navBarStatusChangeableAgain());
+                                      setState(() {
+                                        _mainPage = SinglePostWidget(
+                                          jumpToPage: _jumpToPage,
+                                          backToPostsPage: () {
+                                            _backToPostsPage();
+                                          },
+                                          commentTapped: true,
+                                          session: widget.session,
+                                          post: post,
+                                          user: widget.user,
+                                          languages: languages,
+                                          hideNavBar: widget.hideNavBar,
+                                          navBarStatusChangeableAgain: widget
+                                              .navBarStatusChangeableAgain,
+                                        );
+                                      });
                                     },
                                   ),
                                 ],
@@ -906,29 +906,31 @@ class _PostsWidgetState extends State<PostsWidget> {
 
   void _onPostTap(Post post) async {
     await widget.hideNavBar();
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => SinglePostWidget(
-                commentTapped: false,
-                post: post,
-                session: widget.session,
-                user: widget.user,
-                languages: languages,
-                hideNavBar: widget.hideNavBar,
-                navBarStatusChangeableAgain: widget.navBarStatusChangeableAgain,
-              )),
-    ).whenComplete(() {
-      widget.navBarStatusChangeableAgain();
-      widget.session
-          .get('/api/posts/' + post.postId.toString())
-          .then((response) {
-        if (response.statusCode == 200) {
-          setState(() {
-            post = Post.fromJson(json.decode(utf8.decode(response.bodyBytes)));
+    setState(() {
+      _mainPage = SinglePostWidget(
+        jumpToPage: _jumpToPage,
+        commentTapped: false,
+        post: post,
+        session: widget.session,
+        user: widget.user,
+        languages: languages,
+        hideNavBar: widget.hideNavBar,
+        navBarStatusChangeableAgain: widget.navBarStatusChangeableAgain,
+        backToPostsPage: () {
+          _backToPostsPage();
+          widget.navBarStatusChangeableAgain();
+          widget.session
+              .get('/api/posts/' + post.postId.toString())
+              .then((response) {
+            if (response.statusCode == 200) {
+              setState(() {
+                post =
+                    Post.fromJson(json.decode(utf8.decode(response.bodyBytes)));
+              });
+            }
           });
-        }
-      });
+        },
+      );
     });
   }
 
@@ -944,39 +946,51 @@ class _PostsWidgetState extends State<PostsWidget> {
           fontSize: 16.0);
     } else {
       await widget.hideNavBar();
-      Navigator.of(context)
-          .push(MaterialPageRoute(
-              builder: (context) => FilteredPostsWidget(
-                    session: widget.session,
-                    pattern: _searchFieldController.text,
-                    user: widget.user,
-                    languages: languages,
-                  )))
-          .whenComplete(() {
-        widget.navBarStatusChangeableAgain();
-        _searchFieldController.clear();
-        FocusManager.instance.primaryFocus?.unfocus();
+      setState(() {
+        _mainPage = FilteredPostsWidget(
+          jumpToPage: _jumpToPage,
+          backToPostsPage: () {
+            _backToPostsPage();
+            widget.navBarStatusChangeableAgain();
+            _searchFieldController.clear();
+            FocusManager.instance.primaryFocus?.unfocus();
+          },
+          session: widget.session,
+          pattern: _searchFieldController.text,
+          user: widget.user,
+          languages: languages,
+        );
       });
     }
   }
 
   void _onSearchComplete() async {
     if (_searchFieldController.text.isEmpty) {
+      Fluttertoast.showToast(
+          msg: languages.fillTheSearchFieldWarningMessage,
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 4,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
       FocusManager.instance.primaryFocus?.unfocus();
     } else {
       await widget.hideNavBar();
-      Navigator.of(context)
-          .push(MaterialPageRoute(
-              builder: (context) => FilteredPostsWidget(
-                    session: widget.session,
-                    pattern: _searchFieldController.text,
-                    user: widget.user,
-                    languages: languages,
-                  )))
-          .whenComplete(() {
-        widget.navBarStatusChangeableAgain();
-        _searchFieldController.clear();
-        FocusManager.instance.primaryFocus?.unfocus();
+      setState(() {
+        _mainPage = FilteredPostsWidget(
+          jumpToPage: _jumpToPage,
+          backToPostsPage: () {
+            _backToPostsPage();
+            widget.navBarStatusChangeableAgain();
+            _searchFieldController.clear();
+            FocusManager.instance.primaryFocus?.unfocus();
+          },
+          session: widget.session,
+          pattern: _searchFieldController.text,
+          user: widget.user,
+          languages: languages,
+        );
       });
     }
   }
@@ -1372,7 +1386,7 @@ class _PostsWidgetState extends State<PostsWidget> {
         fontSize: 16.0);
   }
 
-  void _initPageControllers() {
+  Future<void> _initPageControllers() async {
     _pagingNewController.addPageRequestListener((pageKey) {
       _fetchPage(pageKey, FeedType.NEW);
     });
@@ -1414,14 +1428,16 @@ class _PostsWidgetState extends State<PostsWidget> {
 
   void _openStatisticPage(int postId) async {
     await widget.hideNavBar();
-    Navigator.of(context)
-        .push(MaterialPageRoute(
-            builder: (context) => StatisticPage(
-                  postId: postId,
-                  session: widget.session,
-                  languages: languages,
-                )))
-        .whenComplete(() => widget.navBarStatusChangeableAgain());
+    setState(() {
+      _mainPage = StatisticPage(
+        postId: postId,
+        session: widget.session,
+        languages: languages,
+        backToPostsPage: () {
+          _backToPostsPage();
+        },
+      );
+    });
   }
 
   //TODO a nyelvesítést szebben megoldani valami memóriával ha más nem, de ez így nem jó
@@ -1486,214 +1502,259 @@ class _PostsWidgetState extends State<PostsWidget> {
                   ),
           ),
           DefaultTabController(
-            initialIndex: widget.initPage,
+            initialIndex: widget.initTab,
             length: 3,
             child: Center(
               child: Container(
-                width: 700,
-                child: NestedScrollView(
-                  headerSliverBuilder:
-                      (BuildContext context, bool innerBoxIsScrolled) {
-                    return <Widget>[
-                      SliverAppBar(
-                        backgroundColor: Colors.black,
-                        automaticallyImplyLeading: false,
-                        title: Container(
-                          height: 40,
-                          padding: EdgeInsets.only(left: 5, right: 5),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border.all(
-                              color: Colors.white,
-                            ),
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(20),
-                            ),
-                          ),
-                          child: Row(
-                            children: [
-                              Flexible(
-                                child: TypeAheadField(
-                                  loadingBuilder: (context) {
-                                    return Container(
-                                      height: 50,
-                                      padding: EdgeInsets.all(1),
-                                      color: Colors.yellow,
-                                      child: Container(
-                                          color: Colors.black,
-                                          child: Center(
-                                            child: Image(
-                                                image: new AssetImage(
-                                                    "assets/images/loading_breath.gif")),
-                                          )),
-                                    );
-                                  },
-                                  noItemsFoundBuilder: (context) {
-                                    return Container(
-                                      padding: EdgeInsets.all(1),
-                                      color: Colors.yellow,
-                                      child: Container(
-                                        color: Colors.black,
-                                        child: ListTile(
-                                          leading: Icon(
-                                            Icons.not_interested_rounded,
-                                            color: Colors.yellow,
-                                          ),
-                                          title: Text(
-                                            languages.noItemsFoundLabel,
-                                            style: TextStyle(
+                child: RawScrollbar(
+                  controller: _scrollController,
+                  thumbVisibility: true,
+                  thumbColor: Colors.grey,
+                  child: NestedScrollView(
+                    controller: _scrollController,
+                    headerSliverBuilder:
+                        (BuildContext context, bool innerBoxIsScrolled) {
+                      return [
+                        SliverAppBar(
+                          backgroundColor: Colors.black,
+                          automaticallyImplyLeading: false,
+                          title: Center(
+                            child: Container(
+                              height: 40,
+                              width: 700,
+                              padding: EdgeInsets.only(left: 10, right: 10),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                border: Border.all(
+                                  color: Colors.white,
+                                ),
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(20),
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Container(
+                                    width: MediaQuery.of(context).size.width >
+                                            800
+                                        ? 580
+                                        : MediaQuery.of(context).size.width -
+                                            220,
+                                    child: TypeAheadField(
+                                      loadingBuilder: (context) {
+                                        return Container(
+                                          height: 50,
+                                          padding: EdgeInsets.all(1),
+                                          color: Colors.yellow,
+                                          child: Container(
+                                              color: Colors.black,
+                                              child: Center(
+                                                child: Image(
+                                                    image: new AssetImage(
+                                                        "assets/images/loading_breath.gif")),
+                                              )),
+                                        );
+                                      },
+                                      noItemsFoundBuilder: (context) {
+                                        return Container(
+                                          padding: EdgeInsets.all(1),
+                                          color: Colors.yellow,
+                                          child: Container(
+                                            color: Colors.black,
+                                            child: ListTile(
+                                              leading: Icon(
+                                                Icons.not_interested_rounded,
                                                 color: Colors.yellow,
-                                                fontStyle: FontStyle.italic,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 20),
+                                              ),
+                                              title: Text(
+                                                languages.noItemsFoundLabel,
+                                                style: TextStyle(
+                                                    color: Colors.yellow,
+                                                    fontStyle: FontStyle.italic,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 20),
+                                              ),
+                                            ),
                                           ),
-                                        ),
+                                        );
+                                      },
+                                      minCharsForSuggestions: 1,
+                                      textFieldConfiguration:
+                                          TextFieldConfiguration(
+                                        decoration:
+                                            new InputDecoration.collapsed(
+                                                hintText:
+                                                    languages.searchLabel),
+                                        controller: _searchFieldController,
+                                        cursorColor: Colors.black,
+                                        autofocus: false,
+                                        style: TextStyle(fontSize: 20),
+                                        onEditingComplete: _onSearchComplete,
                                       ),
-                                    );
-                                  },
-                                  minCharsForSuggestions: 1,
-                                  textFieldConfiguration:
-                                      TextFieldConfiguration(
-                                    decoration: new InputDecoration.collapsed(
-                                        hintText: languages.searchLabel),
-                                    controller: _searchFieldController,
-                                    cursorColor: Colors.black,
-                                    autofocus: false,
-                                    style: TextStyle(fontSize: 20),
-                                    onEditingComplete: _onSearchComplete,
-                                  ),
-                                  suggestionsCallback: (pattern) async {
-                                    dynamic response = await widget.session
-                                        .get("/api/searchField/" + pattern);
-                                    if (response.statusCode == 200) {
-                                      widget.session.updateCookie(response);
-                                      Iterable l = json.decode(
-                                          utf8.decode(response.bodyBytes));
-                                      names = List<SearchFieldNames>.from(l.map(
-                                          (name) =>
-                                              SearchFieldNames.fromJson(name)));
-                                      List<String> resultList = [];
-                                      names.forEach((name) {
-                                        if (name.id != null) {
-                                          resultList.add(name.id.toString());
-                                        } else {
-                                          resultList.add(name.name);
+                                      suggestionsCallback: (pattern) async {
+                                        dynamic response = await widget.session
+                                            .get("/api/searchField/" + pattern);
+                                        if (response.statusCode == 200) {
+                                          Iterable l = json.decode(
+                                              utf8.decode(response.bodyBytes));
+                                          names = List<SearchFieldNames>.from(
+                                              l.map((name) =>
+                                                  SearchFieldNames.fromJson(
+                                                      name)));
+                                          List<String> resultList = [];
+                                          names.forEach((name) {
+                                            if (name.id != null) {
+                                              resultList
+                                                  .add(name.id.toString());
+                                            } else {
+                                              resultList.add(name.name);
+                                            }
+                                          });
+                                          return resultList;
                                         }
-                                      });
-                                      return resultList;
-                                    }
-                                    return [];
-                                  },
-                                  itemBuilder: (context, n) {
-                                    SearchFieldNames? name;
-                                    if (names
-                                        .where((nm) => nm.id.toString() == n)
-                                        .isNotEmpty) {
-                                      name = names
-                                          .where((nm) => nm.id.toString() == n)
-                                          .first;
-                                    }
-                                    return Container(
-                                      padding: EdgeInsets.all(1),
-                                      color: Colors.yellow,
-                                      child: Container(
-                                        color: Colors.black,
-                                        child: ListTile(
-                                          leading: name != null
-                                              ? CircleAvatar(
-                                                  radius: 20,
-                                                  backgroundImage: NetworkImage(
-                                                    widget.session.domainName +
-                                                        "/api/images/" +
-                                                        name.imageId.toString(),
-                                                    headers:
-                                                        widget.session.headers,
-                                                  ),
-                                                )
-                                              : Icon(
-                                                  Icons.lightbulb_outline_sharp,
-                                                  color: Colors.yellow,
+                                        return [];
+                                      },
+                                      itemBuilder: (context, n) {
+                                        SearchFieldNames? name;
+                                        if (names
+                                            .where(
+                                                (nm) => nm.id.toString() == n)
+                                            .isNotEmpty) {
+                                          name = names
+                                              .where(
+                                                  (nm) => nm.id.toString() == n)
+                                              .first;
+                                        }
+                                        return GestureDetector(
+                                          onPanDown: (_) {
+                                            String name;
+                                            if (names
+                                                .where((nm) =>
+                                                    nm.id.toString() == n)
+                                                .isNotEmpty) {
+                                              name = names
+                                                  .where((nm) =>
+                                                      nm.id.toString() == n)
+                                                  .first
+                                                  .name;
+                                            } else {
+                                              name = n.toString();
+                                            }
+                                            _searchFieldController.text =
+                                                name.toString();
+                                            _onSearchButtonPressed();
+                                          },
+                                          child: Container(
+                                            padding: EdgeInsets.all(1),
+                                            color: Colors.yellow,
+                                            child: Container(
+                                              color: Colors.black,
+                                              child: ListTile(
+                                                onTap: () {},
+                                                leading: name != null
+                                                    ? CircleAvatar(
+                                                        radius: 20,
+                                                        backgroundImage:
+                                                            NetworkImage(
+                                                          widget.session
+                                                                  .domainName +
+                                                              "/api/images/" +
+                                                              name.imageId
+                                                                  .toString(),
+                                                          headers: widget
+                                                              .session.headers,
+                                                        ),
+                                                      )
+                                                    : Icon(
+                                                        Icons
+                                                            .lightbulb_outline_sharp,
+                                                        color: Colors.yellow,
+                                                      ),
+                                                title: Text(
+                                                  name == null
+                                                      ? n.toString()
+                                                      : name.name,
+                                                  style: TextStyle(
+                                                      color: Colors.yellow,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 20),
                                                 ),
-                                          title: Text(
-                                            name == null
-                                                ? n.toString()
-                                                : name.name,
-                                            style: TextStyle(
-                                                color: Colors.yellow,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 20),
+                                              ),
+                                            ),
                                           ),
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  onSuggestionSelected: (n) {
-                                    String name;
-                                    if (names
-                                        .where((nm) => nm.id.toString() == n)
-                                        .isNotEmpty) {
-                                      name = names
-                                          .where((nm) => nm.id.toString() == n)
-                                          .first
-                                          .name;
-                                    } else {
-                                      name = n.toString();
-                                    }
-                                    _searchFieldController.text =
-                                        name.toString();
-                                    _onSearchButtonPressed();
-                                  },
-                                ),
-                                flex: 8,
-                              ),
-                              Flexible(
-                                child: IconButton(
-                                  icon: Icon(
-                                    Icons.search,
-                                    color: Colors.black,
+                                        );
+                                      },
+                                      onSuggestionSelected: (suggestion) {},
+                                    ),
                                   ),
-                                  onPressed: _onSearchButtonPressed,
-                                ),
-                                flex: 1,
+                                  Container(
+                                    width: 50,
+                                    child: IconButton(
+                                      icon: Icon(
+                                        Icons.search,
+                                        color: Colors.black,
+                                      ),
+                                      onPressed: _onSearchButtonPressed,
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
+                            ),
                           ),
+                          pinned: true,
+                          floating: true,
+                          snap: true,
+                          forceElevated: innerBoxIsScrolled,
+                          bottom: TabBar(
+                              onTap: (int tabNumber) {
+                                if (_currentTab != tabNumber) {
+                                  _currentTab = tabNumber;
+                                  _scrollController.jumpTo(0);
+                                }
+                              },
+                              labelColor: Colors.yellow,
+                              indicatorColor: Colors.yellow,
+                              tabs: [
+                                Tab(
+                                  child: Text(
+                                    languages.bestLabel,
+                                    style: TextStyle(color: Colors.yellow),
+                                  ),
+                                ),
+                                Tab(
+                                  child: Text(
+                                    languages.newLabel,
+                                    style: TextStyle(color: Colors.yellow),
+                                  ),
+                                ),
+                                Tab(
+                                  child: Text(
+                                    languages.ownLabel,
+                                    style: TextStyle(color: Colors.yellow),
+                                  ),
+                                ),
+                              ]),
                         ),
-                        pinned: true,
-                        floating: true,
-                        snap: true,
-                        forceElevated: innerBoxIsScrolled,
-                        bottom: TabBar(
-                            labelColor: Colors.yellow,
-                            indicatorColor: Colors.yellow,
-                            tabs: [
-                              Tab(
-                                child: Text(
-                                  languages.bestLabel,
-                                  style: TextStyle(color: Colors.yellow),
-                                ),
-                              ),
-                              Tab(
-                                child: Text(
-                                  languages.newLabel,
-                                  style: TextStyle(color: Colors.yellow),
-                                ),
-                              ),
-                              Tab(
-                                child: Text(
-                                  languages.ownLabel,
-                                  style: TextStyle(color: Colors.yellow),
-                                ),
-                              ),
-                            ]),
+                      ];
+                    },
+                    body: Center(
+                      child: Container(
+                        width: 700,
+                        margin: EdgeInsets.symmetric(horizontal: 20),
+                        child: TabBarView(
+                          children: [
+                            _postsWidget(_pagingBestController, FeedType.BEST),
+                            _postsWidget(_pagingNewController, FeedType.NEW),
+                            _postsWidget(_pagingOwnController, FeedType.OWN),
+                          ],
+                        ),
                       ),
-                    ];
-                  },
-                  body: TabBarView(children: [
-                    _postsWidget(_pagingBestController, FeedType.BEST),
-                    _postsWidget(_pagingNewController, FeedType.NEW),
-                    _postsWidget(_pagingOwnController, FeedType.OWN),
-                  ]),
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -1703,56 +1764,15 @@ class _PostsWidgetState extends State<PostsWidget> {
     );
   }
 
-  void _addMenuItems() {
-    items = [
-      SideMenuItem(
-        // Priority of item to show on SideMenu, lower value is displayed at the top
-        priority: 0,
-        title: languages.mainPageLabel,
-        onTap: (int, controller) {
-          _sideMenuController.changePage(0);
-          page.jumpToPage(0);
-        },
-        icon: Icon(Icons.home),
-      ),
-      SideMenuItem(
-        priority: 1,
-        title: languages.myAccountLabel,
-        onTap: (int, controller) {
-          _sideMenuController.changePage(1);
-          page.jumpToPage(1);
-        },
-        icon: Icon(Icons.perm_identity),
-      ),
-      SideMenuItem(
-        priority: 2,
-        title: languages.companiesLabel,
-        onTap: (int, controller) {
-          _sideMenuController.changePage(2);
-          page.jumpToPage(2);
-        },
-        icon: Icon(Icons.factory),
-      ),
-      SideMenuItem(
-        priority: 3,
-        title: languages.likedPostsLabel,
-        onTap: (int, controller) {
-          _sideMenuController.changePage(3);
-          page.jumpToPage(3);
-        },
-        icon: Icon(Icons.lightbulb),
-      ),
-    ];
-    if (widget.user.roles.contains('ROLE_COMPANY')) {
-      items.add(SideMenuItem(
-        priority: 4,
-        title: languages.subscriptionHandlingLabel,
-        onTap: (int, controller) {
-          _sideMenuController.changePage(4);
-          page.jumpToPage(4);
-        },
-        icon: Icon(Icons.subscriptions),
-      ));
-    }
+  void _backToPostsPage() {
+    setState(() {
+      _mainPage = _scrollableInnerWidget();
+    });
+  }
+
+  void _jumpToPage(Widget page) {
+    setState(() {
+      _mainPage = page;
+    });
   }
 }

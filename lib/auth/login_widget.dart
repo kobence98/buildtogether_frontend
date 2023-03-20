@@ -1,28 +1,18 @@
 import 'dart:convert';
-import 'dart:io';
+import 'dart:html';
 
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/gestures.dart';
+import 'package:autologin_plugin/autologin_plugin_web.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter_frontend/auth/auth_sqflite_handler.dart';
-import 'package:flutter_frontend/auth/auth_user.dart';
 import 'package:flutter_frontend/auth/registration_widget.dart';
 import 'package:flutter_frontend/design/main_background.dart';
 import 'package:flutter_frontend/languages/english_language.dart';
 import 'package:flutter_frontend/languages/hungarian_language.dart';
-import 'package:flutter_frontend/languages/language_code.dart';
 import 'package:flutter_frontend/languages/languages.dart';
-import 'package:flutter_frontend/languages/languages_sqflite_handler.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../entities/session.dart';
 import '../../entities/user.dart';
-import '../entities/age_bracket.dart';
-import '../entities/gender.dart';
-import '../entities/living_place_type.dart';
-import '../entities/salary_type.dart';
-import '../widgets/posts_widget.dart';
+import '../widgets/home_widget.dart';
 
 class LoginPage extends StatefulWidget {
   final Languages languages;
@@ -38,8 +28,7 @@ class _LoginPageState extends State<LoginPage> {
   final _passwordController = TextEditingController();
   final _forgottenPasswordEmailController = TextEditingController();
   Session session = Session();
-  // AuthSqfLiteHandler authSqfLiteHandler = AuthSqfLiteHandler();
-  // LanguagesSqfLiteHandler languagesSqfLiteHandler = LanguagesSqfLiteHandler();
+
   bool loading = false;
   late Languages languages;
   late bool _passwordVisible;
@@ -60,193 +49,195 @@ class _LoginPageState extends State<LoginPage> {
           child: SafeArea(
             child: loading
                 ? Container(
-              child: Center(
-                child: Image(image: new AssetImage("assets/images/loading_breath.gif")),
-              ),
-            )
+                    child: Center(
+                      child: Image(
+                          image: new AssetImage(
+                              "assets/images/loading_breath.gif")),
+                    ),
+                  )
                 : Center(
-              child: Container(
-                padding: EdgeInsets.all(
-                    MediaQuery.of(context).size.height * 0.02),
-                width: 600,
-                height: 1000,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Center(
-                      child: Row(
+                    child: Container(
+                      padding: EdgeInsets.all(
+                          MediaQuery.of(context).size.height * 0.02),
+                      width: 600,
+                      height: 1000,
+                      child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          InkWell(
-                            child: CircleAvatar(
-                              backgroundColor: Colors.white,
-                              radius: 30,
-                              foregroundImage: AssetImage(
-                                  'icons/flags/png/gb.png',
-                                  package: 'country_icons'),
+                          Center(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                InkWell(
+                                  child: CircleAvatar(
+                                    backgroundColor: Colors.white,
+                                    radius: 30,
+                                    foregroundImage: AssetImage(
+                                        'icons/flags/png/gb.png',
+                                        package: 'country_icons'),
+                                  ),
+                                  onTap: () {
+                                    setState(() {
+                                      languages = LanguageEn();
+                                      // languagesSqfLiteHandler.insertLanguageCode(
+                                      //     LanguageCode(code: 'en', id: 0));
+                                    });
+                                  },
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                InkWell(
+                                  child: CircleAvatar(
+                                    backgroundColor: Colors.white,
+                                    radius: 30,
+                                    foregroundImage: AssetImage(
+                                        'icons/flags/png/hu.png',
+                                        package: 'country_icons'),
+                                  ),
+                                  onTap: () {
+                                    setState(() {
+                                      languages = LanguageHu();
+                                      // languagesSqfLiteHandler.insertLanguageCode(
+                                      //     LanguageCode(code: 'hu', id: 0));
+                                    });
+                                  },
+                                ),
+                              ],
                             ),
-                            onTap: () {
-                              setState(() {
-                                languages = LanguageEn();
-                                // languagesSqfLiteHandler.insertLanguageCode(
-                                //     LanguageCode(code: 'en', id: 0));
-                              });
-                            },
                           ),
                           SizedBox(
-                            width: 10,
+                            height: 10,
                           ),
-                          InkWell(
-                            child: CircleAvatar(
-                              backgroundColor: Colors.white,
-                              radius: 30,
-                              foregroundImage: AssetImage(
-                                  'icons/flags/png/hu.png',
-                                  package: 'country_icons'),
+                          Center(
+                            child: Container(
+                              padding: EdgeInsets.only(left: 20.0),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(10),
+                                ),
+                                color: Colors.yellow.withOpacity(0.7),
+                              ),
+                              child: TextField(
+                                style: TextStyle(color: Colors.black),
+                                controller: _emailController,
+                                cursorColor: Colors.black,
+                                keyboardType: TextInputType.emailAddress,
+                                decoration: InputDecoration(
+                                  focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide.none),
+                                  hintText: languages.emailLabel,
+                                  hintStyle: TextStyle(
+                                      color: Colors.black.withOpacity(0.5)),
+                                ),
+                              ),
                             ),
-                            onTap: () {
-                              setState(() {
-                                languages = LanguageHu();
-                                // languagesSqfLiteHandler.insertLanguageCode(
-                                //     LanguageCode(code: 'hu', id: 0));
-                              });
-                            },
+                          ),
+                          SizedBox(height: 5),
+                          Center(
+                            child: Container(
+                              padding: EdgeInsets.only(left: 20.0),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(10),
+                                ),
+                                color: Colors.yellow.withOpacity(0.7),
+                              ),
+                              child: TextField(
+                                enableSuggestions: false,
+                                autocorrect: false,
+                                obscureText: !_passwordVisible,
+                                style: TextStyle(color: Colors.black),
+                                controller: _passwordController,
+                                cursorColor: Colors.black,
+                                decoration: InputDecoration(
+                                  suffixIcon: IconButton(
+                                    icon: Icon(
+                                      // Based on passwordVisible state choose the icon
+                                      _passwordVisible
+                                          ? Icons.visibility
+                                          : Icons.visibility_off,
+                                      color: Colors.black,
+                                    ),
+                                    onPressed: () {
+                                      // Update the state i.e. toogle the state of passwordVisible variable
+                                      setState(() {
+                                        _passwordVisible = !_passwordVisible;
+                                      });
+                                    },
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide.none),
+                                  hintText: languages.passwordLabel,
+                                  hintStyle: TextStyle(
+                                      color: Colors.black.withOpacity(0.5)),
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 10),
+                          Center(
+                            child: ButtonTheme(
+                              height: 50,
+                              minWidth: 300,
+                              child: ElevatedButton(
+                                style: ButtonStyle(
+                                  backgroundColor:
+                                      MaterialStateProperty.all<Color>(
+                                          Colors.yellow),
+                                ),
+                                onPressed: onLoginPressed,
+                                child: Text(
+                                  languages.loginLabel,
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20,
+                                      color: Colors.black),
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 10),
+                          Center(
+                            child: ButtonTheme(
+                              height: 50,
+                              minWidth: 300,
+                              child: ElevatedButton(
+                                onPressed: onRegistrationPressed,
+                                style: ButtonStyle(
+                                  backgroundColor:
+                                      MaterialStateProperty.all<Color>(
+                                          Colors.yellow),
+                                ),
+                                child: Text(
+                                  languages.registrationLabel,
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20,
+                                      color: Colors.black),
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 5),
+                          Center(
+                            child: Container(
+                              child: InkWell(
+                                child: Text(
+                                  languages.forgottenPasswordLabel,
+                                  style: TextStyle(
+                                      fontStyle: FontStyle.italic,
+                                      fontSize: 15,
+                                      color: Colors.yellow),
+                                ),
+                                onTap: _onForgottenPasswordTap,
+                              ),
+                            ),
                           ),
                         ],
                       ),
                     ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Center(
-                      child: Container(
-                        padding: EdgeInsets.only(left: 20.0),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(10),
-                          ),
-                          color: Colors.yellow.withOpacity(0.7),
-                        ),
-                        child: TextField(
-                          style: TextStyle(color: Colors.black),
-                          controller: _emailController,
-                          cursorColor: Colors.black,
-                          keyboardType: TextInputType.emailAddress,
-                          decoration: InputDecoration(
-                            focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide.none),
-                            hintText: languages.emailLabel,
-                            hintStyle: TextStyle(
-                                color: Colors.black.withOpacity(0.5)),
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 5),
-                    Center(
-                      child: Container(
-                        padding: EdgeInsets.only(left: 20.0),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(10),
-                          ),
-                          color: Colors.yellow.withOpacity(0.7),
-                        ),
-                        child: TextField(
-                          enableSuggestions: false,
-                          autocorrect: false,
-                          obscureText: !_passwordVisible,
-                          style: TextStyle(color: Colors.black),
-                          controller: _passwordController,
-                          cursorColor: Colors.black,
-                          decoration: InputDecoration(
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                // Based on passwordVisible state choose the icon
-                                _passwordVisible
-                                    ? Icons.visibility
-                                    : Icons.visibility_off,
-                                color: Colors.black,
-                              ),
-                              onPressed: () {
-                                // Update the state i.e. toogle the state of passwordVisible variable
-                                setState(() {
-                                  _passwordVisible = !_passwordVisible;
-                                });
-                              },
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide.none),
-                            hintText: languages.passwordLabel,
-                            hintStyle: TextStyle(
-                                color: Colors.black.withOpacity(0.5)),
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    Center(
-                      child: ButtonTheme(
-                        height: 50,
-                        minWidth: 300,
-                        child: ElevatedButton(
-                          style: ButtonStyle(
-                            backgroundColor:
-                            MaterialStateProperty.all<Color>(
-                                Colors.yellow),
-                          ),
-                          onPressed: onLoginPressed,
-                          child: Text(
-                            languages.loginLabel,
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20,
-                                color: Colors.black),
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    Center(
-                      child: ButtonTheme(
-                        height: 50,
-                        minWidth: 300,
-                        child: ElevatedButton(
-                          onPressed: onRegistrationPressed,
-                          style: ButtonStyle(
-                            backgroundColor:
-                            MaterialStateProperty.all<Color>(
-                                Colors.yellow),
-                          ),
-                          child: Text(
-                            languages.registrationLabel,
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20,
-                                color: Colors.black),
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 5),
-                    Center(
-                      child: Container(
-                        child: InkWell(
-                          child: Text(
-                            languages.forgottenPasswordLabel,
-                            style: TextStyle(
-                                fontStyle: FontStyle.italic,
-                                fontSize: 15,
-                                color: Colors.yellow),
-                          ),
-                          onTap: _onForgottenPasswordTap,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+                  ),
           ),
         ),
       ),
@@ -275,20 +266,15 @@ class _LoginPageState extends State<LoginPage> {
     )
         .then((res) {
       if (res.statusCode == 200) {
-        session.updateCookie(res);
+        AutologinPlugin.saveLoginData(username: _emailController.text.split(' ').first, password: _passwordController.text);
         session.get('/api/users/getAuthenticatedUser').then((innerRes) {
           if (innerRes.statusCode == 200) {
-            session.updateCookie(innerRes);
             User user =
                 User.fromJson(jsonDecode(utf8.decode(innerRes.bodyBytes)));
             if (user.active) {
               setState(() {
                 loading = false;
               });
-              // authSqfLiteHandler.insertUser(AuthUser(
-              //     id: 0,
-              //     email: _emailController.text.split(' ').first,
-              //     password: _passwordController.text));
               if (user.roles.contains('ROLE_COMPANY') &&
                   !user.isCompanyActive) {
                 Fluttertoast.showToast(
@@ -301,31 +287,17 @@ class _LoginPageState extends State<LoginPage> {
                     fontSize: 16.0);
               }
               Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => PostsWidget(
-                  session: Session(),
-                  user: User(
-                    userId: 1,
-                    email: 'kobence98@gmail.com',
-                    name: 'Kovács Bence',
-                    roles: ['ROLE_ONLINE_USER', 'ROLE_COMPANY'],
-                    active: true,
-                    emailNotificationForCompanyNumber: 0,
-                    locale: 'HU',
-                    setByLocale: false,
-                    companyCountryCode: 'HU',
-                    isCompanyActive: true,
-                    companyId: null,
-                    gender: Gender.OTHER,
-                    livingPlaceType: LivingPlaceType.TOWN,
-                    salaryType: SalaryType.FROM1M_TO_1_5M, numberOfHouseholdMembers: 10, age: AgeBracket.FROM_25_TO_34,
-                  ),
-                  initPage: 1,
-                  languages: LanguageHu(),
-                  navBarStatusChangeableAgain: () {},
-                  hideNavBar: () {}),
-              ));
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => HomeWidget(
+                        session: session,
+                        user: user,
+                        initPage: 0,
+                        initTab: 1,
+                        languages: LanguageHu(),
+                        navBarStatusChangeableAgain: () {},
+                        hideNavBar: () {}),
+                  ));
             } else {
               setState(() {
                 loading = false;
@@ -338,7 +310,9 @@ class _LoginPageState extends State<LoginPage> {
                       return loading
                           ? Container(
                               child: Center(
-                                child: Image(image: new AssetImage("assets/images/loading_breath.gif")),
+                                child: Image(
+                                    image: new AssetImage(
+                                        "assets/images/loading_breath.gif")),
                               ),
                             )
                           : AlertDialog(
@@ -433,7 +407,9 @@ class _LoginPageState extends State<LoginPage> {
             return loading
                 ? Container(
                     child: Center(
-                      child: Image(image: new AssetImage("assets/images/loading_breath.gif")),
+                      child: Image(
+                          image: new AssetImage(
+                              "assets/images/loading_breath.gif")),
                     ),
                   )
                 : AlertDialog(
@@ -505,7 +481,6 @@ class _LoginPageState extends State<LoginPage> {
             '/api/users/forgotPassword/${_forgottenPasswordEmailController.text}/${languages.countryCode}',
             Map<String, dynamic>())
         .then((response) {
-
       if (response.statusCode == 200) {
         setState(() {
           loading = false;

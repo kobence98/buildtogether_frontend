@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:html';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -17,12 +18,13 @@ class StatisticPage extends StatefulWidget {
   final int postId;
   final Session session;
   final Languages languages;
+  final Function backToPostsPage;
 
   const StatisticPage(
       {Key? key,
       required this.postId,
       required this.session,
-      required this.languages})
+      required this.languages, required this.backToPostsPage})
       : super(key: key);
 
   @override
@@ -33,11 +35,13 @@ class _StatisticPageState extends State<StatisticPage> {
   late Languages languages;
   late StatisticData statisticData;
   bool loading = true;
+  ScrollController scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
     languages = widget.languages;
+    document.cookie!.isEmpty;
     _initData();
   }
 
@@ -47,7 +51,12 @@ class _StatisticPageState extends State<StatisticPage> {
         child: Scaffold(
             appBar: AppBar(
               backgroundColor: Colors.black,
-              automaticallyImplyLeading: true,
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back),
+                iconSize: 24,
+                onPressed: (){widget.backToPostsPage();},
+                tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+              ),
               title: Center(
                 child: Text(
                   languages.statisticLabel,
@@ -92,374 +101,391 @@ class _StatisticPageState extends State<StatisticPage> {
   }
 
   _chartsWidget() {
-    return Container(
-      color: Colors.black,
-      child: ListView(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-                color: Colors.black,
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Colors.yellow)),
-            padding: EdgeInsets.all(10),
-            child: Column(
-              children: [
-                Container(
-                  child: Text(
-                    languages.livingPlaceTypeLabel,
-                    style: TextStyle(
-                        color: Colors.yellow,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-                Container(
-                  child: SfCartesianChart(
-                      borderWidth: 10,
-                      plotAreaBorderColor: Colors.white,
-                      plotAreaBorderWidth: 2,
-                      primaryXAxis: CategoryAxis(
-                          labelStyle: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold)),
-                      primaryYAxis: NumericAxis(
-                        majorGridLines: MajorGridLines(
-                          width: 0.6,
-                            color: Colors.grey
+    return RawScrollbar(
+      controller: scrollController,
+      thumbVisibility: true,
+      thumbColor: Colors.grey,
+      child: SingleChildScrollView(
+        controller: scrollController,
+        child: Container(
+          width: MediaQuery.of(context).size.width,
+          color: Colors.black,
+          padding: EdgeInsets.only(bottom: 10),
+          child: Center(
+            child: Container(
+              width: 700,
+              color: Colors.black,
+              child: ListView(
+                shrinkWrap: true,
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                        color: Colors.black,
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: Colors.yellow)),
+                    padding: EdgeInsets.all(10),
+                    child: Column(
+                      children: [
+                        Container(
+                          child: Text(
+                            languages.livingPlaceTypeLabel,
+                            style: TextStyle(
+                                color: Colors.yellow,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold),
+                          ),
                         ),
-                          labelStyle: TextStyle(
-                              color: Colors.white, fontWeight: FontWeight.bold),
-                          borderColor: Colors.white,
-                          maximum: statisticData
-                                  .livingPlaceTypeStatistics.values
-                                  .reduce(max)
-                                  .toDouble() +
-                              10,
-                          interval: ((statisticData
-                                              .livingPlaceTypeStatistics.values
-                                              .reduce(max)
-                                              .toDouble() ~/
-                                          10)
-                                      .toDouble() !=
-                                  0
-                              ? (statisticData.livingPlaceTypeStatistics.values
+                        Container(
+                          child: SfCartesianChart(
+                              borderWidth: 10,
+                              plotAreaBorderColor: Colors.white,
+                              plotAreaBorderWidth: 2,
+                              primaryXAxis: CategoryAxis(
+                                  labelStyle: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold)),
+                              primaryYAxis: NumericAxis(
+                                majorGridLines: MajorGridLines(
+                                  width: 0.6,
+                                    color: Colors.grey
+                                ),
+                                  labelStyle: TextStyle(
+                                      color: Colors.white, fontWeight: FontWeight.bold),
+                                  borderColor: Colors.white,
+                                  maximum: statisticData
+                                          .livingPlaceTypeStatistics.values
                                           .reduce(max)
-                                          .toDouble() ~/
-                                      10)
-                                  .toDouble() * 3
-                              : 1) * 5),
-                      series: <ColumnSeries<MapEntry<String, int>, String>>[
-                        // Initialize line series.
-                        ColumnSeries<MapEntry<String, int>, String>(
-                            color: Colors.lime,
-                            dataSource: statisticData.livingPlaceTypeStatistics
-                                .map((key, value) =>
-                                    MapEntry(key.getName(languages), value))
-                                .entries
-                                .toList(),
-                            xValueMapper: (MapEntry<String, int> data, _) =>
-                                data.key,
-                            yValueMapper: (MapEntry<String, int> data, _) =>
-                                data.value)
-                      ]),
-                ),
-              ],
+                                          .toDouble() +
+                                      10,
+                                  interval: ((statisticData
+                                                      .livingPlaceTypeStatistics.values
+                                                      .reduce(max)
+                                                      .toDouble() ~/
+                                                  10)
+                                              .toDouble() !=
+                                          0
+                                      ? (statisticData.livingPlaceTypeStatistics.values
+                                                  .reduce(max)
+                                                  .toDouble() ~/
+                                              10)
+                                          .toDouble() * 3
+                                      : 1) * 5),
+                              series: <ColumnSeries<MapEntry<String, int>, String>>[
+                                // Initialize line series.
+                                ColumnSeries<MapEntry<String, int>, String>(
+                                    color: Colors.lime,
+                                    dataSource: statisticData.livingPlaceTypeStatistics
+                                        .map((key, value) =>
+                                            MapEntry(key.getName(languages), value))
+                                        .entries
+                                        .toList(),
+                                    xValueMapper: (MapEntry<String, int> data, _) =>
+                                        data.key,
+                                    yValueMapper: (MapEntry<String, int> data, _) =>
+                                        data.value)
+                              ]),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                        color: Colors.black,
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: Colors.yellow)),
+                    padding: EdgeInsets.all(10),
+                    child: Column(
+                      children: [
+                        Container(
+                          child: Text(
+                            languages.ageLabel,
+                            style: TextStyle(
+                                color: Colors.yellow,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        Container(
+                          child: SfCartesianChart(
+                              borderWidth: 10,
+                              plotAreaBorderColor: Colors.white,
+                              plotAreaBorderWidth: 2,
+                              primaryXAxis: CategoryAxis(
+                                  labelRotation: 90,
+                                  labelStyle: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold)),
+                              primaryYAxis: NumericAxis(
+                                majorGridLines: MajorGridLines(
+                                  width: 0.6,
+                                    color: Colors.grey
+                                ),
+                                  labelStyle: TextStyle(
+                                      color: Colors.white, fontWeight: FontWeight.bold),
+                                  borderColor: Colors.white,
+                                  maximum: statisticData.ageStatistics.values
+                                          .reduce(max)
+                                          .toDouble() +
+                                      10,
+                                  interval: ((statisticData.ageStatistics.values
+                                                      .reduce(max)
+                                                      .toDouble() ~/
+                                                  10)
+                                              .toDouble() !=
+                                          0
+                                      ? (statisticData.ageStatistics.values
+                                                  .reduce(max)
+                                                  .toDouble() ~/
+                                              10)
+                                          .toDouble()
+                                      : 1) * 5),
+                              series: <ColumnSeries<MapEntry<String, int>, String>>[
+                                // Initialize line series.
+                                ColumnSeries<MapEntry<String, int>, String>(
+                                    color: Colors.lime,
+                                    dataSource: statisticData.ageStatistics
+                                        .map((key, value) =>
+                                            MapEntry(key.getName, value))
+                                        .entries
+                                        .toList(),
+                                    xValueMapper: (MapEntry<String, int> data, _) =>
+                                        data.key,
+                                    yValueMapper: (MapEntry<String, int> data, _) =>
+                                        data.value)
+                              ]),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                        color: Colors.black,
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: Colors.yellow)),
+                    padding: EdgeInsets.all(10),
+                    child: Column(
+                      children: [
+                        Container(
+                          child: Text(
+                            languages.genderLabel,
+                            style: TextStyle(
+                                color: Colors.yellow,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        Container(
+                          child: SfCartesianChart(
+                              borderWidth: 10,
+                              plotAreaBorderColor: Colors.white,
+                              plotAreaBorderWidth: 2,
+                              primaryXAxis: CategoryAxis(
+                                  labelStyle: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold)),
+                              primaryYAxis: NumericAxis(
+                                majorGridLines: MajorGridLines(
+                                  width: 0.6,
+                                    color: Colors.grey
+                                ),
+                                  labelStyle: TextStyle(
+                                      color: Colors.white, fontWeight: FontWeight.bold),
+                                  borderColor: Colors.white,
+                                  maximum: statisticData.genderStatistics.values
+                                          .reduce(max)
+                                          .toDouble() +
+                                      10,
+                                  interval: ((statisticData.genderStatistics.values
+                                                      .reduce(max)
+                                                      .toDouble() ~/
+                                                  10)
+                                              .toDouble() !=
+                                          0
+                                      ? (statisticData.genderStatistics.values
+                                                  .reduce(max)
+                                                  .toDouble() ~/
+                                              10)
+                                          .toDouble()
+                                      : 1) * 5),
+                              series: <ColumnSeries<MapEntry<String, int>, String>>[
+                                // Initialize line series.
+                                ColumnSeries<MapEntry<String, int>, String>(
+                                    color: Colors.lime,
+                                    dataSource: statisticData.genderStatistics
+                                        .map((key, value) =>
+                                            MapEntry(key.getName(languages), value))
+                                        .entries
+                                        .toList(),
+                                    xValueMapper: (MapEntry<String, int> data, _) =>
+                                        data.key,
+                                    yValueMapper: (MapEntry<String, int> data, _) =>
+                                        data.value)
+                              ]),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                        color: Colors.black,
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: Colors.yellow)),
+                    padding: EdgeInsets.all(10),
+                    child: Column(
+                      children: [
+                        Container(
+                          child: Text(
+                            languages.salaryTypeLabel,
+                            style: TextStyle(
+                                color: Colors.yellow,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        Container(
+                          // height: 400,
+                          child: SfCartesianChart(
+                              borderWidth: 10,
+                              plotAreaBorderColor: Colors.white,
+                              plotAreaBorderWidth: 2,
+                              primaryXAxis: CategoryAxis(
+                                  labelRotation: 90,
+                                  labelStyle: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold)),
+                              primaryYAxis: NumericAxis(
+                                majorGridLines: MajorGridLines(
+                                  width: 0.6,
+                                    color: Colors.grey
+                                ),
+                                  labelStyle: TextStyle(
+                                      color: Colors.white, fontWeight: FontWeight.bold),
+                                  borderColor: Colors.white,
+                                  maximum: statisticData.salaryTypeStatistics.values
+                                          .reduce(max)
+                                          .toDouble() +
+                                      10,
+                                  interval: ((statisticData.salaryTypeStatistics.values
+                                                      .reduce(max)
+                                                      .toDouble() ~/
+                                                  10)
+                                              .toDouble() !=
+                                          0
+                                      ? (statisticData.salaryTypeStatistics.values
+                                                  .reduce(max)
+                                                  .toDouble() ~/
+                                              10)
+                                          .toDouble()
+                                      : 1) * 5),
+                              series: <ColumnSeries<MapEntry<String, int>, String>>[
+                                // Initialize line series.
+                                ColumnSeries<MapEntry<String, int>, String>(
+                                    color: Colors.lime,
+                                    dataSource: statisticData.salaryTypeStatistics
+                                        .map((key, value) =>
+                                            MapEntry(key.getName(languages), value))
+                                        .entries
+                                        .toList(),
+                                    xValueMapper: (MapEntry<String, int> data, _) =>
+                                        data.key,
+                                    yValueMapper: (MapEntry<String, int> data, _) =>
+                                        data.value)
+                              ]),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                        color: Colors.black,
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: Colors.yellow)),
+                    padding: EdgeInsets.all(10),
+                    child: Column(
+                      children: [
+                        Container(
+                          child: Text(
+                            languages.numberOfHouseholdMembersLabel,
+                            style: TextStyle(
+                                color: Colors.yellow,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        Container(
+                          child: SfCartesianChart(
+                              borderWidth: 10,
+                              plotAreaBorderColor: Colors.white,
+                              plotAreaBorderWidth: 2,
+                              primaryXAxis: CategoryAxis(
+                                  labelStyle: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold)),
+                              primaryYAxis: NumericAxis(
+                                majorGridLines: MajorGridLines(
+                                  width: 0.6,
+                                    color: Colors.grey
+                                ),
+                                  labelStyle: TextStyle(
+                                      color: Colors.white, fontWeight: FontWeight.bold),
+                                  borderColor: Colors.white,
+                                  maximum: statisticData
+                                          .numberOfHouseholdMembersStatistics.values
+                                          .reduce(max)
+                                          .toDouble() +
+                                      10,
+                                  interval: ((statisticData
+                                                      .numberOfHouseholdMembersStatistics
+                                                      .values
+                                                      .reduce(max)
+                                                      .toDouble() ~/
+                                                  10)
+                                              .toDouble() !=
+                                          0
+                                      ? (statisticData
+                                                  .numberOfHouseholdMembersStatistics
+                                                  .values
+                                                  .reduce(max)
+                                                  .toDouble() ~/
+                                              10)
+                                          .toDouble()
+                                      : 1) * 5),
+                              series: <ColumnSeries<MapEntry<String, int>, String>>[
+                                // Initialize line series.
+                                ColumnSeries<MapEntry<String, int>, String>(
+                                    color: Colors.lime,
+                                    dataSource: statisticData
+                                        .numberOfHouseholdMembersStatistics
+                                        .map((key, value) =>
+                                            MapEntry(key.toString(), value))
+                                        .entries
+                                        .toList(),
+                                    xValueMapper: (MapEntry<String, int> data, _) =>
+                                        data.key,
+                                    yValueMapper: (MapEntry<String, int> data, _) =>
+                                        data.value)
+                              ]),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-          SizedBox(
-            height: 10,
-          ),
-          Container(
-            decoration: BoxDecoration(
-                color: Colors.black,
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Colors.yellow)),
-            padding: EdgeInsets.all(10),
-            child: Column(
-              children: [
-                Container(
-                  child: Text(
-                    languages.ageLabel,
-                    style: TextStyle(
-                        color: Colors.yellow,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-                Container(
-                  child: SfCartesianChart(
-                      borderWidth: 10,
-                      plotAreaBorderColor: Colors.white,
-                      plotAreaBorderWidth: 2,
-                      primaryXAxis: CategoryAxis(
-                          labelRotation: 90,
-                          labelStyle: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold)),
-                      primaryYAxis: NumericAxis(
-                        majorGridLines: MajorGridLines(
-                          width: 0.6,
-                            color: Colors.grey
-                        ),
-                          labelStyle: TextStyle(
-                              color: Colors.white, fontWeight: FontWeight.bold),
-                          borderColor: Colors.white,
-                          maximum: statisticData.ageStatistics.values
-                                  .reduce(max)
-                                  .toDouble() +
-                              10,
-                          interval: ((statisticData.ageStatistics.values
-                                              .reduce(max)
-                                              .toDouble() ~/
-                                          10)
-                                      .toDouble() !=
-                                  0
-                              ? (statisticData.ageStatistics.values
-                                          .reduce(max)
-                                          .toDouble() ~/
-                                      10)
-                                  .toDouble()
-                              : 1) * 5),
-                      series: <ColumnSeries<MapEntry<String, int>, String>>[
-                        // Initialize line series.
-                        ColumnSeries<MapEntry<String, int>, String>(
-                            color: Colors.lime,
-                            dataSource: statisticData.ageStatistics
-                                .map((key, value) =>
-                                    MapEntry(key.getName, value))
-                                .entries
-                                .toList(),
-                            xValueMapper: (MapEntry<String, int> data, _) =>
-                                data.key,
-                            yValueMapper: (MapEntry<String, int> data, _) =>
-                                data.value)
-                      ]),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          Container(
-            decoration: BoxDecoration(
-                color: Colors.black,
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Colors.yellow)),
-            padding: EdgeInsets.all(10),
-            child: Column(
-              children: [
-                Container(
-                  child: Text(
-                    languages.genderLabel,
-                    style: TextStyle(
-                        color: Colors.yellow,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-                Container(
-                  child: SfCartesianChart(
-                      borderWidth: 10,
-                      plotAreaBorderColor: Colors.white,
-                      plotAreaBorderWidth: 2,
-                      primaryXAxis: CategoryAxis(
-                          labelStyle: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold)),
-                      primaryYAxis: NumericAxis(
-                        majorGridLines: MajorGridLines(
-                          width: 0.6,
-                            color: Colors.grey
-                        ),
-                          labelStyle: TextStyle(
-                              color: Colors.white, fontWeight: FontWeight.bold),
-                          borderColor: Colors.white,
-                          maximum: statisticData.genderStatistics.values
-                                  .reduce(max)
-                                  .toDouble() +
-                              10,
-                          interval: ((statisticData.genderStatistics.values
-                                              .reduce(max)
-                                              .toDouble() ~/
-                                          10)
-                                      .toDouble() !=
-                                  0
-                              ? (statisticData.genderStatistics.values
-                                          .reduce(max)
-                                          .toDouble() ~/
-                                      10)
-                                  .toDouble()
-                              : 1) * 5),
-                      series: <ColumnSeries<MapEntry<String, int>, String>>[
-                        // Initialize line series.
-                        ColumnSeries<MapEntry<String, int>, String>(
-                            color: Colors.lime,
-                            dataSource: statisticData.genderStatistics
-                                .map((key, value) =>
-                                    MapEntry(key.getName(languages), value))
-                                .entries
-                                .toList(),
-                            xValueMapper: (MapEntry<String, int> data, _) =>
-                                data.key,
-                            yValueMapper: (MapEntry<String, int> data, _) =>
-                                data.value)
-                      ]),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          Container(
-            decoration: BoxDecoration(
-                color: Colors.black,
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Colors.yellow)),
-            padding: EdgeInsets.all(10),
-            child: Column(
-              children: [
-                Container(
-                  child: Text(
-                    languages.salaryTypeLabel,
-                    style: TextStyle(
-                        color: Colors.yellow,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-                Container(
-                  // height: 400,
-                  child: SfCartesianChart(
-                      borderWidth: 10,
-                      plotAreaBorderColor: Colors.white,
-                      plotAreaBorderWidth: 2,
-                      primaryXAxis: CategoryAxis(
-                          labelRotation: 90,
-                          labelStyle: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold)),
-                      primaryYAxis: NumericAxis(
-                        majorGridLines: MajorGridLines(
-                          width: 0.6,
-                            color: Colors.grey
-                        ),
-                          labelStyle: TextStyle(
-                              color: Colors.white, fontWeight: FontWeight.bold),
-                          borderColor: Colors.white,
-                          maximum: statisticData.salaryTypeStatistics.values
-                                  .reduce(max)
-                                  .toDouble() +
-                              10,
-                          interval: ((statisticData.salaryTypeStatistics.values
-                                              .reduce(max)
-                                              .toDouble() ~/
-                                          10)
-                                      .toDouble() !=
-                                  0
-                              ? (statisticData.salaryTypeStatistics.values
-                                          .reduce(max)
-                                          .toDouble() ~/
-                                      10)
-                                  .toDouble()
-                              : 1) * 5),
-                      series: <ColumnSeries<MapEntry<String, int>, String>>[
-                        // Initialize line series.
-                        ColumnSeries<MapEntry<String, int>, String>(
-                            color: Colors.lime,
-                            dataSource: statisticData.salaryTypeStatistics
-                                .map((key, value) =>
-                                    MapEntry(key.getName(languages), value))
-                                .entries
-                                .toList(),
-                            xValueMapper: (MapEntry<String, int> data, _) =>
-                                data.key,
-                            yValueMapper: (MapEntry<String, int> data, _) =>
-                                data.value)
-                      ]),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          Container(
-            decoration: BoxDecoration(
-                color: Colors.black,
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Colors.yellow)),
-            padding: EdgeInsets.all(10),
-            child: Column(
-              children: [
-                Container(
-                  child: Text(
-                    languages.numberOfHouseholdMembersLabel,
-                    style: TextStyle(
-                        color: Colors.yellow,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-                Container(
-                  child: SfCartesianChart(
-                      borderWidth: 10,
-                      plotAreaBorderColor: Colors.white,
-                      plotAreaBorderWidth: 2,
-                      primaryXAxis: CategoryAxis(
-                          labelStyle: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold)),
-                      primaryYAxis: NumericAxis(
-                        majorGridLines: MajorGridLines(
-                          width: 0.6,
-                            color: Colors.grey
-                        ),
-                          labelStyle: TextStyle(
-                              color: Colors.white, fontWeight: FontWeight.bold),
-                          borderColor: Colors.white,
-                          maximum: statisticData
-                                  .numberOfHouseholdMembersStatistics.values
-                                  .reduce(max)
-                                  .toDouble() +
-                              10,
-                          interval: ((statisticData
-                                              .numberOfHouseholdMembersStatistics
-                                              .values
-                                              .reduce(max)
-                                              .toDouble() ~/
-                                          10)
-                                      .toDouble() !=
-                                  0
-                              ? (statisticData
-                                          .numberOfHouseholdMembersStatistics
-                                          .values
-                                          .reduce(max)
-                                          .toDouble() ~/
-                                      10)
-                                  .toDouble()
-                              : 1) * 5),
-                      series: <ColumnSeries<MapEntry<String, int>, String>>[
-                        // Initialize line series.
-                        ColumnSeries<MapEntry<String, int>, String>(
-                            color: Colors.lime,
-                            dataSource: statisticData
-                                .numberOfHouseholdMembersStatistics
-                                .map((key, value) =>
-                                    MapEntry(key.toString(), value))
-                                .entries
-                                .toList(),
-                            xValueMapper: (MapEntry<String, int> data, _) =>
-                                data.key,
-                            yValueMapper: (MapEntry<String, int> data, _) =>
-                                data.value)
-                      ]),
-                ),
-              ],
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

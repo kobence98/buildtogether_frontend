@@ -96,6 +96,12 @@ class LanguageHu extends Languages {
   String get maxThirtyLengthLabel => ' (max 30 karakter)';
 
   @override
+  String get errorInAutomaticLogin => 'Hiba történt az automatikus bejelentkeztetés során!';
+
+  @override
+  String get loggedOutLastTime => 'Legutóbb kijelentkeztél a fiókodból, ezért törlődtek a lementett felhasználói adatok.';
+
+  @override
   String switchBetweenCompanyAndSimpleUserLabel(company) =>
       "Nyomd meg a kapcsolót, ha te egy " + (company ? "egyszerű felhasználó" : "céges felhasználó") + " vagy.";
 
@@ -403,6 +409,9 @@ class LanguageHu extends Languages {
 
   @override
   String get mainPageLabel => 'Főoldal';
+
+  @override
+  String get createPostLabel => 'Poszt létrehozása';
 
   //SETTINGS WIDGET
 

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:html';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +24,7 @@ class _CompaniesWidgetState extends State<CompaniesWidget> {
   late Languages languages;
   bool innerLoading = false;
   List<CompanyForListing> companies = [];
+  ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -32,7 +34,6 @@ class _CompaniesWidgetState extends State<CompaniesWidget> {
     widget.session.get('/api/companies').then((response) {
       if (response.statusCode == 200) {
         setState(() {
-          widget.session.updateCookie(response);
           Iterable l = json.decode(utf8.decode(response.bodyBytes));
           companies = List<CompanyForListing>.from(
               l.map((model) => CompanyForListing.fromJson(model)));
@@ -49,7 +50,7 @@ class _CompaniesWidgetState extends State<CompaniesWidget> {
       child: Scaffold(
         appBar: AppBar(
             backgroundColor: Colors.black,
-            automaticallyImplyLeading: true,
+            automaticallyImplyLeading: false,
             title: Center(
               child: Text(
                 languages.companiesLabel,
@@ -72,50 +73,63 @@ class _CompaniesWidgetState extends State<CompaniesWidget> {
                     ),
                   ))
             ]),
-        body: Container(
-          color: Colors.black,
-          child: dataLoading
-              ? Container(
-                  child: Center(
-                    child: Image(
-                        image:
-                            new AssetImage("assets/images/loading_breath.gif")),
+        body: RawScrollbar(
+          controller: _scrollController,
+          thumbVisibility: true,
+          thumbColor: Colors.grey,
+          child: Container(
+            color: Colors.black,
+            width: MediaQuery.of(context).size.width,
+            child: dataLoading
+                ? Container(
+                    child: Center(
+                      child: Image(
+                          image: new AssetImage(
+                              "assets/images/loading_breath.gif")),
+                    ),
+                  )
+                : Center(
+                    child: Container(
+                      width: 700,
+                      child: ListView.builder(
+                          controller: _scrollController,
+                          padding: EdgeInsets.only(bottom: 10),
+                          itemCount: companies.length,
+                          itemBuilder: (context, index) {
+                            CompanyForListing company =
+                                companies.elementAt(index);
+                            return Container(
+                              margin: EdgeInsets.all(5),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: company.active
+                                      ? CupertinoColors.systemYellow
+                                      : Colors.red),
+                              child: ListTile(
+                                leading: CircleAvatar(
+                                  radius: 20,
+                                  backgroundImage: NetworkImage(
+                                    widget.session.domainName +
+                                        "/api/images/" +
+                                        company.imageId.toString(),
+                                    headers: widget.session.headers,
+                                  ),
+                                ),
+                                title: Container(
+                                  child: Text(
+                                    company.name,
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                                onTap: () => _onCompanyTap(company.id),
+                              ),
+                            );
+                          }),
+                    ),
                   ),
-                )
-              : ListView.builder(
-                  padding: EdgeInsets.only(bottom: 10),
-                  itemCount: companies.length,
-                  itemBuilder: (context, index) {
-                    CompanyForListing company = companies.elementAt(index);
-                    return Container(
-                      margin: EdgeInsets.all(5),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: company.active
-                              ? CupertinoColors.systemYellow
-                              : Colors.red),
-                      child: ListTile(
-                        leading: CircleAvatar(
-                          radius: 20,
-                          backgroundImage: NetworkImage(
-                            widget.session.domainName +
-                                "/api/images/" +
-                                company.imageId.toString(),
-                            headers: widget.session.headers,
-                          ),
-                        ),
-                        title: Container(
-                          child: Text(
-                            company.name,
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        onTap: () => _onCompanyTap(company.id),
-                      ),
-                    );
-                  }),
+          ),
         ),
       ),
     );

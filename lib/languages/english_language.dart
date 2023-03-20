@@ -95,6 +95,12 @@ class LanguageEn extends Languages {
   String get wrongCredentialsErrorMessage => 'Wrong credentials!';
 
   @override
+  String get errorInAutomaticLogin => 'Error during automatic login.';
+
+  @override
+  String get loggedOutLastTime => 'Last time you logged out of your account, which is why your saved credentials has been deleted.';
+
+  @override
   String get nameLabel => 'Name';
 
   @override
@@ -407,6 +413,9 @@ class LanguageEn extends Languages {
 
   @override
   String get mainPageLabel => 'Main page';
+
+  @override
+  String get createPostLabel => 'Create post';
 
   //SETTINGS WIDGET
 

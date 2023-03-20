@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'dart:io';
+import 'dart:html';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +12,6 @@ import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 class CreatePostWidget extends StatefulWidget {
   final Session session;
@@ -47,6 +46,9 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
   int nameLength = 0;
 
   late Languages languages;
+
+  ScrollController _simplePostScrollController = ScrollController();
+  ScrollController _pollPostScrollController = ScrollController();
 
   @override
   void initState() {
@@ -229,26 +231,208 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
   }
 
   Widget _simplePostWidget() {
-    return Container(
-      color: Colors.black,
-      child: ListView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        children: [
-          SizedBox(
-            height: 30,
-          ),
-          ListTile(
-            title: Text(
-              languages.whatIsYourIdeaLabel,
-              style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20),
-            ),
-          ),
-          _selectedCompany == null
-              ? Container(
-                  height: 45,
+    return RawScrollbar(
+      controller: _simplePostScrollController,
+      thumbVisibility: true,
+      thumbColor: Colors.grey,
+      child: Container(
+        color: Colors.black,
+        width: MediaQuery.of(context).size.width,
+        child: Center(
+          child: Container(
+            color: Colors.black,
+            width: 700,
+            child: ListView(
+              controller: _simplePostScrollController,
+              physics: const AlwaysScrollableScrollPhysics(),
+              children: [
+                SizedBox(
+                  height: 30,
+                ),
+                ListTile(
+                  title: Text(
+                    languages.whatIsYourIdeaLabel,
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20),
+                  ),
+                ),
+                _selectedCompany == null
+                    ? Container(
+                        height: 45,
+                        margin: EdgeInsets.only(left: 10, right: 10),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(10),
+                          ),
+                          color: Colors.white,
+                        ),
+                        padding: EdgeInsets.all(4),
+                        child: Center(
+                          child: Container(
+                            width: MediaQuery.of(context).size.width - 70,
+                            child: TypeAheadField(
+                              noItemsFoundBuilder: (context) {
+                                return Container(
+                                  padding: EdgeInsets.all(1),
+                                  color: CupertinoColors.systemYellow,
+                                  child: Container(
+                                    color: Colors.black,
+                                    child: ListTile(
+                                      leading: Icon(
+                                        Icons.not_interested_rounded,
+                                        color: CupertinoColors.systemYellow,
+                                      ),
+                                      title: Text(
+                                        languages.noItemsFoundLabel,
+                                        style: TextStyle(
+                                            color: CupertinoColors.systemYellow,
+                                            fontStyle: FontStyle.italic,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 20),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                              minCharsForSuggestions: 1,
+                              textFieldConfiguration: TextFieldConfiguration(
+                                decoration: new InputDecoration.collapsed(
+                                    hintText: languages.companyNameLabel),
+                                controller: _companyNameController,
+                                onEditingComplete: () {
+                                  if (_titleController.text.isEmpty) {
+                                    _titleFocus.requestFocus();
+                                  } else if (_descriptionController
+                                      .text.isEmpty) {
+                                    _descriptionFocus.requestFocus();
+                                  } else {
+                                    _companyNameFocus.unfocus();
+                                  }
+                                },
+                                cursorColor: Colors.black,
+                                focusNode: _companyNameFocus,
+                                autofocus: true,
+                                style: TextStyle(fontSize: 20),
+                              ),
+                              suggestionsCallback: (pattern) async {
+                                dynamic response = await widget.session
+                                    .get("/api/companies/getByName/" + pattern);
+                                if (response.statusCode == 200) {
+                                  Iterable l = json
+                                      .decode(utf8.decode(response.bodyBytes));
+                                  companies = List<CompanyForSearch>.from(l.map(
+                                      (company) =>
+                                          CompanyForSearch.fromJson(company)));
+                                  List<String> resultList = [];
+                                  companies.forEach((company) {
+                                    resultList.add(company.id.toString());
+                                  });
+                                  return resultList;
+                                }
+                                return [];
+                              },
+                              itemBuilder: (context, suggestion) {
+                                CompanyForSearch company = companies
+                                    .where((cp) => cp.id.toString() == suggestion)
+                                    .first;
+                                return MouseRegion(
+                                  cursor: SystemMouseCursors.click,
+                                  child: GestureDetector(
+                                    onPanDown: (_) {
+                                      setState(() {
+                                        CompanyForSearch company = companies
+                                            .where((cp) => cp.id.toString() == suggestion)
+                                            .first;
+                                        _companyNameController.text = company.name;
+                                        _selectedCompany = company;
+                                        if (_titleController.text.isEmpty) {
+                                          _titleFocus.requestFocus();
+                                        } else if (_descriptionController.text.isEmpty) {
+                                          _descriptionFocus.requestFocus();
+                                        } else {
+                                          _companyNameFocus.unfocus();
+                                        }
+                                      });
+                                    },
+                                    child: Container(
+                                      width: 700,
+                                      padding: EdgeInsets.all(1),
+                                      color: CupertinoColors.systemYellow,
+                                      child: Container(
+                                        color: Colors.black,
+                                        child: ListTile(
+                                          onTap: (){},
+                                          leading: CircleAvatar(
+                                            radius: 20,
+                                            backgroundImage: NetworkImage(
+                                              widget.session.domainName +
+                                                  "/api/images/" +
+                                                  company.imageId.toString(),
+                                              headers: widget.session.headers,
+                                            ),
+                                          ),
+                                          title: Text(
+                                            company.name,
+                                            style: TextStyle(
+                                                color: CupertinoColors.systemYellow,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 20),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                              onSuggestionSelected: (suggestion) {},
+                            ),
+                          ),
+                        ),
+                      )
+                    : Container(
+                        margin: EdgeInsets.only(left: 10, right: 10),
+                        padding: EdgeInsets.all(1),
+                        color: CupertinoColors.systemYellow,
+                        child: Container(
+                          color: Colors.black,
+                          child: ListTile(
+                            leading: CircleAvatar(
+                              radius: 20,
+                              backgroundImage: NetworkImage(
+                                widget.session.domainName +
+                                    "/api/images/" +
+                                    _selectedCompany!.imageId.toString(),
+                                headers: widget.session.headers,
+                              ),
+                            ),
+                            title: Text(
+                              _selectedCompany!.name,
+                              style: TextStyle(
+                                  color: CupertinoColors.systemYellow,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20),
+                            ),
+                            trailing: InkWell(
+                              child: Icon(
+                                Icons.clear,
+                                color: CupertinoColors.systemYellow,
+                              ),
+                              onTap: () {
+                                setState(() {
+                                  _selectedCompany = null;
+                                  _companyNameController.clear();
+                                });
+                              },
+                            ),
+                          ),
+                        ),
+                      ),
+                SizedBox(
+                  height: 20,
+                ),
+                Container(
                   margin: EdgeInsets.only(left: 10, right: 10),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.all(
@@ -257,492 +441,275 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                     color: Colors.white,
                   ),
                   padding: EdgeInsets.all(4),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: MediaQuery.of(context).size.width - 70,
-                        child: TypeAheadField(
-                          noItemsFoundBuilder: (context) {
-                            return Container(
-                              padding: EdgeInsets.all(1),
-                              color: CupertinoColors.systemYellow,
-                              child: Container(
-                                color: Colors.black,
-                                child: ListTile(
-                                  leading: Icon(
-                                    Icons.not_interested_rounded,
-                                    color: CupertinoColors.systemYellow,
-                                  ),
-                                  title: Text(
-                                    languages.noItemsFoundLabel,
-                                    style: TextStyle(
-                                        color: CupertinoColors.systemYellow,
-                                        fontStyle: FontStyle.italic,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 20),
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                          minCharsForSuggestions: 1,
-                          textFieldConfiguration: TextFieldConfiguration(
-                            decoration: new InputDecoration.collapsed(
-                                hintText: languages.companyNameLabel),
-                            controller: _companyNameController,
-                            onEditingComplete: () {
-                              if (_titleController.text.isEmpty) {
-                                _titleFocus.requestFocus();
-                              } else if (_descriptionController.text.isEmpty) {
-                                _descriptionFocus.requestFocus();
-                              } else {
-                                _companyNameFocus.unfocus();
-                              }
-                            },
-                            cursorColor: Colors.black,
-                            focusNode: _companyNameFocus,
-                            autofocus: true,
-                            style: TextStyle(fontSize: 20),
-                          ),
-                          suggestionsCallback: (pattern) async {
-                            dynamic response = await widget.session
-                                .get("/api/companies/getByName/" + pattern);
-                            if (response.statusCode == 200) {
-                              widget.session.updateCookie(response);
-                              Iterable l =
-                                  json.decode(utf8.decode(response.bodyBytes));
-                              companies = List<CompanyForSearch>.from(l.map(
-                                  (company) => CompanyForSearch.fromJson(company)));
-                              List<String> resultList = [];
-                              companies.forEach((company) {
-                                resultList.add(company.id.toString());
-                              });
-                              return resultList;
-                            }
-                            return [];
-                          },
-                          itemBuilder: (context, c) {
-                            CompanyForSearch company =
-                                companies.where((cp) => cp.id.toString() == c).first;
-                            return Container(
-                              padding: EdgeInsets.all(1),
-                              color: CupertinoColors.systemYellow,
-                              child: Container(
-                                color: Colors.black,
-                                child: ListTile(
-                                  leading: CircleAvatar(
-                                    radius: 20,
-                                    backgroundImage: NetworkImage(
-                                      widget.session.domainName +
-                                          "/api/images/" +
-                                          company.imageId.toString(),
-                                      headers: widget.session.headers,
-                                    ),
-                                  ),
-                                  title: Text(
-                                    company.name,
-                                    style: TextStyle(
-                                        color: CupertinoColors.systemYellow,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 20),
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                          onSuggestionSelected: (suggestion) {
-                            setState(() {
-                              CompanyForSearch company = companies
-                                  .where((cp) => cp.id.toString() == suggestion)
-                                  .first;
-                              _companyNameController.text = company.name;
-                              _selectedCompany = company;
-                              if (_titleController.text.isEmpty) {
-                                _titleFocus.requestFocus();
-                              } else if (_descriptionController.text.isEmpty) {
-                                _descriptionFocus.requestFocus();
-                              } else {
-                                _companyNameFocus.unfocus();
-                              }
-                            });
-                          },
-                        ),
-                      ),
-                      SizedBox(width: 7,),
-                      InkWell(
-                        child: Container(
-                          height: 35,
-                          width: 35,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(10),
-                            ),
-                            color: Colors.black,
-                          ),
-                          child: Icon(Icons.close, color: CupertinoColors.systemYellow),
-                        ),
-                        onTap: () {
-                          _companyNameFocus.unfocus();
-                          _companyNameController.clear();
-                        },
-                      )
-                    ],
-                  ),
-                )
-              : Container(
-                  margin: EdgeInsets.only(left: 10, right: 10),
-                  padding: EdgeInsets.all(1),
-                  color: CupertinoColors.systemYellow,
                   child: Container(
-                    color: Colors.black,
-                    child: ListTile(
-                      leading: CircleAvatar(
-                        radius: 20,
-                        backgroundImage: NetworkImage(
-                          widget.session.domainName +
-                              "/api/images/" +
-                              _selectedCompany!.imageId.toString(),
-                          headers: widget.session.headers,
-                        ),
-                      ),
-                      title: Text(
-                        _selectedCompany!.name,
-                        style: TextStyle(
-                            color: CupertinoColors.systemYellow,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20),
-                      ),
-                      trailing: InkWell(
-                        child: Icon(
-                          Icons.clear,
-                          color: CupertinoColors.systemYellow,
-                        ),
-                        onTap: () {
-                          setState(() {
-                            _selectedCompany = null;
-                            _companyNameController.clear();
-                          });
-                        },
-                      ),
-                    ),
-                  ),
-                ),
-          SizedBox(
-            height: 20,
-          ),
-          Container(
-            margin: EdgeInsets.only(left: 10, right: 10),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(
-                Radius.circular(10),
-              ),
-              color: Colors.white,
-            ),
-            padding: EdgeInsets.all(4),
-            child: Row(
-              children: [
-                Container(
-                  width: MediaQuery.of(context).size.width - 70,
-                  height: 35,
-                  child: Center(
-                    child: TextField(
-                      cursorColor: Colors.black,
-                      focusNode: _titleFocus,
-                      onEditingComplete: () {
-                        if (_descriptionController.text.isEmpty) {
-                          _descriptionFocus.requestFocus();
-                        } else {
-                          _titleFocus.unfocus();
-                        }
-                      },
-                      controller: _titleController,
-                      style: TextStyle(fontSize: 20,),
-                      decoration: new InputDecoration.collapsed(
-                          hintText: languages.titleOfIdeaLabel),
-                    ),
-                  ),
-                ),
-                SizedBox(width: 7,),
-                InkWell(
-                  child: Container(
+                    width: MediaQuery.of(context).size.width - 70,
                     height: 35,
-                  width: 35,
+                    child: Center(
+                      child: TextField(
+                        cursorColor: Colors.black,
+                        focusNode: _titleFocus,
+                        onEditingComplete: () {
+                          if (_descriptionController.text.isEmpty) {
+                            _descriptionFocus.requestFocus();
+                          } else {
+                            _titleFocus.unfocus();
+                          }
+                        },
+                        controller: _titleController,
+                        style: TextStyle(
+                          fontSize: 20,
+                        ),
+                        decoration: new InputDecoration.collapsed(
+                            hintText: languages.titleOfIdeaLabel),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Container(
+                  // height: MediaQuery.of(context).size.height - (company ? 450 : 350),
+                  margin: EdgeInsets.only(left: 10, right: 10),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.all(
                       Radius.circular(10),
                     ),
-                    color: Colors.black,
-                  ),
-                    child: Icon(Icons.check, color: CupertinoColors.systemYellow),
-                  ),
-                  onTap: () => _titleFocus.unfocus(),
-                )
-              ],
-            ),
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          Container(
-            // height: MediaQuery.of(context).size.height - (company ? 450 : 350),
-            margin: EdgeInsets.only(left: 10, right: 10),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(
-                Radius.circular(10),
-              ),
-              color: Colors.white,
-            ),
-            padding: EdgeInsets.all(4),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Container(
-                  width: MediaQuery.of(context).size.width - 70,
-                  child: TextField(
-                      maxLines: null,
-                      maxLength: 2048,
-                      controller: _descriptionController,
-                      focusNode: _descriptionFocus,
-                      style: TextStyle(fontSize: 20),
-                      decoration: InputDecoration.collapsed(
-                          hintText: languages.writeHereYourIdeaLabel,),
-                      onChanged: (text) => setState(() {})),
-                ),
-                SizedBox(width: 7,),
-                InkWell(
-                  child: Container(
-                    height: 35,
-                    width: 35,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(10),
-                      ),
-                      color: Colors.black,
-                    ),
-                    child: Icon(Icons.check, color: CupertinoColors.systemYellow),
-                  ),
-                  onTap: () => _descriptionFocus.unfocus(),
-                )
-              ],
-            ),
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          Container(
-            margin: EdgeInsets.all(10),
-            decoration: BoxDecoration(
-                border: Border.all(color: CupertinoColors.systemYellow),
-                borderRadius: BorderRadius.circular(10)),
-            child: ListTile(
-              leading: Text(
-                '${languages.addPictureLabel}:',
-                style: TextStyle(
                     color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold),
-              ),
-              title: image != null
-                  ? InkWell(
-                      child: Center(
-                          child: Container(
-                        height: 40,
-                        width: 40,
-                        decoration: BoxDecoration(
-                            border:
-                                Border.all(color: CupertinoColors.systemYellow),
-                            image: DecorationImage(
-                                image: FileImage(File(image!.path)),
-                                fit: BoxFit.contain),
-                            borderRadius: BorderRadius.circular(10)),
-                      )),
-                      onTap: () {
-                        _addPicture(setState);
-                      },
-                    )
-                  : InkWell(
-                      child: Center(
-                          child: Container(
-                        height: 40,
-                        width: 40,
-                        decoration: BoxDecoration(
-                            color: CupertinoColors.systemYellow,
-                            image: DecorationImage(
-                                image: AssetImage(
-                                  "assets/images/add_image.png",
-                                ),
-                                fit: BoxFit.fill),
-                            borderRadius: BorderRadius.circular(10)),
-                      )),
-                      onTap: () {
-                        _addPicture(setState);
-                      },
-                    ),
-            ),
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          Container(
-            margin: EdgeInsets.only(left: 10, right: 10),
-            child: ElevatedButton(
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(
-                    isButtonEnabled
-                        ? CupertinoColors.systemYellow
-                        : Colors.yellow.shade200),
-              ),
-              onPressed: isButtonEnabled ? _onPostSimplePressed : null,
-              child: ListTile(
-                title: Center(
-                  child: Text("POST"),
+                  ),
+                  padding: EdgeInsets.all(4),
+                  child: Container(
+                    width: MediaQuery.of(context).size.width - 70,
+                    child: TextField(
+                        maxLines: null,
+                        maxLength: 2048,
+                        controller: _descriptionController,
+                        focusNode: _descriptionFocus,
+                        style: TextStyle(fontSize: 20),
+                        decoration: InputDecoration.collapsed(
+                          hintText: languages.writeHereYourIdeaLabel,
+                        ),
+                        onChanged: (text) => setState(() {})),
+                  ),
                 ),
-              ),
+                SizedBox(
+                  height: 10,
+                ),
+                Container(
+                  margin: EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                      border: Border.all(color: CupertinoColors.systemYellow),
+                      borderRadius: BorderRadius.circular(10)),
+                  child: ListTile(
+                    leading: Text(
+                      '${languages.addPictureLabel}:',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    title: image != null
+                        ? InkWell(
+                            child: Center(
+                                child: Container(
+                              height: 40,
+                              width: 40,
+                              decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: CupertinoColors.systemYellow),
+                                  image: DecorationImage(
+                                      image: NetworkImage(image!.path),
+                                      fit: BoxFit.contain),
+                                  borderRadius: BorderRadius.circular(10)),
+                            )),
+                            onTap: () {
+                              _addPicture(setState);
+                            },
+                          )
+                        : InkWell(
+                            child: Center(
+                                child: Container(
+                              height: 40,
+                              width: 40,
+                              decoration: BoxDecoration(
+                                  color: CupertinoColors.systemYellow,
+                                  image: DecorationImage(
+                                      image: AssetImage(
+                                        "assets/images/add_image.png",
+                                      ),
+                                      fit: BoxFit.fill),
+                                  borderRadius: BorderRadius.circular(10)),
+                            )),
+                            onTap: () {
+                              _addPicture(setState);
+                            },
+                          ),
+                  ),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Container(
+                  margin: EdgeInsets.only(left: 10, right: 10),
+                  child: ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                          isButtonEnabled
+                              ? CupertinoColors.systemYellow
+                              : Colors.yellow.shade200),
+                    ),
+                    onPressed: isButtonEnabled ? _onPostSimplePressed : null,
+                    child: ListTile(
+                      title: Center(
+                        child: Text("POST"),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
-        ],
+        ),
       ),
     );
   }
 
   Widget _pollPostWidget() {
-    return Container(
-      color: Colors.black,
-      child: ListView.builder(
-          itemCount: pollOptions.length + 7,
-          itemBuilder: (BuildContext context, int index) {
-            if (index == 0) {
-              return SizedBox(
-                height: 30,
-              );
-            } else if (index == 1) {
-              return ListTile(
-                title: Text(
-                  languages.whatIsYourIdeaLabel,
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20),
-                ),
-              );
-            } else if (index == 2) {
-              return SizedBox(
-                height: 10,
-              );
-            } else if (index == 3) {
-              return Container(
-                margin: EdgeInsets.only(left: 10, right: 10),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(10),
-                  ),
-                  color: Colors.white,
-                ),
-                padding: EdgeInsets.all(5),
-                child: Row(
-                  children: [
-                    Container(
-                      width: MediaQuery.of(context).size.width - 72,
-                      child: TextField(
-                        cursorColor: Colors.black,
-                        controller: _pollTitleController,
-                        focusNode: _pollTitleNameFocus,
-                        onEditingComplete: () {
-                          int nextEmptyIndex = pollControllers
-                              .indexWhere((element) => element.text.isEmpty);
-                          if (nextEmptyIndex != -1) {
-                            pollFocusNodes.elementAt(nextEmptyIndex).requestFocus();
-                          } else {
-                            _pollTitleNameFocus.unfocus();
-                          }
-                        },
-                        maxLength: 256,
-                        style: TextStyle(fontSize: 20),
-                        decoration: new InputDecoration(
-                            isCollapsed: true,
-                            counterText: '',
-                            border: InputBorder.none,
-                            focusedBorder:
-                                OutlineInputBorder(borderSide: BorderSide.none),
-                            ),
-                      ),
-                    ),
-                    SizedBox(width: 7,),
-                    InkWell(
-                      child: Container(
-                        height: 35,
-                        width: 35,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(10),
-                          ),
-                          color: Colors.black,
-                        ),
-                        child: Icon(Icons.check, color: CupertinoColors.systemYellow),
-                      ),
-                      onTap: () => _pollTitleNameFocus.unfocus(),
-                    ),
-                  ],
-                ),
-              );
-            } else if (index == 4) {
-              return ListTile(
-                title: Text(
-                  '${languages.pollOptionsLabel}:',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16),
-                ),
-              );
-            }
-            if (index < pollOptions.length + 5) {
-              return pollOptions.elementAt(index - 5);
-            } else if (index == pollOptions.length + 5) {
-              return Container(
-                margin: EdgeInsets.only(top: 20),
-                child: Center(
-                  child: ButtonTheme(
-                    height: 70,
-                    minWidth: MediaQuery.of(context).size.width - 5,
-                    child: ElevatedButton(
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all<Color>(
-                            CupertinoColors.systemYellow),
-                      ),
-                      onPressed: _onAddOptionPressed,
-                      child: Text(
-                        languages.addOptionLabel,
+    return RawScrollbar(
+      controller: _pollPostScrollController,
+      thumbVisibility: true,
+      thumbColor: Colors.grey,
+      child: Container(
+        width: MediaQuery.of(context).size.width,
+        color: Colors.black,
+        child: Center(
+          child: Container(
+            width: 700,
+            child: ListView.builder(
+                controller: _pollPostScrollController,
+                itemCount: pollOptions.length + 7,
+                itemBuilder: (BuildContext context, int index) {
+                  if (index == 0) {
+                    return SizedBox(
+                      height: 30,
+                    );
+                  } else if (index == 1) {
+                    return ListTile(
+                      title: Text(
+                        languages.whatIsYourIdeaLabel,
                         style: TextStyle(
+                            color: Colors.white,
                             fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                            color: Colors.black),
+                            fontSize: 20),
                       ),
-                    ),
-                  ),
-                ),
-              );
-            } else {
-              return Container(
-                alignment: Alignment.bottomCenter,
-                margin: EdgeInsets.only(left: 10, right: 10, top: 20),
-                child: ElevatedButton(
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(
-                        isButtonEnabled
-                            ? CupertinoColors.systemYellow
-                            : Colors.yellow.shade200),
-                  ),
-                  onPressed: isButtonEnabled ? _onPostPollPressed : null,
-                  child: ListTile(
-                    title: Center(
-                      child: Text(languages.POSTLabel),
-                    ),
-                  ),
-                ),
-              );
-            }
-          }),
+                    );
+                  } else if (index == 2) {
+                    return SizedBox(
+                      height: 10,
+                    );
+                  } else if (index == 3) {
+                    return Container(
+                      height: 40,
+                      margin: EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(10),
+                        ),
+                        color: Colors.white,
+                      ),
+                      padding: EdgeInsets.all(5),
+                      child: Center(
+                        child: Container(
+                          width: MediaQuery.of(context).size.width - 20,
+                          child: TextField(
+                            cursorColor: Colors.black,
+                            controller: _pollTitleController,
+                            focusNode: _pollTitleNameFocus,
+                            onEditingComplete: () {
+                              int nextEmptyIndex = pollControllers.indexWhere(
+                                  (element) => element.text.isEmpty);
+                              if (nextEmptyIndex != -1) {
+                                pollFocusNodes
+                                    .elementAt(nextEmptyIndex)
+                                    .requestFocus();
+                              } else {
+                                _pollTitleNameFocus.unfocus();
+                              }
+                            },
+                            maxLength: 256,
+                            style: TextStyle(fontSize: 20),
+                            decoration: new InputDecoration(
+                              isCollapsed: true,
+                              counterText: '',
+                              border: InputBorder.none,
+                              focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide.none),
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  } else if (index == 4) {
+                    return ListTile(
+                      title: Text(
+                        '${languages.pollOptionsLabel}:',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16),
+                      ),
+                    );
+                  }
+                  if (index < pollOptions.length + 5) {
+                    return pollOptions.elementAt(index - 5);
+                  } else if (index == pollOptions.length + 5) {
+                    return Container(
+                      margin: EdgeInsets.only(top: 20),
+                      child: Center(
+                        child: ButtonTheme(
+                          height: 70,
+                          minWidth: MediaQuery.of(context).size.width - 5,
+                          child: ElevatedButton(
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all<Color>(
+                                  CupertinoColors.systemYellow),
+                            ),
+                            onPressed: _onAddOptionPressed,
+                            child: Text(
+                              languages.addOptionLabel,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20,
+                                  color: Colors.black),
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  } else {
+                    return Container(
+                      alignment: Alignment.bottomCenter,
+                      margin: EdgeInsets.only(left: 10, right: 10, top: 20),
+                      child: ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              isButtonEnabled
+                                  ? CupertinoColors.systemYellow
+                                  : Colors.yellow.shade200),
+                        ),
+                        onPressed: isButtonEnabled ? _onPostPollPressed : null,
+                        child: ListTile(
+                          title: Center(
+                            child: Text(languages.POSTLabel),
+                          ),
+                        ),
+                      ),
+                    );
+                  }
+                }),
+          ),
+        ),
+      ),
     );
   }
 
@@ -769,7 +736,9 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                   focusNode: focusNode,
                   onEditingComplete: () {
                     int nextEmptyIndex = pollControllers.indexWhere((element) =>
-                        element.text.isEmpty && pollControllers.indexOf(element) > pollFocusNodes.indexOf(focusNode) &&
+                        element.text.isEmpty &&
+                        pollControllers.indexOf(element) >
+                            pollFocusNodes.indexOf(focusNode) &&
                         element != textEditingController);
                     if (nextEmptyIndex != -1) {
                       pollFocusNodes.elementAt(nextEmptyIndex).requestFocus();
@@ -916,7 +885,10 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
           focusNode: focusNode,
           onEditingComplete: () {
             int nextEmptyIndex = pollControllers.indexWhere((element) =>
-                element.text.isEmpty && pollControllers.indexOf(element) > pollFocusNodes.indexOf(focusNode) && element != textEditingController);
+                element.text.isEmpty &&
+                pollControllers.indexOf(element) >
+                    pollFocusNodes.indexOf(focusNode) &&
+                element != textEditingController);
             if (nextEmptyIndex != -1) {
               pollFocusNodes.elementAt(nextEmptyIndex).requestFocus();
             } else {
@@ -936,7 +908,6 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
   }
 
   void _addPicture(setState) async {
-    await Permission.photos.request();
     final ImagePicker _picker = ImagePicker();
     image = await _picker.pickImage(source: ImageSource.gallery);
     if (image != null &&
@@ -952,5 +923,11 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
           fontSize: 16.0);
     }
     setState(() {});
+  }
+
+  @override
+  void dispose() {
+    image = null;
+    super.dispose();
   }
 }

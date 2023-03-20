@@ -59,7 +59,7 @@ class _CommentsWidgetState extends State<CommentsWidget> {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (widget.commentTapped) {
             Scrollable.ensureVisible(widget.key.currentContext!,
-                duration: Duration(milliseconds: 500));
+                duration: Duration(seconds: 2));
           }
         });
       }

@@ -13,7 +13,7 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  http: ^0.13.3
+  http: ^0.13.5
 
   cached_network_image: ^3.1.0
   like_button: ^2.0.3
@@ -44,6 +44,8 @@ dependencies:
   country_icons: ^2.0.2
   comment_tree: ^0.3.0
   url_strategy: ^0.2.0
+  universal_html: ^2.2.1
+  autologin_plugin: ^0.0.3
 
 dev_dependencies:
   flutter_test:
@@ -58,3 +60,4 @@ flutter:
     - assets/images/add_image.png
     - assets/images/loading_breath.gif
     - assets/images/loading_spin.gif
+    - assets/images/launcher_icon.png

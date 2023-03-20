@@ -258,7 +258,7 @@ class _FlutterPollsInnoState extends State<FlutterPollsInno> {
                             }
                           },
                           child: LinearPercentIndicator(
-                            width: MediaQuery.of(context).size.width - 22,
+                            width: 670,
                             lineHeight: widget.pollOptionsHeight!,
                             barRadius: widget.votedPollOptionsRadius ??
                                 const Radius.circular(8),
@@ -286,33 +286,31 @@ class _FlutterPollsInnoState extends State<FlutterPollsInno> {
                                     : widget.leadingVotedProgessColor)
                                 : widget.votedProgressColor,
                             center: Container(
-                              width: MediaQuery.of(context).size.width - 10,
+                              width: 660,
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 5,
                               ),
-                              child: Container(
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    pollOption.title,
-                                    votedOption != null &&
-                                            votedOption.id == pollOption.id
-                                        ? const Icon(
-                                            Icons.check_circle_outline_rounded,
-                                            color: Colors.black,
-                                            size: 16,
-                                          )
-                                        : Container(),
-                                    Text(
-                                      totalVotes == 0
-                                          ? "0 ${widget.votesText}"
-                                          : '${(pollOption.votes / totalVotes * 100).toStringAsFixed(1)}% (${pollOption.votes})',
-                                      style: widget.votedPercentageTextStyle,
-                                      textAlign: TextAlign.end,
-                                    ),
-                                  ],
-                                ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  pollOption.title,
+                                  votedOption != null &&
+                                          votedOption.id == pollOption.id
+                                      ? const Icon(
+                                          Icons.check_circle_outline_rounded,
+                                          color: Colors.black,
+                                          size: 16,
+                                        )
+                                      : Container(),
+                                  Text(
+                                    totalVotes == 0
+                                        ? "0 ${widget.votesText}"
+                                        : '${(pollOption.votes / totalVotes * 100).toStringAsFixed(1)}% (${pollOption.votes})',
+                                    style: widget.votedPercentageTextStyle,
+                                    textAlign: TextAlign.end,
+                                  ),
+                                ],
                               ),
                             ),
                           ),
