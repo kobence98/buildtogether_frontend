@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:html';
 
 import 'package:autologin_plugin/autologin_plugin_web.dart';
 import 'package:flutter/material.dart';

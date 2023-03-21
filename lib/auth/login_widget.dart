@@ -185,7 +185,8 @@ class _LoginPageState extends State<LoginPage> {
                             children: [
                               Checkbox(
                                 activeColor: CupertinoColors.systemYellow,
-                                fillColor: MaterialStateProperty.all(CupertinoColors.systemYellow),
+                                fillColor: MaterialStateProperty.all(
+                                    CupertinoColors.systemYellow),
                                 checkColor: Colors.black,
                                 value: _stayLoggedIn,
                                 onChanged: (bool? value) {
@@ -194,7 +195,9 @@ class _LoginPageState extends State<LoginPage> {
                                   });
                                 },
                               ),
-                              SizedBox(width: 5,),
+                              SizedBox(
+                                width: 5,
+                              ),
                               Center(
                                 child: Container(
                                   child: Text(
@@ -299,8 +302,10 @@ class _LoginPageState extends State<LoginPage> {
     )
         .then((res) {
       if (res.statusCode == 200) {
-        if(_stayLoggedIn){
-          AutologinPlugin.saveLoginData(username: _emailController.text.split(' ').first, password: _passwordController.text);
+        if (_stayLoggedIn) {
+          AutologinPlugin.saveLoginData(
+              username: _emailController.text.split(' ').first,
+              password: _passwordController.text);
         }
         session.get('/api/users/getAuthenticatedUser').then((innerRes) {
           if (innerRes.statusCode == 200) {
