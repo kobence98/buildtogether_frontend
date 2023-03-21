@@ -162,6 +162,9 @@ class LanguageHu extends Languages {
   @override
   String get imageFileSizeIsTooBigExceptionMessage => 'Túl nagy a kép fájl mérete, légyszíves töltsél fel egy 1 MB-nál kisebb képet!';
 
+  @override
+  String get stayLoggedInLabel => 'Bejelentkezve maradok';
+
   //CHANGE LOCATION WIDGET
 
   @override

@@ -678,9 +678,10 @@ class _HomeWidgetState extends State<HomeWidget> {
                                       onTap: () async {
                                         await widget.hideNavBar();
                                         Navigator.of(context)
-                                            .push(MaterialPageRoute(
-                                                builder: (context) =>
-                                                    OpenImageWidget(
+                                            .push(PageRouteBuilder(
+                                            opaque: false,
+                                            pageBuilder: (_, __, ___) =>
+                                                OpenImageWidget(
                                                         imageId: post
                                                             .postImageId
                                                             .toString(),

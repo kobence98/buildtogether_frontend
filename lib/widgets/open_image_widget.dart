@@ -17,25 +17,48 @@ class OpenImageWidget extends StatefulWidget {
 class _OpenImageWidgetState extends State<OpenImageWidget> {
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        child: Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-      ),
-      body: Container(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
-        decoration: BoxDecoration(
-          color: Colors.grey,
-          image: DecorationImage(
-            image: NetworkImage(
-              widget.session.domainName + "/api/postImages/" + widget.imageId,
-              headers: widget.session.headers,
+    return Material(
+      color: Colors.transparent,
+      child: Padding(
+        padding: const EdgeInsets.all(10),
+        child: Stack(
+          children: [
+            Positioned(
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.95),
+                  image: DecorationImage(
+                    image: NetworkImage(
+                      widget.session.domainName +
+                          "/api/postImages/" +
+                          widget.imageId,
+                      headers: widget.session.headers,
+                    ),
+                    fit: BoxFit.contain,
+                  ),
+                ),
+              ),
+              left: 0,
+              top: 0,
             ),
-            fit: BoxFit.contain,
-          ),
+            Positioned(
+              child: InkWell(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: Icon(
+                  Icons.close,
+                  color: Colors.white,
+                ),
+              ),
+              left: 0,
+              top: 0,
+            ),
+          ],
         ),
       ),
-    ));
+    );
   }
 }

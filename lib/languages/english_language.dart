@@ -167,6 +167,9 @@ class LanguageEn extends Languages {
   @override
   String get imageFileSizeIsTooBigExceptionMessage => 'Image file size is too big, please upload an image less than 1 MB!';
 
+  @override
+  String get stayLoggedInLabel => 'Keep me logged in';
+
   //CHANGE LOCATION WIDGET
 
   @override

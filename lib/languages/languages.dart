@@ -106,6 +106,8 @@ abstract class Languages {
 
   String get imageFileSizeIsTooBigExceptionMessage;
 
+  String get stayLoggedInLabel;
+
   //CHANGE LOCATION WIDGET
 
   String get countryCodesErrorMessage;

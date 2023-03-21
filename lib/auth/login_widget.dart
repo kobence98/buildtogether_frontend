@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:html';
 
 import 'package:autologin_plugin/autologin_plugin_web.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_frontend/auth/registration_widget.dart';
 import 'package:flutter_frontend/design/main_background.dart';
@@ -32,6 +33,7 @@ class _LoginPageState extends State<LoginPage> {
   bool loading = false;
   late Languages languages;
   late bool _passwordVisible;
+  bool _stayLoggedIn = false;
 
   @override
   void initState() {
@@ -177,6 +179,36 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                           ),
                           SizedBox(height: 10),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Checkbox(
+                                activeColor: CupertinoColors.systemYellow,
+                                fillColor: MaterialStateProperty.all(CupertinoColors.systemYellow),
+                                checkColor: Colors.black,
+                                value: _stayLoggedIn,
+                                onChanged: (bool? value) {
+                                  setState(() {
+                                    _stayLoggedIn = value!;
+                                  });
+                                },
+                              ),
+                              SizedBox(width: 5,),
+                              Center(
+                                child: Container(
+                                  child: Text(
+                                    languages.stayLoggedInLabel,
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 15,
+                                        color: Colors.yellow),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 10),
                           Center(
                             child: ButtonTheme(
                               height: 50,
@@ -267,7 +299,9 @@ class _LoginPageState extends State<LoginPage> {
     )
         .then((res) {
       if (res.statusCode == 200) {
-        AutologinPlugin.saveLoginData(username: _emailController.text.split(' ').first, password: _passwordController.text);
+        if(_stayLoggedIn){
+          AutologinPlugin.saveLoginData(username: _emailController.text.split(' ').first, password: _passwordController.text);
+        }
         session.get('/api/users/getAuthenticatedUser').then((innerRes) {
           if (innerRes.statusCode == 200) {
             User user =

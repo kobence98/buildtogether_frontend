@@ -530,8 +530,9 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
                                                                   ),
                                                                 ),
                                                                 onTap: () async {
-                                                                  Navigator.of(context).push(MaterialPageRoute(
-                                                                      builder: (context) => OpenImageWidget(
+                                                                  Navigator.of(context).push(PageRouteBuilder(
+                                                                      opaque: false,
+                                                                      pageBuilder: (_, __, ___) => OpenImageWidget(
                                                                           imageId: post
                                                                               .postImageId
                                                                               .toString(),

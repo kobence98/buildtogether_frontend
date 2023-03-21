@@ -102,7 +102,10 @@ class _MyAccountWidgetState extends State<MyAccountWidget> {
     );
     if (res.statusCode == 200) {
       await AutologinPlugin.saveLoginData(username: widget.user.email, password: null);
-      Phoenix.rebirth(context);
+      while(Navigator.canPop(context)){
+        Navigator.pop(context);
+      }
+      Navigator.pushNamed(context, '/login');
     }
   }
 

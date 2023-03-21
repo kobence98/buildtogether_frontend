@@ -604,8 +604,9 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                                                     ),
                                                   ),
                                                   onTap: () async {
-                                                    Navigator.of(context).push(MaterialPageRoute(
-                                                        builder: (context) =>
+                                                    Navigator.of(context).push(PageRouteBuilder(
+                                                        opaque: false,
+                                                        pageBuilder: (_, __, ___) =>
                                                             OpenImageWidget(
                                                                 imageId: post
                                                                     .postImageId
@@ -629,32 +630,35 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
-                                      LikeButton(
-                                        size: 20.0,
-                                        circleColor: CircleColor(
-                                            start: Colors.yellow.shade200,
-                                            end: Colors.yellow),
-                                        bubblesColor: BubblesColor(
-                                          dotPrimaryColor:
-                                              Colors.yellow.shade200,
-                                          dotSecondaryColor: Colors.yellow,
+                                      MouseRegion(
+                                        cursor: SystemMouseCursors.click,
+                                        child: LikeButton(
+                                          size: 20.0,
+                                          circleColor: CircleColor(
+                                              start: Colors.yellow.shade200,
+                                              end: Colors.yellow),
+                                          bubblesColor: BubblesColor(
+                                            dotPrimaryColor:
+                                                Colors.yellow.shade200,
+                                            dotSecondaryColor: Colors.yellow,
+                                          ),
+                                          isLiked: post.liked,
+                                          likeBuilder: (bool isLiked) {
+                                            return Icon(
+                                              Icons.lightbulb,
+                                              color: isLiked
+                                                  ? Colors.yellow
+                                                  : Colors.white,
+                                            );
+                                          },
+                                          onTap: (isLiked) {
+                                            return post.creatorId ==
+                                                    widget.user.userId
+                                                ? _onLikeOwnButtonPressed()
+                                                : _onLikeButton(isLiked);
+                                          },
+                                          likeCount: post.likeNumber,
                                         ),
-                                        isLiked: post.liked,
-                                        likeBuilder: (bool isLiked) {
-                                          return Icon(
-                                            Icons.lightbulb,
-                                            color: isLiked
-                                                ? Colors.yellow
-                                                : Colors.white,
-                                          );
-                                        },
-                                        onTap: (isLiked) {
-                                          return post.creatorId ==
-                                                  widget.user.userId
-                                              ? _onLikeOwnButtonPressed()
-                                              : _onLikeButton(isLiked);
-                                        },
-                                        likeCount: post.likeNumber,
                                       ),
                                       widget.user.companyId != null &&
                                               widget.user.companyId ==
