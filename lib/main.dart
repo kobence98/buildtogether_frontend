@@ -1,8 +1,12 @@
+import 'dart:html';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_frontend/auth/login_widget.dart';
 import 'package:flutter_frontend/auth/registration_widget.dart';
+import 'package:flutter_frontend/languages/english_language.dart';
 import 'package:flutter_frontend/languages/hungarian_language.dart';
 import 'package:flutter_frontend/router_loading_widget.dart';
+import 'package:flutter_frontend/static/inno_web_scroll_behavior.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:url_strategy/url_strategy.dart';
 
@@ -15,12 +19,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      scrollBehavior: InnoWebScrollBehavior(),
       debugShowCheckedModeBanner: false,
       initialRoute: '/home',
       routes: {
-        '/login': (context) => LoginPage(languages: LanguageHu()),
+        '/login': (context) => LoginPage(languages: window.navigator.language == 'hu' ? LanguageHu() : LanguageEn()),
         '/registration': (context) =>
-            RegistrationWidget(languages: LanguageHu()),
+            RegistrationWidget(languages:  window.navigator.language == 'hu' ? LanguageHu() : LanguageEn()),
         '/home': (context) => RouterLoadingWidget(
               path: '/home',
             ),

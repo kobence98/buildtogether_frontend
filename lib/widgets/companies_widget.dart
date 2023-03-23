@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:html';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -79,7 +78,6 @@ class _CompaniesWidgetState extends State<CompaniesWidget> {
           thumbColor: Colors.grey,
           child: Container(
             color: Colors.black,
-            width: MediaQuery.of(context).size.width,
             child: dataLoading
                 ? Container(
                     child: Center(

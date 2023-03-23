@@ -1,15 +1,18 @@
 import 'dart:convert';
+import 'dart:html';
 
 import 'package:autologin_plugin/autologin_plugin_web.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_frontend/auth/login_widget.dart';
 import 'package:flutter_frontend/languages/hungarian_language.dart';
+import 'package:flutter_frontend/languages/languages.dart';
 import 'package:flutter_frontend/widgets/home_widget.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart';
 
 import 'entities/session.dart';
 import 'entities/user.dart';
+import 'languages/english_language.dart';
 
 class RouterLoadingWidget extends StatefulWidget {
   final String path;
@@ -24,9 +27,11 @@ class _RouterLoadingWidgetState extends State<RouterLoadingWidget> {
   late Widget _routerLoadingWidget;
   bool _loading = true;
   Session session = new Session();
+  late Languages language;
 
   @override
   void initState() {
+    language = window.navigator.language == 'hu' ? LanguageHu() : LanguageEn();
     super.initState();
     _onAutomaticLogin().then((widget) {
       setState(() {
@@ -75,7 +80,7 @@ class _RouterLoadingWidgetState extends State<RouterLoadingWidget> {
                 if (user.roles.contains('ROLE_COMPANY') &&
                     !user.isCompanyActive) {
                   Fluttertoast.showToast(
-                      msg: LanguageHu().subscribeWarningMessage,
+                      msg: language.subscribeWarningMessage,
                       toastLength: Toast.LENGTH_LONG,
                       gravity: ToastGravity.CENTER,
                       timeInSecForIosWeb: 4,
@@ -86,26 +91,26 @@ class _RouterLoadingWidgetState extends State<RouterLoadingWidget> {
                 return _selectWidgetByPath(user);
               } else {
                 Fluttertoast.showToast(
-                    msg: LanguageHu().errorInAutomaticLogin,
+                    msg: language.errorInAutomaticLogin,
                     toastLength: Toast.LENGTH_LONG,
                     gravity: ToastGravity.CENTER,
                     timeInSecForIosWeb: 4,
                     backgroundColor: Colors.red,
                     textColor: Colors.white,
                     fontSize: 16.0);
-                return LoginPage(languages: LanguageHu());
+                return LoginPage(languages: language);
               }
             }
           } else if (res.statusCode == 401) {
             Fluttertoast.showToast(
-                msg: LanguageHu().errorInAutomaticLogin,
+                msg: language.errorInAutomaticLogin,
                 toastLength: Toast.LENGTH_LONG,
                 gravity: ToastGravity.CENTER,
                 timeInSecForIosWeb: 4,
                 backgroundColor: Colors.red,
                 textColor: Colors.white,
                 fontSize: 16.0);
-            return LoginPage(languages: LanguageHu());
+            return LoginPage(languages: language);
           } else {
             Fluttertoast.showToast(
                 msg: res.toString(),
@@ -115,26 +120,26 @@ class _RouterLoadingWidgetState extends State<RouterLoadingWidget> {
                 backgroundColor: Colors.red,
                 textColor: Colors.white,
                 fontSize: 16.0);
-            return LoginPage(languages: LanguageHu());
+            return LoginPage(languages: language);
           }
         } else {
           Fluttertoast.showToast(
-              msg: LanguageHu().loggedOutLastTime,
+              msg: language.loggedOutLastTime,
               toastLength: Toast.LENGTH_LONG,
               gravity: ToastGravity.CENTER,
               timeInSecForIosWeb: 4,
               backgroundColor: Colors.red,
               textColor: Colors.white,
               fontSize: 16.0);
-          return LoginPage(languages: LanguageHu());
+          return LoginPage(languages: language);
         }
       } else {
-        return LoginPage(languages: LanguageHu());
+        return LoginPage(languages: language);
       }
     } catch (error) {
-      return LoginPage(languages: LanguageHu());
+      return LoginPage(languages: language);
     }
-    return LoginPage(languages: LanguageHu());
+    return LoginPage(languages: language);
   }
 
   Widget _selectWidgetByPath(User user) {
@@ -145,7 +150,7 @@ class _RouterLoadingWidgetState extends State<RouterLoadingWidget> {
             user: user,
             initPage: 1,
             initTab: 1,
-            languages: LanguageHu(),
+            languages: language,
             navBarStatusChangeableAgain: () {},
             hideNavBar: () {});
       case '/myAccount':
@@ -154,7 +159,7 @@ class _RouterLoadingWidgetState extends State<RouterLoadingWidget> {
             user: user,
             initPage: 2,
             initTab: 1,
-            languages: LanguageHu(),
+            languages: language,
             navBarStatusChangeableAgain: () {},
             hideNavBar: () {});
       case '/registeredCompanies':
@@ -163,7 +168,7 @@ class _RouterLoadingWidgetState extends State<RouterLoadingWidget> {
             user: user,
             initPage: 3,
             initTab: 1,
-            languages: LanguageHu(),
+            languages: language,
             navBarStatusChangeableAgain: () {},
             hideNavBar: () {});
       case '/likedPosts':
@@ -172,7 +177,7 @@ class _RouterLoadingWidgetState extends State<RouterLoadingWidget> {
             user: user,
             initPage: 4,
             initTab: 1,
-            languages: LanguageHu(),
+            languages: language,
             navBarStatusChangeableAgain: () {},
             hideNavBar: () {});
       case '/subscription':
@@ -181,7 +186,7 @@ class _RouterLoadingWidgetState extends State<RouterLoadingWidget> {
             user: user,
             initPage: 5,
             initTab: 1,
-            languages: LanguageHu(),
+            languages: language,
             navBarStatusChangeableAgain: () {},
             hideNavBar: () {});
       case '/home':
@@ -191,7 +196,7 @@ class _RouterLoadingWidgetState extends State<RouterLoadingWidget> {
             user: user,
             initPage: 0,
             initTab: 1,
-            languages: LanguageHu(),
+            languages: language,
             navBarStatusChangeableAgain: () {},
             hideNavBar: () {});
     }

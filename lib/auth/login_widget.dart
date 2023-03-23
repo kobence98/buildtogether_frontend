@@ -334,7 +334,7 @@ class _LoginPageState extends State<LoginPage> {
                         user: user,
                         initPage: 0,
                         initTab: 1,
-                        languages: LanguageHu(),
+                        languages: languages,
                         navBarStatusChangeableAgain: () {},
                         hideNavBar: () {}),
                   ));

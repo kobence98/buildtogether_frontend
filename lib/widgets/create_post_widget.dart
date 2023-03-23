@@ -105,6 +105,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                           ),
                         ]),
                     body: TabBarView(
+                      physics: NeverScrollableScrollPhysics(),
                         children: [_simplePostWidget(), _pollPostWidget()]),
                   ),
                 )
