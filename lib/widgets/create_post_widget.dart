@@ -274,7 +274,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                         padding: EdgeInsets.all(4),
                         child: Center(
                           child: Container(
-                            width: MediaQuery.of(context).size.width - 70,
+                            width: 700,
                             child: TypeAheadField(
                               noItemsFoundBuilder: (context) {
                                 return Container(
@@ -633,7 +633,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                       padding: EdgeInsets.all(5),
                       child: Center(
                         child: Container(
-                          width: MediaQuery.of(context).size.width - 20,
+                          width: 700,
                           child: TextField(
                             cursorColor: Colors.black,
                             controller: _pollTitleController,
@@ -677,6 +677,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                     return pollOptions.elementAt(index - 5);
                   } else if (index == pollOptions.length + 5) {
                     return Container(
+                      width: 700,
                       margin: EdgeInsets.only(top: 20),
                       child: Center(
                         child: ButtonTheme(
@@ -739,6 +740,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
       pollControllers.add(textEditingController);
       pollOptions.add(
         Container(
+          width: 700,
           margin: EdgeInsets.only(left: 10, right: 10, top: 10),
           padding: EdgeInsets.only(left: 20.0),
           decoration: BoxDecoration(
@@ -888,6 +890,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
     pollFocusNodes.add(focusNode);
     pollOptions.add(
       Container(
+        width: 700,
         margin: EdgeInsets.only(left: 10, right: 10, top: 10),
         padding: EdgeInsets.only(left: 20.0),
         decoration: BoxDecoration(

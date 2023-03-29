@@ -12,6 +12,7 @@ import 'package:flutter_frontend/languages/english_language.dart';
 import 'package:flutter_frontend/languages/hungarian_language.dart';
 import 'package:flutter_frontend/languages/languages.dart';
 import 'package:flutter_frontend/static/date_formatter.dart';
+import 'package:flutter_frontend/static/inno_web_scroll_behavior.dart';
 import 'package:flutter_frontend/widgets/create_post_widget.dart';
 import 'package:flutter_frontend/widgets/my_account_widget.dart';
 import 'package:flutter_frontend/widgets/single_post_widget.dart';
@@ -90,6 +91,7 @@ class _HomeWidgetState extends State<HomeWidget> {
   late List<SideMenuItem> items;
   int _currentTab = 1;
   bool _mainLoading = true;
+  double _pageWidth = 1100;
 
   //TODO language change
   @override
@@ -186,169 +188,179 @@ class _HomeWidgetState extends State<HomeWidget> {
       body: _mainLoading
           ? InnoLoading()
           : Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Container(
-                padding: EdgeInsets.all(4),
-                color: Colors.grey.shade900,
-                child: SideMenu(
-                  collapseWidth: 1300,
-                  style: SideMenuStyle(
-                      backgroundColor: Colors.black,
-                      selectedTitleTextStyle:
-                          TextStyle(color: Colors.grey.shade500),
-                      unselectedTitleTextStyle:
-                          TextStyle(color: Colors.grey.shade500),
-                      selectedIconColor: Colors.grey.shade500,
-                      unselectedIconColor: Colors.grey.shade500,
-                      selectedColor: Colors.grey.shade900),
-                  title: Container(
-                    margin: EdgeInsets.only(bottom: 4),
-                    padding: EdgeInsets.only(bottom: 4),
-                    color: Colors.grey.shade900,
-                    child: Image.asset('assets/images/launcher_icon.png'),
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Container(
+                  padding: EdgeInsets.all(4),
+                  color: Colors.grey.shade900,
+                  child: SideMenu(
+                    collapseWidth: 1300,
+                    style: SideMenuStyle(
+                        backgroundColor: Colors.black,
+                        selectedTitleTextStyle:
+                            TextStyle(color: Colors.grey.shade500),
+                        unselectedTitleTextStyle:
+                            TextStyle(color: Colors.grey.shade500),
+                        selectedIconColor: Colors.grey.shade500,
+                        unselectedIconColor: Colors.grey.shade500,
+                        selectedColor: Colors.grey.shade900),
+                    title: Container(
+                      margin: EdgeInsets.only(bottom: 4),
+                      padding: EdgeInsets.only(bottom: 4),
+                      color: Colors.grey.shade900,
+                      child: Image.asset('assets/images/launcher_icon.png'),
+                    ),
+                    items: [
+                      SideMenuItem(
+                        // Priority of item to show on SideMenu, lower value is displayed at the top
+                        priority: 0,
+                        title: languages.mainPageLabel,
+                        onTap: (int, controller) {
+                          _sideMenuController.changePage(0);
+                          page.jumpToPage(0);
+                          window.history.pushState(null, 'home', '/home');
+                          _pageWidth = 1100;
+                        },
+                        icon: Icon(Icons.home),
+                      ),
+                      SideMenuItem(
+                        priority: 1,
+                        title: languages.createPostLabel,
+                        onTap: (int, controller) {
+                          _sideMenuController.changePage(1);
+                          page.jumpToPage(1);
+                          window.history
+                              .pushState(null, 'createPost', '/createPost');
+                          _pageWidth = 700;
+                        },
+                        icon: Icon(Icons.create),
+                      ),
+                      SideMenuItem(
+                        priority: 2,
+                        title: languages.myAccountLabel,
+                        onTap: (int, controller) {
+                          _sideMenuController.changePage(2);
+                          page.jumpToPage(2);
+                          window.history
+                              .pushState(null, 'myAccount', '/myAccount');
+                          _pageWidth = 700;
+                        },
+                        icon: Icon(Icons.perm_identity),
+                      ),
+                      SideMenuItem(
+                        priority: 3,
+                        title: languages.companiesLabel,
+                        onTap: (int, controller) {
+                          _sideMenuController.changePage(3);
+                          page.jumpToPage(3);
+                          window.history.pushState(null, 'registeredCompanies',
+                              '/registeredCompanies');
+                          _pageWidth = 700;
+                        },
+                        icon: Icon(Icons.factory),
+                      ),
+                      SideMenuItem(
+                        priority: 4,
+                        title: languages.likedPostsLabel,
+                        onTap: (int, controller) {
+                          _sideMenuController.changePage(4);
+                          page.jumpToPage(4);
+                          window.history
+                              .pushState(null, 'likedPosts', '/likedPosts');
+                          _pageWidth = 700;
+                        },
+                        icon: Icon(Icons.lightbulb),
+                      ),
+                      ...widget.user.roles.contains('ROLE_COMPANY')
+                          ? [
+                              SideMenuItem(
+                                priority: 5,
+                                title: languages.subscriptionHandlingLabel,
+                                onTap: (int, controller) {
+                                  _sideMenuController.changePage(5);
+                                  page.jumpToPage(5);
+                                  window.history.pushState(
+                                      null, 'subscription', '/subscription');
+                                  _pageWidth = 700;
+                                },
+                                icon: Icon(Icons.subscriptions),
+                              )
+                            ]
+                          : [],
+                    ],
+                    controller: _sideMenuController,
                   ),
-                  items: [
-                    SideMenuItem(
-                      // Priority of item to show on SideMenu, lower value is displayed at the top
-                      priority: 0,
-                      title: languages.mainPageLabel,
-                      onTap: (int, controller) {
-                        _sideMenuController.changePage(0);
-                        page.jumpToPage(0);
-                        window.history.pushState(null, 'home', '/home');
-                      },
-                      icon: Icon(Icons.home),
-                    ),
-                    SideMenuItem(
-                      priority: 1,
-                      title: languages.createPostLabel,
-                      onTap: (int, controller) {
-                        _sideMenuController.changePage(1);
-                        page.jumpToPage(1);
-                        window.history
-                            .pushState(null, 'createPost', '/createPost');
-                      },
-                      icon: Icon(Icons.create),
-                    ),
-                    SideMenuItem(
-                      priority: 2,
-                      title: languages.myAccountLabel,
-                      onTap: (int, controller) {
-                        _sideMenuController.changePage(2);
-                        page.jumpToPage(2);
-                        window.history
-                            .pushState(null, 'myAccount', '/myAccount');
-                      },
-                      icon: Icon(Icons.perm_identity),
-                    ),
-                    SideMenuItem(
-                      priority: 3,
-                      title: languages.companiesLabel,
-                      onTap: (int, controller) {
-                        _sideMenuController.changePage(3);
-                        page.jumpToPage(3);
-                        window.history.pushState(null,
-                            'registeredCompanies', '/registeredCompanies');
-                      },
-                      icon: Icon(Icons.factory),
-                    ),
-                    SideMenuItem(
-                      priority: 4,
-                      title: languages.likedPostsLabel,
-                      onTap: (int, controller) {
-                        _sideMenuController.changePage(4);
-                        page.jumpToPage(4);
-                        window.history
-                            .pushState(null, 'likedPosts', '/likedPosts');
-                      },
-                      icon: Icon(Icons.lightbulb),
-                    ),
-                    ...widget.user.roles.contains('ROLE_COMPANY')
-                        ? [
-                            SideMenuItem(
-                              priority: 5,
-                              title: languages.subscriptionHandlingLabel,
-                              onTap: (int, controller) {
-                                _sideMenuController.changePage(5);
-                                page.jumpToPage(5);
-                                window.history.pushState(
-                                    null, 'subscription', '/subscription');
-                              },
-                              icon: Icon(Icons.subscriptions),
-                            )
-                          ]
-                        : [],
-                  ],
-                  controller: _sideMenuController,
                 ),
-              ),
-              RawScrollbar(
-                controller: _horizontalScrollController,
-                thumbVisibility: true,
-                thumbColor: Colors.grey,
-                scrollbarOrientation: ScrollbarOrientation.bottom,
-                child: Container(
-                  height: MediaQuery.of(context).size.height,
-                  width: MediaQuery.of(context).size.width < 1300
-                      ? MediaQuery.of(context).size.width - 58
-                      : MediaQuery.of(context).size.width - 308,
-                  color: Colors.black,
-                  child: Center(
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      controller: _horizontalScrollController,
-                      child: Container(
-                        width: 952,
-                        child: PageView(
-                          controller: page,
-                          physics: NeverScrollableScrollPhysics(),
-                          children: [
-                            _mainPage,
-                            CreatePostWidget(
-                              session: widget.session,
-                              user: widget.user,
-                              languages: languages,
-                              callHomePage: () {
-                                setState(() {
-                                  page.jumpToPage(0);
-                                  _mainPage = _scrollableInnerWidget();
-                                  window.history
-                                      .pushState(null, 'home', '/home');
-                                });
-                              },
-                            ),
-                            MyAccountWidget(
-                              languages: languages,
-                              session: widget.session,
-                              user: widget.user,
-                            ),
-                            CompaniesWidget(
-                              session: widget.session,
-                              languages: languages,
-                            ),
-                            LikedPostsWidget(
-                              backToPostsPage: () {
-                                _backToPostsPage();
-                              },
-                              user: widget.user,
-                              session: widget.session,
-                              languages: languages,
-                            ),
-                            SubscriptionHandlingWidget(
-                              languages: languages,
-                              user: widget.user,
-                              session: widget.session,
-                            )
-                          ],
+                RawScrollbar(
+                  controller: _horizontalScrollController,
+                  thumbVisibility: true,
+                  thumbColor: Colors.grey,
+                  scrollbarOrientation: ScrollbarOrientation.bottom,
+                  child: Container(
+                    height: MediaQuery.of(context).size.height,
+                    width: MediaQuery.of(context).size.width < 1300
+                        ? MediaQuery.of(context).size.width - 58
+                        : MediaQuery.of(context).size.width - 308,
+                    color: Colors.black,
+                    child: Center(
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        controller: _horizontalScrollController,
+                        child: Container(
+                          width: MediaQuery.of(context).size.width < _pageWidth
+                              ? _pageWidth
+                              : (MediaQuery.of(context).size.width < 1300
+                              ? MediaQuery.of(context).size.width - 58
+                              : MediaQuery.of(context).size.width - 308),
+                          child: PageView(
+                            controller: page,
+                            physics: NeverScrollableScrollPhysics(),
+                            children: [
+                              _mainPage,
+                              CreatePostWidget(
+                                session: widget.session,
+                                user: widget.user,
+                                languages: languages,
+                                callHomePage: () {
+                                  setState(() {
+                                    page.jumpToPage(0);
+                                    _mainPage = _scrollableInnerWidget();
+                                    window.history
+                                        .pushState(null, 'home', '/home');
+                                  });
+                                },
+                              ),
+                              MyAccountWidget(
+                                languages: languages,
+                                session: widget.session,
+                                user: widget.user,
+                              ),
+                              CompaniesWidget(
+                                session: widget.session,
+                                languages: languages,
+                              ),
+                              LikedPostsWidget(
+                                backToPostsPage: () {
+                                  _backToPostsPage();
+                                },
+                                user: widget.user,
+                                session: widget.session,
+                                languages: languages,
+                              ),
+                              SubscriptionHandlingWidget(
+                                languages: languages,
+                                user: widget.user,
+                                session: widget.session,
+                              )
+                            ],
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
-          ),
+              ],
+            ),
     );
   }
 
@@ -367,9 +379,12 @@ class _HomeWidgetState extends State<HomeWidget> {
         break;
     }
     return Container(
-      width: 700,
+      width: MediaQuery.of(context).size.width < 700
+          ? 700
+          : MediaQuery.of(context).size.width,
       color: Colors.black,
       child: PagedListView<int, Post>(
+        physics: ClampingScrollPhysics(),
         pagingController: pagingController,
         builderDelegate: PagedChildBuilderDelegate<Post>(
           firstPageErrorIndicatorBuilder: (context) => Container(
@@ -1447,22 +1462,18 @@ class _HomeWidgetState extends State<HomeWidget> {
   _scrollableInnerWidget() {
     return Container(
       color: Colors.black,
-      width: 771,
+      width: MediaQuery.of(context).size.width,
       child: DefaultTabController(
         initialIndex: widget.initTab,
         length: 3,
         child: Center(
           child: Container(
             child: NestedScrollView(
-              // physics: NeverScrollableScrollPhysics(),
               controller: _scrollController,
               headerSliverBuilder:
                   (BuildContext context, bool innerBoxIsScrolled) {
                 return [
                   SliverAppBar(
-                    onStretchTrigger: () async {
-                      print('most triggerelődött');
-                    },
                     backgroundColor: Colors.black,
                     automaticallyImplyLeading: false,
                     title: Center(
@@ -1742,8 +1753,9 @@ class _HomeWidgetState extends State<HomeWidget> {
               },
               body: Center(
                 child: Container(
-                  width: 700,
-                  margin: EdgeInsets.symmetric(horizontal: 20),
+                  width: MediaQuery.of(context).size.width < 700
+                      ? 700
+                      : MediaQuery.of(context).size.width,
                   child: TabBarView(
                     physics: NeverScrollableScrollPhysics(),
                     children: [
