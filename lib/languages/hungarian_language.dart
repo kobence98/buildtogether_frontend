@@ -251,7 +251,7 @@ class LanguageHu extends Languages {
   String get emptyCommentWarningMessage => 'Ne hagyd üresen a kommentet!';
 
   @override
-  String get reportUserAndCommentTitleLabel => 'A poszt és a készítője jelentéséhez kérünk add meg a jelentés okát:';
+  String get reportUserAndCommentTitleLabel => 'A komment és a készítője jelentéséhez kérünk add meg a jelentés okát:';
 
   @override
   String get alreadyReportedCommentMessage => 'Már jelentetted ezt a posztot!';
@@ -266,7 +266,7 @@ class LanguageHu extends Languages {
   String get removedLabel => '[Törölve]';
 
   @override
-  String get tooDeepToDisplayMessage => 'The comment tree would be too deep to display, so further replies are not allowed for now!';
+  String get tooDeepToDisplayMessage => 'A komment fa túl mély a megjelenítéshez, szóval egyelőre nincsen engedélyezve a további válaszadás!';
 
   //CREATE POST WIDGET
 

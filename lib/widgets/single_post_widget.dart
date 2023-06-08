@@ -178,8 +178,8 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                                   ),
                                   itemBuilder: (context) {
                                     return List.generate(
-                                        widget.user.companyId == post.companyId
-                                            ? 4
+                                        (widget.user.companyId == post.companyId)
+                                            ? 5
                                             : 2, (index) {
                                       if (index == 0) {
                                         return PopupMenuItem(

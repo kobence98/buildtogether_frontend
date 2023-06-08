@@ -55,7 +55,7 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
     });
     dataLoading = true;
     widget.session
-        .get('/api/posts/filtered/' + widget.pattern)
+        .postJson('/api/posts/filtered', {'pattern' : widget.pattern})
         .then((response) {
       if (response.statusCode == 200) {
         setState(() {
