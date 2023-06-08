@@ -54,6 +54,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
   LivingPlaceType? _chosenLivingPlaceType;
   SalaryType? _chosenSalaryType;
   List<int> houseHoldMembersHelperList = [];
+  bool _imageLoading = false;
 
   @override
   void initState() {
@@ -393,9 +394,14 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
   }
 
   void _addPicture(setState) async {
+    setState(() {
+      _imageLoading = true;
+    });
     final ImagePicker _picker = ImagePicker();
     image = await _picker.pickImage(source: ImageSource.gallery);
-    setState(() {});
+    setState(() {
+      _imageLoading = false;
+    });
   }
 
   @override
@@ -1146,34 +1152,45 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                 fontSize: 20,
                 fontWeight: FontWeight.bold),
           ),
-          title: image != null
+          title: _imageLoading
               ? InkWell(
-                  child: Center(
-                    child: CircleAvatar(
-                      radius: 20,
-                      backgroundImage: NetworkImage(image!.path),
-                    ),
-                  ),
-                  onTap: () {
-                    _addPicture(setState);
-                  },
-                )
+            child: Center(
+              child: CircleAvatar(
+                backgroundColor: Colors.black,
+                radius: 20,
+                backgroundImage:
+                AssetImage("assets/images/loading_spin.gif"),
+              ),
+            ),
+            onTap: () {
+              _addPicture(setState);
+            },
+          )
+              : (image != null
+              ? InkWell(
+            child: Center(
+              child: CircleAvatar(
+                radius: 20,
+                backgroundImage: NetworkImage(image!.path),
+              ),
+            ),
+            onTap: () {
+              _addPicture(setState);
+            },
+          )
               : InkWell(
-                  child: Center(
-                    child: CircleAvatar(
-                      radius: 20,
-                      backgroundImage: NetworkImage(
-                        widget.session.domainName +
-                            "/api/images/" +
-                            companyData!.imageId.toString(),
-                        headers: widget.session.headers,
-                      ),
-                    ),
-                  ),
-                  onTap: () {
-                    _addPicture(setState);
-                  },
-                ),
+            child: Center(
+              child: CircleAvatar(
+                backgroundColor: Colors.yellow,
+                radius: 20,
+                backgroundImage:
+                AssetImage("assets/images/add_image.png"),
+              ),
+            ),
+            onTap: () {
+              _addPicture(setState);
+            },
+          )),
         ),
       ),
     );

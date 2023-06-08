@@ -28,7 +28,6 @@ class _SubscriptionHandlingWidgetState
     extends State<SubscriptionHandlingWidget> {
   bool loading = false;
   late Languages languages;
-  ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -38,73 +37,73 @@ class _SubscriptionHandlingWidgetState
 
   @override
   Widget build(BuildContext context) {
-    return RawScrollbar(
-      controller: _scrollController,
-      scrollbarOrientation: ScrollbarOrientation.right,
-      thumbVisibility: true,
-      thumbColor: Colors.grey,
-      child: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        controller: _scrollController,
-        child: Container(
-          color: Colors.black,
-          child: Center(
-            child: Container(
-              padding: EdgeInsets.all(10),
-              height: 400,
-              width: 400,
-              decoration: BoxDecoration(
-                  color: Colors.black,
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                    color: Colors.yellow,
-                  )),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    '${languages.subscriptionHandlingLabel}',
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 30,
-                        color: Colors.yellow),
+    return Container(
+      height: MediaQuery.of(context).size.height,
+      width: MediaQuery.of(context).size.width < 1300
+          ? MediaQuery.of(context).size.width - 58
+          : MediaQuery.of(context).size.width - 308,
+      //itt kéne egy csomagolás
+      child: Container(
+        width: MediaQuery.of(context).size.width < 400 ? 400 : (MediaQuery.of(context).size.width < 1300
+            ? MediaQuery.of(context).size.width - 58
+            : MediaQuery.of(context).size.width - 308),
+        height: MediaQuery.of(context).size.height < 400 ? 400 : MediaQuery.of(context).size.height,
+        color: Colors.black,
+        child: Center(
+          child: Container(
+            height: 400,
+            width: 400,
+            decoration: BoxDecoration(
+                color: Colors.black,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                  color: Colors.yellow,
+                )),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  '${languages.subscriptionHandlingLabel}',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 30,
+                      color: Colors.yellow),
+                ),
+                Container(
+                  height: 300,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade900,
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                  Container(
-                    height: 300,
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade900,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    padding: EdgeInsets.all(10),
-                    child: Center(
-                      child: Text(
-                        widget.user.isCompanyActive
-                            ? languages.unsubscribeTipLabel
-                            : languages.subscribeTipLabel,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                            color: Colors.yellow),
-                      ),
+                  padding: EdgeInsets.all(10),
+                  child: Center(
+                    child: Text(
+                      widget.user.isCompanyActive
+                          ? languages.unsubscribeTipLabel
+                          : languages.subscribeTipLabel,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                          color: Colors.yellow),
                     ),
                   ),
-                  Container(
-                    height: 30,
-                    child: TextButton(
-                      onPressed: () {
-                        _onSubscriptionTap();
-                      },
-                      child: Text(
-                        widget.user.isCompanyActive
-                            ? languages.unsubscribeLabel
-                            : languages.subscribeLabel,
-                        style: TextStyle(color: Colors.yellow),
-                      ),
+                ),
+                Container(
+                  height: 30,
+                  child: TextButton(
+                    onPressed: () {
+                      _onSubscriptionTap();
+                    },
+                    child: Text(
+                      widget.user.isCompanyActive
+                          ? languages.unsubscribeLabel
+                          : languages.subscribeLabel,
+                      style: TextStyle(color: Colors.yellow),
                     ),
-                  )
-                ],
-              ),
+                  ),
+                )
+              ],
             ),
           ),
         ),

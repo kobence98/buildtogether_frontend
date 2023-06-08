@@ -12,7 +12,6 @@ import 'package:flutter_frontend/languages/english_language.dart';
 import 'package:flutter_frontend/languages/hungarian_language.dart';
 import 'package:flutter_frontend/languages/languages.dart';
 import 'package:flutter_frontend/static/date_formatter.dart';
-import 'package:flutter_frontend/static/inno_web_scroll_behavior.dart';
 import 'package:flutter_frontend/widgets/create_post_widget.dart';
 import 'package:flutter_frontend/widgets/my_account_widget.dart';
 import 'package:flutter_frontend/widgets/single_post_widget.dart';
@@ -91,7 +90,6 @@ class _HomeWidgetState extends State<HomeWidget> {
   late List<SideMenuItem> items;
   int _currentTab = 1;
   bool _mainLoading = true;
-  double _pageWidth = 1100;
 
   //TODO language change
   @override
@@ -219,7 +217,6 @@ class _HomeWidgetState extends State<HomeWidget> {
                           _sideMenuController.changePage(0);
                           page.jumpToPage(0);
                           window.history.pushState(null, 'home', '/home');
-                          _pageWidth = 1100;
                         },
                         icon: Icon(Icons.home),
                       ),
@@ -231,7 +228,6 @@ class _HomeWidgetState extends State<HomeWidget> {
                           page.jumpToPage(1);
                           window.history
                               .pushState(null, 'createPost', '/createPost');
-                          _pageWidth = 700;
                         },
                         icon: Icon(Icons.create),
                       ),
@@ -243,7 +239,6 @@ class _HomeWidgetState extends State<HomeWidget> {
                           page.jumpToPage(2);
                           window.history
                               .pushState(null, 'myAccount', '/myAccount');
-                          _pageWidth = 700;
                         },
                         icon: Icon(Icons.perm_identity),
                       ),
@@ -255,7 +250,6 @@ class _HomeWidgetState extends State<HomeWidget> {
                           page.jumpToPage(3);
                           window.history.pushState(null, 'registeredCompanies',
                               '/registeredCompanies');
-                          _pageWidth = 700;
                         },
                         icon: Icon(Icons.factory),
                       ),
@@ -267,7 +261,6 @@ class _HomeWidgetState extends State<HomeWidget> {
                           page.jumpToPage(4);
                           window.history
                               .pushState(null, 'likedPosts', '/likedPosts');
-                          _pageWidth = 700;
                         },
                         icon: Icon(Icons.lightbulb),
                       ),
@@ -281,7 +274,6 @@ class _HomeWidgetState extends State<HomeWidget> {
                                   page.jumpToPage(5);
                                   window.history.pushState(
                                       null, 'subscription', '/subscription');
-                                  _pageWidth = 700;
                                 },
                                 icon: Icon(Icons.subscriptions),
                               )
@@ -291,71 +283,75 @@ class _HomeWidgetState extends State<HomeWidget> {
                     controller: _sideMenuController,
                   ),
                 ),
-                RawScrollbar(
-                  controller: _horizontalScrollController,
-                  thumbVisibility: true,
-                  thumbColor: Colors.grey,
-                  scrollbarOrientation: ScrollbarOrientation.bottom,
-                  child: Container(
-                    height: MediaQuery.of(context).size.height,
-                    width: MediaQuery.of(context).size.width < 1300
-                        ? MediaQuery.of(context).size.width - 58
-                        : MediaQuery.of(context).size.width - 308,
-                    color: Colors.black,
-                    child: Center(
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        controller: _horizontalScrollController,
-                        child: Container(
-                          width: MediaQuery.of(context).size.width < _pageWidth
-                              ? _pageWidth
-                              : (MediaQuery.of(context).size.width < 1300
-                              ? MediaQuery.of(context).size.width - 58
-                              : MediaQuery.of(context).size.width - 308),
-                          child: PageView(
-                            controller: page,
-                            physics: NeverScrollableScrollPhysics(),
-                            children: [
-                              _mainPage,
-                              CreatePostWidget(
-                                session: widget.session,
-                                user: widget.user,
-                                languages: languages,
-                                callHomePage: () {
-                                  setState(() {
-                                    page.jumpToPage(0);
-                                    _mainPage = _scrollableInnerWidget();
-                                    window.history
-                                        .pushState(null, 'home', '/home');
-                                  });
-                                },
+                Container(
+                  height: MediaQuery.of(context).size.height,
+                  width: MediaQuery.of(context).size.width < 1300
+                      ? MediaQuery.of(context).size.width - 58
+                      : MediaQuery.of(context).size.width - 308,
+                  color: Colors.black,
+                  child: Center(
+                    child: PageView(
+                      controller: page,
+                      physics: NeverScrollableScrollPhysics(),
+                      children: [
+                        RawScrollbar(
+                          controller: _horizontalScrollController,
+                          thumbVisibility: true,
+                          thumbColor: Colors.grey,
+                          scrollbarOrientation: ScrollbarOrientation.bottom,
+                          child: Container(
+                            width: MediaQuery.of(context).size.width <
+                                    1100
+                                ? 1100
+                                : (MediaQuery.of(context).size.width < 1300
+                                    ? MediaQuery.of(context).size.width - 58
+                                    : MediaQuery.of(context).size.width - 308),
+                            child: Center(
+                              child: SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                controller: _horizontalScrollController,
+                                child: _mainPage,
                               ),
-                              MyAccountWidget(
-                                languages: languages,
-                                session: widget.session,
-                                user: widget.user,
-                              ),
-                              CompaniesWidget(
-                                session: widget.session,
-                                languages: languages,
-                              ),
-                              LikedPostsWidget(
-                                backToPostsPage: () {
-                                  _backToPostsPage();
-                                },
-                                user: widget.user,
-                                session: widget.session,
-                                languages: languages,
-                              ),
-                              SubscriptionHandlingWidget(
-                                languages: languages,
-                                user: widget.user,
-                                session: widget.session,
-                              )
-                            ],
+                            ),
                           ),
                         ),
-                      ),
+                        Container(
+                          child: CreatePostWidget(
+                            session: widget.session,
+                            user: widget.user,
+                            languages: languages,
+                            callHomePage: () {
+                              setState(() {
+                                page.jumpToPage(0);
+                                _mainPage = _scrollableInnerWidget();
+                                window.history.pushState(null, 'home', '/home');
+                              });
+                            },
+                          ),
+                        ),
+                        MyAccountWidget(
+                          languages: languages,
+                          session: widget.session,
+                          user: widget.user,
+                        ),
+                        CompaniesWidget(
+                          session: widget.session,
+                          languages: languages,
+                        ),
+                        LikedPostsWidget(
+                          backToPostsPage: () {
+                            _backToPostsPage();
+                          },
+                          user: widget.user,
+                          session: widget.session,
+                          languages: languages,
+                        ),
+                        SubscriptionHandlingWidget(
+                          languages: languages,
+                          user: widget.user,
+                          session: widget.session,
+                        )
+                      ],
                     ),
                   ),
                 ),
@@ -1462,7 +1458,10 @@ class _HomeWidgetState extends State<HomeWidget> {
   _scrollableInnerWidget() {
     return Container(
       color: Colors.black,
-      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height,
+      width: MediaQuery.of(context).size.width < 1300
+          ? MediaQuery.of(context).size.width - 58
+          : MediaQuery.of(context).size.width - 308,
       child: DefaultTabController(
         initialIndex: widget.initTab,
         length: 3,

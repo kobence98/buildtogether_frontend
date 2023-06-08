@@ -19,6 +19,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData.light().copyWith(
+          scrollbarTheme: ScrollbarThemeData().copyWith(
+            thumbColor: MaterialStateProperty.all(Colors.grey),
+          )
+      ),
       scrollBehavior: InnoWebScrollBehavior(),
       debugShowCheckedModeBanner: false,
       initialRoute: '/home',

@@ -10,6 +10,7 @@ import 'package:flutter_frontend/languages/english_language.dart';
 import 'package:flutter_frontend/languages/hungarian_language.dart';
 import 'package:flutter_frontend/languages/languages.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:web_smooth_scroll/web_smooth_scroll.dart';
 
 import '../../entities/session.dart';
 import '../../entities/user.dart';
@@ -49,186 +50,199 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: RawScrollbar(
-        controller: _verticalScrollController,
-        thumbVisibility: true,
-        thumbColor: Colors.grey,
+      body: WebSmoothScroll(
+        controller: _horizontalScrollController,
         child: SingleChildScrollView(
-          controller: _verticalScrollController,
-          scrollDirection: Axis.vertical,
-          child: RawScrollbar(
-            controller: _horizontalScrollController,
-            thumbVisibility: true,
-            thumbColor: Colors.grey,
+          physics: const NeverScrollableScrollPhysics(),
+          controller: _horizontalScrollController,
+          child: WebSmoothScroll(
+            controller: _verticalScrollController,
             child: SingleChildScrollView(
-              controller: _horizontalScrollController,
-              scrollDirection: Axis.horizontal,
+              physics: const NeverScrollableScrollPhysics(),
+              controller: _verticalScrollController,
               child: Container(
-                width: MediaQuery.of(context).size.width < 620 ? 620 : MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height < 600 ? 600 : MediaQuery.of(context).size.height,
+                width: MediaQuery.of(context).size.width < 620
+                    ? 620
+                    : MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height < 600
+                    ? 600
+                    : MediaQuery.of(context).size.height,
                 child: CustomPaint(
                   painter: MainBackground(),
-                  child: Container(
-                    child: loading
-                        ? Container(
-                            child: Center(
-                              child: Image(
-                                  image: new AssetImage(
-                                      "assets/images/loading_breath.gif")),
-                            ),
-                          )
-                        : Center(
-                            child: Container(
-                              width: 600,
-                              height: 1000,
-                              margin: EdgeInsets.symmetric(horizontal: 10),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Container(
-                                    width: 600,
-                                    child: Center(
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          InkWell(
-                                            child: CircleAvatar(
-                                              backgroundColor: Colors.white,
-                                              radius: 30,
-                                              foregroundImage: AssetImage(
-                                                  'icons/flags/png/gb.png',
-                                                  package: 'country_icons'),
-                                            ),
-                                            onTap: () {
-                                              setState(() {
-                                                languages = LanguageEn();
-                                                // languagesSqfLiteHandler.insertLanguageCode(
-                                                //     LanguageCode(code: 'en', id: 0));
-                                              });
-                                            },
-                                          ),
-                                          SizedBox(
-                                            width: 10,
-                                          ),
-                                          InkWell(
-                                            child: CircleAvatar(
-                                              backgroundColor: Colors.white,
-                                              radius: 30,
-                                              foregroundImage: AssetImage(
-                                                  'icons/flags/png/hu.png',
-                                                  package: 'country_icons'),
-                                            ),
-                                            onTap: () {
-                                              setState(() {
-                                                languages = LanguageHu();
-                                                // languagesSqfLiteHandler.insertLanguageCode(
-                                                //     LanguageCode(code: 'hu', id: 0));
-                                              });
-                                            },
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Container(
-                                    width: 600,
-                                    child: Center(
-                                      child: Container(
-                                        padding: EdgeInsets.only(left: 20.0),
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.all(
-                                            Radius.circular(10),
-                                          ),
-                                          color: Colors.yellow.withOpacity(0.7),
-                                        ),
-                                        child: TextField(
-                                          style: TextStyle(color: Colors.black),
-                                          controller: _emailController,
-                                          cursorColor: Colors.black,
-                                          keyboardType: TextInputType.emailAddress,
-                                          decoration: InputDecoration(
-                                            focusedBorder: OutlineInputBorder(
-                                                borderSide: BorderSide.none),
-                                            hintText: languages.emailLabel,
-                                            hintStyle: TextStyle(
-                                                color: Colors.black.withOpacity(0.5)),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(height: 5),
-                                  Container(
-                                    width: 600,
-                                    child: Center(
-                                      child: Container(
-                                        padding: EdgeInsets.only(left: 20.0),
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.all(
-                                            Radius.circular(10),
-                                          ),
-                                          color: Colors.yellow.withOpacity(0.7),
-                                        ),
-                                        child: TextField(
-                                          enableSuggestions: false,
-                                          autocorrect: false,
-                                          obscureText: !_passwordVisible,
-                                          style: TextStyle(color: Colors.black),
-                                          controller: _passwordController,
-                                          cursorColor: Colors.black,
-                                          decoration: InputDecoration(
-                                            suffixIcon: IconButton(
-                                              icon: Icon(
-                                                // Based on passwordVisible state choose the icon
-                                                _passwordVisible
-                                                    ? Icons.visibility
-                                                    : Icons.visibility_off,
-                                                color: Colors.black,
-                                              ),
-                                              onPressed: () {
-                                                // Update the state i.e. toogle the state of passwordVisible variable
-                                                setState(() {
-                                                  _passwordVisible = !_passwordVisible;
-                                                });
-                                              },
-                                            ),
-                                            focusedBorder: OutlineInputBorder(
-                                                borderSide: BorderSide.none),
-                                            hintText: languages.passwordLabel,
-                                            hintStyle: TextStyle(
-                                                color: Colors.black.withOpacity(0.5)),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(height: 10),
-                                  Container(
-                                    width: 600,
+                  child: loading
+                      ? Container(
+                          child: Center(
+                            child: Image(
+                                image: new AssetImage(
+                                    "assets/images/loading_breath.gif")),
+                          ),
+                        )
+                      : Center(
+                          child: Container(
+                            width: 600,
+                            height: 1000,
+                            margin: EdgeInsets.symmetric(horizontal: 10),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Container(
+                                  width: 600,
+                                  child: Center(
                                     child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      mainAxisSize: MainAxisSize.min,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
-                                        Checkbox(
-                                          activeColor: CupertinoColors.systemYellow,
-                                          fillColor: MaterialStateProperty.all(
-                                              CupertinoColors.systemYellow),
-                                          checkColor: Colors.black,
-                                          value: _stayLoggedIn,
-                                          onChanged: (bool? value) {
+                                        InkWell(
+                                          child: CircleAvatar(
+                                            backgroundColor: Colors.white,
+                                            radius: 30,
+                                            foregroundImage: AssetImage(
+                                                'icons/flags/png/gb.png',
+                                                package: 'country_icons'),
+                                          ),
+                                          onTap: () {
                                             setState(() {
-                                              _stayLoggedIn = value!;
+                                              languages = LanguageEn();
+                                              // languagesSqfLiteHandler.insertLanguageCode(
+                                              //     LanguageCode(code: 'en', id: 0));
                                             });
                                           },
                                         ),
                                         SizedBox(
-                                          width: 5,
+                                          width: 10,
                                         ),
-                                        Center(
-                                          child: Container(
+                                        InkWell(
+                                          child: CircleAvatar(
+                                            backgroundColor: Colors.white,
+                                            radius: 30,
+                                            foregroundImage: AssetImage(
+                                                'icons/flags/png/hu.png',
+                                                package: 'country_icons'),
+                                          ),
+                                          onTap: () {
+                                            setState(() {
+                                              languages = LanguageHu();
+                                              // languagesSqfLiteHandler.insertLanguageCode(
+                                              //     LanguageCode(code: 'hu', id: 0));
+                                            });
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Container(
+                                  width: 600,
+                                  child: Center(
+                                    child: Container(
+                                      padding: EdgeInsets.only(left: 20.0),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.all(
+                                          Radius.circular(10),
+                                        ),
+                                        color: Colors.yellow.withOpacity(0.7),
+                                      ),
+                                      child: TextField(
+                                        style: TextStyle(color: Colors.black),
+                                        controller: _emailController,
+                                        cursorColor: Colors.black,
+                                        keyboardType:
+                                            TextInputType.emailAddress,
+                                        decoration: InputDecoration(
+                                          focusedBorder: OutlineInputBorder(
+                                              borderSide: BorderSide.none),
+                                          hintText: languages.emailLabel,
+                                          hintStyle: TextStyle(
+                                              color: Colors.black
+                                                  .withOpacity(0.5)),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(height: 5),
+                                Container(
+                                  width: 600,
+                                  child: Center(
+                                    child: Container(
+                                      padding: EdgeInsets.only(left: 20.0),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.all(
+                                          Radius.circular(10),
+                                        ),
+                                        color: Colors.yellow.withOpacity(0.7),
+                                      ),
+                                      child: TextField(
+                                        enableSuggestions: false,
+                                        autocorrect: false,
+                                        obscureText: !_passwordVisible,
+                                        style: TextStyle(color: Colors.black),
+                                        controller: _passwordController,
+                                        cursorColor: Colors.black,
+                                        decoration: InputDecoration(
+                                          suffixIcon: IconButton(
+                                            icon: Icon(
+                                              // Based on passwordVisible state choose the icon
+                                              _passwordVisible
+                                                  ? Icons.visibility
+                                                  : Icons.visibility_off,
+                                              color: Colors.black,
+                                            ),
+                                            onPressed: () {
+                                              // Update the state i.e. toogle the state of passwordVisible variable
+                                              setState(() {
+                                                _passwordVisible =
+                                                    !_passwordVisible;
+                                              });
+                                            },
+                                          ),
+                                          focusedBorder: OutlineInputBorder(
+                                              borderSide: BorderSide.none),
+                                          hintText: languages.passwordLabel,
+                                          hintStyle: TextStyle(
+                                              color: Colors.black
+                                                  .withOpacity(0.5)),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(height: 10),
+                                Container(
+                                  width: 600,
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.center,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Checkbox(
+                                        activeColor:
+                                            CupertinoColors.systemYellow,
+                                        fillColor: MaterialStateProperty.all(
+                                            CupertinoColors.systemYellow),
+                                        checkColor: Colors.black,
+                                        value: _stayLoggedIn,
+                                        onChanged: (bool? value) {
+                                          setState(() {
+                                            _stayLoggedIn = value!;
+                                          });
+                                        },
+                                      ),
+                                      SizedBox(
+                                        width: 5,
+                                      ),
+                                      Center(
+                                        child: Container(
+                                          child: InkWell(
+                                            onTap: () {
+                                              setState(() {
+                                                _stayLoggedIn =
+                                                    !_stayLoggedIn;
+                                              });
+                                            },
                                             child: Text(
                                               languages.stayLoggedInLabel,
                                               style: TextStyle(
@@ -238,82 +252,82 @@ class _LoginPageState extends State<LoginPage> {
                                             ),
                                           ),
                                         ),
-                                      ],
-                                    ),
+                                      ),
+                                    ],
                                   ),
-                                  SizedBox(height: 10),
-                                  Container(
-                                    width: 600,
-                                    child: Center(
-                                      child: ButtonTheme(
-                                        height: 50,
-                                        minWidth: 300,
-                                        child: ElevatedButton(
-                                          style: ButtonStyle(
-                                            backgroundColor:
-                                                MaterialStateProperty.all<Color>(
-                                                    Colors.yellow),
-                                          ),
-                                          onPressed: onLoginPressed,
-                                          child: Text(
-                                            languages.loginLabel,
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 20,
-                                                color: Colors.black),
-                                          ),
+                                ),
+                                SizedBox(height: 10),
+                                Container(
+                                  width: 600,
+                                  child: Center(
+                                    child: ButtonTheme(
+                                      height: 50,
+                                      minWidth: 300,
+                                      child: ElevatedButton(
+                                        style: ButtonStyle(
+                                          backgroundColor:
+                                              MaterialStateProperty.all<
+                                                  Color>(Colors.yellow),
+                                        ),
+                                        onPressed: onLoginPressed,
+                                        child: Text(
+                                          languages.loginLabel,
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 20,
+                                              color: Colors.black),
                                         ),
                                       ),
                                     ),
                                   ),
-                                  SizedBox(height: 10),
-                                  Container(
-                                    width: 600,
-                                    child: Center(
-                                      child: ButtonTheme(
-                                        height: 50,
-                                        minWidth: 300,
-                                        child: ElevatedButton(
-                                          onPressed: onRegistrationPressed,
-                                          style: ButtonStyle(
-                                            backgroundColor:
-                                                MaterialStateProperty.all<Color>(
-                                                    Colors.yellow),
-                                          ),
-                                          child: Text(
-                                            languages.registrationLabel,
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 20,
-                                                color: Colors.black),
-                                          ),
+                                ),
+                                SizedBox(height: 10),
+                                Container(
+                                  width: 600,
+                                  child: Center(
+                                    child: ButtonTheme(
+                                      height: 50,
+                                      minWidth: 300,
+                                      child: ElevatedButton(
+                                        onPressed: onRegistrationPressed,
+                                        style: ButtonStyle(
+                                          backgroundColor:
+                                              MaterialStateProperty.all<
+                                                  Color>(Colors.yellow),
+                                        ),
+                                        child: Text(
+                                          languages.registrationLabel,
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 20,
+                                              color: Colors.black),
                                         ),
                                       ),
                                     ),
                                   ),
-                                  SizedBox(height: 5),
-                                  Container(
-                                    width: 600,
-                                    child: Center(
-                                      child: Container(
-                                        child: InkWell(
-                                          child: Text(
-                                            languages.forgottenPasswordLabel,
-                                            style: TextStyle(
-                                                fontStyle: FontStyle.italic,
-                                                fontSize: 15,
-                                                color: Colors.yellow),
-                                          ),
-                                          onTap: _onForgottenPasswordTap,
+                                ),
+                                SizedBox(height: 5),
+                                Container(
+                                  width: 600,
+                                  child: Center(
+                                    child: Container(
+                                      child: InkWell(
+                                        child: Text(
+                                          languages.forgottenPasswordLabel,
+                                          style: TextStyle(
+                                              fontStyle: FontStyle.italic,
+                                              fontSize: 15,
+                                              color: Colors.yellow),
                                         ),
+                                        onTap: _onForgottenPasswordTap,
                                       ),
                                     ),
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
-                  ),
+                        ),
                 ),
               ),
             ),
