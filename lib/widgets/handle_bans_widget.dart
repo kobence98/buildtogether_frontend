@@ -82,7 +82,7 @@ class _HandleBansWidgetState extends State<HandleBansWidget> {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     fontSize: 20,
-                    color: Colors.yellow,
+                    color: CupertinoColors.systemYellow,
                     fontWeight: FontWeight.bold),
               ),
             ),
@@ -100,7 +100,7 @@ class _HandleBansWidgetState extends State<HandleBansWidget> {
                       borderRadius: BorderRadius.all(
                         Radius.circular(10),
                       ),
-                      color: Colors.yellow,
+                      color: CupertinoColors.systemYellow,
                     ),
                     padding: EdgeInsets.all(1),
                     child: Container(
@@ -124,7 +124,7 @@ class _HandleBansWidgetState extends State<HandleBansWidget> {
                                     padding: EdgeInsets.only(left: 5, top: 3, bottom: 3),
                                     child: Text(
                                       '${languages.idLabel}: ${bannedUser.id}',
-                                      style: TextStyle(color: Colors.yellow),
+                                      style: TextStyle(color: CupertinoColors.systemYellow),
                                       textAlign: TextAlign.left,
                                     ),
                                   ),
@@ -133,7 +133,7 @@ class _HandleBansWidgetState extends State<HandleBansWidget> {
                                     alignment: Alignment.centerLeft,
                                     child: Text(
                                       '${languages.nameLabel}: ${bannedUser.name}',
-                                      style: TextStyle(color: Colors.yellow),
+                                      style: TextStyle(color: CupertinoColors.systemYellow),
                                       textAlign: TextAlign.left,
                                     ),
                                   ),
@@ -142,7 +142,7 @@ class _HandleBansWidgetState extends State<HandleBansWidget> {
                                     alignment: Alignment.centerLeft,
                                     child: Text(
                                       '${languages.emailLabel}: ${bannedUser.email}',
-                                      style: TextStyle(color: Colors.yellow),
+                                      style: TextStyle(color: CupertinoColors.systemYellow),
                                       textAlign: TextAlign.left,
                                     ),
                                   ),
@@ -155,7 +155,7 @@ class _HandleBansWidgetState extends State<HandleBansWidget> {
                             child: InkWell(
                               child: Icon(
                                 Icons.delete,
-                                color: Colors.yellow,
+                                color: CupertinoColors.systemYellow,
                               ),
                               onTap: (){_deleteBanTap(bannedUsers.elementAt(index).id);},
                             ),

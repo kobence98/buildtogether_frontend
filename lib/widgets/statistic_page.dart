@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_frontend/entities/age_bracket.dart';
 import 'package:flutter_frontend/entities/gender.dart';
@@ -100,7 +101,7 @@ class _StatisticPageState extends State<StatisticPage> {
             decoration: BoxDecoration(
                 color: Colors.black,
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Colors.yellow)),
+                border: Border.all(color: CupertinoColors.systemYellow)),
             padding: EdgeInsets.all(10),
             child: Column(
               children: [
@@ -108,7 +109,7 @@ class _StatisticPageState extends State<StatisticPage> {
                   child: Text(
                     languages.livingPlaceTypeLabel,
                     style: TextStyle(
-                        color: Colors.yellow,
+                        color: CupertinoColors.systemYellow,
                         fontSize: 20,
                         fontWeight: FontWeight.bold),
                   ),
@@ -173,7 +174,7 @@ class _StatisticPageState extends State<StatisticPage> {
             decoration: BoxDecoration(
                 color: Colors.black,
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Colors.yellow)),
+                border: Border.all(color: CupertinoColors.systemYellow)),
             padding: EdgeInsets.all(10),
             child: Column(
               children: [
@@ -181,7 +182,7 @@ class _StatisticPageState extends State<StatisticPage> {
                   child: Text(
                     languages.ageLabel,
                     style: TextStyle(
-                        color: Colors.yellow,
+                        color: CupertinoColors.systemYellow,
                         fontSize: 20,
                         fontWeight: FontWeight.bold),
                   ),
@@ -245,7 +246,7 @@ class _StatisticPageState extends State<StatisticPage> {
             decoration: BoxDecoration(
                 color: Colors.black,
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Colors.yellow)),
+                border: Border.all(color: CupertinoColors.systemYellow)),
             padding: EdgeInsets.all(10),
             child: Column(
               children: [
@@ -253,7 +254,7 @@ class _StatisticPageState extends State<StatisticPage> {
                   child: Text(
                     languages.genderLabel,
                     style: TextStyle(
-                        color: Colors.yellow,
+                        color: CupertinoColors.systemYellow,
                         fontSize: 20,
                         fontWeight: FontWeight.bold),
                   ),
@@ -316,7 +317,7 @@ class _StatisticPageState extends State<StatisticPage> {
             decoration: BoxDecoration(
                 color: Colors.black,
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Colors.yellow)),
+                border: Border.all(color: CupertinoColors.systemYellow)),
             padding: EdgeInsets.all(10),
             child: Column(
               children: [
@@ -324,7 +325,7 @@ class _StatisticPageState extends State<StatisticPage> {
                   child: Text(
                     languages.salaryTypeLabel,
                     style: TextStyle(
-                        color: Colors.yellow,
+                        color: CupertinoColors.systemYellow,
                         fontSize: 20,
                         fontWeight: FontWeight.bold),
                   ),
@@ -389,7 +390,7 @@ class _StatisticPageState extends State<StatisticPage> {
             decoration: BoxDecoration(
                 color: Colors.black,
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Colors.yellow)),
+                border: Border.all(color: CupertinoColors.systemYellow)),
             padding: EdgeInsets.all(10),
             child: Column(
               children: [
@@ -397,7 +398,7 @@ class _StatisticPageState extends State<StatisticPage> {
                   child: Text(
                     languages.numberOfHouseholdMembersLabel,
                     style: TextStyle(
-                        color: Colors.yellow,
+                        color: CupertinoColors.systemYellow,
                         fontSize: 20,
                         fontWeight: FontWeight.bold),
                   ),

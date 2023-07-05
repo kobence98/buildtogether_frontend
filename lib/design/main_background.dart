@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
@@ -18,7 +19,7 @@ class MainBackground extends CustomPainter {
 
     var rect = Offset.zero & size;
 
-    paint.color = Colors.yellow;
+    paint.color = CupertinoColors.systemYellow;
     canvas.drawRect(
       rect,
       paint
@@ -37,7 +38,7 @@ class MainBackground extends CustomPainter {
     pathBelow.lineTo(0, size.height);
     pathBelow.close();
 
-    paint.color = Colors.yellow;
+    paint.color = CupertinoColors.systemYellow;
     canvas.drawPath(pathBelow, paint);
 
   }

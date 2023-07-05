@@ -176,7 +176,7 @@ class _CompaniesWidgetState extends State<CompaniesWidget> {
                         },
                         child: Text(
                           languages.closeLabel,
-                          style: TextStyle(color: Colors.yellow),
+                          style: TextStyle(color: CupertinoColors.systemYellow),
                         )),
                   ],
                 );
@@ -253,7 +253,7 @@ class _CompaniesWidgetState extends State<CompaniesWidget> {
                   },
                   child: Text(
                     languages.closeLabel,
-                    style: TextStyle(color: Colors.yellow),
+                    style: TextStyle(color: CupertinoColors.systemYellow),
                   )),
             ],
           );

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -138,7 +139,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                         languages.registrationLabel,
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            color: Colors.yellow,
+                            color: CupertinoColors.systemYellow,
                             fontSize: 25),
                       ),
                     ),
@@ -156,7 +157,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                                   borderRadius: BorderRadius.all(
                                     Radius.circular(10),
                                   ),
-                                  color: Colors.yellow.withOpacity(0.7),
+                                  color: CupertinoColors.systemYellow.withOpacity(0.7),
                                 ),
                                 child: TextField(
                                   style: TextStyle(color: Colors.black),
@@ -181,7 +182,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                                   borderRadius: BorderRadius.all(
                                     Radius.circular(10),
                                   ),
-                                  color: Colors.yellow.withOpacity(0.7),
+                                  color: CupertinoColors.systemYellow.withOpacity(0.7),
                                 ),
                                 child: TextField(
                                   style: TextStyle(color: Colors.black),
@@ -222,7 +223,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                                   borderRadius: BorderRadius.all(
                                     Radius.circular(10),
                                   ),
-                                  color: Colors.yellow.withOpacity(0.7),
+                                  color: CupertinoColors.systemYellow.withOpacity(0.7),
                                 ),
                                 child: TextField(
                                   style: TextStyle(color: Colors.black),
@@ -263,7 +264,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                                   borderRadius: BorderRadius.all(
                                     Radius.circular(10),
                                   ),
-                                  color: Colors.yellow.withOpacity(0.7),
+                                  color: CupertinoColors.systemYellow.withOpacity(0.7),
                                 ),
                                 child: TextField(
                                   style: TextStyle(color: Colors.black),
@@ -293,7 +294,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                                 borderRadius: BorderRadius.all(
                                   Radius.circular(10),
                                 ),
-                                color: Colors.yellow,
+                                color: CupertinoColors.systemYellow,
                               ),
                               padding: EdgeInsets.all(1),
                               child: Container(
@@ -341,7 +342,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                                 borderRadius: BorderRadius.all(
                                   Radius.circular(10),
                                 ),
-                                color: Colors.yellow,
+                                color: CupertinoColors.systemYellow,
                               ),
                               padding: EdgeInsets.all(1),
                               child: Container(
@@ -377,7 +378,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                                                 text: languages.userPolicyLabel,
                                                 style: new TextStyle(
                                                     fontWeight: FontWeight.bold,
-                                                    color: Colors.yellow),
+                                                    color: CupertinoColors.systemYellow),
                                                 recognizer:
                                                     new TapGestureRecognizer()
                                                       ..onTap = () =>
@@ -407,7 +408,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                           },
                           child: Text(
                             languages.closeLabel,
-                            style: TextStyle(color: Colors.yellow),
+                            style: TextStyle(color: CupertinoColors.systemYellow),
                           ),
                         ),
                         TextButton(
@@ -416,7 +417,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                           },
                           child: Text(
                             languages.registrationLabel,
-                            style: TextStyle(color: Colors.yellow),
+                            style: TextStyle(color: CupertinoColors.systemYellow),
                           ),
                         ),
                       ],
@@ -686,7 +687,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
               style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 20,
-                  color: Colors.yellow),
+                  color: CupertinoColors.systemYellow),
             ),
             content: Column(
               mainAxisSize: MainAxisSize.min,
@@ -694,7 +695,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                 Center(
                   child: Container(
                     padding: EdgeInsets.all(20.0),
-                    color: Colors.yellow,
+                    color: CupertinoColors.systemYellow,
                     child: SingleChildScrollView(
                       child: Text(languages.userPolicyText),
                     ),
@@ -709,7 +710,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                 },
                 child: Text(
                   languages.backLabel,
-                  style: TextStyle(color: Colors.yellow),
+                  style: TextStyle(color: CupertinoColors.systemYellow),
                 ),
               ),
             ],
@@ -729,7 +730,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
       Container(
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: Colors.yellow)),
+            border: Border.all(color: CupertinoColors.systemYellow)),
         padding: EdgeInsets.all(5),
         child: Row(
           children: [
@@ -738,7 +739,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                 child: Text(
                   "${languages.numberOfHouseholdMembersLabel}",
                   style: TextStyle(
-                      color: Colors.yellow,
+                      color: CupertinoColors.systemYellow,
                       fontSize: 20,
                       fontWeight: FontWeight.bold),
                 ),
@@ -751,8 +752,8 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                   margin: EdgeInsets.symmetric(vertical: 10),
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: Colors.yellow),
-                      color: Colors.yellow),
+                      border: Border.all(color: CupertinoColors.systemYellow),
+                      color: CupertinoColors.systemYellow),
                   child: NumberPicker(
                     axis: Axis.horizontal,
                     itemWidth: 50,
@@ -786,7 +787,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
     //AGE BRACKET
     widgetList.add(Container(
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.yellow),
+        border: Border.all(color: CupertinoColors.systemYellow),
         borderRadius: BorderRadius.circular(10),
       ),
       padding: EdgeInsets.all(10),
@@ -798,7 +799,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
               child: Text(
                 "${languages.ageLabel}",
                 style: TextStyle(
-                    color: Colors.yellow,
+                    color: CupertinoColors.systemYellow,
                     fontSize: 20,
                     fontWeight: FontWeight.bold),
               ),
@@ -808,7 +809,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
           Flexible(
             child: Container(
               decoration: BoxDecoration(
-                  color: Colors.yellow,
+                  color: CupertinoColors.systemYellow,
                   borderRadius: BorderRadius.circular(10)),
               child: Container(
                 decoration: BoxDecoration(
@@ -821,11 +822,11 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                   focusColor: Colors.white,
                   dropdownDecoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
-                    color: Colors.yellow,
+                    color: CupertinoColors.systemYellow,
                   ),
                   value: _chosenAgeBracket,
-                  style: TextStyle(color: Colors.yellow),
-                  iconEnabledColor: Colors.yellow,
+                  style: TextStyle(color: CupertinoColors.systemYellow),
+                  iconEnabledColor: CupertinoColors.systemYellow,
                   itemPadding: const EdgeInsets.all(1),
                   dropdownPadding: EdgeInsets.all(2),
                   scrollbarRadius: const Radius.circular(40),
@@ -851,7 +852,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                               _chosenAgeBracket!.getName,
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                  color: Colors.yellow,
+                                  color: CupertinoColors.systemYellow,
                                   fontSize: 30,
                                   fontWeight: FontWeight.bold),
                             ),
@@ -859,7 +860,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                         ),
                         IconTheme(
                           data: IconThemeData(
-                            color: Colors.yellow,
+                            color: CupertinoColors.systemYellow,
                             size: 24,
                           ),
                           child: Icon(Icons.arrow_drop_down_outlined),
@@ -890,7 +891,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                             value.getName,
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                                color: Colors.yellow,
+                                color: CupertinoColors.systemYellow,
                                 fontSize: 30,
                                 fontWeight: FontWeight.bold),
                           ),
@@ -919,7 +920,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
     //GENDER
     widgetList.add(Container(
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.yellow),
+        border: Border.all(color: CupertinoColors.systemYellow),
         borderRadius: BorderRadius.circular(10),
       ),
       padding: EdgeInsets.all(10),
@@ -931,7 +932,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
               child: Text(
                 "${languages.genderLabel}",
                 style: TextStyle(
-                    color: Colors.yellow,
+                    color: CupertinoColors.systemYellow,
                     fontSize: 20,
                     fontWeight: FontWeight.bold),
               ),
@@ -941,7 +942,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
           Flexible(
             child: Container(
               decoration: BoxDecoration(
-                  color: Colors.yellow,
+                  color: CupertinoColors.systemYellow,
                   borderRadius: BorderRadius.circular(10)),
               child: Container(
                 decoration: BoxDecoration(
@@ -954,11 +955,11 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                   focusColor: Colors.white,
                   dropdownDecoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
-                    color: Colors.yellow,
+                    color: CupertinoColors.systemYellow,
                   ),
                   value: _chosenGender,
-                  style: TextStyle(color: Colors.yellow),
-                  iconEnabledColor: Colors.yellow,
+                  style: TextStyle(color: CupertinoColors.systemYellow),
+                  iconEnabledColor: CupertinoColors.systemYellow,
                   itemPadding: const EdgeInsets.all(1),
                   dropdownPadding: EdgeInsets.all(2),
                   scrollbarRadius: const Radius.circular(40),
@@ -984,7 +985,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                               _chosenGender!.getName(languages),
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                  color: Colors.yellow,
+                                  color: CupertinoColors.systemYellow,
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold),
                             ),
@@ -992,7 +993,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                         ),
                         IconTheme(
                           data: IconThemeData(
-                            color: Colors.yellow,
+                            color: CupertinoColors.systemYellow,
                             size: 24,
                           ),
                           child: Icon(Icons.arrow_drop_down_outlined),
@@ -1023,7 +1024,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                             value.getName(languages),
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                                color: Colors.yellow,
+                                color: CupertinoColors.systemYellow,
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold),
                           ),
@@ -1052,7 +1053,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
     //LIVING PLACE TYPE
     widgetList.add(Container(
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.yellow),
+        border: Border.all(color: CupertinoColors.systemYellow),
         borderRadius: BorderRadius.circular(10),
       ),
       padding: EdgeInsets.all(10),
@@ -1064,7 +1065,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
               child: Text(
                 "${languages.livingPlaceTypeLabel}",
                 style: TextStyle(
-                    color: Colors.yellow,
+                    color: CupertinoColors.systemYellow,
                     fontSize: 20,
                     fontWeight: FontWeight.bold),
               ),
@@ -1074,7 +1075,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
           Flexible(
             child: Container(
               decoration: BoxDecoration(
-                  color: Colors.yellow,
+                  color: CupertinoColors.systemYellow,
                   borderRadius: BorderRadius.circular(10)),
               child: Container(
                 decoration: BoxDecoration(
@@ -1087,11 +1088,11 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                   focusColor: Colors.white,
                   dropdownDecoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
-                    color: Colors.yellow,
+                    color: CupertinoColors.systemYellow,
                   ),
                   value: _chosenLivingPlaceType,
-                  style: TextStyle(color: Colors.yellow),
-                  iconEnabledColor: Colors.yellow,
+                  style: TextStyle(color: CupertinoColors.systemYellow),
+                  iconEnabledColor: CupertinoColors.systemYellow,
                   itemPadding: const EdgeInsets.all(1),
                   dropdownPadding: EdgeInsets.all(2),
                   scrollbarRadius: const Radius.circular(40),
@@ -1117,7 +1118,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                               _chosenLivingPlaceType!.getName(languages),
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                  color: Colors.yellow,
+                                  color: CupertinoColors.systemYellow,
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold),
                             ),
@@ -1125,7 +1126,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                         ),
                         IconTheme(
                           data: IconThemeData(
-                            color: Colors.yellow,
+                            color: CupertinoColors.systemYellow,
                             size: 24,
                           ),
                           child: Icon(Icons.arrow_drop_down_outlined),
@@ -1157,7 +1158,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                             value.getName(languages),
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                                color: Colors.yellow,
+                                color: CupertinoColors.systemYellow,
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold),
                           ),
@@ -1186,7 +1187,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
     //SALARY TYPE
     widgetList.add(Container(
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.yellow),
+        border: Border.all(color: CupertinoColors.systemYellow),
         borderRadius: BorderRadius.circular(10),
       ),
       padding: EdgeInsets.all(10),
@@ -1198,7 +1199,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
               child: Text(
                 "${languages.salaryTypeLabel}",
                 style: TextStyle(
-                    color: Colors.yellow,
+                    color: CupertinoColors.systemYellow,
                     fontSize: 20,
                     fontWeight: FontWeight.bold),
               ),
@@ -1208,7 +1209,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
           Flexible(
             child: Container(
               decoration: BoxDecoration(
-                  color: Colors.yellow,
+                  color: CupertinoColors.systemYellow,
                   borderRadius: BorderRadius.circular(10)),
               child: Container(
                 decoration: BoxDecoration(
@@ -1221,11 +1222,11 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                   focusColor: Colors.white,
                   dropdownDecoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
-                    color: Colors.yellow,
+                    color: CupertinoColors.systemYellow,
                   ),
                   value: _chosenSalaryType,
-                  style: TextStyle(color: Colors.yellow),
-                  iconEnabledColor: Colors.yellow,
+                  style: TextStyle(color: CupertinoColors.systemYellow),
+                  iconEnabledColor: CupertinoColors.systemYellow,
                   itemPadding: const EdgeInsets.all(1),
                   dropdownPadding: EdgeInsets.all(2),
                   scrollbarRadius: const Radius.circular(40),
@@ -1251,7 +1252,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                               _chosenSalaryType!.getName(languages),
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                  color: Colors.yellow,
+                                  color: CupertinoColors.systemYellow,
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold),
                             ),
@@ -1259,7 +1260,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                         ),
                         IconTheme(
                           data: IconThemeData(
-                            color: Colors.yellow,
+                            color: CupertinoColors.systemYellow,
                             size: 24,
                           ),
                           child: Icon(Icons.arrow_drop_down_outlined),
@@ -1290,7 +1291,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                             value.getName(languages),
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                                color: Colors.yellow,
+                                color: CupertinoColors.systemYellow,
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold),
                           ),
@@ -1336,7 +1337,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
           borderRadius: BorderRadius.all(
             Radius.circular(10),
           ),
-          color: Colors.yellow.withOpacity(0.7),
+          color: CupertinoColors.systemYellow.withOpacity(0.7),
         ),
         padding: EdgeInsets.all(4),
         child: TextField(
@@ -1356,7 +1357,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
         borderRadius: BorderRadius.all(
           Radius.circular(10),
         ),
-        color: Colors.yellow,
+        color: CupertinoColors.systemYellow,
       ),
       padding: EdgeInsets.all(1),
       child: Container(
@@ -1387,7 +1388,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
               : InkWell(
                   child: Center(
                     child: CircleAvatar(
-                      backgroundColor: Colors.yellow,
+                      backgroundColor: CupertinoColors.systemYellow,
                       radius: 20,
                       backgroundImage:
                           AssetImage("assets/images/add_image.png"),
@@ -1406,7 +1407,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
         borderRadius: BorderRadius.all(
           Radius.circular(10),
         ),
-        color: Colors.yellow,
+        color: CupertinoColors.systemYellow,
       ),
       padding: EdgeInsets.all(1),
       child: Container(
@@ -1426,7 +1427,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                   child: Text(
                     "${languages.nationalityLabel}",
                     style: TextStyle(
-                        color: Colors.yellow,
+                        color: CupertinoColors.systemYellow,
                         fontSize: 20,
                         fontWeight: FontWeight.bold),
                   ),
@@ -1436,7 +1437,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
               Flexible(
                 child: Container(
                   decoration: BoxDecoration(
-                      color: Colors.yellow,
+                      color: CupertinoColors.systemYellow,
                       borderRadius: BorderRadius.circular(10)),
                   child: Container(
                     decoration: BoxDecoration(
@@ -1450,11 +1451,11 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                       focusColor: Colors.white,
                       dropdownDecoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
-                        color: Colors.yellow,
+                        color: CupertinoColors.systemYellow,
                       ),
                       value: _chosenCountryCode,
-                      style: TextStyle(color: Colors.yellow),
-                      iconEnabledColor: Colors.yellow,
+                      style: TextStyle(color: CupertinoColors.systemYellow),
+                      iconEnabledColor: CupertinoColors.systemYellow,
                       itemPadding: const EdgeInsets.all(1),
                       dropdownPadding: EdgeInsets.all(2),
                       scrollbarRadius: const Radius.circular(40),
@@ -1481,7 +1482,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                                   _chosenCountryCode!,
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                      color: Colors.yellow,
+                                      color: CupertinoColors.systemYellow,
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold),
                                 ),
@@ -1489,7 +1490,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                             ),
                             IconTheme(
                               data: IconThemeData(
-                                color: Colors.yellow,
+                                color: CupertinoColors.systemYellow,
                                 size: 24,
                               ),
                               child: Icon(Icons.arrow_drop_down_outlined),
@@ -1520,7 +1521,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                                 value,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                    color: Colors.yellow,
+                                    color: CupertinoColors.systemYellow,
                                     fontSize: 20,
                                     fontWeight: FontWeight.bold),
                               ),

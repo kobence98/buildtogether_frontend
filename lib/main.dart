@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_frontend/auth/auth_sqflite_handler.dart';
@@ -92,7 +93,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         toastLength: Toast.LENGTH_LONG,
                         gravity: ToastGravity.CENTER,
                         timeInSecForIosWeb: 4,
-                        backgroundColor: Colors.yellow,
+                        backgroundColor: CupertinoColors.systemYellow,
                         textColor: Colors.black,
                         fontSize: 16.0);
                   }

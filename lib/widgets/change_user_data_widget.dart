@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_frontend/entities/age_bracket.dart';
@@ -158,7 +159,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                           Container(
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10),
-                                border: Border.all(color: Colors.yellow)),
+                                border: Border.all(color: CupertinoColors.systemYellow)),
                             padding: EdgeInsets.all(5),
                             child: Center(
                               child: Row(
@@ -170,7 +171,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                                       child: Text(
                                         "${languages.nameLabel}: ",
                                         style: TextStyle(
-                                            color: Colors.yellow,
+                                            color: CupertinoColors.systemYellow,
                                             fontSize: 20,
                                             fontWeight: FontWeight.bold),
                                       ),
@@ -185,7 +186,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                                         borderRadius: BorderRadius.all(
                                           Radius.circular(10),
                                         ),
-                                        color: Colors.yellow.withOpacity(0.7),
+                                        color: CupertinoColors.systemYellow.withOpacity(0.7),
                                       ),
                                       child: TextField(
                                         style: TextStyle(color: Colors.black),
@@ -218,7 +219,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                                 style: ButtonStyle(
                                   backgroundColor:
                                       MaterialStateProperty.all<Color>(
-                                          Colors.yellow),
+                                          CupertinoColors.systemYellow),
                                 ),
                                 onPressed: _onChangePressed,
                                 child: Text(
@@ -408,7 +409,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
       Container(
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: Colors.yellow)),
+            border: Border.all(color: CupertinoColors.systemYellow)),
         padding: EdgeInsets.all(5),
         child: Row(
           children: [
@@ -417,7 +418,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                 child: Text(
                   "${languages.numberOfHouseholdMembersLabel}",
                   style: TextStyle(
-                      color: Colors.yellow,
+                      color: CupertinoColors.systemYellow,
                       fontSize: 20,
                       fontWeight: FontWeight.bold),
                 ),
@@ -430,8 +431,8 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                   margin: EdgeInsets.symmetric(vertical: 10),
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: Colors.yellow),
-                      color: Colors.yellow),
+                      border: Border.all(color: CupertinoColors.systemYellow),
+                      color: CupertinoColors.systemYellow),
                   child: NumberPicker(
                     axis: Axis.horizontal,
                     itemWidth: 50,
@@ -465,7 +466,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
     //AGE BRACKET
     widgetList.add(Container(
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.yellow),
+        border: Border.all(color: CupertinoColors.systemYellow),
         borderRadius: BorderRadius.circular(10),
       ),
       padding: EdgeInsets.all(10),
@@ -477,7 +478,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
               child: Text(
                 "${languages.ageLabel}",
                 style: TextStyle(
-                    color: Colors.yellow,
+                    color: CupertinoColors.systemYellow,
                     fontSize: 20,
                     fontWeight: FontWeight.bold),
               ),
@@ -487,7 +488,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
           Flexible(
             child: Container(
               decoration: BoxDecoration(
-                  color: Colors.yellow,
+                  color: CupertinoColors.systemYellow,
                   borderRadius: BorderRadius.circular(10)),
               child: Container(
                 decoration: BoxDecoration(
@@ -500,11 +501,11 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                   focusColor: Colors.white,
                   dropdownDecoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
-                    color: Colors.yellow,
+                    color: CupertinoColors.systemYellow,
                   ),
                   value: _chosenAgeBracket,
-                  style: TextStyle(color: Colors.yellow),
-                  iconEnabledColor: Colors.yellow,
+                  style: TextStyle(color: CupertinoColors.systemYellow),
+                  iconEnabledColor: CupertinoColors.systemYellow,
                   itemPadding: const EdgeInsets.all(1),
                   dropdownPadding: EdgeInsets.all(2),
                   scrollbarRadius: const Radius.circular(40),
@@ -530,7 +531,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                               _chosenAgeBracket!.getName,
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                  color: Colors.yellow,
+                                  color: CupertinoColors.systemYellow,
                                   fontSize: 30,
                                   fontWeight: FontWeight.bold),
                             ),
@@ -538,7 +539,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                         ),
                         IconTheme(
                           data: IconThemeData(
-                            color: Colors.yellow,
+                            color: CupertinoColors.systemYellow,
                             size: 24,
                           ),
                           child: Icon(Icons.arrow_drop_down_outlined),
@@ -569,7 +570,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                             value.getName,
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                                color: Colors.yellow,
+                                color: CupertinoColors.systemYellow,
                                 fontSize: 30,
                                 fontWeight: FontWeight.bold),
                           ),
@@ -598,7 +599,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
     //GENDER
     widgetList.add(Container(
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.yellow),
+        border: Border.all(color: CupertinoColors.systemYellow),
         borderRadius: BorderRadius.circular(10),
       ),
       padding: EdgeInsets.all(10),
@@ -610,7 +611,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
               child: Text(
                 "${languages.genderLabel}",
                 style: TextStyle(
-                    color: Colors.yellow,
+                    color: CupertinoColors.systemYellow,
                     fontSize: 20,
                     fontWeight: FontWeight.bold),
               ),
@@ -620,7 +621,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
           Flexible(
             child: Container(
               decoration: BoxDecoration(
-                  color: Colors.yellow,
+                  color: CupertinoColors.systemYellow,
                   borderRadius: BorderRadius.circular(10)),
               child: Container(
                 decoration: BoxDecoration(
@@ -633,11 +634,11 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                   focusColor: Colors.white,
                   dropdownDecoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
-                    color: Colors.yellow,
+                    color: CupertinoColors.systemYellow,
                   ),
                   value: _chosenGender,
-                  style: TextStyle(color: Colors.yellow),
-                  iconEnabledColor: Colors.yellow,
+                  style: TextStyle(color: CupertinoColors.systemYellow),
+                  iconEnabledColor: CupertinoColors.systemYellow,
                   itemPadding: const EdgeInsets.all(1),
                   dropdownPadding: EdgeInsets.all(2),
                   scrollbarRadius: const Radius.circular(40),
@@ -663,7 +664,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                               _chosenGender!.getName(languages),
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                  color: Colors.yellow,
+                                  color: CupertinoColors.systemYellow,
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold),
                             ),
@@ -671,7 +672,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                         ),
                         IconTheme(
                           data: IconThemeData(
-                            color: Colors.yellow,
+                            color: CupertinoColors.systemYellow,
                             size: 24,
                           ),
                           child: Icon(Icons.arrow_drop_down_outlined),
@@ -702,7 +703,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                             value.getName(languages),
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                                color: Colors.yellow,
+                                color: CupertinoColors.systemYellow,
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold),
                           ),
@@ -731,7 +732,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
     //LIVING PLACE TYPE
     widgetList.add(Container(
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.yellow),
+        border: Border.all(color: CupertinoColors.systemYellow),
         borderRadius: BorderRadius.circular(10),
       ),
       padding: EdgeInsets.all(10),
@@ -743,7 +744,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
               child: Text(
                 "${languages.livingPlaceTypeLabel}",
                 style: TextStyle(
-                    color: Colors.yellow,
+                    color: CupertinoColors.systemYellow,
                     fontSize: 20,
                     fontWeight: FontWeight.bold),
               ),
@@ -753,7 +754,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
           Flexible(
             child: Container(
               decoration: BoxDecoration(
-                  color: Colors.yellow,
+                  color: CupertinoColors.systemYellow,
                   borderRadius: BorderRadius.circular(10)),
               child: Container(
                 decoration: BoxDecoration(
@@ -766,11 +767,11 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                   focusColor: Colors.white,
                   dropdownDecoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
-                    color: Colors.yellow,
+                    color: CupertinoColors.systemYellow,
                   ),
                   value: _chosenLivingPlaceType,
-                  style: TextStyle(color: Colors.yellow),
-                  iconEnabledColor: Colors.yellow,
+                  style: TextStyle(color: CupertinoColors.systemYellow),
+                  iconEnabledColor: CupertinoColors.systemYellow,
                   itemPadding: const EdgeInsets.all(1),
                   dropdownPadding: EdgeInsets.all(2),
                   scrollbarRadius: const Radius.circular(40),
@@ -796,7 +797,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                               _chosenLivingPlaceType!.getName(languages),
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                  color: Colors.yellow,
+                                  color: CupertinoColors.systemYellow,
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold),
                             ),
@@ -804,7 +805,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                         ),
                         IconTheme(
                           data: IconThemeData(
-                            color: Colors.yellow,
+                            color: CupertinoColors.systemYellow,
                             size: 24,
                           ),
                           child: Icon(Icons.arrow_drop_down_outlined),
@@ -836,7 +837,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                             value.getName(languages),
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                                color: Colors.yellow,
+                                color: CupertinoColors.systemYellow,
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold),
                           ),
@@ -865,7 +866,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
     //SALARY TYPE
     widgetList.add(Container(
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.yellow),
+        border: Border.all(color: CupertinoColors.systemYellow),
         borderRadius: BorderRadius.circular(10),
       ),
       padding: EdgeInsets.all(10),
@@ -877,7 +878,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
               child: Text(
                 "${languages.salaryTypeLabel}",
                 style: TextStyle(
-                    color: Colors.yellow,
+                    color: CupertinoColors.systemYellow,
                     fontSize: 20,
                     fontWeight: FontWeight.bold),
               ),
@@ -887,7 +888,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
           Flexible(
             child: Container(
               decoration: BoxDecoration(
-                  color: Colors.yellow,
+                  color: CupertinoColors.systemYellow,
                   borderRadius: BorderRadius.circular(10)),
               child: Container(
                 decoration: BoxDecoration(
@@ -900,11 +901,11 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                   focusColor: Colors.white,
                   dropdownDecoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
-                    color: Colors.yellow,
+                    color: CupertinoColors.systemYellow,
                   ),
                   value: _chosenSalaryType,
-                  style: TextStyle(color: Colors.yellow),
-                  iconEnabledColor: Colors.yellow,
+                  style: TextStyle(color: CupertinoColors.systemYellow),
+                  iconEnabledColor: CupertinoColors.systemYellow,
                   itemPadding: const EdgeInsets.all(1),
                   dropdownPadding: EdgeInsets.all(2),
                   scrollbarRadius: const Radius.circular(40),
@@ -930,7 +931,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                               _chosenSalaryType!.getName(languages),
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                  color: Colors.yellow,
+                                  color: CupertinoColors.systemYellow,
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold),
                             ),
@@ -938,7 +939,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                         ),
                         IconTheme(
                           data: IconThemeData(
-                            color: Colors.yellow,
+                            color: CupertinoColors.systemYellow,
                             size: 24,
                           ),
                           child: Icon(Icons.arrow_drop_down_outlined),
@@ -969,7 +970,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                             value.getName(languages),
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                                color: Colors.yellow,
+                                color: CupertinoColors.systemYellow,
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold),
                           ),
@@ -1005,7 +1006,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
         padding: EdgeInsets.all(10),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: Colors.yellow)),
+            border: Border.all(color: CupertinoColors.systemYellow)),
         child: Column(
           children: [
             Align(
@@ -1014,7 +1015,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                 child: Text(
                   "${languages.descriptionLabel}:",
                   style: TextStyle(
-                      color: Colors.yellow,
+                      color: CupertinoColors.systemYellow,
                       fontSize: 20,
                       fontWeight: FontWeight.bold),
                 ),
@@ -1027,7 +1028,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                 borderRadius: BorderRadius.all(
                   Radius.circular(10),
                 ),
-                color: Colors.yellow,
+                color: CupertinoColors.systemYellow,
               ),
               padding: EdgeInsets.all(4),
               child: TextField(
@@ -1049,12 +1050,12 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
       Container(
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: Colors.yellow)),
+            border: Border.all(color: CupertinoColors.systemYellow)),
         child: ListTile(
           leading: Text(
             '${languages.logoLabel}:',
             style: TextStyle(
-                color: Colors.yellow, fontSize: 20, fontWeight: FontWeight.bold),
+                color: CupertinoColors.systemYellow, fontSize: 20, fontWeight: FontWeight.bold),
           ),
           title: image != null
               ? InkWell(
@@ -1092,7 +1093,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
       Container(
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: Colors.yellow)),
+            border: Border.all(color: CupertinoColors.systemYellow)),
         padding: EdgeInsets.all(10),
         child: Column(
           children: [
@@ -1100,14 +1101,14 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
               child: Text(
                 languages.likesNotificationEmailTipLabel,
                 style: TextStyle(
-                    color: Colors.yellow, fontWeight: FontWeight.bold, fontSize: 20),
+                    color: CupertinoColors.systemYellow, fontWeight: FontWeight.bold, fontSize: 20),
               ),
             ),
             SizedBox(height: 10),
             Container(
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Colors.yellow)),
+                  border: Border.all(color: CupertinoColors.systemYellow)),
               child: Row(
                 children: [
                   Flexible(
@@ -1135,8 +1136,8 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                               margin: EdgeInsets.symmetric(vertical: 10),
                               decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10),
-                                  border: Border.all(color: Colors.yellow),
-                                  color: Colors.yellow),
+                                  border: Border.all(color: CupertinoColors.systemYellow),
+                                  color: CupertinoColors.systemYellow),
                               child: NumberPicker(
                                 axis: Axis.horizontal,
                                 itemWidth: 70,
@@ -1169,7 +1170,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
     widgetList.add(SizedBox(height: 10));
     widgetList.add(Container(
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.yellow),
+        border: Border.all(color: CupertinoColors.systemYellow),
         borderRadius: BorderRadius.circular(10),
       ),
       padding: EdgeInsets.all(10),
@@ -1181,7 +1182,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
               child: Text(
                 "${languages.nationalityLabel}",
                 style: TextStyle(
-                    color: Colors.yellow,
+                    color: CupertinoColors.systemYellow,
                     fontSize: 20,
                     fontWeight: FontWeight.bold),
               ),
@@ -1191,7 +1192,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
           Flexible(
             child: Container(
               decoration: BoxDecoration(
-                  color: Colors.yellow,
+                  color: CupertinoColors.systemYellow,
                   borderRadius: BorderRadius.circular(10)),
               child: Container(
                 decoration: BoxDecoration(
@@ -1205,11 +1206,11 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                   focusColor: Colors.white,
                   dropdownDecoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
-                    color: Colors.yellow,
+                    color: CupertinoColors.systemYellow,
                   ),
                   value: _chosenCountryCode,
-                  style: TextStyle(color: Colors.yellow),
-                  iconEnabledColor: Colors.yellow,
+                  style: TextStyle(color: CupertinoColors.systemYellow),
+                  iconEnabledColor: CupertinoColors.systemYellow,
                   itemPadding: const EdgeInsets.all(1),
                   dropdownPadding: EdgeInsets.all(2),
                   scrollbarRadius: const Radius.circular(40),
@@ -1236,7 +1237,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                               _chosenCountryCode!,
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                  color: Colors.yellow,
+                                  color: CupertinoColors.systemYellow,
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold),
                             ),
@@ -1244,7 +1245,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                         ),
                         IconTheme(
                           data: IconThemeData(
-                            color: Colors.yellow,
+                            color: CupertinoColors.systemYellow,
                             size: 24,
                           ),
                           child: Icon(Icons.arrow_drop_down_outlined),
@@ -1275,7 +1276,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                                 value,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                    color: Colors.yellow,
+                                    color: CupertinoColors.systemYellow,
                                     fontSize: 20,
                                     fontWeight: FontWeight.bold),
                               ),

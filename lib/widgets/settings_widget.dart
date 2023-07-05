@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_frontend/auth/auth_sqflite_handler.dart';
@@ -105,7 +106,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
               style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 20,
-                  color: Colors.yellow),
+                  color: CupertinoColors.systemYellow),
             ),
             content: Column(
               mainAxisSize: MainAxisSize.min,
@@ -161,7 +162,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                 },
                 child: Text(
                   languages.cancelLabel,
-                  style: TextStyle(color: Colors.yellow),
+                  style: TextStyle(color: CupertinoColors.systemYellow),
                 ),
               ),
             ],
@@ -190,7 +191,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 20,
-                          color: Colors.yellow),
+                          color: CupertinoColors.systemYellow),
                     ),
                     content: Container(
                       child: Text(
@@ -200,7 +201,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 20,
-                            color: Colors.yellow),
+                            color: CupertinoColors.systemYellow),
                       ),
                     ),
                     actions: <Widget>[
@@ -210,7 +211,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                         },
                         child: Text(
                           languages.cancelLabel,
-                          style: TextStyle(color: Colors.yellow),
+                          style: TextStyle(color: CupertinoColors.systemYellow),
                         ),
                       ),
                       TextButton(
@@ -221,7 +222,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                           widget.user.isCompanyActive
                               ? languages.unsubscribeLabel
                               : languages.subscribeLabel,
-                          style: TextStyle(color: Colors.yellow),
+                          style: TextStyle(color: CupertinoColors.systemYellow),
                         ),
                       )
                     ],
@@ -334,10 +335,13 @@ class _SettingsWidgetState extends State<SettingsWidget> {
           ),
           child: Stack(children: [
             Center(
-              child: Text(
+              child: AutoSizeText(
                 label,
                 textAlign: TextAlign.center,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
+                maxFontSize: 30,
+                minFontSize: 24,
+                maxLines: 3,
+                style: TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
             Positioned(

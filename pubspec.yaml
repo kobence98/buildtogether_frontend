@@ -3,7 +3,7 @@ description: Build together flutter frontend
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 92.0.0+92
+version: 93.0.0+93
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
@@ -42,6 +42,7 @@ dependencies:
   flutter_launcher_icons: ^0.9.2
   country_icons: ^2.0.2
   comment_tree: ^0.3.0
+  auto_size_text: ^3.0.0
 
 dev_dependencies:
   flutter_test:

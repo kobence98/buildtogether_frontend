@@ -121,7 +121,7 @@ class _LoginPageState extends State<LoginPage> {
                           borderRadius: BorderRadius.all(
                             Radius.circular(10),
                           ),
-                          color: Colors.yellow.withOpacity(0.7),
+                          color: CupertinoColors.systemYellow.withOpacity(0.7),
                         ),
                         child: TextField(
                           style: TextStyle(color: Colors.black),
@@ -146,7 +146,7 @@ class _LoginPageState extends State<LoginPage> {
                           borderRadius: BorderRadius.all(
                             Radius.circular(10),
                           ),
-                          color: Colors.yellow.withOpacity(0.7),
+                          color: CupertinoColors.systemYellow.withOpacity(0.7),
                         ),
                         child: TextField(
                           enableSuggestions: false,
@@ -189,7 +189,7 @@ class _LoginPageState extends State<LoginPage> {
                           style: ButtonStyle(
                             backgroundColor:
                             MaterialStateProperty.all<Color>(
-                                Colors.yellow),
+                                CupertinoColors.systemYellow),
                           ),
                           onPressed: onLoginPressed,
                           child: Text(
@@ -212,7 +212,7 @@ class _LoginPageState extends State<LoginPage> {
                           style: ButtonStyle(
                             backgroundColor:
                             MaterialStateProperty.all<Color>(
-                                Colors.yellow),
+                                CupertinoColors.systemYellow),
                           ),
                           child: Text(
                             languages.registrationLabel,
@@ -233,7 +233,7 @@ class _LoginPageState extends State<LoginPage> {
                             style: TextStyle(
                                 fontStyle: FontStyle.italic,
                                 fontSize: 15,
-                                color: Colors.yellow),
+                                color: CupertinoColors.systemYellow),
                           ),
                           onTap: _onForgottenPasswordTap,
                         ),
@@ -292,7 +292,7 @@ class _LoginPageState extends State<LoginPage> {
                     toastLength: Toast.LENGTH_LONG,
                     gravity: ToastGravity.CENTER,
                     timeInSecForIosWeb: 4,
-                    backgroundColor: Colors.yellow,
+                    backgroundColor: CupertinoColors.systemYellow,
                     textColor: Colors.black,
                     fontSize: 16.0);
               }
@@ -324,7 +324,7 @@ class _LoginPageState extends State<LoginPage> {
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 20,
-                                    color: Colors.yellow),
+                                    color: CupertinoColors.systemYellow),
                               ),
                               content: Container(
                                 height: 100,
@@ -334,7 +334,7 @@ class _LoginPageState extends State<LoginPage> {
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 20,
-                                        color: Colors.yellow),
+                                        color: CupertinoColors.systemYellow),
                                   ),
                                 ),
                               ),
@@ -345,7 +345,7 @@ class _LoginPageState extends State<LoginPage> {
                                   },
                                   child: Text(
                                     languages.cancelLabel,
-                                    style: TextStyle(color: Colors.yellow),
+                                    style: TextStyle(color: CupertinoColors.systemYellow),
                                   ),
                                 ),
                                 TextButton(
@@ -354,7 +354,7 @@ class _LoginPageState extends State<LoginPage> {
                                   },
                                   child: Text(
                                     languages.requestNewVerificationEmailLabel,
-                                    style: TextStyle(color: Colors.yellow),
+                                    style: TextStyle(color: CupertinoColors.systemYellow),
                                   ),
                                 )
                               ],
@@ -419,7 +419,7 @@ class _LoginPageState extends State<LoginPage> {
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 20,
-                          color: Colors.yellow),
+                          color: CupertinoColors.systemYellow),
                     ),
                     content: Column(mainAxisSize: MainAxisSize.min, children: [
                       Center(
@@ -429,7 +429,7 @@ class _LoginPageState extends State<LoginPage> {
                             borderRadius: BorderRadius.all(
                               Radius.circular(10),
                             ),
-                            color: Colors.yellow.withOpacity(0.7),
+                            color: CupertinoColors.systemYellow.withOpacity(0.7),
                           ),
                           child: TextField(
                             style: TextStyle(color: Colors.black),
@@ -454,7 +454,7 @@ class _LoginPageState extends State<LoginPage> {
                         },
                         child: Text(
                           languages.cancelLabel,
-                          style: TextStyle(color: Colors.yellow),
+                          style: TextStyle(color: CupertinoColors.systemYellow),
                         ),
                       ),
                       TextButton(
@@ -463,7 +463,7 @@ class _LoginPageState extends State<LoginPage> {
                         },
                         child: Text(
                           languages.sendLabel,
-                          style: TextStyle(color: Colors.yellow),
+                          style: TextStyle(color: CupertinoColors.systemYellow),
                         ),
                       )
                     ],

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_frontend/entities/company.dart';
 import 'package:flutter_frontend/entities/post.dart';
@@ -229,7 +230,7 @@ class _PostsWidgetState extends State<PostsWidget> {
                                   return Container(
                                     height: 50,
                                     padding: EdgeInsets.all(1),
-                                    color: Colors.yellow,
+                                    color: CupertinoColors.systemYellow,
                                     child: Container(
                                         color: Colors.black,
                                         child: Center(
@@ -242,18 +243,18 @@ class _PostsWidgetState extends State<PostsWidget> {
                                 noItemsFoundBuilder: (context) {
                                   return Container(
                                     padding: EdgeInsets.all(1),
-                                    color: Colors.yellow,
+                                    color: CupertinoColors.systemYellow,
                                     child: Container(
                                       color: Colors.black,
                                       child: ListTile(
                                         leading: Icon(
                                           Icons.not_interested_rounded,
-                                          color: Colors.yellow,
+                                          color: CupertinoColors.systemYellow,
                                         ),
                                         title: Text(
                                           languages.noItemsFoundLabel,
                                           style: TextStyle(
-                                              color: Colors.yellow,
+                                              color: CupertinoColors.systemYellow,
                                               fontStyle: FontStyle.italic,
                                               fontWeight: FontWeight.bold,
                                               fontSize: 20),
@@ -273,8 +274,10 @@ class _PostsWidgetState extends State<PostsWidget> {
                                   onEditingComplete: _onSearchComplete,
                                 ),
                                 suggestionsCallback: (pattern) async {
+                                  var body = new Map<String, dynamic>();
+                                  body['pattern'] = pattern;
                                   dynamic response = await widget.session
-                                      .get("/api/searchField/" + pattern);
+                                      .post("/api/searchField", body);
                                   if (response.statusCode == 200) {
                                     widget.session.updateCookie(response);
                                     Iterable l = json
@@ -305,7 +308,7 @@ class _PostsWidgetState extends State<PostsWidget> {
                                   }
                                   return Container(
                                     padding: EdgeInsets.all(1),
-                                    color: Colors.yellow,
+                                    color: CupertinoColors.systemYellow,
                                     child: Container(
                                       color: Colors.black,
                                       child: ListTile(
@@ -321,12 +324,12 @@ class _PostsWidgetState extends State<PostsWidget> {
                                               )
                                             : Icon(
                                                 Icons.lightbulb_outline_sharp,
-                                                color: Colors.yellow,
+                                                color: CupertinoColors.systemYellow,
                                               ),
                                         title: Text(
                                           name == null ? n.toString() : name.name,
                                           style: TextStyle(
-                                              color: Colors.yellow,
+                                              color: CupertinoColors.systemYellow,
                                               fontWeight: FontWeight.bold,
                                               fontSize: 20),
                                         ),
@@ -371,25 +374,25 @@ class _PostsWidgetState extends State<PostsWidget> {
                     snap: true,
                     forceElevated: innerBoxIsScrolled,
                     bottom: TabBar(
-                        labelColor: Colors.yellow,
-                        indicatorColor: Colors.yellow,
+                        labelColor: CupertinoColors.systemYellow,
+                        indicatorColor: CupertinoColors.systemYellow,
                         tabs: [
                           Tab(
                             child: Text(
                               languages.bestLabel,
-                              style: TextStyle(color: Colors.yellow),
+                              style: TextStyle(color: CupertinoColors.systemYellow),
                             ),
                           ),
                           Tab(
                             child: Text(
                               languages.newLabel,
-                              style: TextStyle(color: Colors.yellow),
+                              style: TextStyle(color: CupertinoColors.systemYellow),
                             ),
                           ),
                           Tab(
                             child: Text(
                               languages.ownLabel,
-                              style: TextStyle(color: Colors.yellow),
+                              style: TextStyle(color: CupertinoColors.systemYellow),
                             ),
                           ),
                         ]),
@@ -446,7 +449,7 @@ class _PostsWidgetState extends State<PostsWidget> {
                   textAlign: TextAlign.center,
                   style: TextStyle(
                       fontSize: 20,
-                      color: Colors.yellow,
+                      color: CupertinoColors.systemYellow,
                       fontWeight: FontWeight.bold),
                 ),
               ),
@@ -459,7 +462,7 @@ class _PostsWidgetState extends State<PostsWidget> {
               child: Text(
                 languages.noMoreItemsLabel,
                 style: TextStyle(
-                    color: Colors.yellow,
+                    color: CupertinoColors.systemYellow,
                     fontStyle: FontStyle.italic,
                     fontSize: 15),
               ),
@@ -492,7 +495,7 @@ class _PostsWidgetState extends State<PostsWidget> {
                   textAlign: TextAlign.center,
                   style: TextStyle(
                       fontSize: 20,
-                      color: Colors.yellow,
+                      color: CupertinoColors.systemYellow,
                       fontWeight: FontWeight.bold),
                 ),
               ),
@@ -501,8 +504,8 @@ class _PostsWidgetState extends State<PostsWidget> {
               child: Container(
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
-                    color: Colors.yellow.withOpacity(0.1),
-                    border: Border.all(color: Colors.yellow)),
+                    color: CupertinoColors.systemYellow.withOpacity(0.1),
+                    border: Border.all(color: CupertinoColors.systemYellow)),
                 padding: EdgeInsets.all(5),
                 margin: EdgeInsets.only(top: 10, left: 5, right: 5),
                 child: Column(
@@ -560,7 +563,7 @@ class _PostsWidgetState extends State<PostsWidget> {
                               ? InkWell(
                                   child: Icon(
                                     Icons.lightbulb_outline_sharp,
-                                    color: Colors.yellow,
+                                    color: CupertinoColors.systemYellow,
                                   ),
                                   onTap: () {
                                     Fluttertoast.showToast(
@@ -729,7 +732,7 @@ class _PostsWidgetState extends State<PostsWidget> {
                             margin: EdgeInsets.all(10),
                             decoration: BoxDecoration(
                                 color: Colors.black,
-                                border: Border.all(color: Colors.yellow),
+                                border: Border.all(color: CupertinoColors.systemYellow),
                                 borderRadius: BorderRadius.circular(10)),
                             child: Container(
                               padding: EdgeInsets.all(10),
@@ -753,7 +756,7 @@ class _PostsWidgetState extends State<PostsWidget> {
                                           width: 40,
                                           decoration: BoxDecoration(
                                               border: Border.all(
-                                                  color: Colors.yellow),
+                                                  color: CupertinoColors.systemYellow),
                                               image: DecorationImage(
                                                 image: NetworkImage(
                                                   widget.session.domainName +
@@ -793,16 +796,16 @@ class _PostsWidgetState extends State<PostsWidget> {
                             size: 20.0,
                             circleColor: CircleColor(
                                 start: Colors.yellow.shade200,
-                                end: Colors.yellow),
+                                end: CupertinoColors.systemYellow),
                             bubblesColor: BubblesColor(
                               dotPrimaryColor: Colors.yellow.shade200,
-                              dotSecondaryColor: Colors.yellow,
+                              dotSecondaryColor: CupertinoColors.systemYellow,
                             ),
                             isLiked: post.liked,
                             likeBuilder: (bool isLiked) {
                               return Icon(
                                 Icons.lightbulb,
-                                color: isLiked ? Colors.yellow : Colors.white,
+                                color: isLiked ? CupertinoColors.systemYellow : Colors.white,
                               );
                             },
                             onTap: (isLiked) {
@@ -929,7 +932,7 @@ class _PostsWidgetState extends State<PostsWidget> {
                         },
                         child: Text(
                           languages.closeLabel,
-                          style: TextStyle(color: Colors.yellow),
+                          style: TextStyle(color: CupertinoColors.systemYellow),
                         )),
                   ],
                 );
@@ -1047,7 +1050,7 @@ class _PostsWidgetState extends State<PostsWidget> {
                     ),
                   )
                 : AlertDialog(
-                    backgroundColor: Colors.yellow,
+                    backgroundColor: CupertinoColors.systemYellow,
                     title: Text(
                       languages.thisIsTheContactEmailLabel,
                       style: TextStyle(
@@ -1087,7 +1090,7 @@ class _PostsWidgetState extends State<PostsWidget> {
                                 borderRadius: BorderRadius.all(
                                   Radius.circular(10),
                                 ),
-                                color: Colors.yellow.withOpacity(0.7),
+                                color: CupertinoColors.systemYellow.withOpacity(0.7),
                               ),
                               child: TextField(
                                 style: TextStyle(color: Colors.black),
@@ -1197,7 +1200,7 @@ class _PostsWidgetState extends State<PostsWidget> {
                     ),
                   )
                 : AlertDialog(
-                    backgroundColor: Colors.yellow,
+                    backgroundColor: CupertinoColors.systemYellow,
                     title: Text(
                       languages.reportUserAndPostTitleLabel,
                       style: TextStyle(
@@ -1214,7 +1217,7 @@ class _PostsWidgetState extends State<PostsWidget> {
                           child: Center(
                             child: Container(
                               padding: EdgeInsets.only(left: 20.0),
-                              color: Colors.yellow.withOpacity(0.7),
+                              color: CupertinoColors.systemYellow.withOpacity(0.7),
                               child: TextField(
                                 style: TextStyle(color: Colors.black),
                                 maxLength: 256,
@@ -1351,7 +1354,7 @@ class _PostsWidgetState extends State<PostsWidget> {
                       ),
                     )
                   : AlertDialog(
-                      backgroundColor: Colors.yellow,
+                      backgroundColor: CupertinoColors.systemYellow,
                       title: Text(
                         languages.banCreatorConfirmQuestionLabel,
                         style: TextStyle(
@@ -1447,7 +1450,7 @@ class _PostsWidgetState extends State<PostsWidget> {
               style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 20,
-                  color: Colors.yellow),
+                  color: CupertinoColors.systemYellow),
             ),
             actions: <Widget>[
               TextButton(
@@ -1456,7 +1459,7 @@ class _PostsWidgetState extends State<PostsWidget> {
                 },
                 child: Text(
                   languages.OKLabel,
-                  style: TextStyle(color: Colors.yellow),
+                  style: TextStyle(color: CupertinoColors.systemYellow),
                 ),
               ),
             ],

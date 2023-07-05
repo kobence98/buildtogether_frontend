@@ -108,7 +108,7 @@ class _ChangeLocationWidgetState extends State<ChangeLocationWidget> {
                                 ? languages.switchOffLocationUseLabel
                                 : languages.switchOnLocationUseLabel,
                             style: TextStyle(
-                                color: Colors.yellow,
+                                color: CupertinoColors.systemYellow,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 20),
                           ),
@@ -134,7 +134,7 @@ class _ChangeLocationWidgetState extends State<ChangeLocationWidget> {
                             ? Container()
                             : Container(
                           decoration: BoxDecoration(
-                              color: Colors.yellow,
+                              color: CupertinoColors.systemYellow,
                               borderRadius: BorderRadius.circular(10)),
                           child: Container(
                             decoration: BoxDecoration(
@@ -148,11 +148,11 @@ class _ChangeLocationWidgetState extends State<ChangeLocationWidget> {
                               focusColor: Colors.white,
                               dropdownDecoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10),
-                                color: Colors.yellow,
+                                color: CupertinoColors.systemYellow,
                               ),
                               value: _chosenCountryCode,
-                              style: TextStyle(color: Colors.yellow),
-                              iconEnabledColor: Colors.yellow,
+                              style: TextStyle(color: CupertinoColors.systemYellow),
+                              iconEnabledColor: CupertinoColors.systemYellow,
                               itemPadding: const EdgeInsets.all(1),
                               dropdownPadding: EdgeInsets.all(2),
                               scrollbarRadius: const Radius.circular(40),
@@ -179,7 +179,7 @@ class _ChangeLocationWidgetState extends State<ChangeLocationWidget> {
                                           _chosenCountryCode!,
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
-                                              color: Colors.yellow,
+                                              color: CupertinoColors.systemYellow,
                                               fontSize: 20,
                                               fontWeight: FontWeight.bold),
                                         ),
@@ -187,7 +187,7 @@ class _ChangeLocationWidgetState extends State<ChangeLocationWidget> {
                                     ),
                                     IconTheme(
                                       data: IconThemeData(
-                                        color: Colors.yellow,
+                                        color: CupertinoColors.systemYellow,
                                         size: 24,
                                       ),
                                       child: Icon(Icons.arrow_drop_down_outlined),
@@ -218,7 +218,7 @@ class _ChangeLocationWidgetState extends State<ChangeLocationWidget> {
                                             value,
                                             textAlign: TextAlign.center,
                                             style: TextStyle(
-                                                color: Colors.yellow,
+                                                color: CupertinoColors.systemYellow,
                                                 fontSize: 20,
                                                 fontWeight: FontWeight.bold),
                                           ),
@@ -245,7 +245,7 @@ class _ChangeLocationWidgetState extends State<ChangeLocationWidget> {
                               style: ButtonStyle(
                                 backgroundColor:
                                     MaterialStateProperty.all<Color>(
-                                        Colors.yellow),
+                                        CupertinoColors.systemYellow),
                               ),
                               onPressed: _onChangePressed,
                               child: Text(

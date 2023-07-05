@@ -62,7 +62,7 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
                         borderRadius: BorderRadius.all(
                           Radius.circular(10),
                         ),
-                        color: Colors.yellow.withOpacity(0.7),
+                        color: CupertinoColors.systemYellow.withOpacity(0.7),
                       ),
                       child: TextField(
                         style: TextStyle(color: Colors.black),
@@ -104,7 +104,7 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
                         borderRadius: BorderRadius.all(
                           Radius.circular(10),
                         ),
-                        color: Colors.yellow.withOpacity(0.7),
+                        color: CupertinoColors.systemYellow.withOpacity(0.7),
                       ),
                       child: TextField(
                         style: TextStyle(color: Colors.black),
@@ -146,7 +146,7 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
                       child: ElevatedButton(
                         style: ButtonStyle(
                           backgroundColor:
-                              MaterialStateProperty.all<Color>(Colors.yellow),
+                              MaterialStateProperty.all<Color>(CupertinoColors.systemYellow),
                         ),
                         onPressed: _onChangePressed,
                         child: Text(

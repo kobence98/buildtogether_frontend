@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
@@ -267,10 +268,13 @@ class _MyAccountWidgetState extends State<MyAccountWidget> {
           ),
           child: Stack(children: [
             Center(
-              child: Text(
+              child: AutoSizeText(
                 label,
                 textAlign: TextAlign.center,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
+                maxFontSize: 30,
+                minFontSize: 24,
+                maxLines: 3,
+                style: TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
             Positioned(

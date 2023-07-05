@@ -131,7 +131,7 @@ class _CommentsWidgetState extends State<CommentsWidget> {
                       child: Text(
                         languages.addCommentLabel,
                         style: TextStyle(
-                            color: Colors.yellow,
+                            color: CupertinoColors.systemYellow,
                             fontSize: 20,
                             fontWeight: FontWeight.bold),
                       ),
@@ -161,7 +161,7 @@ class _CommentsWidgetState extends State<CommentsWidget> {
                           borderRadius: BorderRadius.all(
                             Radius.circular(10),
                           ),
-                          color: Colors.yellow,
+                          color: CupertinoColors.systemYellow,
                         ),
                         child: TextButton(
                           onPressed: () {
@@ -179,7 +179,7 @@ class _CommentsWidgetState extends State<CommentsWidget> {
                           borderRadius: BorderRadius.all(
                             Radius.circular(10),
                           ),
-                          color: Colors.yellow,
+                          color: CupertinoColors.systemYellow,
                         ),
                         child: TextButton(
                           onPressed: () {
@@ -311,7 +311,7 @@ class _CommentsWidgetState extends State<CommentsWidget> {
                     ),
                   )
                 : AlertDialog(
-                    backgroundColor: Colors.yellow,
+                    backgroundColor: CupertinoColors.systemYellow,
                     title: Text(
                       languages.reportUserAndCommentTitleLabel,
                       style: TextStyle(
@@ -328,7 +328,7 @@ class _CommentsWidgetState extends State<CommentsWidget> {
                           child: Center(
                             child: Container(
                               padding: EdgeInsets.only(left: 20.0),
-                              color: Colors.yellow.withOpacity(0.7),
+                              color: CupertinoColors.systemYellow.withOpacity(0.7),
                               child: TextField(
                                 style: TextStyle(color: Colors.black),
                                 controller: _reportReasonTextFieldController,
@@ -471,7 +471,7 @@ class _CommentsWidgetState extends State<CommentsWidget> {
                       ),
                     )
                   : AlertDialog(
-                      backgroundColor: Colors.yellow,
+                      backgroundColor: CupertinoColors.systemYellow,
                       title: Text(
                         languages.banCommenterConfirmQuestionLabel,
                         style: TextStyle(
@@ -715,17 +715,17 @@ class _CommentsWidgetState extends State<CommentsWidget> {
                 LikeButton(
                   size: 20.0,
                   circleColor: CircleColor(
-                      start: Colors.yellow.shade200, end: Colors.yellow),
+                      start: Colors.yellow.shade200, end: CupertinoColors.systemYellow),
                   bubblesColor: BubblesColor(
                     dotPrimaryColor: Colors.yellow.shade200,
-                    dotSecondaryColor: Colors.yellow,
+                    dotSecondaryColor: CupertinoColors.systemYellow,
                   ),
                   isLiked: parentComment.liked,
                   likeBuilder: (bool isLiked) {
                     return Icon(
                       Icons.lightbulb,
                       size: 20,
-                      color: isLiked ? Colors.yellow : Colors.white,
+                      color: isLiked ? CupertinoColors.systemYellow : Colors.white,
                     );
                   },
                   onTap: (isLiked) {

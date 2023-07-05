@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_frontend/entities/company.dart';
 import 'package:flutter_frontend/entities/post.dart';
@@ -106,7 +107,7 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
                           textAlign: TextAlign.center,
                           style: TextStyle(
                               fontSize: 20,
-                              color: Colors.yellow,
+                              color: CupertinoColors.systemYellow,
                               fontWeight: FontWeight.bold),
                         ),
                       ),
@@ -123,8 +124,8 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
                                 child: Container(
                                   decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(10),
-                                      color: Colors.yellow.withOpacity(0.1),
-                                      border: Border.all(color: Colors.yellow)),
+                                      color: CupertinoColors.systemYellow.withOpacity(0.1),
+                                      border: Border.all(color: CupertinoColors.systemYellow)),
                                   padding: EdgeInsets.all(5),
                                   margin: EdgeInsets.only(top: 10),
                                   child: Column(
@@ -190,7 +191,7 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
                                                     child: Icon(
                                                       Icons
                                                           .lightbulb_outline_sharp,
-                                                      color: Colors.yellow,
+                                                      color: CupertinoColors.systemYellow,
                                                     ),
                                                     onTap: () {
                                                       Fluttertoast.showToast(
@@ -414,7 +415,7 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
                                         margin: EdgeInsets.all(10),
                                         decoration: BoxDecoration(
                                             color: Colors.black,
-                                            border: Border.all(color: Colors.yellow),
+                                            border: Border.all(color: CupertinoColors.systemYellow),
                                             borderRadius: BorderRadius.circular(10)),
                                         child: Container(
                                           padding: EdgeInsets.all(10),
@@ -438,7 +439,7 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
                                                       width: 40,
                                                       decoration: BoxDecoration(
                                                           border: Border.all(
-                                                              color: Colors.yellow),
+                                                              color: CupertinoColors.systemYellow),
                                                           image: DecorationImage(
                                                             image: NetworkImage(
                                                               widget.session.domainName +
@@ -478,19 +479,19 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
                                               size: 20.0,
                                               circleColor: CircleColor(
                                                   start: Colors.yellow.shade200,
-                                                  end: Colors.yellow),
+                                                  end: CupertinoColors.systemYellow),
                                               bubblesColor: BubblesColor(
                                                 dotPrimaryColor:
                                                     Colors.yellow.shade200,
                                                 dotSecondaryColor:
-                                                    Colors.yellow,
+                                                    CupertinoColors.systemYellow,
                                               ),
                                               isLiked: post.liked,
                                               likeBuilder: (bool isLiked) {
                                                 return Icon(
                                                   Icons.lightbulb,
                                                   color: isLiked
-                                                      ? Colors.yellow
+                                                      ? CupertinoColors.systemYellow
                                                       : Colors.white,
                                                 );
                                               },
@@ -641,7 +642,7 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
                         },
                         child: Text(
                           languages.closeLabel,
-                          style: TextStyle(color: Colors.yellow),
+                          style: TextStyle(color: CupertinoColors.systemYellow),
                         )),
                   ],
                 );
@@ -711,7 +712,7 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
                     ),
                   )
                 : AlertDialog(
-                    backgroundColor: Colors.yellow,
+                    backgroundColor: CupertinoColors.systemYellow,
                     title: Text(
                       languages.reportUserAndPostTitleLabel,
                       style: TextStyle(
@@ -728,7 +729,7 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
                           child: Center(
                             child: Container(
                               padding: EdgeInsets.only(left: 20.0),
-                              color: Colors.yellow.withOpacity(0.7),
+                              color: CupertinoColors.systemYellow.withOpacity(0.7),
                               child: TextField(
                                 style: TextStyle(color: Colors.black),
                                 maxLength: 256,
@@ -843,7 +844,7 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
                     ),
                   )
                 : AlertDialog(
-                    backgroundColor: Colors.yellow,
+                    backgroundColor: CupertinoColors.systemYellow,
                     title: Text(
                       languages.thisIsTheContactEmailLabel,
                       style: TextStyle(
@@ -883,7 +884,7 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
                                 borderRadius: BorderRadius.all(
                                   Radius.circular(10),
                                 ),
-                                color: Colors.yellow.withOpacity(0.7),
+                                color: CupertinoColors.systemYellow.withOpacity(0.7),
                               ),
                               child: TextField(
                                 style: TextStyle(color: Colors.black),
@@ -1022,7 +1023,7 @@ class _FilteredPostsWidgetState extends State<FilteredPostsWidget> {
                       ),
                     )
                   : AlertDialog(
-                      backgroundColor: Colors.yellow,
+                      backgroundColor: CupertinoColors.systemYellow,
                       title: Text(
                         languages.banCreatorConfirmQuestionLabel,
                         style: TextStyle(

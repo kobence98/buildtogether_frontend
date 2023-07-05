@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_frontend/entities/company.dart';
 import 'package:flutter_frontend/entities/poll_option.dart';
@@ -92,8 +93,8 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                   Container(
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
-                        color: Colors.yellow.withOpacity(0.1),
-                        border: Border.all(color: Colors.yellow)),
+                        color: CupertinoColors.systemYellow.withOpacity(0.1),
+                        border: Border.all(color: CupertinoColors.systemYellow)),
                     padding: EdgeInsets.all(5),
                     margin: EdgeInsets.symmetric(vertical: 10),
                     child: Column(
@@ -151,7 +152,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                                   ? InkWell(
                                 child: Icon(
                                   Icons.lightbulb_outline_sharp,
-                                  color: Colors.yellow,
+                                  color: CupertinoColors.systemYellow,
                                 ),
                                 onTap: () {
                                   Fluttertoast.showToast(
@@ -464,7 +465,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                           margin: EdgeInsets.all(10),
                           decoration: BoxDecoration(
                               color: Colors.black,
-                              border: Border.all(color: Colors.yellow),
+                              border: Border.all(color: CupertinoColors.systemYellow),
                               borderRadius: BorderRadius.circular(10)),
                           child: Container(
                             padding: EdgeInsets.all(10),
@@ -488,7 +489,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                                         width: 40,
                                         decoration: BoxDecoration(
                                             border: Border.all(
-                                                color: Colors.yellow),
+                                                color: CupertinoColors.systemYellow),
                                             image: DecorationImage(
                                               image: NetworkImage(
                                                 widget.session.domainName +
@@ -527,16 +528,16 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                                 size: 20.0,
                                 circleColor: CircleColor(
                                     start: Colors.yellow.shade200,
-                                    end: Colors.yellow),
+                                    end: CupertinoColors.systemYellow),
                                 bubblesColor: BubblesColor(
                                   dotPrimaryColor: Colors.yellow.shade200,
-                                  dotSecondaryColor: Colors.yellow,
+                                  dotSecondaryColor: CupertinoColors.systemYellow,
                                 ),
                                 isLiked: post.liked,
                                 likeBuilder: (bool isLiked) {
                                   return Icon(
                                     Icons.lightbulb,
-                                    color: isLiked ? Colors.yellow : Colors.white,
+                                    color: isLiked ? CupertinoColors.systemYellow : Colors.white,
                                   );
                                 },
                                 onTap: (isLiked) {
@@ -665,7 +666,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                         },
                         child: Text(
                           languages.closeLabel,
-                          style: TextStyle(color: Colors.yellow),
+                          style: TextStyle(color: CupertinoColors.systemYellow),
                         )),
                   ],
                 );
@@ -718,7 +719,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
     return FlutterPollsInno(
       isOwn: post.creatorId == widget.user.userId,
       votesText: languages.votesText,
-      pollOptionsFillColor: Colors.yellow,
+      pollOptionsFillColor: CupertinoColors.systemYellow,
       votedBackgroundColor: Colors.yellow.shade600,
       leadingVotedByUserProgessColor: Colors.red,
       votedProgressColor: Colors.yellow.shade900,
@@ -756,7 +757,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                     ),
                   )
                 : AlertDialog(
-                    backgroundColor: Colors.yellow,
+                    backgroundColor: CupertinoColors.systemYellow,
                     title: Text(
                       languages.reportUserAndPostTitleLabel,
                       style: TextStyle(
@@ -773,7 +774,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                           child: Center(
                             child: Container(
                               padding: EdgeInsets.only(left: 20.0),
-                              color: Colors.yellow.withOpacity(0.7),
+                              color: CupertinoColors.systemYellow.withOpacity(0.7),
                               child: TextField(
                                 style: TextStyle(color: Colors.black),
                                 maxLength: 256,
@@ -888,7 +889,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                     ),
                   )
                 : AlertDialog(
-                    backgroundColor: Colors.yellow,
+                    backgroundColor: CupertinoColors.systemYellow,
                     title: Text(
                       languages.thisIsTheContactEmailLabel,
                       style: TextStyle(
@@ -928,7 +929,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                                 borderRadius: BorderRadius.all(
                                   Radius.circular(10),
                                 ),
-                                color: Colors.yellow.withOpacity(0.7),
+                                color: CupertinoColors.systemYellow.withOpacity(0.7),
                               ),
                               child: TextField(
                                 style: TextStyle(color: Colors.black),
@@ -1091,7 +1092,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                       ),
                     )
                   : AlertDialog(
-                      backgroundColor: Colors.yellow,
+                      backgroundColor: CupertinoColors.systemYellow,
                       title: Text(
                         languages.banCreatorConfirmQuestionLabel,
                         style: TextStyle(
@@ -1237,7 +1238,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                       ),
                     )
                   : AlertDialog(
-                      backgroundColor: Colors.yellow,
+                      backgroundColor: CupertinoColors.systemYellow,
                       title: Text(
                         languages.editTitleConfirmLabel,
                         style: TextStyle(
@@ -1260,7 +1261,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 20,
-                                    color: Colors.yellow),
+                                    color: CupertinoColors.systemYellow),
                               ),
                             ),
                             SizedBox(
@@ -1269,7 +1270,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                             Center(
                               child: Icon(
                                 Icons.keyboard_double_arrow_down,
-                                color: Colors.yellow,
+                                color: CupertinoColors.systemYellow,
                                 size: 40,
                               ),
                             ),
@@ -1282,7 +1283,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 20,
-                                    color: Colors.yellow),
+                                    color: CupertinoColors.systemYellow),
                               ),
                             ),
                           ],
@@ -1401,7 +1402,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                       ),
                     )
                   : AlertDialog(
-                      backgroundColor: Colors.yellow,
+                      backgroundColor: CupertinoColors.systemYellow,
                       title: Text(
                         languages.editDescriptionConfirmLabel,
                         style: TextStyle(
@@ -1424,7 +1425,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 20,
-                                    color: Colors.yellow),
+                                    color: CupertinoColors.systemYellow),
                               ),
                             ),
                             SizedBox(
@@ -1433,7 +1434,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                             Center(
                               child: Icon(
                                 Icons.keyboard_double_arrow_down,
-                                color: Colors.yellow,
+                                color: CupertinoColors.systemYellow,
                                 size: 40,
                               ),
                             ),
@@ -1446,7 +1447,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 20,
-                                    color: Colors.yellow),
+                                    color: CupertinoColors.systemYellow),
                               ),
                             ),
                           ],
