@@ -201,6 +201,7 @@ class _PostsWidgetState extends State<PostsWidget> {
         length: 3,
         child: SafeArea(
           child: Scaffold(
+            resizeToAvoidBottomInset: false,
             body: NestedScrollView(
               headerSliverBuilder:
                   (BuildContext context, bool innerBoxIsScrolled) {
