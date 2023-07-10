@@ -132,7 +132,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(child: mainWidget);
+    return Container(child: SafeArea(child: mainWidget), color: Colors.black,);
   }
 }
 
