@@ -7,6 +7,7 @@ import '../entities/company.dart';
 import '../entities/company_for_listing.dart';
 import '../entities/session.dart';
 import '../languages/languages.dart';
+import '../static/safe_area.dart';
 
 class CompaniesWidget extends StatefulWidget {
   final Session session;
@@ -45,7 +46,7 @@ class _CompaniesWidgetState extends State<CompaniesWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
+    return InnoSafeArea(
       child: Scaffold(
         appBar: AppBar(
             backgroundColor: Colors.black,

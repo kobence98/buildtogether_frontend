@@ -10,6 +10,7 @@ import 'package:flutter_frontend/widgets/posts_widget.dart';
 import 'package:flutter_frontend/widgets/settings_widget.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 
+import '../static/safe_area.dart';
 import 'create_post_widget.dart';
 
 class MainWidget extends StatefulWidget {
@@ -44,7 +45,7 @@ class _MainWidgetState extends State<MainWidget> {
     }
     return Container(
       color: Colors.black,
-      child: SafeArea(
+      child: InnoSafeArea(
         child: NotificationListener<UserScrollNotification>(
           onNotification: (notification) {
             final ScrollDirection direction = notification.direction;
@@ -70,7 +71,7 @@ class _MainWidgetState extends State<MainWidget> {
             controller: _pageController,
             screens: _buildScreens(),
             items: _navBarsItems(),
-            confineInSafeArea: false,
+            confineInSafeArea: true,
             backgroundColor: Colors.black,
             handleAndroidBackButtonPress: true,
             stateManagement: true,

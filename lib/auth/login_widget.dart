@@ -19,6 +19,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../entities/session.dart';
 import '../../entities/user.dart';
+import '../static/safe_area.dart';
 
 class LoginPage extends StatefulWidget {
   final Languages languages;
@@ -53,7 +54,7 @@ class _LoginPageState extends State<LoginPage> {
       body: CustomPaint(
         painter: MainBackground(),
         child: Container(
-          child: SafeArea(
+          child: InnoSafeArea(
             child: loading
                 ? Container(
               child: Center(

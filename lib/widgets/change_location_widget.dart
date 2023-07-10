@@ -8,6 +8,8 @@ import 'package:flutter_frontend/entities/user.dart';
 import 'package:flutter_frontend/languages/languages.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
+import '../static/safe_area.dart';
+
 class ChangeLocationWidget extends StatefulWidget {
   final Session session;
   final User user;
@@ -85,7 +87,7 @@ class _ChangeLocationWidgetState extends State<ChangeLocationWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
+    return InnoSafeArea(
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.black,

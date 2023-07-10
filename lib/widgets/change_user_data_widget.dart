@@ -19,6 +19,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 import '../entities/gender.dart';
 import '../entities/salary_type.dart';
+import '../static/safe_area.dart';
 
 class ChangeUserDataWidget extends StatefulWidget {
   final Session session;
@@ -142,7 +143,7 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
     } else if (!company) {
       _addNonCompanyItems();
     }
-    return SafeArea(
+    return InnoSafeArea(
       child: Scaffold(
           appBar: AppBar(
             backgroundColor: Colors.black,

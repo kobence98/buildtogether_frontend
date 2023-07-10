@@ -8,6 +8,7 @@ import '../entities/banned_user.dart';
 import '../entities/session.dart';
 import '../entities/user.dart';
 import '../languages/languages.dart';
+import '../static/safe_area.dart';
 
 class HandleBansWidget extends StatefulWidget {
   final Session session;
@@ -58,7 +59,7 @@ class _HandleBansWidgetState extends State<HandleBansWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
+    return InnoSafeArea(
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.black,

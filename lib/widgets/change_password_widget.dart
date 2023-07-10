@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_frontend/auth/auth_sqflite_handler.dart';
@@ -8,6 +6,8 @@ import 'package:flutter_frontend/entities/session.dart';
 import 'package:flutter_frontend/entities/user.dart';
 import 'package:flutter_frontend/languages/languages.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+
+import '../static/safe_area.dart';
 
 class ChangePasswordWidget extends StatefulWidget {
   final Session session;
@@ -39,7 +39,7 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
+    return InnoSafeArea(
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.black,
@@ -145,8 +145,8 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
                       minWidth: 300,
                       child: ElevatedButton(
                         style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all<Color>(CupertinoColors.systemYellow),
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              CupertinoColors.systemYellow),
                         ),
                         onPressed: _onChangePressed,
                         child: Text(

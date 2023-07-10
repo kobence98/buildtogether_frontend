@@ -15,6 +15,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:like_button/like_button.dart';
 
 import '../static/profanity_checker.dart';
+import '../static/safe_area.dart';
 import 'comments_widget.dart';
 import 'flutter_polls_inno.dart';
 import 'open_image_widget.dart';
@@ -78,7 +79,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
     voted = post.pollOptions.any((element) => element.liked);
     return Container(
       color: Colors.black,
-      child: SafeArea(
+      child: InnoSafeArea(
         child: Scaffold(
           appBar: AppBar(
             backgroundColor: Colors.black,

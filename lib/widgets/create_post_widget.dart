@@ -14,6 +14,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../static/safe_area.dart';
+
 class CreatePostWidget extends StatefulWidget {
   final Session session;
   final User user;
@@ -67,7 +69,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
   Widget build(BuildContext context) {
     return Container(
       color: Colors.black,
-      child: SafeArea(
+      child: InnoSafeArea(
           child: company && widget.user.isCompanyActive
               ? DefaultTabController(
                   initialIndex: 0,

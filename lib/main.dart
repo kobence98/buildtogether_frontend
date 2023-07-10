@@ -8,6 +8,7 @@ import 'package:flutter_frontend/auth/auth_sqflite_handler.dart';
 import 'package:flutter_frontend/languages/english_language.dart';
 import 'package:flutter_frontend/languages/languages.dart';
 import 'package:flutter_frontend/languages/languages_sqflite_handler.dart';
+import 'package:flutter_frontend/static/safe_area.dart';
 import 'package:flutter_frontend/widgets/main_widget.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -132,7 +133,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(child: SafeArea(child: mainWidget), color: Colors.black,);
+    return Container(child: InnoSafeArea(child: mainWidget), color: Colors.black,);
   }
 }
 

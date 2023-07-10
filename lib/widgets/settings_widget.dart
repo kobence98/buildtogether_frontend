@@ -12,6 +12,7 @@ import 'package:flutter_frontend/widgets/my_account_widget.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
+import '../static/safe_area.dart';
 import 'companies_widget.dart';
 
 class SettingsWidget extends StatefulWidget {
@@ -51,7 +52,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
 
     return Container(
       color: Colors.black,
-      child: SafeArea(
+      child: InnoSafeArea(
         child: ListView(
           children: [
             SizedBox(

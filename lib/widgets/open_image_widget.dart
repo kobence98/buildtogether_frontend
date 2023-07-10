@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../entities/session.dart';
+import '../static/safe_area.dart';
 
 class OpenImageWidget extends StatefulWidget {
   final String imageId;
@@ -17,7 +18,7 @@ class OpenImageWidget extends StatefulWidget {
 class _OpenImageWidgetState extends State<OpenImageWidget> {
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
+    return InnoSafeArea(
         child: Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,

@@ -9,6 +9,7 @@ import '../entities/session.dart';
 import '../entities/user.dart';
 import '../languages/languages.dart';
 import '../languages/languages_sqflite_handler.dart';
+import '../static/safe_area.dart';
 import 'change_location_widget.dart';
 import 'change_password_widget.dart';
 import 'change_user_data_widget.dart';
@@ -49,7 +50,7 @@ class _MyAccountWidgetState extends State<MyAccountWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
+    return InnoSafeArea(
         child: Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,

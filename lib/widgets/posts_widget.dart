@@ -21,6 +21,7 @@ import 'package:location/location.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import '../entities/feed_type.dart';
+import '../static/safe_area.dart';
 import 'filtered_posts_widget.dart';
 import 'open_image_widget.dart';
 
@@ -199,7 +200,7 @@ class _PostsWidgetState extends State<PostsWidget> {
       child: DefaultTabController(
         initialIndex: widget.initPage,
         length: 3,
-        child: SafeArea(
+        child: InnoSafeArea(
           child: Scaffold(
             resizeToAvoidBottomInset: false,
             body: NestedScrollView(

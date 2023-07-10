@@ -12,6 +12,7 @@ import 'package:flutter_frontend/widgets/single_post_widget.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:like_button/like_button.dart';
 
+import '../static/safe_area.dart';
 import 'open_image_widget.dart';
 
 class LikedPostsWidget extends StatefulWidget {
@@ -66,7 +67,7 @@ class _LikedPostsWidgetState extends State<LikedPostsWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
+    return InnoSafeArea(
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.black,

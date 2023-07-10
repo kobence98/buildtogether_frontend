@@ -13,6 +13,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 import '../entities/statistic_data.dart';
+import '../static/safe_area.dart';
 
 class StatisticPage extends StatefulWidget {
   final int postId;
@@ -44,7 +45,7 @@ class _StatisticPageState extends State<StatisticPage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
+    return InnoSafeArea(
         child: Scaffold(
             appBar: AppBar(
               backgroundColor: Colors.black,

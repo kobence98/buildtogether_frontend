@@ -18,6 +18,7 @@ import '../entities/session.dart';
 import '../languages/languages.dart';
 import '../languages/languages_sqflite_handler.dart';
 import '../static/profanity_checker.dart';
+import '../static/safe_area.dart';
 import 'auth_sqflite_handler.dart';
 
 class RegistrationWidget extends StatefulWidget {
@@ -118,7 +119,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
       _addNonCompanyItems();
     }
 
-    return SafeArea(
+    return InnoSafeArea(
       child: Scaffold(
         backgroundColor: Colors.black,
         body: loading
