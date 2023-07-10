@@ -70,7 +70,7 @@ class _MainWidgetState extends State<MainWidget> {
             controller: _pageController,
             screens: _buildScreens(),
             items: _navBarsItems(),
-            confineInSafeArea: true,
+            confineInSafeArea: false,
             backgroundColor: Colors.black,
             handleAndroidBackButtonPress: true,
             stateManagement: true,
