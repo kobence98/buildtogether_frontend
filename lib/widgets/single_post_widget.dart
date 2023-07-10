@@ -76,153 +76,194 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
   @override
   Widget build(BuildContext context) {
     voted = post.pollOptions.any((element) => element.liked);
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.black,
-        ),
-        body: Container(
-          height: MediaQuery.of(context).size.height,
-          padding: EdgeInsets.only(bottom: 10),
-          color: Colors.black,
-          child: SingleChildScrollView(
-            child: Container(
-              color: Colors.black,
-              child: Column(
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: CupertinoColors.systemYellow.withOpacity(0.1),
-                        border: Border.all(color: CupertinoColors.systemYellow)),
-                    padding: EdgeInsets.all(5),
-                    margin: EdgeInsets.symmetric(vertical: 10),
-                    child: Column(
-                      children: [
-                        ListTile(
-                          leading: InkWell(
-                            child: CircleAvatar(
-                              radius: 20,
-                              backgroundImage: NetworkImage(
-                                widget.session.domainName +
-                                    "/api/images/" +
-                                    post.companyImageId.toString(),
-                                headers: widget.session.headers,
+    return Container(
+      color: Colors.black,
+      child: SafeArea(
+        child: Scaffold(
+          appBar: AppBar(
+            backgroundColor: Colors.black,
+          ),
+          body: Container(
+            height: MediaQuery.of(context).size.height,
+            padding: EdgeInsets.only(bottom: 10),
+            color: Colors.black,
+            child: SingleChildScrollView(
+              child: Container(
+                color: Colors.black,
+                child: Column(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: CupertinoColors.systemYellow.withOpacity(0.1),
+                          border: Border.all(color: CupertinoColors.systemYellow)),
+                      padding: EdgeInsets.all(5),
+                      margin: EdgeInsets.symmetric(vertical: 10),
+                      child: Column(
+                        children: [
+                          ListTile(
+                            leading: InkWell(
+                              child: CircleAvatar(
+                                radius: 20,
+                                backgroundImage: NetworkImage(
+                                  widget.session.domainName +
+                                      "/api/images/" +
+                                      post.companyImageId.toString(),
+                                  headers: widget.session.headers,
+                                ),
                               ),
+                              onTap: () => _onCompanyTap(post.companyId),
                             ),
-                            onTap: () => _onCompanyTap(post.companyId),
-                          ),
-                          title: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                post.userName,
-                                style: TextStyle(color: Colors.white),
-                              ),
-                              SizedBox(
-                                height: 1,
-                              ),
-                              InkWell(
-                                child: Container(
-                                  padding: EdgeInsets.all(3),
-                                  decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      border: Border.all(
-                                        color: Colors.black,
-                                      ),
-                                      borderRadius:
-                                      BorderRadius.all(Radius.circular(20))),
-                                  child: Text(
-                                    post.companyName,
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold),
-                                  ),
+                            title: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  post.userName,
+                                  style: TextStyle(color: Colors.white),
                                 ),
-                                onTap: () {
-                                  _onCompanyTap(post.companyId);
-                                },
-                              ),
-                            ],
-                          ),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              post.implemented
-                                  ? InkWell(
-                                child: Icon(
-                                  Icons.lightbulb_outline_sharp,
-                                  color: CupertinoColors.systemYellow,
+                                SizedBox(
+                                  height: 1,
                                 ),
-                                onTap: () {
-                                  Fluttertoast.showToast(
-                                      msg: languages.ideaIsImplementedMessage,
-                                      toastLength: Toast.LENGTH_SHORT,
-                                      gravity: ToastGravity.CENTER,
-                                      timeInSecForIosWeb: 4,
-                                      backgroundColor: Colors.green,
-                                      textColor: Colors.white,
-                                      fontSize: 16.0);
-                                },
-                              )
-                                  : Container(),
-                              Text(
-                                DateFormatter.formatDate(post.createdDate, languages),
-                                style: TextStyle(color: Colors.white),
-                              ),
-                              Container(
-                                margin: EdgeInsets.only(left: 5),
-                                child: PopupMenuButton(
-                                  child: Icon(
-                                    Icons.more_horiz,
-                                    color: Colors.white,
+                                InkWell(
+                                  child: Container(
+                                    padding: EdgeInsets.all(3),
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        border: Border.all(
+                                          color: Colors.black,
+                                        ),
+                                        borderRadius:
+                                        BorderRadius.all(Radius.circular(20))),
+                                    child: Text(
+                                      post.companyName,
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold),
+                                    ),
                                   ),
-                                  itemBuilder: (context) {
-                                    return List.generate(
-                                        (widget.user.companyId == post.companyId)
-                                            ? 5
-                                            : 2, (index) {
-                                      if (index == 0) {
-                                        return PopupMenuItem(
-                                          child: Text(widget.user.companyId ==
-                                              post.companyId ||
-                                              widget.user.userId == post.creatorId
-                                              ? languages.deleteLabel
-                                              : languages.reportLabel),
-                                          value: 0,
-                                        );
-                                      } else if (index == 1) {
-                                        return PopupMenuItem(
-                                          child: Text(languages.banUserLabel),
-                                          value: 1,
-                                        );
-                                      } else if (index == 2) {
-                                        return PopupMenuItem(
-                                          child: Text(languages.contactCreatorLabel),
-                                          value: 2,
-                                        );
-                                      } else {
-                                        return PopupMenuItem(
-                                          child: Text(post.implemented
-                                              ? languages.notImplementedLabel
-                                              : languages.implementedLabel),
-                                          value: 3,
-                                        );
-                                      }
-                                    });
+                                  onTap: () {
+                                    _onCompanyTap(post.companyId);
                                   },
-                                  onSelected: (index) {
-                                    if (index == 0) {
-                                      if (widget.user.companyId == post.companyId ||
-                                          widget.user.userId == post.creatorId) {
+                                ),
+                              ],
+                            ),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                post.implemented
+                                    ? InkWell(
+                                  child: Icon(
+                                    Icons.lightbulb_outline_sharp,
+                                    color: CupertinoColors.systemYellow,
+                                  ),
+                                  onTap: () {
+                                    Fluttertoast.showToast(
+                                        msg: languages.ideaIsImplementedMessage,
+                                        toastLength: Toast.LENGTH_SHORT,
+                                        gravity: ToastGravity.CENTER,
+                                        timeInSecForIosWeb: 4,
+                                        backgroundColor: Colors.green,
+                                        textColor: Colors.white,
+                                        fontSize: 16.0);
+                                  },
+                                )
+                                    : Container(),
+                                Text(
+                                  DateFormatter.formatDate(post.createdDate, languages),
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                Container(
+                                  margin: EdgeInsets.only(left: 5),
+                                  child: PopupMenuButton(
+                                    child: Icon(
+                                      Icons.more_horiz,
+                                      color: Colors.white,
+                                    ),
+                                    itemBuilder: (context) {
+                                      return List.generate(
+                                          (widget.user.companyId == post.companyId)
+                                              ? 5
+                                              : 2, (index) {
+                                        if (index == 0) {
+                                          return PopupMenuItem(
+                                            child: Text(widget.user.companyId ==
+                                                post.companyId ||
+                                                widget.user.userId == post.creatorId
+                                                ? languages.deleteLabel
+                                                : languages.reportLabel),
+                                            value: 0,
+                                          );
+                                        } else if (index == 1) {
+                                          return PopupMenuItem(
+                                            child: Text(languages.banUserLabel),
+                                            value: 1,
+                                          );
+                                        } else if (index == 2) {
+                                          return PopupMenuItem(
+                                            child: Text(languages.contactCreatorLabel),
+                                            value: 2,
+                                          );
+                                        } else {
+                                          return PopupMenuItem(
+                                            child: Text(post.implemented
+                                                ? languages.notImplementedLabel
+                                                : languages.implementedLabel),
+                                            value: 3,
+                                          );
+                                        }
+                                      });
+                                    },
+                                    onSelected: (index) {
+                                      if (index == 0) {
+                                        if (widget.user.companyId == post.companyId ||
+                                            widget.user.userId == post.creatorId) {
+                                          widget.session
+                                              .delete('/api/posts/' +
+                                              post.postId.toString())
+                                              .then((response) {
+                                            if (response.statusCode == 200) {
+                                              Fluttertoast.showToast(
+                                                  msg:
+                                                  languages.successfulDeleteMessage,
+                                                  toastLength: Toast.LENGTH_LONG,
+                                                  gravity: ToastGravity.CENTER,
+                                                  timeInSecForIosWeb: 4,
+                                                  backgroundColor: Colors.green,
+                                                  textColor: Colors.white,
+                                                  fontSize: 16.0);
+                                              setState(() {
+                                                Navigator.of(context).pop();
+                                              });
+                                            } else {
+                                              Fluttertoast.showToast(
+                                                  msg: languages
+                                                      .globalServerErrorMessage,
+                                                  toastLength: Toast.LENGTH_LONG,
+                                                  gravity: ToastGravity.CENTER,
+                                                  timeInSecForIosWeb: 4,
+                                                  backgroundColor: Colors.red,
+                                                  textColor: Colors.white,
+                                                  fontSize: 16.0);
+                                            }
+                                          });
+                                        } else {
+                                          onReportTap(post);
+                                        }
+                                      } else if (index == 1) {
+                                        _onBanUserTap(post.creatorId);
+                                      } else if (index == 2) {
+                                        _onContactCreatorTap(post);
+                                      } else {
                                         widget.session
-                                            .delete('/api/posts/' +
-                                            post.postId.toString())
+                                            .post(
+                                            '/api/posts/' +
+                                                post.postId.toString() +
+                                                '/implemented',
+                                            Map<String, dynamic>())
                                             .then((response) {
                                           if (response.statusCode == 200) {
                                             Fluttertoast.showToast(
-                                                msg:
-                                                languages.successfulDeleteMessage,
+                                                msg: "${languages.successLabel}!",
                                                 toastLength: Toast.LENGTH_LONG,
                                                 gravity: ToastGravity.CENTER,
                                                 timeInSecForIosWeb: 4,
@@ -230,12 +271,11 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                                                 textColor: Colors.white,
                                                 fontSize: 16.0);
                                             setState(() {
-                                              Navigator.of(context).pop();
+                                              post.implemented = !post.implemented;
                                             });
                                           } else {
                                             Fluttertoast.showToast(
-                                                msg: languages
-                                                    .globalServerErrorMessage,
+                                                msg: languages.globalServerErrorMessage,
                                                 toastLength: Toast.LENGTH_LONG,
                                                 gravity: ToastGravity.CENTER,
                                                 timeInSecForIosWeb: 4,
@@ -244,365 +284,328 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                                                 fontSize: 16.0);
                                           }
                                         });
-                                      } else {
-                                        onReportTap(post);
                                       }
-                                    } else if (index == 1) {
-                                      _onBanUserTap(post.creatorId);
-                                    } else if (index == 2) {
-                                      _onContactCreatorTap(post);
-                                    } else {
-                                      widget.session
-                                          .post(
-                                          '/api/posts/' +
-                                              post.postId.toString() +
-                                              '/implemented',
-                                          Map<String, dynamic>())
-                                          .then((response) {
-                                        if (response.statusCode == 200) {
-                                          Fluttertoast.showToast(
-                                              msg: "${languages.successLabel}!",
-                                              toastLength: Toast.LENGTH_LONG,
-                                              gravity: ToastGravity.CENTER,
-                                              timeInSecForIosWeb: 4,
-                                              backgroundColor: Colors.green,
-                                              textColor: Colors.white,
-                                              fontSize: 16.0);
-                                          setState(() {
-                                            post.implemented = !post.implemented;
-                                          });
-                                        } else {
-                                          Fluttertoast.showToast(
-                                              msg: languages.globalServerErrorMessage,
-                                              toastLength: Toast.LENGTH_LONG,
-                                              gravity: ToastGravity.CENTER,
-                                              timeInSecForIosWeb: 4,
-                                              backgroundColor: Colors.red,
-                                              textColor: Colors.white,
-                                              fontSize: 16.0);
-                                        }
-                                      });
-                                    }
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        ListTile(
-                          title: isCreator && _editTitleIsActive
-                              ? EditableText(
-                              controller: _editTitleTextController,
-                              focusNode: _editTitleTextFocusNode,
-                              onChanged: (newText) {
-                                setState(() {});
-                              },
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20),
-                              cursorColor: Colors.white,
-                              backgroundCursorColor: Colors.black)
-                              : Text(
-                            post.title,
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20),
-                          ),
-                          trailing: isCreator
-                              ? Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              InkWell(
-                                child: Icon(
-                                  _editTitleIsActive
-                                      ? Icons.save_alt
-                                      : Icons.edit,
-                                  color: post.title ==
-                                      _editTitleTextController.text &&
-                                      _editTitleIsActive
-                                      ? Colors.grey
-                                      : Colors.white,
-                                ),
-                                onTap: _editTitleIsActive
-                                    ? _onSaveTitleEditTap
-                                    : () {
-                                  setState(() {
-                                    _editTitleTextFocusNode
-                                        .requestFocus();
-                                    _editTitleIsActive = true;
-                                  });
-                                },
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              _editTitleIsActive
-                                  ? InkWell(
-                                child: Icon(
-                                  Icons.cancel,
-                                  color: Colors.white,
-                                ),
-                                onTap: () {
-                                  setState(() {
-                                    _editTitleIsActive = false;
-                                    _editTitleTextController.text =
-                                        post.title;
-                                  });
-                                },
-                              )
-                                  : Container(),
-                            ],
-                          )
-                              : Container(
-                            width: 0,
-                            height: 0,
-                          ),
-                        ),
-                        Container(
-                          padding:
-                          EdgeInsets.only(left: 5, right: 5, top: 5, bottom: 15),
-                          alignment: Alignment.topLeft,
-                          child: post.postType == 'SIMPLE_POST'
-                              ? (isCreator
-                              ? Row(
-                            children: [
-                              Container(
-                                width: MediaQuery.of(context).size.width -
-                                    (_editDescriptionIsActive ? 85 : 65),
-                                child: (isCreator &&
-                                    _editDescriptionIsActive
-                                    ? EditableText(
-                                    textInputAction:
-                                    TextInputAction.newline,
-                                    maxLines: null,
-                                    controller:
-                                    _editDescriptionTextController,
-                                    focusNode:
-                                    _editDescriptionTextFocusNode,
-                                    onChanged: (newText) {
-                                      setState(() {});
-                                    },
-                                    style:
-                                    TextStyle(color: Colors.white),
-                                    cursorColor: Colors.white,
-                                    backgroundCursorColor: Colors.black)
-                                    : Text(
-                                  post.description,
-                                  style:
-                                  TextStyle(color: Colors.white),
-                                )),
-                              ),
-                              Container(
-                                width: _editDescriptionIsActive ? 60 : 30,
-                                child: Row(
-                                  mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    InkWell(
-                                      child: Icon(
-                                        _editDescriptionIsActive
-                                            ? Icons.save_alt
-                                            : Icons.edit,
-                                        color: post.description ==
-                                            _editDescriptionTextController
-                                                .text &&
-                                            _editDescriptionIsActive
-                                            ? Colors.grey
-                                            : Colors.white,
-                                      ),
-                                      onTap: () {
-                                        if (_editDescriptionIsActive) {
-                                          _onSaveDescriptionTap();
-                                        } else {
-                                          setState(() {
-                                            _editDescriptionTextFocusNode
-                                                .requestFocus();
-                                            _editDescriptionIsActive = true;
-                                          });
-                                        }
-                                      },
-                                    ),
-                                    SizedBox(
-                                      width:
-                                      _editDescriptionIsActive ? 10 : 0,
-                                    ),
-                                    _editDescriptionIsActive
-                                        ? InkWell(
-                                      child: Icon(
-                                        Icons.cancel,
-                                        color: Colors.white,
-                                      ),
-                                      onTap: () {
-                                        setState(() {
-                                          _editDescriptionIsActive =
-                                          false;
-                                          _editDescriptionTextController
-                                              .text =
-                                              post.description;
-                                        });
-                                      },
-                                    )
-                                        : Container(),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          )
-                              : Text(
-                            post.description,
-                            style: TextStyle(color: Colors.white),
-                          ))
-                              : _pollWidget(post),
-                        ),
-                        SizedBox(
-                          height: post.postImageId == null ? 0 : 10,
-                        ),
-                        post.postImageId == null
-                            ? Container()
-                            : Container(
-                          margin: EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                              color: Colors.black,
-                              border: Border.all(color: CupertinoColors.systemYellow),
-                              borderRadius: BorderRadius.circular(10)),
-                          child: Container(
-                            padding: EdgeInsets.all(10),
-                            child: Row(
-                              children: [
-                                Flexible(
-                                  child: Text(
-                                    '${languages.thisPostHasPicture}:',
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  flex: 5,
-                                ),
-                                Flexible(
-                                  child: InkWell(
-                                    child: Center(
-                                      child: Container(
-                                        height: 40,
-                                        width: 40,
-                                        decoration: BoxDecoration(
-                                            border: Border.all(
-                                                color: CupertinoColors.systemYellow),
-                                            image: DecorationImage(
-                                              image: NetworkImage(
-                                                widget.session.domainName +
-                                                    "/api/postImages/" +
-                                                    post.postImageId
-                                                        .toString(),
-                                                headers:
-                                                widget.session.headers,
-                                              ),
-                                              fit: BoxFit.contain,
-                                            ),
-                                            borderRadius:
-                                            BorderRadius.circular(10)),
-                                      ),
-                                    ),
-                                    onTap: () async {
-                                      Navigator.of(context).push(MaterialPageRoute(
-                                          builder: (context) =>
-                                              OpenImageWidget(imageId: post.postImageId.toString(), session: widget.session)));
                                     },
                                   ),
-                                  flex: 1,
                                 ),
                               ],
                             ),
                           ),
-                        ),
-                        Container(
-                          height: 40,
-                          margin: EdgeInsets.only(bottom: 20),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              LikeButton(
-                                size: 20.0,
-                                circleColor: CircleColor(
-                                    start: Colors.yellow.shade200,
-                                    end: CupertinoColors.systemYellow),
-                                bubblesColor: BubblesColor(
-                                  dotPrimaryColor: Colors.yellow.shade200,
-                                  dotSecondaryColor: CupertinoColors.systemYellow,
-                                ),
-                                isLiked: post.liked,
-                                likeBuilder: (bool isLiked) {
-                                  return Icon(
-                                    Icons.lightbulb,
-                                    color: isLiked ? CupertinoColors.systemYellow : Colors.white,
-                                  );
+                          ListTile(
+                            title: isCreator && _editTitleIsActive
+                                ? EditableText(
+                                controller: _editTitleTextController,
+                                focusNode: _editTitleTextFocusNode,
+                                onChanged: (newText) {
+                                  setState(() {});
                                 },
-                                onTap: (isLiked) {
-                                  return post.creatorId == widget.user.userId
-                                      ? _onLikeOwnButtonPressed()
-                                      : _onLikeButton(isLiked);
-                                },
-                                likeCount: post.likeNumber,
-                              ),
-                              widget.user.companyId != null &&
-                                  widget.user.companyId == post.companyId
-                                  ? InkWell(
-                                  child: Icon(
-                                    Icons.bar_chart,
+                                style: TextStyle(
                                     color: Colors.white,
-                                    size: 30,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20),
+                                cursorColor: Colors.white,
+                                backgroundCursorColor: Colors.black)
+                                : Text(
+                              post.title,
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20),
+                            ),
+                            trailing: isCreator
+                                ? Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                InkWell(
+                                  child: Icon(
+                                    _editTitleIsActive
+                                        ? Icons.save_alt
+                                        : Icons.edit,
+                                    color: post.title ==
+                                        _editTitleTextController.text &&
+                                        _editTitleIsActive
+                                        ? Colors.grey
+                                        : Colors.white,
+                                  ),
+                                  onTap: _editTitleIsActive
+                                      ? _onSaveTitleEditTap
+                                      : () {
+                                    setState(() {
+                                      _editTitleTextFocusNode
+                                          .requestFocus();
+                                      _editTitleIsActive = true;
+                                    });
+                                  },
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                _editTitleIsActive
+                                    ? InkWell(
+                                  child: Icon(
+                                    Icons.cancel,
+                                    color: Colors.white,
                                   ),
                                   onTap: () {
-                                    _openStatisticPage(post.postId);
-                                  })
-                                  : (voted
-                                  ? InkWell(
-                                child: Text(
-                                  languages.removeMyVoteLabel,
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontStyle: FontStyle.italic),
+                                    setState(() {
+                                      _editTitleIsActive = false;
+                                      _editTitleTextController.text =
+                                          post.title;
+                                    });
+                                  },
+                                )
+                                    : Container(),
+                              ],
+                            )
+                                : Container(
+                              width: 0,
+                              height: 0,
+                            ),
+                          ),
+                          Container(
+                            padding:
+                            EdgeInsets.only(left: 5, right: 5, top: 5, bottom: 15),
+                            alignment: Alignment.topLeft,
+                            child: post.postType == 'SIMPLE_POST'
+                                ? (isCreator
+                                ? Row(
+                              children: [
+                                Container(
+                                  width: MediaQuery.of(context).size.width -
+                                      (_editDescriptionIsActive ? 85 : 65),
+                                  child: (isCreator &&
+                                      _editDescriptionIsActive
+                                      ? EditableText(
+                                      textInputAction:
+                                      TextInputAction.newline,
+                                      maxLines: null,
+                                      controller:
+                                      _editDescriptionTextController,
+                                      focusNode:
+                                      _editDescriptionTextFocusNode,
+                                      onChanged: (newText) {
+                                        setState(() {});
+                                      },
+                                      style:
+                                      TextStyle(color: Colors.white),
+                                      cursorColor: Colors.white,
+                                      backgroundCursorColor: Colors.black)
+                                      : Text(
+                                    post.description,
+                                    style:
+                                    TextStyle(color: Colors.white),
+                                  )),
                                 ),
-                                onTap: _onRemovePollVote,
-                              )
-                                  : Container()),
-                              Row(
-                                children: [
-                                  Text(
-                                    post.commentNumber.toString(),
-                                    style: TextStyle(color: Colors.white),
+                                Container(
+                                  width: _editDescriptionIsActive ? 60 : 30,
+                                  child: Row(
+                                    mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      InkWell(
+                                        child: Icon(
+                                          _editDescriptionIsActive
+                                              ? Icons.save_alt
+                                              : Icons.edit,
+                                          color: post.description ==
+                                              _editDescriptionTextController
+                                                  .text &&
+                                              _editDescriptionIsActive
+                                              ? Colors.grey
+                                              : Colors.white,
+                                        ),
+                                        onTap: () {
+                                          if (_editDescriptionIsActive) {
+                                            _onSaveDescriptionTap();
+                                          } else {
+                                            setState(() {
+                                              _editDescriptionTextFocusNode
+                                                  .requestFocus();
+                                              _editDescriptionIsActive = true;
+                                            });
+                                          }
+                                        },
+                                      ),
+                                      SizedBox(
+                                        width:
+                                        _editDescriptionIsActive ? 10 : 0,
+                                      ),
+                                      _editDescriptionIsActive
+                                          ? InkWell(
+                                        child: Icon(
+                                          Icons.cancel,
+                                          color: Colors.white,
+                                        ),
+                                        onTap: () {
+                                          setState(() {
+                                            _editDescriptionIsActive =
+                                            false;
+                                            _editDescriptionTextController
+                                                .text =
+                                                post.description;
+                                          });
+                                        },
+                                      )
+                                          : Container(),
+                                    ],
                                   ),
-                                  IconButton(
-                                    icon: Icon(Icons.comment),
-                                    color: Colors.white,
-                                    onPressed: () {
-                                      Scrollable.ensureVisible(
-                                          commentsKey.currentContext!,
-                                          duration: Duration(milliseconds: 500));
-                                    },
+                                ),
+                              ],
+                            )
+                                : Text(
+                              post.description,
+                              style: TextStyle(color: Colors.white),
+                            ))
+                                : _pollWidget(post),
+                          ),
+                          SizedBox(
+                            height: post.postImageId == null ? 0 : 10,
+                          ),
+                          post.postImageId == null
+                              ? Container()
+                              : Container(
+                            margin: EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                                color: Colors.black,
+                                border: Border.all(color: CupertinoColors.systemYellow),
+                                borderRadius: BorderRadius.circular(10)),
+                            child: Container(
+                              padding: EdgeInsets.all(10),
+                              child: Row(
+                                children: [
+                                  Flexible(
+                                    child: Text(
+                                      '${languages.thisPostHasPicture}:',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    flex: 5,
+                                  ),
+                                  Flexible(
+                                    child: InkWell(
+                                      child: Center(
+                                        child: Container(
+                                          height: 40,
+                                          width: 40,
+                                          decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  color: CupertinoColors.systemYellow),
+                                              image: DecorationImage(
+                                                image: NetworkImage(
+                                                  widget.session.domainName +
+                                                      "/api/postImages/" +
+                                                      post.postImageId
+                                                          .toString(),
+                                                  headers:
+                                                  widget.session.headers,
+                                                ),
+                                                fit: BoxFit.contain,
+                                              ),
+                                              borderRadius:
+                                              BorderRadius.circular(10)),
+                                        ),
+                                      ),
+                                      onTap: () async {
+                                        Navigator.of(context).push(MaterialPageRoute(
+                                            builder: (context) =>
+                                                OpenImageWidget(imageId: post.postImageId.toString(), session: widget.session)));
+                                      },
+                                    ),
+                                    flex: 1,
                                   ),
                                 ],
                               ),
-                            ],
+                            ),
                           ),
-                        ),
-                      ],
+                          Container(
+                            height: 40,
+                            margin: EdgeInsets.only(bottom: 20),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                LikeButton(
+                                  size: 20.0,
+                                  circleColor: CircleColor(
+                                      start: Colors.yellow.shade200,
+                                      end: CupertinoColors.systemYellow),
+                                  bubblesColor: BubblesColor(
+                                    dotPrimaryColor: Colors.yellow.shade200,
+                                    dotSecondaryColor: CupertinoColors.systemYellow,
+                                  ),
+                                  isLiked: post.liked,
+                                  likeBuilder: (bool isLiked) {
+                                    return Icon(
+                                      Icons.lightbulb,
+                                      color: isLiked ? CupertinoColors.systemYellow : Colors.white,
+                                    );
+                                  },
+                                  onTap: (isLiked) {
+                                    return post.creatorId == widget.user.userId
+                                        ? _onLikeOwnButtonPressed()
+                                        : _onLikeButton(isLiked);
+                                  },
+                                  likeCount: post.likeNumber,
+                                ),
+                                widget.user.companyId != null &&
+                                    widget.user.companyId == post.companyId
+                                    ? InkWell(
+                                    child: Icon(
+                                      Icons.bar_chart,
+                                      color: Colors.white,
+                                      size: 30,
+                                    ),
+                                    onTap: () {
+                                      _openStatisticPage(post.postId);
+                                    })
+                                    : (voted
+                                    ? InkWell(
+                                  child: Text(
+                                    languages.removeMyVoteLabel,
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontStyle: FontStyle.italic),
+                                  ),
+                                  onTap: _onRemovePollVote,
+                                )
+                                    : Container()),
+                                Row(
+                                  children: [
+                                    Text(
+                                      post.commentNumber.toString(),
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                    IconButton(
+                                      icon: Icon(Icons.comment),
+                                      color: Colors.white,
+                                      onPressed: () {
+                                        Scrollable.ensureVisible(
+                                            commentsKey.currentContext!,
+                                            duration: Duration(milliseconds: 500));
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  CommentsWidget(
-                    key: commentsKey,
-                    session: widget.session,
-                    postId: post.postId,
-                    post: post,
-                    user: widget.user,
-                    languages: languages,
-                    commentTapped: widget.commentTapped,
-                    setMainState: setState,
-                  ),
-                ],
+                    CommentsWidget(
+                      key: commentsKey,
+                      session: widget.session,
+                      postId: post.postId,
+                      post: post,
+                      user: widget.user,
+                      languages: languages,
+                      commentTapped: widget.commentTapped,
+                      setMainState: setState,
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
