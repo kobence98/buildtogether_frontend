@@ -43,93 +43,94 @@ class _MainWidgetState extends State<MainWidget> {
     if (_pageController.index == 1 && _hideNavBar == true) {
       _hideNavBar = false;
     }
-    return Container(
-      color: Colors.black,
-      child: InnoSafeArea(
-        child: NotificationListener<UserScrollNotification>(
-          onNotification: (notification) {
-            final ScrollDirection direction = notification.direction;
-            if (direction == ScrollDirection.forward &&
-                _hideNavBar == true &&
-                _pageController.index == 0 &&
-                _navBarStatusChangeable) {
-              setState(() {
-                _hideNavBar = false;
-              });
-            } else if (direction == ScrollDirection.reverse &&
-                _hideNavBar == false &&
-                _pageController.index == 0 &&
-                _navBarStatusChangeable) {
-              setState(() {
-                _hideNavBar = true;
-              });
-            }
-            return true;
-          },
-          child: PersistentTabView(
-            context,
-            controller: _pageController,
-            screens: _buildScreens(),
-            items: _navBarsItems(),
-            confineInSafeArea: true,
-            backgroundColor: Colors.black,
-            handleAndroidBackButtonPress: true,
-            stateManagement: true,
-            hideNavigationBarWhenKeyboardShows: true,
-            hideNavigationBar: _hideNavBar,
-            decoration: NavBarDecoration(
-              borderRadius: BorderRadius.circular(10.0),
-              colorBehindNavBar: Colors.black,
-            ),
-            popAllScreensOnTapOfSelectedTab: true,
-            popActionScreens: PopActionScreensType.all,
-            itemAnimationProperties: ItemAnimationProperties(
-              duration: Duration(milliseconds: 200),
-              curve: Curves.ease,
-            ),
-            screenTransitionAnimation: ScreenTransitionAnimation(
-              animateTabTransition: true,
-              curve: Curves.ease,
-              duration: Duration(milliseconds: 200),
-            ),
-            navBarStyle: NavBarStyle.style15,
-          ),
+    return NotificationListener<UserScrollNotification>(
+      onNotification: (notification) {
+        final ScrollDirection direction = notification.direction;
+        if (direction == ScrollDirection.forward &&
+            _hideNavBar == true &&
+            _pageController.index == 0 &&
+            _navBarStatusChangeable) {
+          setState(() {
+            _hideNavBar = false;
+          });
+        } else if (direction == ScrollDirection.reverse &&
+            _hideNavBar == false &&
+            _pageController.index == 0 &&
+            _navBarStatusChangeable) {
+          setState(() {
+            _hideNavBar = true;
+          });
+        }
+        return true;
+      },
+      child: PersistentTabView(
+        context,
+        controller: _pageController,
+        screens: _buildScreens(),
+        items: _navBarsItems(),
+        confineInSafeArea: true,
+        backgroundColor: Colors.black,
+        handleAndroidBackButtonPress: true,
+        stateManagement: true,
+        hideNavigationBarWhenKeyboardShows: true,
+        hideNavigationBar: _hideNavBar,
+        decoration: NavBarDecoration(
+          borderRadius: BorderRadius.circular(10.0),
+          colorBehindNavBar: Colors.black,
         ),
+        popAllScreensOnTapOfSelectedTab: true,
+        popActionScreens: PopActionScreensType.all,
+        itemAnimationProperties: ItemAnimationProperties(
+          duration: Duration(milliseconds: 200),
+          curve: Curves.ease,
+        ),
+        screenTransitionAnimation: ScreenTransitionAnimation(
+          animateTabTransition: true,
+          curve: Curves.ease,
+          duration: Duration(milliseconds: 200),
+        ),
+        navBarStyle: NavBarStyle.style15,
       ),
     );
   }
 
   List<Widget> _buildScreens() {
     return [
-      PostsWidget(
-        session: widget.session,
-        user: widget.user,
-        initPage: 1,
-        languages: languages,
-        hideNavBar: hideNavBar,
-        navBarStatusChangeableAgain: () {
-          setState(() {
-            _navBarStatusChangeable = true;
-            _hideNavBar = false;
-          });
-        },
+      InnoSafeArea(
+        child: PostsWidget(
+          session: widget.session,
+          user: widget.user,
+          initPage: 1,
+          languages: languages,
+          hideNavBar: hideNavBar,
+          navBarStatusChangeableAgain: () {
+            setState(() {
+              _navBarStatusChangeable = true;
+              _hideNavBar = false;
+            });
+          },
+        ),
       ),
-      CreatePostWidget(
-        session: widget.session,
-        user: widget.user,
-        languages: languages,
+      InnoSafeArea(
+        child: CreatePostWidget(
+          session: widget.session,
+          user: widget.user,
+          languages: languages,
+        ),
       ),
-      SettingsWidget(
-        session: widget.session,
-        user: widget.user,
-        languages: languages,
-        hideNavBar: hideNavBar,
-        navBarStatusChangeableAgain: () {
-          setState(() {
-            _navBarStatusChangeable = true;
-            _hideNavBar = false;
-          });
-        },
+      InnoSafeArea(
+        child: SettingsWidget(
+          session: widget.session,
+          user: widget.user,
+          languages: languages,
+          hideNavBar: hideNavBar,
+          navBarStatusChangeableAgain: () {
+            setState(() {
+              _navBarStatusChangeable = true;
+              _hideNavBar = false;
+            });
+          },
+        ),
       )
     ];
   }
