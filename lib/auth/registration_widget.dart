@@ -646,9 +646,20 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
   }
 
   void _addPicture(setState) async {
+    if (await Permission.photos.isPermanentlyDenied) {
+      Fluttertoast.showToast(
+          msg: languages.goToSettingsForPermission,
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 4,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }
     await Permission.photos.request();
     final ImagePicker _picker = ImagePicker();
-    image = await _picker
+
+    XFile? tmpImage = await _picker
         .pickImage(source: ImageSource.gallery)
         .onError((error, stackTrace) {
       Fluttertoast.showToast(
@@ -661,9 +672,8 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
           fontSize: 16.0);
       return null;
     });
-    if (image != null &&
-        (await image!.readAsBytes()).lengthInBytes >= 1048576) {
-      image = null;
+    if (tmpImage != null &&
+        (await tmpImage.readAsBytes()).lengthInBytes >= 1048576) {
       Fluttertoast.showToast(
           msg: languages.imageFileSizeIsTooBigExceptionMessage,
           toastLength: Toast.LENGTH_LONG,
@@ -673,7 +683,11 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
           textColor: Colors.white,
           fontSize: 16.0);
     }
-    setState(() {});
+    else{
+      setState(() {
+        image = tmpImage;
+      });
+    }
   }
 
   void _onPrivacyPolicyTap() {
@@ -847,14 +861,14 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                                 topLeft: Radius.circular(10),
                                 bottomLeft: Radius.circular(10)),
                           ),
-                          width: MediaQuery.of(context).size.width - 256,
+                          width: MediaQuery.of(context).size.width / 16 * 5,
                           child: Center(
                             child: Text(
                               _chosenAgeBracket!.getName,
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                   color: CupertinoColors.systemYellow,
-                                  fontSize: 30,
+                                  fontSize: MediaQuery.of(context).size.width/13,
                                   fontWeight: FontWeight.bold),
                             ),
                           ),
@@ -980,14 +994,14 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                                 topLeft: Radius.circular(10),
                                 bottomLeft: Radius.circular(10)),
                           ),
-                          width: MediaQuery.of(context).size.width - 256,
+                          width: MediaQuery.of(context).size.width / 16 * 5,
                           child: Center(
                             child: Text(
                               _chosenGender!.getName(languages),
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                   color: CupertinoColors.systemYellow,
-                                  fontSize: 20,
+                                  fontSize: MediaQuery.of(context).size.width/20,
                                   fontWeight: FontWeight.bold),
                             ),
                           ),
@@ -1113,14 +1127,14 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                                 topLeft: Radius.circular(10),
                                 bottomLeft: Radius.circular(10)),
                           ),
-                          width: MediaQuery.of(context).size.width - 256,
+                          width: MediaQuery.of(context).size.width / 16 * 5,
                           child: Center(
                             child: Text(
                               _chosenLivingPlaceType!.getName(languages),
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                   color: CupertinoColors.systemYellow,
-                                  fontSize: 20,
+                                  fontSize: MediaQuery.of(context).size.width/23,
                                   fontWeight: FontWeight.bold),
                             ),
                           ),
@@ -1247,14 +1261,14 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                                 topLeft: Radius.circular(10),
                                 bottomLeft: Radius.circular(10)),
                           ),
-                          width: MediaQuery.of(context).size.width - 256,
+                          width: MediaQuery.of(context).size.width / 16 * 5,
                           child: Center(
                             child: Text(
                               _chosenSalaryType!.getName(languages),
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                   color: CupertinoColors.systemYellow,
-                                  fontSize: 20,
+                                  fontSize: MediaQuery.of(context).size.width/23,
                                   fontWeight: FontWeight.bold),
                             ),
                           ),

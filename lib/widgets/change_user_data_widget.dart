@@ -375,9 +375,19 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
   }
 
   void _addPicture(setState) async {
-    Permission.photos.request();
+    if (await Permission.photos.isPermanentlyDenied) {
+      Fluttertoast.showToast(
+          msg: languages.goToSettingsForPermission,
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 4,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }
+    await Permission.photos.request();
     final ImagePicker _picker = ImagePicker();
-    image = await _picker.pickImage(source: ImageSource.gallery).onError((error, stackTrace) {
+    XFile? tmpImage = await _picker.pickImage(source: ImageSource.gallery).onError((error, stackTrace) {
       Fluttertoast.showToast(
           msg: languages.goToSettingsForPermission,
           toastLength: Toast.LENGTH_LONG,
@@ -388,7 +398,22 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
           fontSize: 16.0);
       return null;
     });
-    setState(() {});
+    if (tmpImage != null &&
+        (await tmpImage.readAsBytes()).lengthInBytes >= 1048576) {
+      Fluttertoast.showToast(
+          msg: languages.imageFileSizeIsTooBigExceptionMessage,
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 4,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }
+    else{
+      setState(() {
+        image = tmpImage;
+      });
+    }
   }
 
   @override
@@ -526,14 +551,14 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                                 topLeft: Radius.circular(10),
                                 bottomLeft: Radius.circular(10)),
                           ),
-                          width: MediaQuery.of(context).size.width - 252,
+                          width: MediaQuery.of(context).size.width / 16 * 5,
                           child: Center(
                             child: Text(
                               _chosenAgeBracket!.getName,
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                   color: CupertinoColors.systemYellow,
-                                  fontSize: 30,
+                                  fontSize: MediaQuery.of(context).size.width/13,
                                   fontWeight: FontWeight.bold),
                             ),
                           ),
@@ -659,14 +684,14 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                                 topLeft: Radius.circular(10),
                                 bottomLeft: Radius.circular(10)),
                           ),
-                          width: MediaQuery.of(context).size.width - 252,
+                          width: MediaQuery.of(context).size.width / 16 * 5,
                           child: Center(
                             child: Text(
                               _chosenGender!.getName(languages),
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                   color: CupertinoColors.systemYellow,
-                                  fontSize: 20,
+                                  fontSize: MediaQuery.of(context).size.width/20,
                                   fontWeight: FontWeight.bold),
                             ),
                           ),
@@ -792,14 +817,14 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                                 topLeft: Radius.circular(10),
                                 bottomLeft: Radius.circular(10)),
                           ),
-                          width: MediaQuery.of(context).size.width - 252,
+                          width: MediaQuery.of(context).size.width / 16 * 5,
                           child: Center(
                             child: Text(
                               _chosenLivingPlaceType!.getName(languages),
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                   color: CupertinoColors.systemYellow,
-                                  fontSize: 20,
+                                  fontSize: MediaQuery.of(context).size.width/23,
                                   fontWeight: FontWeight.bold),
                             ),
                           ),
@@ -926,14 +951,14 @@ class _ChangeUserDataWidgetState extends State<ChangeUserDataWidget> {
                                 topLeft: Radius.circular(10),
                                 bottomLeft: Radius.circular(10)),
                           ),
-                          width: MediaQuery.of(context).size.width - 252,
+                          width: MediaQuery.of(context).size.width / 16 * 5,
                           child: Center(
                             child: Text(
                               _chosenSalaryType!.getName(languages),
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                   color: CupertinoColors.systemYellow,
-                                  fontSize: 20,
+                                  fontSize: MediaQuery.of(context).size.width/23,
                                   fontWeight: FontWeight.bold),
                             ),
                           ),

@@ -100,7 +100,7 @@ class LanguageHu extends Languages {
       "Nyomd meg a kapcsolót, ha te egy " + (company ? "egyszerű felhasználó" : "céges felhasználó") + " vagy.";
 
   @override
-  String get companyDescriptionTipLabel => 'Ide írjad a cégedet bemutató rövid leírást. Maximum 1024 karakterből állhat.';
+  String get companyDescriptionTipLabel => 'Ide írd a cégedet bemutató rövid leírást. Maximum 1024 karakterből állhat.';
 
   @override
   String get addCompanyLogoLabel => 'Cég logó hozzáadása';
@@ -154,7 +154,7 @@ class LanguageHu extends Languages {
   String get userPolicyText => 'Ebben az applikációban felhasználók által generált tartalom van, posztok és kommentek formájában. A Felhasználói Szabályzat előírja, hogy nem szabad sem offenzív, sem trágár tartalmat poszolni és kommentelni. Ha ezt a felhasználó nem tartja be, akkor az alkalmazás üzemeltetője jogosult eltávolítani a tartalmat, szélsőséges esetben akár a felhasználót is.';
 
   @override
-  String get imageFileSizeIsTooBigExceptionMessage => 'Túl nagy a kép fájl mérete, légyszíves töltsél fel egy 1 MB-nál kisebb képet!';
+  String get imageFileSizeIsTooBigExceptionMessage => 'Túl nagy a kép fájl mérete, légy szíves tölts fel egy 1 MB-nál kisebb képet!';
 
   @override
   String get goToSettingsForPermission => 'A kép feltöltéséhez engedélyezd a beállításoknál a hozzáférést a galériához.';
@@ -242,7 +242,7 @@ class LanguageHu extends Languages {
   String get addCommentLabel => 'Komment hozzáadása';
 
   @override
-  String get commentTipLabel => 'Ide írjad a kommentet. Maximum 256 karakterből állhat.';
+  String get commentTipLabel => 'Ide írd a kommentet. Maximum 256 karakterből állhat.';
 
   @override
   String get commentAddedMessage => 'Komment hozzáadva!';
@@ -267,6 +267,9 @@ class LanguageHu extends Languages {
 
   @override
   String get tooDeepToDisplayMessage => 'A komment fa túl mély a megjelenítéshez, szóval egyelőre nincsen engedélyezve a további válaszadás!';
+
+  @override
+  String get banCommenterLabel => 'Kommentelő tiltása';
 
   //CREATE POST WIDGET
 
@@ -356,7 +359,7 @@ class LanguageHu extends Languages {
   String get successLabel => 'Siker';
 
   @override
-  String get noPostInYourAreaLabel => 'A te országodban nincsenek posztok, légyszíves ellenőrizd a helyzetmeghatározási beállításokat vagy húzd le a képernyőt a frissítéshez!';
+  String get noPostInYourAreaLabel => 'A te országodban nincsenek posztok, légy szíves ellenőrizd a helyzetmeghatározási beállításokat vagy húzd le a képernyőt a frissítéshez!';
 
   @override
   String get contactCreatorLabel => 'Kapcsolatfelvétel a készítővel';
@@ -407,7 +410,7 @@ class LanguageHu extends Languages {
   //SETTINGS WIDGET
 
   @override
-  String get changeUserDataLabel => 'Felhasználó adatok megváltoztatása';
+  String get changeUserDataLabel => 'Felhasználói adatok megváltoztatása';
 
   @override
   String get subscriptionHandlingLabel => 'Feliratkozás kezelése';
@@ -506,7 +509,7 @@ class LanguageHu extends Languages {
   String get noBannedUsers => 'Nincsenek tiltott felhasználók a listában!';
 
   @override
-  String get idLabel => 'Felhasználó azonosító';
+  String get idLabel => 'Felhasználói azonosító';
 
   @override
   String get successfulBanDeleteMessage => 'Sikeres eltávolítás!';

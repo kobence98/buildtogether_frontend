@@ -51,46 +51,47 @@ class _MyAccountWidgetState extends State<MyAccountWidget> {
   @override
   Widget build(BuildContext context) {
     return InnoSafeArea(
-        child: Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-      ),
-      body: Container(
-        color: Colors.black,
-        child: ListView(
-          children: [
-            SizedBox(
-              height: 10,
-            ),
-            Row(
-              children: [
-                _menuPoint(languages.changePasswordLabel, Icons.password,
-                    _onChangePasswordTap),
-                _menuPoint(languages.changeUserDataLabel, Icons.security,
-                    _onChangeUserDataTap),
-              ],
-            ),
-            SizedBox(height: 5),
-            Row(
-              children: [
-                _menuPoint(languages.changeLocationLabel, Icons.location_on,
-                    _onChangeLocationTap),
-                _menuPoint(languages.handleBansLabel, Icons.not_interested,
-                    _onHandleBansTap),
-              ],
-            ),
-            SizedBox(height: 5),
-            Row(
-              children: [
-                _menuPoint(languages.logoutLabel, Icons.logout, _onLogoutTap),
-                _menuPoint(languages.deleteAccountLabel, Icons.delete_forever,
-                    _onDeleteAccountTap),
-              ],
-            ),
-          ],
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.black,
+        ),
+        body: Container(
+          color: Colors.black,
+          child: ListView(
+            children: [
+              SizedBox(
+                height: 10,
+              ),
+              Row(
+                children: [
+                  _menuPoint(languages.changePasswordLabel, Icons.password,
+                      _onChangePasswordTap),
+                  _menuPoint(languages.changeUserDataLabel, Icons.security,
+                      _onChangeUserDataTap),
+                ],
+              ),
+              SizedBox(height: 5),
+              Row(
+                children: [
+                  _menuPoint(languages.changeLocationLabel, Icons.location_on,
+                      _onChangeLocationTap),
+                  _menuPoint(languages.handleBansLabel, Icons.not_interested,
+                      _onHandleBansTap),
+                ],
+              ),
+              SizedBox(height: 5),
+              Row(
+                children: [
+                  _menuPoint(languages.logoutLabel, Icons.logout, _onLogoutTap),
+                  _menuPoint(languages.deleteAccountLabel, Icons.delete_forever,
+                      _onDeleteAccountTap),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
-    ));
+    );
   }
 
   void _onLogoutTap() {
@@ -117,7 +118,10 @@ class _MyAccountWidgetState extends State<MyAccountWidget> {
                   session: widget.session,
                   languages: languages,
                 )))
-        .whenComplete(() => widget.navBarStatusChangeableAgain());
+        .whenComplete(() {
+          widget.navBarStatusChangeableAgain();
+          widget.hideNavBar();
+    });
   }
 
   void _onChangeUserDataTap() async {
@@ -134,6 +138,7 @@ class _MyAccountWidgetState extends State<MyAccountWidget> {
         Phoenix.rebirth(context);
       } else {
         widget.navBarStatusChangeableAgain();
+        widget.hideNavBar();
       }
     });
   }
@@ -147,7 +152,10 @@ class _MyAccountWidgetState extends State<MyAccountWidget> {
                   session: widget.session,
                   languages: languages,
                 )))
-        .whenComplete(() => widget.navBarStatusChangeableAgain());
+        .whenComplete(() {
+          widget.navBarStatusChangeableAgain();
+          widget.hideNavBar();
+    });
   }
 
   void _onHandleBansTap() async {
@@ -159,7 +167,10 @@ class _MyAccountWidgetState extends State<MyAccountWidget> {
                   session: widget.session,
                   languages: languages,
                 )))
-        .whenComplete(() => widget.navBarStatusChangeableAgain());
+        .whenComplete(() {
+          widget.navBarStatusChangeableAgain();
+          widget.hideNavBar();
+    });
   }
 
   void _onDeleteAccountTap() {

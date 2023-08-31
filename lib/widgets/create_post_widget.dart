@@ -974,7 +974,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
     }
     await Permission.photos.request();
     final ImagePicker _picker = ImagePicker();
-    image = await _picker
+    XFile? tmpImage = await _picker
         .pickImage(source: ImageSource.gallery)
         .onError((error, stackTrace) {
       Fluttertoast.showToast(
@@ -987,9 +987,8 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
           fontSize: 16.0);
       return null;
     });
-    if (image != null &&
-        (await image!.readAsBytes()).lengthInBytes >= 1048576) {
-      image = null;
+    if (tmpImage != null &&
+        (await tmpImage.readAsBytes()).lengthInBytes >= 1048576) {
       Fluttertoast.showToast(
           msg: languages.imageFileSizeIsTooBigExceptionMessage,
           toastLength: Toast.LENGTH_LONG,
@@ -999,6 +998,10 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
           textColor: Colors.white,
           fontSize: 16.0);
     }
-    setState(() {});
+    else{
+      setState(() {
+        image = tmpImage;
+      });
+    }
   }
 }

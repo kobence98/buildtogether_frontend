@@ -54,6 +54,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
       color: Colors.black,
       child: InnoSafeArea(
         child: ListView(
+          padding: EdgeInsets.only(bottom: 30),
           children: [
             SizedBox(
               height: 50,

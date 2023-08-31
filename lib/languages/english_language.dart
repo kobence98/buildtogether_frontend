@@ -273,6 +273,9 @@ class LanguageEn extends Languages {
   @override
   String get tooDeepToDisplayMessage => 'The comment tree is too deep to display, ezért egyelőre nem engedélyezett a további válaszadás!';
 
+  @override
+  String get banCommenterLabel => 'Ban commenter';
+
   //CREATE POST WIDGET
 
   @override

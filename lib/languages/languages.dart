@@ -180,6 +180,8 @@ abstract class Languages {
 
   String get tooDeepToDisplayMessage;
 
+  String get banCommenterLabel;
+
   //CREATE POST WIDGET
 
   String get newPollOptionLabel;

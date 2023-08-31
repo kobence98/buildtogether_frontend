@@ -14,6 +14,7 @@ import 'package:flutter_frontend/widgets/statistic_page.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:like_button/like_button.dart';
 
+import '../entities/post_popup_menu_items.dart';
 import '../static/profanity_checker.dart';
 import '../static/safe_area.dart';
 import 'comments_widget.dart';
@@ -29,14 +30,13 @@ class SinglePostWidget extends StatefulWidget {
   final Function hideNavBar;
   final Function navBarStatusChangeableAgain;
 
-  const SinglePostWidget(
-      {required this.post,
-      required this.session,
-      required this.user,
-      required this.languages,
-      required this.commentTapped,
-      required this.hideNavBar,
-      required this.navBarStatusChangeableAgain});
+  const SinglePostWidget({required this.post,
+    required this.session,
+    required this.user,
+    required this.languages,
+    required this.commentTapped,
+    required this.hideNavBar,
+    required this.navBarStatusChangeableAgain});
 
   @override
   _SinglePostWidgetState createState() => _SinglePostWidgetState();
@@ -48,21 +48,23 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
   late Post post;
   bool innerLoading = false;
   final TextEditingController _reportReasonTextFieldController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _couponCodeController = TextEditingController();
   late bool voted;
   final commentsKey = GlobalKey();
   late bool isCreator;
 
   final TextEditingController _editTitleTextController =
-      TextEditingController();
+  TextEditingController();
   FocusNode _editTitleTextFocusNode = FocusNode();
   bool _editTitleIsActive = false;
 
   final TextEditingController _editDescriptionTextController =
-      TextEditingController();
+  TextEditingController();
   FocusNode _editDescriptionTextFocusNode = FocusNode();
   bool _editDescriptionIsActive = false;
+
+  List<PostPopupMenuItem> actualPopupItems = [];
 
   @override
   void initState() {
@@ -85,7 +87,10 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
             backgroundColor: Colors.black,
           ),
           body: Container(
-            height: MediaQuery.of(context).size.height,
+            height: MediaQuery
+                .of(context)
+                .size
+                .height,
             padding: EdgeInsets.only(bottom: 10),
             color: Colors.black,
             child: SingleChildScrollView(
@@ -97,7 +102,8 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
                           color: CupertinoColors.systemYellow.withOpacity(0.1),
-                          border: Border.all(color: CupertinoColors.systemYellow)),
+                          border: Border.all(color: CupertinoColors
+                              .systemYellow)),
                       padding: EdgeInsets.all(5),
                       margin: EdgeInsets.symmetric(vertical: 10),
                       child: Column(
@@ -170,7 +176,8 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                                 )
                                     : Container(),
                                 Text(
-                                  DateFormatter.formatDate(post.createdDate, languages),
+                                  DateFormatter.formatDate(
+                                      post.createdDate, languages),
                                   style: TextStyle(color: Colors.white),
                                 ),
                                 Container(
@@ -181,111 +188,77 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                                       color: Colors.white,
                                     ),
                                     itemBuilder: (context) {
-                                      return List.generate(
-                                          (widget.user.companyId == post.companyId)
-                                              ? 5
-                                              : 2, (index) {
-                                        if (index == 0) {
-                                          return PopupMenuItem(
-                                            child: Text(widget.user.companyId ==
-                                                post.companyId ||
-                                                widget.user.userId == post.creatorId
-                                                ? languages.deleteLabel
-                                                : languages.reportLabel),
-                                            value: 0,
-                                          );
-                                        } else if (index == 1) {
-                                          return PopupMenuItem(
-                                            child: Text(languages.banUserLabel),
-                                            value: 1,
-                                          );
-                                        } else if (index == 2) {
-                                          return PopupMenuItem(
-                                            child: Text(languages.contactCreatorLabel),
-                                            value: 2,
-                                          );
-                                        } else {
-                                          return PopupMenuItem(
-                                            child: Text(post.implemented
-                                                ? languages.notImplementedLabel
-                                                : languages.implementedLabel),
-                                            value: 3,
-                                          );
-                                        }
-                                      });
+                                      actualPopupItems.clear();
+                                      //törlés
+                                      if (widget.user.companyId ==
+                                          post.companyId ||
+                                          widget.user.userId ==
+                                              post.creatorId) {
+                                        actualPopupItems.add(PostPopupMenuItem(
+                                            item: PopupMenuItem(
+                                              child: Text(
+                                                  languages.deleteLabel),
+                                              value: actualPopupItems.length,
+                                            ),
+                                            function: () => onDeleteTap(post)));
+                                      }
+                                      //report
+                                      if (widget.user.userId !=
+                                          post.creatorId) {
+                                        actualPopupItems.add(PostPopupMenuItem(
+                                            item: PopupMenuItem(
+                                              child: Text(
+                                                  languages.reportLabel),
+                                              value: actualPopupItems.length,
+                                            ),
+                                            function: () => onReportTap(post)));
+                                      }
+                                      //ban user
+                                      if (widget.user.userId !=
+                                          post.creatorId) {
+                                        actualPopupItems.add(PostPopupMenuItem(
+                                            item: PopupMenuItem(
+                                              child: Text(
+                                                  languages.banUserLabel),
+                                              value: actualPopupItems.length,
+                                            ),
+                                            function: () =>
+                                                _onBanUserTap(post.creatorId)));
+                                      }
+                                      //contact creator
+                                      if (widget.user.companyId ==
+                                          post.companyId &&
+                                          widget.user.userId !=
+                                              post.creatorId) {
+                                        actualPopupItems.add(PostPopupMenuItem(
+                                            item: PopupMenuItem(
+                                              child: Text(languages
+                                                  .contactCreatorLabel),
+                                              value: actualPopupItems.length,
+                                            ),
+                                            function: () =>
+                                                _onContactCreatorTap(post)));
+                                      }
+                                      //implemented
+                                      if (widget.user.companyId ==
+                                          post.companyId) {
+                                        actualPopupItems.add(PostPopupMenuItem(
+                                            item: PopupMenuItem(
+                                              child: Text(post.implemented
+                                                  ? languages
+                                                  .notImplementedLabel
+                                                  : languages.implementedLabel),
+                                              value: actualPopupItems.length,
+                                            ),
+                                            function: () =>
+                                                _onImplementedTap(post)));
+                                      }
+                                      return actualPopupItems.map((e) => e.item)
+                                          .toList();
                                     },
                                     onSelected: (index) {
-                                      if (index == 0) {
-                                        if (widget.user.companyId == post.companyId ||
-                                            widget.user.userId == post.creatorId) {
-                                          widget.session
-                                              .delete('/api/posts/' +
-                                              post.postId.toString())
-                                              .then((response) {
-                                            if (response.statusCode == 200) {
-                                              Fluttertoast.showToast(
-                                                  msg:
-                                                  languages.successfulDeleteMessage,
-                                                  toastLength: Toast.LENGTH_LONG,
-                                                  gravity: ToastGravity.CENTER,
-                                                  timeInSecForIosWeb: 4,
-                                                  backgroundColor: Colors.green,
-                                                  textColor: Colors.white,
-                                                  fontSize: 16.0);
-                                              setState(() {
-                                                Navigator.of(context).pop();
-                                              });
-                                            } else {
-                                              Fluttertoast.showToast(
-                                                  msg: languages
-                                                      .globalServerErrorMessage,
-                                                  toastLength: Toast.LENGTH_LONG,
-                                                  gravity: ToastGravity.CENTER,
-                                                  timeInSecForIosWeb: 4,
-                                                  backgroundColor: Colors.red,
-                                                  textColor: Colors.white,
-                                                  fontSize: 16.0);
-                                            }
-                                          });
-                                        } else {
-                                          onReportTap(post);
-                                        }
-                                      } else if (index == 1) {
-                                        _onBanUserTap(post.creatorId);
-                                      } else if (index == 2) {
-                                        _onContactCreatorTap(post);
-                                      } else {
-                                        widget.session
-                                            .post(
-                                            '/api/posts/' +
-                                                post.postId.toString() +
-                                                '/implemented',
-                                            Map<String, dynamic>())
-                                            .then((response) {
-                                          if (response.statusCode == 200) {
-                                            Fluttertoast.showToast(
-                                                msg: "${languages.successLabel}!",
-                                                toastLength: Toast.LENGTH_LONG,
-                                                gravity: ToastGravity.CENTER,
-                                                timeInSecForIosWeb: 4,
-                                                backgroundColor: Colors.green,
-                                                textColor: Colors.white,
-                                                fontSize: 16.0);
-                                            setState(() {
-                                              post.implemented = !post.implemented;
-                                            });
-                                          } else {
-                                            Fluttertoast.showToast(
-                                                msg: languages.globalServerErrorMessage,
-                                                toastLength: Toast.LENGTH_LONG,
-                                                gravity: ToastGravity.CENTER,
-                                                timeInSecForIosWeb: 4,
-                                                backgroundColor: Colors.red,
-                                                textColor: Colors.white,
-                                                fontSize: 16.0);
-                                          }
-                                        });
-                                      }
+                                      actualPopupItems[int.parse(
+                                          index!.toString())].function.call();
                                     },
                                   ),
                                 ),
@@ -365,14 +338,18 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                           ),
                           Container(
                             padding:
-                            EdgeInsets.only(left: 5, right: 5, top: 5, bottom: 15),
+                            EdgeInsets.only(
+                                left: 5, right: 5, top: 5, bottom: 15),
                             alignment: Alignment.topLeft,
                             child: post.postType == 'SIMPLE_POST'
                                 ? (isCreator
                                 ? Row(
                               children: [
                                 Container(
-                                  width: MediaQuery.of(context).size.width -
+                                  width: MediaQuery
+                                      .of(context)
+                                      .size
+                                      .width -
                                       (_editDescriptionIsActive ? 85 : 65),
                                   child: (isCreator &&
                                       _editDescriptionIsActive
@@ -468,7 +445,8 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                             margin: EdgeInsets.all(10),
                             decoration: BoxDecoration(
                                 color: Colors.black,
-                                border: Border.all(color: CupertinoColors.systemYellow),
+                                border: Border.all(
+                                    color: CupertinoColors.systemYellow),
                                 borderRadius: BorderRadius.circular(10)),
                             child: Container(
                               padding: EdgeInsets.all(10),
@@ -492,7 +470,8 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                                           width: 40,
                                           decoration: BoxDecoration(
                                               border: Border.all(
-                                                  color: CupertinoColors.systemYellow),
+                                                  color: CupertinoColors
+                                                      .systemYellow),
                                               image: DecorationImage(
                                                 image: NetworkImage(
                                                   widget.session.domainName +
@@ -509,9 +488,15 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                                         ),
                                       ),
                                       onTap: () async {
-                                        Navigator.of(context).push(MaterialPageRoute(
-                                            builder: (context) =>
-                                                OpenImageWidget(imageId: post.postImageId.toString(), session: widget.session)));
+                                        Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    OpenImageWidget(
+                                                        imageId: post
+                                                            .postImageId
+                                                            .toString(),
+                                                        session: widget
+                                                            .session)));
                                       },
                                     ),
                                     flex: 1,
@@ -534,13 +519,15 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                                       end: CupertinoColors.systemYellow),
                                   bubblesColor: BubblesColor(
                                     dotPrimaryColor: Colors.yellow.shade200,
-                                    dotSecondaryColor: CupertinoColors.systemYellow,
+                                    dotSecondaryColor: CupertinoColors
+                                        .systemYellow,
                                   ),
                                   isLiked: post.liked,
                                   likeBuilder: (bool isLiked) {
                                     return Icon(
                                       Icons.lightbulb,
-                                      color: isLiked ? CupertinoColors.systemYellow : Colors.white,
+                                      color: isLiked ? CupertinoColors
+                                          .systemYellow : Colors.white,
                                     );
                                   },
                                   onTap: (isLiked) {
@@ -584,7 +571,8 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
                                       onPressed: () {
                                         Scrollable.ensureVisible(
                                             commentsKey.currentContext!,
-                                            duration: Duration(milliseconds: 500));
+                                            duration: Duration(
+                                                milliseconds: 500));
                                       },
                                     ),
                                   ],
@@ -622,7 +610,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
       if (response.statusCode == 200) {
         setState(() {
           Company company =
-              Company.fromJson(json.decode(utf8.decode(response.bodyBytes)));
+          Company.fromJson(json.decode(utf8.decode(response.bodyBytes)));
           showDialog(
               context: context,
               useRootNavigator: false,
@@ -700,7 +688,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
   Widget _pollWidget(Post post) {
     List<PollOption> polls = [];
     List<PollOptionInno> likedPollOptions =
-        post.pollOptions.where((po) => po.liked).toList();
+    post.pollOptions.where((po) => po.liked).toList();
 
     for (PollOptionInno option in post.pollOptions) {
       polls.add(PollOption(
@@ -713,9 +701,15 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
               option.title == null ? '' : option.title!,
             ),
             width:
-                likedPollOptions.isEmpty && widget.user.userId != post.creatorId
-                    ? MediaQuery.of(context).size.width
-                    : MediaQuery.of(context).size.width - 180,
+            likedPollOptions.isEmpty && widget.user.userId != post.creatorId
+                ? MediaQuery
+                .of(context)
+                .size
+                .width
+                : MediaQuery
+                .of(context)
+                .size
+                .width - 180,
           ),
           votes: option.likeNumber));
     }
@@ -735,7 +729,8 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
         return _onPollVoted(pollOption.id!);
       },
       pollTitle: Text(
-        '${languages.numberOfVotesLabel}: ${post.pollOptions.map((e) => e.likeNumber).reduce((a, b) => a + b)}',
+        '${languages.numberOfVotesLabel}: ${post.pollOptions.map((e) =>
+        e.likeNumber).reduce((a, b) => a + b)}',
         style: TextStyle(color: Colors.white, fontStyle: FontStyle.italic),
       ),
       onPollOptionRemove: () {
@@ -743,7 +738,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
       },
       pollOptions: polls,
       userVotedOptionId:
-          likedPollOptions.isEmpty ? null : likedPollOptions.first.pollId,
+      likedPollOptions.isEmpty ? null : likedPollOptions.first.pollId,
     );
   }
 
@@ -754,72 +749,72 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
           return StatefulBuilder(builder: (context, setState) {
             return innerLoading
                 ? Container(
+              child: Center(
+                child: Image(
+                    image: new AssetImage(
+                        "assets/images/loading_breath.gif")),
+              ),
+            )
+                : AlertDialog(
+              backgroundColor: CupertinoColors.systemYellow,
+              title: Text(
+                languages.reportUserAndPostTitleLabel,
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                    color: Colors.black),
+              ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    color: Colors.black,
+                    padding: EdgeInsets.all(2),
                     child: Center(
-                      child: Image(
-                          image: new AssetImage(
-                              "assets/images/loading_breath.gif")),
+                      child: Container(
+                        padding: EdgeInsets.only(left: 20.0),
+                        color: CupertinoColors.systemYellow.withOpacity(0.7),
+                        child: TextField(
+                          style: TextStyle(color: Colors.black),
+                          maxLength: 256,
+                          controller: _reportReasonTextFieldController,
+                          cursorColor: Colors.black,
+                          decoration: InputDecoration(
+                            hintText: languages.reportReasonHintLabel,
+                            hintStyle: TextStyle(
+                                color: Colors.black.withOpacity(0.5)),
+                          ),
+                        ),
+                      ),
                     ),
                   )
-                : AlertDialog(
-                    backgroundColor: CupertinoColors.systemYellow,
-                    title: Text(
-                      languages.reportUserAndPostTitleLabel,
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                          color: Colors.black),
-                    ),
-                    content: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                          color: Colors.black,
-                          padding: EdgeInsets.all(2),
-                          child: Center(
-                            child: Container(
-                              padding: EdgeInsets.only(left: 20.0),
-                              color: CupertinoColors.systemYellow.withOpacity(0.7),
-                              child: TextField(
-                                style: TextStyle(color: Colors.black),
-                                maxLength: 256,
-                                controller: _reportReasonTextFieldController,
-                                cursorColor: Colors.black,
-                                decoration: InputDecoration(
-                                  hintText: languages.reportReasonHintLabel,
-                                  hintStyle: TextStyle(
-                                      color: Colors.black.withOpacity(0.5)),
-                                ),
-                              ),
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                    actions: <Widget>[
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                          _reportReasonTextFieldController.clear();
-                        },
-                        child: Text(
-                          languages.cancelLabel,
-                          style: TextStyle(color: Colors.black),
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          _onSendReportTap(post.postId, context, setState);
-                          setState(() {
-                            innerLoading = true;
-                          });
-                        },
-                        child: Text(
-                          languages.sendLabel,
-                          style: TextStyle(color: Colors.black),
-                        ),
-                      ),
-                    ],
-                  );
+                ],
+              ),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    _reportReasonTextFieldController.clear();
+                  },
+                  child: Text(
+                    languages.cancelLabel,
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {
+                    _onSendReportTap(post.postId, context, setState);
+                    setState(() {
+                      innerLoading = true;
+                    });
+                  },
+                  child: Text(
+                    languages.sendLabel,
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ),
+              ],
+            );
           });
         });
   }
@@ -883,105 +878,102 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
     showDialog(
         context: context,
         builder: (context) {
-          return StatefulBuilder(builder: (context, setState) {
+          return StatefulBuilder(builder: (context, setInnerState) {
             return innerLoading
                 ? Container(
+              child: Center(
+                child: Image(
+                    image: new AssetImage(
+                        "assets/images/loading_breath.gif")),
+              ),
+            )
+                : AlertDialog(
+              backgroundColor: CupertinoColors.systemYellow,
+              title: Text(
+                languages.thisIsTheContactEmailLabel,
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                    color: Colors.black),
+              ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
                     child: Center(
-                      child: Image(
-                          image: new AssetImage(
-                              "assets/images/loading_breath.gif")),
+                      child: Text(
+                        post.creatorEmail,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                            color: Colors.black),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(10),
+                      ),
+                      color: Colors.black,
+                    ),
+                    padding: EdgeInsets.all(2),
+                    child: Center(
+                      child: Container(
+                        padding: EdgeInsets.only(left: 20.0),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(10),
+                          ),
+                          color: CupertinoColors.systemYellow.withOpacity(0.7),
+                        ),
+                        child: TextField(
+                          style: TextStyle(color: Colors.black),
+                          controller: _couponCodeController,
+                          cursorColor: Colors.black,
+                          decoration: InputDecoration(
+                            focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide.none),
+                            hintText: languages.couponCodeLabel,
+                            hintStyle: TextStyle(
+                                color: Colors.black.withOpacity(0.5)),
+                          ),
+                        ),
+                      ),
                     ),
                   )
-                : AlertDialog(
-                    backgroundColor: CupertinoColors.systemYellow,
-                    title: Text(
-                      languages.thisIsTheContactEmailLabel,
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                          color: Colors.black),
-                    ),
-                    content: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                          child: Center(
-                            child: Text(
-                              post.creatorEmail,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20,
-                                  color: Colors.black),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(10),
-                            ),
-                            color: Colors.black,
-                          ),
-                          padding: EdgeInsets.all(2),
-                          child: Center(
-                            child: Container(
-                              padding: EdgeInsets.only(left: 20.0),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(10),
-                                ),
-                                color: CupertinoColors.systemYellow.withOpacity(0.7),
-                              ),
-                              child: TextField(
-                                style: TextStyle(color: Colors.black),
-                                controller: _couponCodeController,
-                                cursorColor: Colors.black,
-                                decoration: InputDecoration(
-                                  focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide.none),
-                                  hintText: languages.couponCodeLabel,
-                                  hintStyle: TextStyle(
-                                      color: Colors.black.withOpacity(0.5)),
-                                ),
-                              ),
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                    actions: <Widget>[
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                          _couponCodeController.clear();
-                        },
-                        child: Text(
-                          languages.cancelLabel,
-                          style: TextStyle(color: Colors.black),
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          _onSendCouponEmailTap(post.postId, context, setState);
-                          setState(() {
-                            innerLoading = true;
-                          });
-                        },
-                        child: Text(
-                          languages.sendLabel,
-                          style: TextStyle(color: Colors.black),
-                        ),
-                      ),
-                    ],
-                  );
+                ],
+              ),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    _couponCodeController.clear();
+                  },
+                  child: Text(
+                    languages.cancelLabel,
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {
+                    _onSendCouponEmailTap(post.postId, context, setInnerState);
+                  },
+                  child: Text(
+                    languages.sendLabel,
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ),
+              ],
+            );
           });
         });
   }
 
-  void _onSendCouponEmailTap(int postId, context, setOutterState) {
+  void _onSendCouponEmailTap(int postId, context, setInnerState) {
     if (_couponCodeController.text.isEmpty) {
       Fluttertoast.showToast(
           msg: languages.fillAllFieldsWarningMessage,
@@ -992,6 +984,9 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
           textColor: Colors.white,
           fontSize: 16.0);
     } else {
+      setInnerState(() {
+        innerLoading = true;
+      });
       dynamic body = <String, dynamic>{
         'couponCode': _couponCodeController.text,
       };
@@ -1022,7 +1017,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
               textColor: Colors.white,
               fontSize: 16.0);
         }
-        setOutterState(() {
+        setInnerState(() {
           innerLoading = false;
         });
       });
@@ -1054,7 +1049,10 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
         .then((response) {
       if (response.statusCode == 200) {
         setState(() {
-          post.pollOptions.where((element) => element.liked).first.likeNumber--;
+          post.pollOptions
+              .where((element) => element.liked)
+              .first
+              .likeNumber--;
           post.pollOptions.forEach((option) {
             option.liked = false;
           });
@@ -1062,6 +1060,62 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
       } else {
         Fluttertoast.showToast(
             msg: languages.globalErrorMessage,
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 4,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      }
+    });
+  }
+
+  void onDeleteTap(Post post) {
+    widget.session
+        .delete('/api/posts/' + post.postId.toString())
+        .then((response) {
+      if (response.statusCode == 200) {
+        Fluttertoast.showToast(
+            msg: languages.successfulDeleteMessage,
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.green,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      } else {
+        Fluttertoast.showToast(
+            msg: languages.globalServerErrorMessage,
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      }
+    });
+  }
+
+  void _onImplementedTap(Post post) {
+    widget.session
+        .post('/api/posts/' + post.postId.toString() + '/implemented',
+        Map<String, dynamic>())
+        .then((response) {
+      if (response.statusCode == 200) {
+        Fluttertoast.showToast(
+            msg: "${languages.successLabel}!",
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 4,
+            backgroundColor: Colors.green,
+            textColor: Colors.white,
+            fontSize: 16.0);
+        setState(() {
+          post.implemented = !post.implemented;
+        });
+      } else {
+        Fluttertoast.showToast(
+            msg: languages.globalServerErrorMessage,
             toastLength: Toast.LENGTH_LONG,
             gravity: ToastGravity.CENTER,
             timeInSecForIosWeb: 4,
@@ -1089,70 +1143,70 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
             return StatefulBuilder(builder: (context, setInnerState) {
               return innerLoading
                   ? Container(
-                      child: Center(
-                        child: Image(
-                            image: new AssetImage(
-                                "assets/images/loading_breath.gif")),
-                      ),
-                    )
+                child: Center(
+                  child: Image(
+                      image: new AssetImage(
+                          "assets/images/loading_breath.gif")),
+                ),
+              )
                   : AlertDialog(
-                      backgroundColor: CupertinoColors.systemYellow,
-                      title: Text(
-                        languages.banCreatorConfirmQuestionLabel,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                            color: Colors.black),
-                      ),
-                      actions: <Widget>[
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          child: Text(
-                            languages.cancelLabel,
-                            style: TextStyle(color: Colors.black),
-                          ),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            innerLoading = true;
-                            widget.session
-                                .postJson(
-                                    '/api/users/banUser/$creatorId', Map())
-                                .then((response) {
-                              setInnerState(() {
-                                innerLoading = false;
-                              });
-                              if (response.statusCode == 200) {
-                                Navigator.of(context).pop();
-                                Fluttertoast.showToast(
-                                    msg: languages.successfulBanMessage,
-                                    toastLength: Toast.LENGTH_LONG,
-                                    gravity: ToastGravity.CENTER,
-                                    timeInSecForIosWeb: 4,
-                                    backgroundColor: Colors.green,
-                                    textColor: Colors.white,
-                                    fontSize: 16.0);
-                              } else {
-                                Fluttertoast.showToast(
-                                    msg: languages.globalServerErrorMessage,
-                                    toastLength: Toast.LENGTH_LONG,
-                                    gravity: ToastGravity.CENTER,
-                                    timeInSecForIosWeb: 4,
-                                    backgroundColor: Colors.red,
-                                    textColor: Colors.white,
-                                    fontSize: 16.0);
-                              }
-                            });
-                          },
-                          child: Text(
-                            languages.banLabel,
-                            style: TextStyle(color: Colors.black),
-                          ),
-                        ),
-                      ],
-                    );
+                backgroundColor: CupertinoColors.systemYellow,
+                title: Text(
+                  languages.banCreatorConfirmQuestionLabel,
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                      color: Colors.black),
+                ),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text(
+                      languages.cancelLabel,
+                      style: TextStyle(color: Colors.black),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      innerLoading = true;
+                      widget.session
+                          .postJson(
+                          '/api/users/banUser/$creatorId', Map())
+                          .then((response) {
+                        setInnerState(() {
+                          innerLoading = false;
+                        });
+                        if (response.statusCode == 200) {
+                          Navigator.of(context).pop();
+                          Fluttertoast.showToast(
+                              msg: languages.successfulBanMessage,
+                              toastLength: Toast.LENGTH_LONG,
+                              gravity: ToastGravity.CENTER,
+                              timeInSecForIosWeb: 4,
+                              backgroundColor: Colors.green,
+                              textColor: Colors.white,
+                              fontSize: 16.0);
+                        } else {
+                          Fluttertoast.showToast(
+                              msg: languages.globalServerErrorMessage,
+                              toastLength: Toast.LENGTH_LONG,
+                              gravity: ToastGravity.CENTER,
+                              timeInSecForIosWeb: 4,
+                              backgroundColor: Colors.red,
+                              textColor: Colors.white,
+                              fontSize: 16.0);
+                        }
+                      });
+                    },
+                    child: Text(
+                      languages.banLabel,
+                      style: TextStyle(color: Colors.black),
+                    ),
+                  ),
+                ],
+              );
             });
           });
     }
@@ -1173,8 +1227,14 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
           }
           option.liked = false;
         });
-        post.pollOptions.where((po) => po.pollId == pollId).first.likeNumber++;
-        post.pollOptions.where((po) => po.pollId == pollId).first.liked = true;
+        post.pollOptions
+            .where((po) => po.pollId == pollId)
+            .first
+            .likeNumber++;
+        post.pollOptions
+            .where((po) => po.pollId == pollId)
+            .first
+            .liked = true;
       });
       return Future.value(true);
     } else {
@@ -1235,120 +1295,126 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
             return StatefulBuilder(builder: (context, setInnerState) {
               return innerLoading
                   ? Container(
-                      child: Center(
-                        child: Image(
-                            image: new AssetImage(
-                                "assets/images/loading_breath.gif")),
-                      ),
-                    )
+                child: Center(
+                  child: Image(
+                      image: new AssetImage(
+                          "assets/images/loading_breath.gif")),
+                ),
+              )
                   : AlertDialog(
-                      backgroundColor: CupertinoColors.systemYellow,
-                      title: Text(
-                        languages.editTitleConfirmLabel,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                            color: Colors.black),
-                      ),
-                      content: Container(
-                        padding: EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: Colors.black),
-                        height: MediaQuery.of(context).size.height / 5,
-                        width: MediaQuery.of(context).size.width,
-                        child: ListView(
-                          children: [
-                            Center(
-                              child: Text(
-                                post.title,
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 20,
-                                    color: CupertinoColors.systemYellow),
-                              ),
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            Center(
-                              child: Icon(
-                                Icons.keyboard_double_arrow_down,
-                                color: CupertinoColors.systemYellow,
-                                size: 40,
-                              ),
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            Center(
-                              child: Text(
-                                _editTitleTextController.text,
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 20,
-                                    color: CupertinoColors.systemYellow),
-                              ),
-                            ),
-                          ],
+                backgroundColor: CupertinoColors.systemYellow,
+                title: Text(
+                  languages.editTitleConfirmLabel,
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                      color: Colors.black),
+                ),
+                content: Container(
+                  padding: EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: Colors.black),
+                  height: MediaQuery
+                      .of(context)
+                      .size
+                      .height / 5,
+                  width: MediaQuery
+                      .of(context)
+                      .size
+                      .width,
+                  child: ListView(
+                    children: [
+                      Center(
+                        child: Text(
+                          post.title,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                              color: CupertinoColors.systemYellow),
                         ),
                       ),
-                      actions: <Widget>[
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          child: Text(
-                            languages.cancelLabel,
-                            style: TextStyle(color: Colors.black),
-                          ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Center(
+                        child: Icon(
+                          Icons.keyboard_double_arrow_down,
+                          color: CupertinoColors.systemYellow,
+                          size: 40,
                         ),
-                        TextButton(
-                          onPressed: () {
-                            innerLoading = true;
-                            dynamic body = <String, String?>{
-                              'postId': post.postId.toString(),
-                              'title': _editTitleTextController.text,
-                            };
-                            widget.session
-                                .postJson('/api/posts/editTitle', body)
-                                .then((response) {
-                              setInnerState(() {
-                                innerLoading = false;
-                              });
-                              if (response.statusCode == 200) {
-                                setState(() {
-                                  post.title = _editTitleTextController.text;
-                                  _editTitleIsActive = false;
-                                });
-                                Navigator.of(context).pop();
-                                Fluttertoast.showToast(
-                                    msg: languages.successfulDataChangeLabel,
-                                    toastLength: Toast.LENGTH_LONG,
-                                    gravity: ToastGravity.CENTER,
-                                    timeInSecForIosWeb: 4,
-                                    backgroundColor: Colors.green,
-                                    textColor: Colors.white,
-                                    fontSize: 16.0);
-                              } else {
-                                Fluttertoast.showToast(
-                                    msg: languages.globalServerErrorMessage,
-                                    toastLength: Toast.LENGTH_LONG,
-                                    gravity: ToastGravity.CENTER,
-                                    timeInSecForIosWeb: 4,
-                                    backgroundColor: Colors.red,
-                                    textColor: Colors.white,
-                                    fontSize: 16.0);
-                              }
-                            });
-                          },
-                          child: Text(
-                            languages.OKLabel,
-                            style: TextStyle(color: Colors.black),
-                          ),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Center(
+                        child: Text(
+                          _editTitleTextController.text,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                              color: CupertinoColors.systemYellow),
                         ),
-                      ],
-                    );
+                      ),
+                    ],
+                  ),
+                ),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text(
+                      languages.cancelLabel,
+                      style: TextStyle(color: Colors.black),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      innerLoading = true;
+                      dynamic body = <String, String?>{
+                        'postId': post.postId.toString(),
+                        'title': _editTitleTextController.text,
+                      };
+                      widget.session
+                          .postJson('/api/posts/editTitle', body)
+                          .then((response) {
+                        setInnerState(() {
+                          innerLoading = false;
+                        });
+                        if (response.statusCode == 200) {
+                          setState(() {
+                            post.title = _editTitleTextController.text;
+                            _editTitleIsActive = false;
+                          });
+                          Navigator.of(context).pop();
+                          Fluttertoast.showToast(
+                              msg: languages.successfulDataChangeLabel,
+                              toastLength: Toast.LENGTH_LONG,
+                              gravity: ToastGravity.CENTER,
+                              timeInSecForIosWeb: 4,
+                              backgroundColor: Colors.green,
+                              textColor: Colors.white,
+                              fontSize: 16.0);
+                        } else {
+                          Fluttertoast.showToast(
+                              msg: languages.globalServerErrorMessage,
+                              toastLength: Toast.LENGTH_LONG,
+                              gravity: ToastGravity.CENTER,
+                              timeInSecForIosWeb: 4,
+                              backgroundColor: Colors.red,
+                              textColor: Colors.white,
+                              fontSize: 16.0);
+                        }
+                      });
+                    },
+                    child: Text(
+                      languages.OKLabel,
+                      style: TextStyle(color: Colors.black),
+                    ),
+                  ),
+                ],
+              );
             });
           });
     }
@@ -1399,122 +1465,128 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
             return StatefulBuilder(builder: (context, setInnerState) {
               return innerLoading
                   ? Container(
-                      child: Center(
-                        child: Image(
-                            image: new AssetImage(
-                                "assets/images/loading_breath.gif")),
-                      ),
-                    )
+                child: Center(
+                  child: Image(
+                      image: new AssetImage(
+                          "assets/images/loading_breath.gif")),
+                ),
+              )
                   : AlertDialog(
-                      backgroundColor: CupertinoColors.systemYellow,
-                      title: Text(
-                        languages.editDescriptionConfirmLabel,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                            color: Colors.black),
-                      ),
-                      content: Container(
-                        padding: EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: Colors.black),
-                        height: MediaQuery.of(context).size.height / 5,
-                        width: MediaQuery.of(context).size.width,
-                        child: ListView(
-                          children: [
-                            Center(
-                              child: Text(
-                                post.description,
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 20,
-                                    color: CupertinoColors.systemYellow),
-                              ),
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            Center(
-                              child: Icon(
-                                Icons.keyboard_double_arrow_down,
-                                color: CupertinoColors.systemYellow,
-                                size: 40,
-                              ),
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            Center(
-                              child: Text(
-                                _editDescriptionTextController.text,
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 20,
-                                    color: CupertinoColors.systemYellow),
-                              ),
-                            ),
-                          ],
+                backgroundColor: CupertinoColors.systemYellow,
+                title: Text(
+                  languages.editDescriptionConfirmLabel,
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                      color: Colors.black),
+                ),
+                content: Container(
+                  padding: EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: Colors.black),
+                  height: MediaQuery
+                      .of(context)
+                      .size
+                      .height / 5,
+                  width: MediaQuery
+                      .of(context)
+                      .size
+                      .width,
+                  child: ListView(
+                    children: [
+                      Center(
+                        child: Text(
+                          post.description,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                              color: CupertinoColors.systemYellow),
                         ),
                       ),
-                      actions: <Widget>[
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          child: Text(
-                            languages.cancelLabel,
-                            style: TextStyle(color: Colors.black),
-                          ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Center(
+                        child: Icon(
+                          Icons.keyboard_double_arrow_down,
+                          color: CupertinoColors.systemYellow,
+                          size: 40,
                         ),
-                        TextButton(
-                          onPressed: () {
-                            innerLoading = true;
-                            dynamic body = <String, String?>{
-                              'postId': post.postId.toString(),
-                              'description':
-                                  _editDescriptionTextController.text,
-                            };
-                            widget.session
-                                .postJson('/api/posts/editDescription', body)
-                                .then((response) {
-                              setInnerState(() {
-                                innerLoading = false;
-                              });
-                              if (response.statusCode == 200) {
-                                setState(() {
-                                  post.description =
-                                      _editDescriptionTextController.text;
-                                  _editDescriptionIsActive = false;
-                                });
-                                Navigator.of(context).pop();
-                                Fluttertoast.showToast(
-                                    msg: languages.successfulDataChangeLabel,
-                                    toastLength: Toast.LENGTH_LONG,
-                                    gravity: ToastGravity.CENTER,
-                                    timeInSecForIosWeb: 4,
-                                    backgroundColor: Colors.green,
-                                    textColor: Colors.white,
-                                    fontSize: 16.0);
-                              } else {
-                                Fluttertoast.showToast(
-                                    msg: languages.globalServerErrorMessage,
-                                    toastLength: Toast.LENGTH_LONG,
-                                    gravity: ToastGravity.CENTER,
-                                    timeInSecForIosWeb: 4,
-                                    backgroundColor: Colors.red,
-                                    textColor: Colors.white,
-                                    fontSize: 16.0);
-                              }
-                            });
-                          },
-                          child: Text(
-                            languages.OKLabel,
-                            style: TextStyle(color: Colors.black),
-                          ),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Center(
+                        child: Text(
+                          _editDescriptionTextController.text,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                              color: CupertinoColors.systemYellow),
                         ),
-                      ],
-                    );
+                      ),
+                    ],
+                  ),
+                ),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text(
+                      languages.cancelLabel,
+                      style: TextStyle(color: Colors.black),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      innerLoading = true;
+                      dynamic body = <String, String?>{
+                        'postId': post.postId.toString(),
+                        'description':
+                        _editDescriptionTextController.text,
+                      };
+                      widget.session
+                          .postJson('/api/posts/editDescription', body)
+                          .then((response) {
+                        setInnerState(() {
+                          innerLoading = false;
+                        });
+                        if (response.statusCode == 200) {
+                          setState(() {
+                            post.description =
+                                _editDescriptionTextController.text;
+                            _editDescriptionIsActive = false;
+                          });
+                          Navigator.of(context).pop();
+                          Fluttertoast.showToast(
+                              msg: languages.successfulDataChangeLabel,
+                              toastLength: Toast.LENGTH_LONG,
+                              gravity: ToastGravity.CENTER,
+                              timeInSecForIosWeb: 4,
+                              backgroundColor: Colors.green,
+                              textColor: Colors.white,
+                              fontSize: 16.0);
+                        } else {
+                          Fluttertoast.showToast(
+                              msg: languages.globalServerErrorMessage,
+                              toastLength: Toast.LENGTH_LONG,
+                              gravity: ToastGravity.CENTER,
+                              timeInSecForIosWeb: 4,
+                              backgroundColor: Colors.red,
+                              textColor: Colors.white,
+                              fontSize: 16.0);
+                        }
+                      });
+                    },
+                    child: Text(
+                      languages.OKLabel,
+                      style: TextStyle(color: Colors.black),
+                    ),
+                  ),
+                ],
+              );
             });
           });
     }
@@ -1524,11 +1596,12 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
     await widget.hideNavBar();
     Navigator.of(context)
         .push(MaterialPageRoute(
-            builder: (context) => StatisticPage(
-                  postId: postId,
-                  session: widget.session,
-                  languages: languages,
-                )))
+        builder: (context) =>
+            StatisticPage(
+              postId: postId,
+              session: widget.session,
+              languages: languages,
+            )))
         .whenComplete(() => widget.navBarStatusChangeableAgain());
   }
 }

@@ -611,7 +611,7 @@ class _CommentsWidgetState extends State<CommentsWidget> {
                         color: Colors.white,
                       ),
                       itemBuilder: (context) {
-                        return List.generate(2, (index) {
+                        return List.generate(parentComment.userId == widget.user.userId ? 1 : 2, (index) {
                           if (index == 0) {
                             return PopupMenuItem(
                               child: Text(
@@ -622,7 +622,7 @@ class _CommentsWidgetState extends State<CommentsWidget> {
                             );
                           } else {
                             return PopupMenuItem(
-                              child: Text(languages.banUserLabel),
+                              child: Text(languages.banCommenterLabel),
                               value: 1,
                             );
                           }
