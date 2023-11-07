@@ -672,21 +672,22 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
           fontSize: 16.0);
       return null;
     });
-    if (tmpImage != null &&
-        (await tmpImage.readAsBytes()).lengthInBytes >= 1048576) {
-      Fluttertoast.showToast(
-          msg: languages.imageFileSizeIsTooBigExceptionMessage,
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 4,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          fontSize: 16.0);
-    }
-    else{
-      setState(() {
-        image = tmpImage;
-      });
+    if (tmpImage != null){
+        if((await tmpImage.readAsBytes()).lengthInBytes >= 1048576) {
+          Fluttertoast.showToast(
+              msg: languages.imageFileSizeIsTooBigExceptionMessage,
+              toastLength: Toast.LENGTH_LONG,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 4,
+              backgroundColor: Colors.red,
+              textColor: Colors.white,
+              fontSize: 16.0);
+      }
+        else{
+          setState(() {
+            image = tmpImage;
+          });
+        }
     }
   }
 

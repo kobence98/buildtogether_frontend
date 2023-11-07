@@ -187,6 +187,7 @@ class _LoginPageState extends State<LoginPage> {
                         height: 50,
                         minWidth: 300,
                         child: ElevatedButton(
+                          key: const Key("loginButton"),
                           style: ButtonStyle(
                             backgroundColor:
                             MaterialStateProperty.all<Color>(
@@ -209,6 +210,7 @@ class _LoginPageState extends State<LoginPage> {
                         height: 50,
                         minWidth: 300,
                         child: ElevatedButton(
+                          key: const Key("registrationButton"),
                           onPressed: onRegistrationPressed,
                           style: ButtonStyle(
                             backgroundColor:
